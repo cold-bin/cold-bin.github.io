@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>https on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/https/</link>
+    <description>Recent content in https on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 16 Jul 2022 11:03:31 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/https/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Https在golang的实践</title>
+      <link>https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/</link>
+      <pubDate>Sat, 16 Jul 2022 11:03:31 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/</guid>
+      <description>Golang创建最简单的HTTP和HTTPS服务 HTTP服务 HTTP是基于传输层TCP协议的。 1 2 3 4 5 6 7 8 9 10 11 12 13 14 package main import ( &amp;#34;net/http&amp;#34; &amp;#34;fmt&amp;#34; &amp;#34;log&amp;#34; ) func main() { http.HandleFunc(&amp;#34;/&amp;#34;, func(w http.ResponseWriter, r *http.Request){ fmt.Fprint(w, &amp;#34;Hello world&amp;#34;) }) log.Fatal(http.ListenAndServe(&amp;#34;:5001&amp;#34;, nil)) } HTTPS服务 HTTPS服务不同于HTTP服务，HTTPS是HTTP over SSL或HTTP over TLS。 SSL是“Sec</description>
+    </item>
+    
+  </channel>
+</rss>

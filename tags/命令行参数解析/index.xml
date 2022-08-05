@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>命令行参数解析 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90/</link>
+    <description>Recent content in 命令行参数解析 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 17 Jul 2022 10:16:08 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Flag包的在go项目的实践</title>
+      <link>https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/</link>
+      <pubDate>Sun, 17 Jul 2022 10:16:08 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/</guid>
+      <description>阅读本文前，需具备flag基础 通常我们有种需求：可以在不修改程序源码的情况下，控制一些程序内部的变化。比如配置文件，我们可以手动更改配置文件，也可以在程序启动时，通过命令行参数在程序运行时，给程序提供一些配置选项，这样可以方便地不需要更改程序源码就可以达到在外部控制程序内部一些变</description>
+    </item>
+    
+    <item>
+      <title>Go语言标准库flag基本使用</title>
+      <link>https://cold-bin.github.io/post/Go%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%BA%93flag%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Sat, 16 Jul 2022 14:03:46 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/Go%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%BA%93flag%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</guid>
+      <description>Go语言内置的flag包实现了命令行参数的解析，flag包使得开发命令行工具更为简单。 os.Args 如果你只是简单的想要获取命令行参数，可以像下面的代码示例一样使用os.Args来获取命令行参数。 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 package main import ( &amp;#34;fmt&amp;#34; &amp;#34;os&amp;#34; ) //os.Args demo func main() { //os.Args是一个[]string</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Golang on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/categories/Golang/</link>
+    <description>Recent content in Golang on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 17 Jul 2022 15:26:09 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/Golang/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go的结构体内存对齐</title>
+      <link>https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/</link>
+      <pubDate>Sun, 17 Jul 2022 15:26:09 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/</guid>
+      <description>一. 什么是内存对齐, 为啥要内存对齐？ 在解释什么是内存对齐之前，我们需要先了解一下CPU和内存数据交互的过程。CPU和内存是通过总线进行数据交互的。其中地址总线用来传递CPU需要的数据地址，内存将数据通过数据总线传递给CPU， 或者CPU将数据通过数据总线回传给内存。 首先我们需要知道</description>
+    </item>
+    
+    <item>
+      <title>Flag包的在go项目的实践</title>
+      <link>https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/</link>
+      <pubDate>Sun, 17 Jul 2022 10:16:08 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/</guid>
+      <description>阅读本文前，需具备flag基础 通常我们有种需求：可以在不修改程序源码的情况下，控制一些程序内部的变化。比如配置文件，我们可以手动更改配置文件，也可以在程序启动时，通过命令行参数在程序运行时，给程序提供一些配置选项，这样可以方便地不需要更改程序源码就可以达到在外部控制程序内部一些变</description>
+    </item>
+    
+    <item>
+      <title>Makefile在go项目的实践</title>
+      <link>https://cold-bin.github.io/post/Makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/</link>
+      <pubDate>Sat, 16 Jul 2022 22:13:26 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/Makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/</guid>
+      <description>Make介绍 make命令是GNU的工程化编译工具，用以实现工程化的管理，提高开发效率。 Make解释Makefile 中的指令（应该说是规则）。在Makefile文件中描述了整个工程所有文件的编译顺序、编译规则。Makefile 有自己的书写格式、关键字、函数。像C 语言有自己的格式、关</description>
+    </item>
+    
+    <item>
+      <title>Go语言标准库flag基本使用</title>
+      <link>https://cold-bin.github.io/post/Go%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%BA%93flag%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Sat, 16 Jul 2022 14:03:46 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/Go%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%BA%93flag%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</guid>
+      <description>Go语言内置的flag包实现了命令行参数的解析，flag包使得开发命令行工具更为简单。 os.Args 如果你只是简单的想要获取命令行参数，可以像下面的代码示例一样使用os.Args来获取命令行参数。 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 package main import ( &amp;#34;fmt&amp;#34; &amp;#34;os&amp;#34; ) //os.Args demo func main() { //os.Args是一个[]string</description>
+    </item>
+    
+    <item>
+      <title>Https在golang的实践</title>
+      <link>https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/</link>
+      <pubDate>Sat, 16 Jul 2022 11:03:31 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/</guid>
+      <description>Golang创建最简单的HTTP和HTTPS服务 HTTP服务 HTTP是基于传输层TCP协议的。 1 2 3 4 5 6 7 8 9 10 11 12 13 14 package main import ( &amp;#34;net/http&amp;#34; &amp;#34;fmt&amp;#34; &amp;#34;log&amp;#34; ) func main() { http.HandleFunc(&amp;#34;/&amp;#34;, func(w http.ResponseWriter, r *http.Request){ fmt.Fprint(w, &amp;#34;Hello world&amp;#34;) }) log.Fatal(http.ListenAndServe(&amp;#34;:5001&amp;#34;, nil)) } HTTPS服务 HTTPS服务不同于HTTP服务，HTTPS是HTTP over SSL或HTTP over TLS。 SSL是“Sec</description>
+    </item>
+    
+    <item>
+      <title>Go杂烩</title>
+      <link>https://cold-bin.github.io/post/go%E6%9D%82%E7%83%A9/</link>
+      <pubDate>Fri, 15 Jul 2022 14:19:32 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/go%E6%9D%82%E7%83%A9/</guid>
+      <description>Golang杂烩 一、结构体 和 C/C++ 的结构体类似，Go 语言的结构体 struct 是一种聚合的数据类型，可以包含任意类型的值。 自动转换 先定义一个 struct 1 2 3 4 type Person struct { Name string Age int } 初始化 1 2 3 4 5 6 7 8 9 10 11 12 13 func main() { me := &amp;amp;Person{ Name: &amp;#34;HF&amp;#34;, Age: 1, } fmt.Printf(&amp;#34;type of me: %T\n&amp;#34;, me) fmt.Printf(&amp;#34;my name: %s, type of my name: %T\n&amp;#34;, (*me).Name, (*me).Name) fmt.Printf(&amp;#34;my age: %d, type of my age: %T\n&amp;#34;, (*me).Age, (*me).Age) fmt.Printf(&amp;#34;my name: %s, type of my name: %T\n&amp;#34;, me.Name, me.Name) fmt.Printf(&amp;#34;my age:</description>
+    </item>
+    
+    <item>
+      <title>集中式与分布式</title>
+      <link>https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/</link>
+      <pubDate>Thu, 07 Jul 2022 17:55:34 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/</guid>
+      <description>集中式与分布式 集中式系统架构 集中式是指由一台或多台主计算机组成的中心节点，数据集中存储于这个中心节点中，并且整个系统的所有业务单元都集中部署在这个中心节点上，系统的所有功能均由其集中处理。在集中式系统中，每个终端或客户端机器仅仅负责数据的录入和输出，而数据的存储与控制处理完全交由</description>
+    </item>
+    
+    <item>
+      <title>Go测试与性能优化</title>
+      <link>https://cold-bin.github.io/post/go%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</link>
+      <pubDate>Thu, 07 Jul 2022 17:46:37 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/go%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</guid>
+      <description>go测试与性能优化 一、单元测试 不写测试的开发不是好程序员。我个人非常崇尚TDD（Test Driven Development）的，然而可惜的是国内的程序员都不太关注测试这一部分。 这篇文章主要介绍下在Go语言中如何做单元测试和基准测试。 go test工具 Go语言中的测试依赖go test命令。编写测</description>
+    </item>
+    
+  </channel>
+</rss>

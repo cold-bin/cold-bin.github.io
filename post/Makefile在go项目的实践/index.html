@@ -1,0 +1,1118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Makefile在go项目的实践 | cold bin&#39;s blog</title>
+    <meta property="og:title" content="Makefile在go项目的实践 - cold bin&#39;s blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2022-07-16T22:13:26&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2022-07-16T22:13:26&#43;08:00'>
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="Makefile在go项目的实践">
+        
+    <meta name="author" content="cold bin">
+    <meta property="og:url" content="https://cold-bin.github.io/post/Makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://cold-bin.github.io">
+                        cold bin&#39;s blog
+                    </a>
+                
+                
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://cold-bin.github.io">首页</a>
+                    
+                    <a  href="https://cold-bin.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://cold-bin.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+
+
+<aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details >
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">Table of Contents</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#make%e4%bb%8b%e7%bb%8d" aria-label="Make介绍">Make介绍</a></li>
+                    <li>
+                        <a href="#makefile%e6%96%87%e4%bb%b6" aria-label="Makefile文件">Makefile文件</a><ul>
+                            
+                    <li>
+                        <a href="#%e6%96%87%e4%bb%b6%e6%a0%bc%e5%bc%8f" aria-label="文件格式">文件格式</a><ul>
+                            
+                    <li>
+                        <a href="#target%e7%9b%ae%e6%a0%87" aria-label="target目标">target目标</a></li>
+                    <li>
+                        <a href="#prerequisites%e5%85%88%e5%86%b3%e6%9d%a1%e4%bb%b6" aria-label="prerequisites先决条件">prerequisites先决条件</a></li>
+                    <li>
+                        <a href="#commands%e5%91%bd%e4%bb%a4" aria-label="commands命令">commands命令</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e6%96%87%e4%bb%b6%e8%af%ad%e6%b3%95" aria-label="文件语法">文件语法</a><ul>
+                            
+                    <li>
+                        <a href="#%e6%b3%a8%e9%87%8a" aria-label="注释">注释</a></li>
+                    <li>
+                        <a href="#%e5%9b%9e%e6%98%be" aria-label="回显">回显</a></li>
+                    <li>
+                        <a href="#%e9%80%9a%e9%85%8d%e7%ac%a6" aria-label="通配符">通配符</a></li>
+                    <li>
+                        <a href="#%e6%a8%a1%e5%bc%8f%e5%8c%b9%e9%85%8d" aria-label="模式匹配">模式匹配</a></li>
+                    <li>
+                        <a href="#%e5%8f%98%e9%87%8f%e5%92%8c%e8%b5%8b%e5%80%bc%e7%ac%a6" aria-label="变量和赋值符">变量和赋值符</a></li>
+                    <li>
+                        <a href="#%e5%86%85%e7%bd%ae%e5%8f%98%e9%87%8f" aria-label="内置变量">内置变量</a></li>
+                    <li>
+                        <a href="#%e5%88%a4%e6%96%ad%e5%92%8c%e5%be%aa%e7%8e%af" aria-label="判断和循环">判断和循环</a></li></ul>
+                    </li></ul>
+                    </li>
+                    <li>
+                        <a href="#makefile%e4%be%8b%e5%ad%90%e6%bc%94%e7%a4%ba" aria-label="Makefile例子演示">Makefile例子演示</a><ul>
+                            
+                    <li>
+                        <a href="#1-%e6%89%a7%e8%a1%8c%e5%a4%9a%e4%b8%aa%e7%9b%ae%e6%a0%87" aria-label="1. 执行多个目标">1. 执行多个目标</a></li>
+                    <li>
+                        <a href="#2-%e6%9e%84%e5%bb%bagolang%e9%a1%b9%e7%9b%ae" aria-label="2. 构建golang项目">2. 构建golang项目</a>
+                    </li>
+                </ul>
+                </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+<div class="res-cons">
+
+    <article class="post">
+        <div class="res-cons">
+
+        <header>
+            <h1 class="post-title">Makefile在go项目的实践</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年7月16日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        
+        <div class="post-content">
+            <h1 id="make介绍">Make介绍</h1>
+<p><strong>make命令</strong>是GNU的工程化编译工具，用以实现工程化的管理，提高开发效率。</p>
+<p>Make解释<a href="https://so.csdn.net/so/search?q=Makefile&amp;spm=1001.2101.3001.7020">Makefile</a> 中的指令（应该说是规则）。在Makefile文件中描述了整个工程所有文件的编译顺序、编译规则。Makefile 有自己的书写格式、关键字、函数。像C 语言有自己的格式、关键字和函数一样。而且在Makefile 中可以使用系统shell所提供的任何命令来完成想要的工作。</p>
+<h1 id="makefile文件">Makefile文件</h1>
+<p>构建规则都写在Makefile文件里面，要学会如何Make命令，就必须学会如何编写Makefile文件。</p>
+<h2 id="文件格式">文件格式</h2>
+<p>Makefile文件由一系列规则（rules）构成。</p>
+<p>每条规则要说明构建的依赖条件，及怎么样去构建。那么格式如下，</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span># rule
+</span></span><span style="display:flex;"><span>&lt;target&gt; : &lt;prerequisites&gt; 
+</span></span><span style="display:flex;"><span>[tab]  &lt;commands&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>target: 目标</p>
+<p>prerequisites： 先决条件，或者说依赖条件</p>
+<p>tab: 使用tab来缩进</p>
+<p>command: 要执行的命令（可以说是小型的shell代码块）</p>
+<h3 id="target目标">target目标</h3>
+<p>一个目标，可以是文件名，也可以是某个操作的名字（伪目标），这个名字由自己定义，用来指明要构建的对象。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">create</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    touch newfile
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>比如上面这条规则，伪目标为create，命令作用为创建一个文件。要想构建这个操作，调用<code>make create</code>(指定目标进行构建编译)即可。</p>
+<p><strong>但是如果目录下，存在一个文件名为create，那么构建命令就不会去执行。为了解决这个问题，当使用伪目标时，可以明确声明create是“伪目标“，告诉make跳过文件检查。</strong></p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">.PHONY</span><span style="color:#000;font-weight:bold">:</span> clean
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">create</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    touch newfile
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果Make命令运行时没有指定目标，默认会执行Makefile文件的第一个目标。</p>
+<h3 id="prerequisites先决条件">prerequisites先决条件</h3>
+<p>先决条件，通常是文件名，多个名字用空格分隔。</p>
+<p>它定义了一个是否进行重新构建的判断标准： 如果有任何一个先决文件发生改变（时间戳更新），就要重新构建。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">result.txt</span><span style="color:#000;font-weight:bold">:</span> source.txt
+</span></span><span style="display:flex;"><span>    cp source.txt result.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，构建 result.txt 的前置条件是 source.txt 。如果当前目录中，source.txt 已经存在，那么<code>make result.txt</code>可以正常运行，否则必须再写一条规则，来生成 source.txt 。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">source.txt</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;this is the source&#34;</span> &gt; source.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，source.txt后面没有前置条件，就意味着它跟其他文件都无关，只要这个文件还不存在，每次调用<code>make source.txt</code>，它都会生成。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>make result.txt
+</span></span><span style="display:flex;"><span>make result.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面命令连续执行两次<code>make result.txt</code>。第一次执行会先新建 source.txt，然后再新建 result.txt。第二次执行，make发现 source.txt 没有变动（时间戳晚于 result.txt），就不会执行任何操作，result.txt 也不会重新生成。</p>
+<p>如果需要生成多个文件，往往采用下面的写法。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">source</span><span style="color:#000;font-weight:bold">:</span> file1 file2 file3
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，source 是一个伪目标，只有三个前置文件，没有任何对应的命令。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>make <span style="color:#0086b3">source</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>执行<code>make source</code>命令后，就会一次性生成 file1，file2，file3 三个文件。这比下面的写法要方便很多。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>make file1
+</span></span><span style="display:flex;"><span>make file2
+</span></span><span style="display:flex;"><span>make file3
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>如果先决条件也是伪目标，即不是一个实实在在的、真实存在的文件，而是仅仅是一个目标的标识符。那么在当前目标执行前，就会先去先决条件对应的伪目标去递归执行。当前目标被指定make时，会先调用先决条件的目标，如果先决条件也具备这样的依赖时，也会如此递归调用下去</strong></p>
+<blockquote>
+<p>target: target1 target2</p>
+<p>​	echo &gt; &ldquo;this tartget&rdquo;</p>
+<p>target1:</p>
+<p>​	echo &gt; &ldquo;this is target1&rdquo;</p>
+<p>target2:</p>
+<p>​	echo &gt; &ldquo;this is target2&rdquo;</p>
+</blockquote>
+<h3 id="commands命令">commands命令</h3>
+<p>命令是构建目标时具体执行的指令，由一行或多行shell组成。每行命令之前必须有一个tab键缩进。如果想用其他键缩进，可以用内置变量.RECIPEPREFIX声明。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#008080">.RECIPEPREFIX</span> <span style="color:#000;font-weight:bold">=</span> &gt;
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">hello</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">&gt;</span> <span style="color:#a61717;background-color:#e3d2d2">echo</span> <span style="color:#a61717;background-color:#e3d2d2">Hello,</span> <span style="color:#a61717;background-color:#e3d2d2">world</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>需要注意的是，每行shell在一个单独的bash进程中执行，多进程间没有继承关系。</p>
+</blockquote>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">var</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">export</span> <span style="color:#008080">name</span><span style="color:#000;font-weight:bold">=</span>wangpeng
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;myname is </span><span style="color:#008080">$name</span><span style="color:#d14">&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>运行上面的构建 ，发现变量name是取不到的，因为两行shell在两个独立的bash中运行。</p>
+<p>最直接的方法就是将两行shell写到一行中，</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">var</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">export</span> <span style="color:#008080">name</span><span style="color:#000;font-weight:bold">=</span>wangpeng; <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;myname is </span><span style="color:#008080">$name</span><span style="color:#d14">&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>第二种办法，在换行前加反斜杠\转义，</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">var</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">export</span> <span style="color:#008080">name</span><span style="color:#000;font-weight:bold">=</span>wangpeng <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;myname is </span><span style="color:#008080">$name</span><span style="color:#d14">&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>还有第三种办法是使用<code>。ONESHELL</code>内置命令。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">.ONESHELL</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">var</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">export</span> <span style="color:#008080">name</span><span style="color:#000;font-weight:bold">=</span>wangpeng
+</span></span><span style="display:flex;"><span>    <span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;myname is </span><span style="color:#008080">$name</span><span style="color:#d14">&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="文件语法">文件语法</h2>
+<h3 id="注释">注释</h3>
+<p>行首井号（#）表示注释。</p>
+<h3 id="回显">回显</h3>
+<p>回显是指，在执行到每行命令前，将命令本身打印出来。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">test</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic"># 这是测试</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>执行上面构建会输出</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>make <span style="color:#0086b3">test</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 这是测试</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在命令的前面加上@，就可以关闭回声。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">test</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    @# 这是测试
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这下构建时就不会有任何输出。</p>
+<h3 id="通配符">通配符</h3>
+<p>Makefile 的通配符与 Bash 一致，主要有星号（<em>）、问号（？）.比如</em> .text 表示所有后缀名为text的文件。</p>
+<h3 id="模式匹配">模式匹配</h3>
+<p>Make命令允许对文件名，进行类似正则运算的匹配，主要用到的匹配符是%。比如，假定当前目录下有 f1.c 和 f2.c 两个源码文件，需要将它们编译为对应的对象文件。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">%.o</span><span style="color:#000;font-weight:bold">:</span> %.c
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>等同于下面的写法。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">f1.o</span><span style="color:#000;font-weight:bold">:</span> f1.c
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">f2.o</span><span style="color:#000;font-weight:bold">:</span> f2.c
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用匹配符%，可以将大量同类型的文件，只用一条规则就完成构建。</p>
+<h3 id="变量和赋值符">变量和赋值符</h3>
+<p>Makefile 允许自定义变量。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#008080">txt</span> <span style="color:#000;font-weight:bold">=</span> Hello World
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">test</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    @echo <span style="color:#000;font-weight:bold">$(</span>txt<span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>调用shell中的变量，需要使用两个美元符号$$。</p>
+<p>Makefile一共提供了四个赋值运算符 （=、:=、?=、+=），它们的区别请看<a href="http://stackoverflow.com/questions/448910/makefile-variable-assignment">StackOverflow</a>。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#008080">VARIABLE</span> <span style="color:#000;font-weight:bold">=</span> value
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 在执行时扩展，允许递归扩展。
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">VARIABLE</span> <span style="color:#000;font-weight:bold">:=</span> value
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 在定义时扩展。
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">VARIABLE</span> <span style="color:#000;font-weight:bold">?=</span> value
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 只有在该变量为空时才设置值。
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">VARIABLE</span> <span style="color:#000;font-weight:bold">+=</span> value
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 将值追加到变量的尾端。
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="内置变量">内置变量</h3>
+<p>Make命令提供一系列内置变量，比如，$(CC)指向当前使用的编译器，$(MAKE) 指向当前使用的Make工具。这主要是为了跨平台的兼容性，详细的内置变量清单见<a href="https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html">手册</a>。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">output</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">$(</span>CC<span style="color:#000;font-weight:bold">)</span> -o output input.c
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="判断和循环">判断和循环</h3>
+<p>Makefile使用 Bash 语法，完成判断和循环。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">ifeq</span> <span style="color:#a61717;background-color:#e3d2d2">(</span><span style="color:#000;font-weight:bold">$(</span><span style="color:#008080">CC</span><span style="color:#000;font-weight:bold">)</span><span style="color:#a61717;background-color:#e3d2d2">,gcc)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008080">libs</span><span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">$(</span>libs_for_gcc<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">else</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#008080">libs</span><span style="color:#000;font-weight:bold">=</span><span style="color:#000;font-weight:bold">$(</span>normal_libs<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">endif</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面代码判断当前编译器是否 gcc ，然后指定不同的库文件。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#008080">LIST</span> <span style="color:#000;font-weight:bold">=</span> one two three
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">all</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">for</span> i in <span style="color:#000;font-weight:bold">$(</span>LIST<span style="color:#000;font-weight:bold">)</span>; <span style="color:#000;font-weight:bold">do</span> <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>        <span style="color:#0086b3">echo</span> <span style="color:#008080">$$</span>i; <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    <span style="color:#000;font-weight:bold">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 等同于
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">all</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">for</span> i in one two three; <span style="color:#000;font-weight:bold">do</span> <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>        <span style="color:#0086b3">echo</span> <span style="color:#008080">$i</span>; <span style="color:#d14">\
+</span></span></span><span style="display:flex;"><span><span style="color:#d14"></span>    <span style="color:#000;font-weight:bold">done</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面代码的运行结果。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-txt" data-lang="txt"><span style="display:flex;"><span>one
+</span></span><span style="display:flex;"><span>two
+</span></span><span style="display:flex;"><span>three
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="makefile例子演示">Makefile例子演示</h1>
+<h2 id="1-执行多个目标">1. 执行多个目标</h2>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">.PHONY</span><span style="color:#000;font-weight:bold">:</span> cleanall cleanobj cleandiff
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">cleanall</span><span style="color:#000;font-weight:bold">:</span> cleanobj cleandiff
+</span></span><span style="display:flex;"><span>        rm all
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">cleanobj</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>        rm *.o
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">cleandiff</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>        rm *.diff
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面代码可以调用不同目标，删除不同后缀名的文件，也可以调用一个目标（cleanall），删除所有指定类型的文件。</p>
+<h2 id="2-构建golang项目">2. 构建golang项目</h2>
+<p>以下Makefile仅供参考，<a href="https://github.com/liuhaibin123456789/web-app/blob/master/Makefile">项目仓库</a></p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">55
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">56
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">57
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">58
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">59
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">60
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">61
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">62
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">63
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 伪目标，如果未指定终极目标，将默认使用Makefile里的第一个目标，
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 即Makefile里最靠前的规则（本Makefile是all这个目标）
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 因此，当执行make时，会默认第一个目标为终极目标，所以all后面的依赖都会执行下去
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 因此，可以将all后面放置一些必须编译的默认选项，在只使用make时；当然也可以使用make指定终极目标进行构建
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#900;font-weight:bold">.PHONY</span><span style="color:#000;font-weight:bold">:</span> openssl format build build_linux build_win clean swag \ 
+</span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">docker-build</span> <span style="color:#a61717;background-color:#e3d2d2">help</span> <span style="color:#a61717;background-color:#e3d2d2">format</span> <span style="color:#a61717;background-color:#e3d2d2">test</span> <span style="color:#a61717;background-color:#e3d2d2">run</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">all</span><span style="color:#000;font-weight:bold">:</span> openssl format build
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 声明编译项目的文件名
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#008080">BUILD_NAME</span><span style="color:#000;font-weight:bold">=</span>web_app
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># swagger接口文档初始化
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#900;font-weight:bold">swag</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>	@swag init
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 在./config目录，签发自建的tls证书
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 或者使用go标准库：go run $GOROOT/src/crypto/tls/generate_cert.go --host localhost
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#900;font-weight:bold">openssl</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>	@openssl genrsa -out ./config/key.pem 2048;openssl req -new -x509 -key ./config/key.pem -out ./config/cert.pem -days <span style="color:#099">3650</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 使用Dockerfile对项目打包编译出镜像
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#900;font-weight:bold">docker-build</span><span style="color:#000;font-weight:bold">:</span> swag
+</span></span><span style="display:flex;"><span>	@docker build -t <span style="color:#d14">${</span><span style="color:#008080">BUILD_NAME</span><span style="color:#d14">}</span>:1.0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 格式化项目
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#900;font-weight:bold">format</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>	@go fmt ./
+</span></span><span style="display:flex;"><span>	@go vet ./
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 测试代码
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#900;font-weight:bold">test</span><span style="color:#000;font-weight:bold">:</span> swag
+</span></span><span style="display:flex;"><span>	@go <span style="color:#0086b3">test</span> -v <span style="color:#998;font-style:italic">#回归测试</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 直接运行项目根目录下已经编译好的二进制文件
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#900;font-weight:bold">run</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>	./<span style="color:#d14">${</span><span style="color:#008080">BUILD_NAME</span><span style="color:#d14">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 默认编译
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#900;font-weight:bold">build</span><span style="color:#000;font-weight:bold">:</span> test
+</span></span><span style="display:flex;"><span>	@go build -o <span style="color:#d14">${</span><span style="color:#008080">BUILD_NAME</span><span style="color:#d14">}</span> <span style="color:#d14">${</span><span style="color:#008080">SOURCE</span><span style="color:#d14">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 交叉编译--适应linux系统
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#900;font-weight:bold">build_linux</span><span style="color:#000;font-weight:bold">:</span> test
+</span></span><span style="display:flex;"><span>	@CGO_ENABLED<span style="color:#000;font-weight:bold">=</span><span style="color:#099">0</span> <span style="color:#008080">GOOS</span><span style="color:#000;font-weight:bold">=</span>linux <span style="color:#008080">GOARCH</span><span style="color:#000;font-weight:bold">=</span>amd64 go build -o <span style="color:#d14">${</span><span style="color:#008080">BUILD_NAME</span><span style="color:#d14">}</span> .
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 交叉编译--适应windows系统
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#900;font-weight:bold">build_win</span><span style="color:#000;font-weight:bold">:</span> test
+</span></span><span style="display:flex;"><span>    @CGO_ENABLED<span style="color:#000;font-weight:bold">=</span><span style="color:#099">0</span> <span style="color:#008080">GOOS</span><span style="color:#000;font-weight:bold">=</span>windows <span style="color:#008080">GOARCH</span><span style="color:#000;font-weight:bold">=</span>amd64 go build -o <span style="color:#d14">${</span><span style="color:#008080">BUILD_NAME</span><span style="color:#d14">}</span> .
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 清除编译文件
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#900;font-weight:bold">clean</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>	@go clean
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 帮助命令
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#900;font-weight:bold">help</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>	@echo <span style="color:#d14">&#34;make - 格式化 Go 代码、更新swagger文档、生成tls证书、测试代码、编译生成二进制文件&#34;</span>
+</span></span><span style="display:flex;"><span>	@echo <span style="color:#d14">&#34;make docker-build - 构建本项目的Docker镜像&#34;</span>
+</span></span><span style="display:flex;"><span>	@echo <span style="color:#d14">&#34;make build - 编译 Go 代码, 生成当前环境默认的二进制文件&#34;</span>
+</span></span><span style="display:flex;"><span>	@echo <span style="color:#d14">&#34;make build_linux - 编译 Go 代码, 生成linux环境二进制文件&#34;</span>
+</span></span><span style="display:flex;"><span>	@echo <span style="color:#d14">&#34;make build_win - 编译 Go 代码, 生成windows环境二进制文件&#34;</span>
+</span></span><span style="display:flex;"><span>	@echo <span style="color:#d14">&#34;make run - 直接运行 Go 代码&#34;</span>
+</span></span><span style="display:flex;"><span>	@echo <span style="color:#d14">&#34;make clean - 移除二进制文件和 vim swap files&#34;</span>
+</span></span><span style="display:flex;"><span>	@echo <span style="color:#d14">&#34;make format - 运行 Go 工具 &#39;fmt&#39; and &#39;vet&#39;&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>另一个例子：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-makefile" data-lang="makefile"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">.PHONY</span><span style="color:#000;font-weight:bold">:</span> all build clean run check cover lint docker help
+</span></span><span style="display:flex;"><span><span style="color:#008080">BIN_FILE</span><span style="color:#000;font-weight:bold">=</span>hello
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">all</span><span style="color:#000;font-weight:bold">:</span> check build
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">build</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    @go build -o <span style="color:#d14">&#34;</span><span style="color:#d14">${</span><span style="color:#008080">BIN_FILE</span><span style="color:#d14">}</span><span style="color:#d14">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">clean</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    @go clean
+</span></span><span style="display:flex;"><span>    rm --force <span style="color:#d14">&#34;xx.out&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">test</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    @go <span style="color:#0086b3">test</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">check</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    @go fmt ./
+</span></span><span style="display:flex;"><span>    @go vet ./
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">cover</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    @go <span style="color:#0086b3">test</span> -coverprofile xx.out
+</span></span><span style="display:flex;"><span>    @go tool cover -html<span style="color:#000;font-weight:bold">=</span>xx.out
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">run</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    ./<span style="color:#d14">&#34;</span><span style="color:#d14">${</span><span style="color:#008080">BIN_FILE</span><span style="color:#d14">}</span><span style="color:#d14">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">lint</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    golangci-lint run --enable-all
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">docker</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    @docker build -t leo/hello:latest .
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">help</span><span style="color:#000;font-weight:bold">:</span>
+</span></span><span style="display:flex;"><span>    @echo <span style="color:#d14">&#34;make 格式化go代码 并编译生成二进制文件&#34;</span>
+</span></span><span style="display:flex;"><span>    @echo <span style="color:#d14">&#34;make build 编译go代码生成二进制文件&#34;</span>
+</span></span><span style="display:flex;"><span>    @echo <span style="color:#d14">&#34;make clean 清理中间目标文件&#34;</span>
+</span></span><span style="display:flex;"><span>    @echo <span style="color:#d14">&#34;make test 执行测试case&#34;</span>
+</span></span><span style="display:flex;"><span>    @echo <span style="color:#d14">&#34;make check 格式化go代码&#34;</span>
+</span></span><span style="display:flex;"><span>    @echo <span style="color:#d14">&#34;make cover 检查测试覆盖率&#34;</span>
+</span></span><span style="display:flex;"><span>    @echo <span style="color:#d14">&#34;make run 直接运行程序&#34;</span>
+</span></span><span style="display:flex;"><span>    @echo <span style="color:#d14">&#34;make lint 执行代码检查&#34;</span>
+</span></span><span style="display:flex;"><span>    @echo <span style="color:#d14">&#34;make docker 构建docker镜像&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样就很方便地通过一个make命令完成对项目的构建。</p>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://cold-bin.github.io">cold bin</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://cold-bin.github.io/post/Makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/">https://cold-bin.github.io/post/Makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/Go%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%BA%93flag%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/">Go语言标准库flag基本使用</a></li>
+        
+        <li><a href="/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/">Https在golang的实践</a></li>
+        
+        <li><a href="/post/go%E6%9D%82%E7%83%A9/">Go杂烩</a></li>
+        
+        <li><a href="/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/">集中式与分布式</a></li>
+        
+        <li><a href="/post/API%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9%E6%80%A7%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">API向前兼容性的解决方案</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/Makefile'>Makefile</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "my-blog-comment"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+    
+    
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://cold-bin.github.io">cold bin&#39;s blog By cold bin</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.2.8/raphael.min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/flowchart/1.12.2/flowchart.min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+                if (!window.flowchart) return;
+                const blocks = document.querySelectorAll('pre code.language-flowchart, pre code.language-flow');
+                for (let i = 0; i < blocks.length; i++) {
+                    const block = blocks[i];
+                    const rootElement = block.parentNode;
+                    const container = document.createElement('div');
+                    const id = `js-flowchart-diagrams-${i}`;
+                    container.id = id;
+                    container.className = 'align-center';
+                    container.setAttribute("style", "overFlow-x:auto");
+                    rootElement.parentNode.replaceChild(container, rootElement);
+                    const diagram = flowchart.parse(block.childNodes[0].nodeValue);
+                    diagram.drawSVG(id, window.flowchartDiagramsOptions ? window.flowchartDiagramsOptions : {});
+                }
+            })();
+        </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+            if (!window.Diagram) return;
+            const blocks = document.querySelectorAll('pre code.language-sequence');
+            for (let i = 0; i < blocks.length; i++) {
+                const block = blocks[i];
+                
+                const rootElement = block.parentNode;
+                const container = document.createElement('div');
+                const id = `js-sequence-diag-${i}`;
+                container.id = id;
+                container.className = 'align-center';
+                container.setAttribute("style", "overFlow-x:auto");
+                rootElement.parentNode.replaceChild(container, rootElement);
+
+                const diagram = Diagram.parse(block.childNodes[0].nodeValue);
+                diagram.drawSVG(id, window.sequenceDiagramsOptions
+                    ? window.sequenceDiagramsOptions
+                    : { theme: 'simple' });
+            }
+        })();
+        </script><script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://cold-bin.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://cold-bin.github.io">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/" title="Go的结构体内存对齐">Go的结构体内存对齐</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/" title="Flag包的在go项目的实践">Flag包的在go项目的实践</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/Makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/" title="Makefile在go项目的实践">Makefile在go项目的实践</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/Go%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%BA%93flag%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" title="Go语言标准库flag基本使用">Go语言标准库flag基本使用</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/" title="Https在golang的实践">Https在golang的实践</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/go%E6%9D%82%E7%83%A9/" title="Go杂烩">Go杂烩</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/" title="集中式与分布式">集中式与分布式</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/API%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9%E6%80%A7%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" title="API向前兼容性的解决方案">API向前兼容性的解决方案</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/go%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" title="Go测试与性能优化">Go测试与性能优化</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95java%E7%89%88/" title="数据结构与算法（java版）">数据结构与算法（java版）</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (8)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (1)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://cold-bin.github.io/tags/Makefile/">Makefile</a>
+    
+    <a href="https://cold-bin.github.io/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/">api向前兼容</a>
+    
+    <a href="https://cold-bin.github.io/tags/https/">https</a>
+    
+    <a href="https://cold-bin.github.io/tags/tls%E8%AF%81%E4%B9%A6/">tls证书</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">内存对齐</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E9%9B%86%E4%B8%AD%E5%BC%8F/">分布式与集中式</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">单元测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90/">命令行参数解析</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93java/">数据结构与算法总结，java</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/">网络测试</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://github.com/cold-bin" title="GitHub">GitHub</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://blog.csdn.net/qq_57467091" title="CSDN">CSDN</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://cold-bin.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

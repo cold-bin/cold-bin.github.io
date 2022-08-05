@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Https在golang的实践 | cold bin&#39;s blog</title>
+    <meta property="og:title" content="Https在golang的实践 - cold bin&#39;s blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2022-07-16T11:03:31&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2022-07-16T11:03:31&#43;08:00'>
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="Https在golang的实践">
+        
+    <meta name="author" content="cold bin">
+    <meta property="og:url" content="https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://cold-bin.github.io">
+                        cold bin&#39;s blog
+                    </a>
+                
+                
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://cold-bin.github.io">首页</a>
+                    
+                    <a  href="https://cold-bin.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://cold-bin.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+
+
+<aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details >
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">Table of Contents</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#golang%e5%88%9b%e5%bb%ba%e6%9c%80%e7%ae%80%e5%8d%95%e7%9a%84http%e5%92%8chttps%e6%9c%8d%e5%8a%a1" aria-label="Golang创建最简单的HTTP和HTTPS服务">Golang创建最简单的HTTP和HTTPS服务</a><ul>
+                            
+                    <li>
+                        <a href="#http%e6%9c%8d%e5%8a%a1" aria-label="HTTP服务">HTTP服务</a></li>
+                    <li>
+                        <a href="#https%e6%9c%8d%e5%8a%a1" aria-label="HTTPS服务">HTTPS服务</a></li>
+                    <li>
+                        <a href="#https%e5%8e%9f%e7%90%86" aria-label="https原理">https原理</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#https" aria-label="HTTPS"><strong>HTTPS</strong></a></li>
+                    <li>
+                        <a href="#https-%e7%9a%84%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86" aria-label="HTTPS 的实现原理"><strong>HTTPS 的实现原理</strong></a><ul>
+                            
+                    <li>
+                        <a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e6%95%b0%e6%8d%ae%e4%bc%a0%e8%be%93%e6%98%af%e7%94%a8%e5%af%b9%e7%a7%b0%e5%8a%a0%e5%af%86" aria-label="为什么数据传输是用对称加密？">为什么数据传输是用对称加密？</a></li>
+                    <li>
+                        <a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e9%9c%80%e8%a6%81-ca-%e8%ae%a4%e8%af%81%e6%9c%ba%e6%9e%84%e9%a2%81%e5%8f%91%e8%af%81%e4%b9%a6" aria-label="为什么需要 CA 认证机构颁发证书？">为什么需要 CA 认证机构颁发证书？</a></li>
+                    <li>
+                        <a href="#%e6%b5%8f%e8%a7%88%e5%99%a8%e6%98%af%e5%a6%82%e4%bd%95%e7%a1%ae%e4%bf%9d-ca-%e8%af%81%e4%b9%a6%e7%9a%84%e5%90%88%e6%b3%95%e6%80%a7" aria-label="浏览器是如何确保 CA 证书的合法性？">浏览器是如何确保 CA 证书的合法性？</a><ul>
+                            
+                    <li>
+                        <a href="#1-%e8%af%81%e4%b9%a6%e5%8c%85%e5%90%ab%e4%bb%80%e4%b9%88%e4%bf%a1%e6%81%af" aria-label="1. 证书包含什么信息？">1. 证书包含什么信息？</a></li>
+                    <li>
+                        <a href="#2-%e8%af%81%e4%b9%a6%e7%9a%84%e5%90%88%e6%b3%95%e6%80%a7%e4%be%9d%e6%8d%ae%e6%98%af%e4%bb%80%e4%b9%88" aria-label="2. 证书的合法性依据是什么？">2. 证书的合法性依据是什么？</a></li>
+                    <li>
+                        <a href="#3-%e6%b5%8f%e8%a7%88%e5%99%a8%e5%a6%82%e4%bd%95%e9%aa%8c%e8%af%81%e8%af%81%e4%b9%a6%e7%9a%84%e5%90%88%e6%b3%95%e6%80%a7" aria-label="3. 浏览器如何验证证书的合法性？">3. 浏览器如何验证证书的合法性？</a></li>
+                    <li>
+                        <a href="#4-%e5%8f%aa%e6%9c%89%e8%ae%a4%e8%af%81%e6%9c%ba%e6%9e%84%e5%8f%af%e4%bb%a5%e7%94%9f%e6%88%90%e8%af%81%e4%b9%a6%e5%90%97" aria-label="4. 只有认证机构可以生成证书吗？">4. 只有认证机构可以生成证书吗？</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e6%9c%ac%e5%9c%b0%e9%9a%8f%e6%9c%ba%e6%95%b0%e8%a2%ab%e7%aa%83%e5%8f%96%e6%80%8e%e4%b9%88%e5%8a%9e" aria-label="本地随机数被窃取怎么办？">本地随机数被窃取怎么办？</a></li>
+                    <li>
+                        <a href="#%e7%94%a8%e4%ba%86-https-%e4%bc%9a%e8%a2%ab%e6%8a%93%e5%8c%85%e5%90%97" aria-label="用了 HTTPS 会被抓包吗？">用了 HTTPS 会被抓包吗？</a>
+                    </li>
+                </ul>
+                </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+<div class="res-cons">
+
+    <article class="post">
+        <div class="res-cons">
+
+        <header>
+            <h1 class="post-title">Https在golang的实践</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年7月16日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        
+        <div class="post-content">
+            <h2 id="golang创建最简单的http和https服务">Golang创建最简单的HTTP和HTTPS服务</h2>
+<h3 id="http服务">HTTP服务</h3>
+<p>HTTP是基于传输层TCP协议的。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">package</span> main
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;net/http&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;log&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">main</span>() {
+</span></span><span style="display:flex;"><span>    http.<span style="color:#900;font-weight:bold">HandleFunc</span>(<span style="color:#d14">&#34;/&#34;</span>, <span style="color:#000;font-weight:bold">func</span>(w http.ResponseWriter, r <span style="color:#000;font-weight:bold">*</span>http.Request){
+</span></span><span style="display:flex;"><span>        fmt.<span style="color:#900;font-weight:bold">Fprint</span>(w, <span style="color:#d14">&#34;Hello world&#34;</span>)
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    log.<span style="color:#900;font-weight:bold">Fatal</span>(http.<span style="color:#900;font-weight:bold">ListenAndServe</span>(<span style="color:#d14">&#34;:5001&#34;</span>, <span style="color:#000;font-weight:bold">nil</span>))
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="https服务">HTTPS服务</h3>
+<p>HTTPS服务不同于HTTP服务，HTTPS是HTTP over SSL或HTTP over TLS。</p>
+<blockquote>
+<p><strong>SSL</strong>是“Secure Sockets Layer”的缩写，中文叫做“安全套接层”。它是在上世纪90年代中期，由NetScape公司设计的。为啥要发明 SSL 这个协议捏？因为原先互联网上使用的 HTTP 协议是明文的，存在很多缺点——比如传输内容会被偷窥（嗅探）和篡改。发明 SSL 协议，就是为了解决这些问题。
+到了1999年，SSL 因为应用广泛，已经成为互联网上的事实标准。IETF 就在那年把 SSL 标准化。标准化之后的名称改为<strong>TLS</strong>是“Transport Layer Security”的缩写，中文叫做“传输层安全协议”。
+很多相关的文章都把这两者并列称呼（SSL/TLS），因为这两者可以视作同一个东西的不同阶段。<a href="https://link.segmentfault.com/?enc=d6dzpXRfp5NWXPAUkfM2pQ%3D%3D.adEc0wYhT8N6x80%2FnLQ%2BLsbFgrsGwl2xBikABnkAQVX%2FQJsZ08aw5GLPt5SOSuNU">参考</a></p>
+</blockquote>
+<p>要启用HTTPS首先需要创建私钥和证书。</p>
+<p>有两种方式生成私钥和证书：</p>
+<ul>
+<li>
+<p>OpenSSL方式，生成私钥key.pem和证书cert.pem，3650代表有效期为10年</p>
+<p><a href="https://zhuanlan.zhihu.com/p/107741096">其他OpenSSL使用方式</a></p>
+</li>
+</ul>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>openssl genrsa -out key.pem <span style="color:#099">2048</span>
+</span></span><span style="display:flex;"><span>openssl req -new -x509 -key key.pem -out cert.pem -days <span style="color:#099">3650</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>Golang标准库<code>crypto/tls</code>里有<code>generate_cert.go</code>，可以生成私钥<code>key.pem</code>和证书<code>cert.pem</code>，host参数是必须的，需要注意的是<strong>默认有效期是1年</strong></li>
+</ul>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>go run <span style="color:#008080">$GOROOT</span>/src/crypto/tls/generate_cert.go --host localhost
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>将生成的key.pem、cert.pem和以下代码放在同一目录下</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">package</span> main
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;log&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;net/http&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">handler</span>(w http.ResponseWriter, req <span style="color:#000;font-weight:bold">*</span>http.Request) {
+</span></span><span style="display:flex;"><span>    w.<span style="color:#900;font-weight:bold">Header</span>().<span style="color:#900;font-weight:bold">Set</span>(<span style="color:#d14">&#34;Content-Type&#34;</span>, <span style="color:#d14">&#34;text/plain&#34;</span>)
+</span></span><span style="display:flex;"><span>    w.<span style="color:#900;font-weight:bold">Write</span>([]<span style="color:#0086b3">byte</span>(<span style="color:#d14">&#34;This is an example server.\n&#34;</span>))
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">main</span>() {
+</span></span><span style="display:flex;"><span>    http.<span style="color:#900;font-weight:bold">HandleFunc</span>(<span style="color:#d14">&#34;/&#34;</span>, handler)
+</span></span><span style="display:flex;"><span>    log.<span style="color:#900;font-weight:bold">Printf</span>(<span style="color:#d14">&#34;About to listen on 10443. Go to https://127.0.0.1:10443/&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// One can use generate_cert.go in crypto/tls to generate cert.pem and key.pem.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#998;font-style:italic">// ListenAndServeTLS always returns a non-nil error.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    err <span style="color:#000;font-weight:bold">:=</span> http.<span style="color:#900;font-weight:bold">ListenAndServeTLS</span>(<span style="color:#d14">&#34;:10443&#34;</span>, <span style="color:#d14">&#34;cert.pem&#34;</span>, <span style="color:#d14">&#34;key.pem&#34;</span>, <span style="color:#000;font-weight:bold">nil</span>)
+</span></span><span style="display:flex;"><span>    log.<span style="color:#900;font-weight:bold">Fatal</span>(err)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当然鉴于以上go的https方式，是自建证书，并不是CA机构签发的证书，虽然也使用了https加密，但是不是权威机构，浏览器访问时，会提示不安全，容易被中间人劫持。</p>
+<h3 id="https原理">https原理</h3>
+<h2 id="https"><strong>HTTPS</strong></h2>
+<p>随着 HTTPS 建站的成本下降，现在大部分的网站都已经开始用上 HTTPS 协议。大家都知道 HTTPS 比 HTTP 安全，也听说过与 HTTPS 协议相关的概念有 SSL 、非对称加密、 CA证书等，但对于以下灵魂三拷问可能就答不上了：</p>
+<p>1.为什么用了 HTTPS 就是安全的？</p>
+<p>2.HTTPS 的底层原理如何实现？</p>
+<p>3.用了 HTTPS 就一定安全吗？</p>
+<p>本文将层层深入，从原理上把 HTTPS 的安全性讲透。</p>
+<h2 id="https-的实现原理"><strong>HTTPS 的实现原理</strong></h2>
+<p>大家可能都听说过 HTTPS 协议之所以是安全的是因为 HTTPS 协议会对传输的数据进行加密，而加密过程是使用了非对称加密实现。但其实，HTTPS 在内容传输的加密上使用的是对称加密，非对称加密只作用在证书验证阶段。</p>
+<p>HTTPS的整体过程分为证书验证和数据传输阶段，具体的交互过程如下：</p>
+<p>
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161340428.jpeg">
+            <img class="mx-auto" alt="img" src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161340428.jpeg" />
+        </a>
+    </p>
+<p>① 证书验证阶段</p>
+<ol>
+<li>浏览器发起 HTTPS 请求</li>
+<li>服务端返回 HTTPS 证书</li>
+<li>客户端验证证书是否合法，如果不合法则提示告警</li>
+</ol>
+<p>② 数据传输阶段</p>
+<ol>
+<li>当证书验证合法后，在本地生成随机数</li>
+<li>通过公钥加密随机数，并把加密后的随机数传输到服务端</li>
+<li>服务端通过私钥对随机数进行解密</li>
+<li>服务端通过客户端传入的随机数构造对称加密算法，对返回结果内容进行加密后传输</li>
+</ol>
+<h3 id="为什么数据传输是用对称加密">为什么数据传输是用对称加密？</h3>
+<p>首先，非对称加密的加解密效率是非常低的，而 http 的应用场景中通常端与端之间存在大量的交互，非对称加密的效率是无法接受的；</p>
+<p>另外，在 HTTPS 的场景中只有服务端保存了私钥，一对公私钥只能实现单向的加解密，所以 HTTPS 中内容传输加密采取的是对称加密，而不是非对称加密。</p>
+<h3 id="为什么需要-ca-认证机构颁发证书">为什么需要 CA 认证机构颁发证书？</h3>
+<p>HTTP 协议被认为不安全是因为传输过程容易被监听者勾线监听、伪造<a href="https://cloud.tencent.com/product/cvm?from=10680">服务器</a>，而 HTTPS 协议主要解决的便是网络传输的安全性问题。</p>
+<p>首先我们假设不存在认证机构，任何人都可以制作证书，这带来的安全风险便是经典的“中间人攻击”问题。</p>
+<p>“中间人攻击”的具体过程如下：</p>
+<p>
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161339732.jpeg">
+            <img class="mx-auto" alt="img" src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161339732.jpeg" />
+        </a>
+    </p>
+<p>过程原理：</p>
+<p>1.本地请求被劫持（如DNS劫持等），所有请求均发送到中间人的服务器</p>
+<p>2.中间人服务器返回中间人自己的证书</p>
+<p>3.客户端创建随机数，通过中间人证书的公钥对随机数加密后传送给中间人，然后凭随机数构造对称加密对传输内容进行加密传输</p>
+<p>4.中间人因为拥有客户端的随机数，可以通过对称加密算法进行内容解密</p>
+<p>5.中间人以客户端的请求内容再向正规网站发起请求</p>
+<p>6.因为中间人与服务器的通信过程是合法的，正规网站通过建立的安全通道返回加密后的数据</p>
+<p>7.中间人凭借与正规网站建立的对称加密算法对内容进行解密</p>
+<p>8.中间人通过与客户端建立的对称加密算法对正规内容返回的数据进行加密传输</p>
+<p>9.客户端通过与中间人建立的对称加密算法对返回结果数据进行解密</p>
+<p>由于缺少对证书的验证，所以客户端虽然发起的是 HTTPS 请求，但客户端完全不知道自己的网络已被拦截，传输内容被中间人全部窃取。</p>
+<blockquote>
+<p>推荐阅读：<a href="http://mp.weixin.qq.com/s?__biz=MzI3ODcxMzQzMw==&amp;mid=2247492561&amp;idx=2&amp;sn=fc337cad12cc5fb0bb02036a33f72d39&amp;chksm=eb5066e7dc27eff19afcf0ea6215b3e911b22b2d512ef3b750e298e7eaaae04586b5d111137b&amp;scene=21#wechat_redirect">用户密码到底要怎么加密存储？</a></p>
+</blockquote>
+<h3 id="浏览器是如何确保-ca-证书的合法性">浏览器是如何确保 CA 证书的合法性？</h3>
+<h4 id="1-证书包含什么信息">1. 证书包含什么信息？</h4>
+<ul>
+<li>颁发机构信息</li>
+<li>公钥</li>
+<li>公司信息</li>
+<li>域名</li>
+<li>有效期</li>
+<li>指纹</li>
+<li>&hellip;&hellip;</li>
+</ul>
+<h4 id="2-证书的合法性依据是什么">2. 证书的合法性依据是什么？</h4>
+<p>首先，权威机构是要有认证的，不是随便一个机构都有资格颁发证书，不然也不叫做权威机构。</p>
+<p>另外，证书的可信性基于信任制，权威机构需要对其颁发的证书进行信用背书，只要是权威机构生成的证书，我们就认为是合法的。</p>
+<p>所以权威机构会对申请者的信息进行审核，不同等级的权威机构对审核的要求也不一样，于是证书也分为免费的、便宜的和贵的。</p>
+<h4 id="3-浏览器如何验证证书的合法性">3. 浏览器如何验证证书的合法性？</h4>
+<p>浏览器发起 HTTPS 请求时，服务器会返回网站的 SSL 证书，浏览器需要对证书做以下验证：</p>
+<ol>
+<li>验证域名、有效期等信息是否正确。证书上都有包含这些信息，比较容易完成验证；</li>
+<li>判断证书来源是否合法。每份签发证书都可以根据验证链查找到对应的根证书，操作系统、浏览器会在本地存储权威机构的根证书，利用本地根证书可以对对应机构签发证书完成来源验证；
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161340605.jpeg">
+            <img class="mx-auto" alt="img" src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161340605.jpeg" />
+        </a>
+    </li>
+<li>判断证书是否被篡改。需要与 CA 服务器进行校验；</li>
+<li>判断证书是否已吊销。通过CRL（Certificate Revocation List 证书注销列表）和 OCSP（Online Certificate Status Protocol 在线证书状态协议）实现，其中 OCSP 可用于第3步中以减少与 CA 服务器的交互，提高验证效率</li>
+</ol>
+<p>以上任意一步都满足的情况下浏览器才认为证书是合法的。</p>
+<p>这里插一个我想了很久的但其实答案很简单的问题：</p>
+<p>既然证书是公开的，如果要发起中间人攻击，我在官网上下载一份证书作为我的<a href="https://cloud.tencent.com/product/ssl?from=10680">服务器证书</a>，那客户端肯定会认同这个证书是合法的，如何避免这种证书冒用的情况？</p>
+<p>其实这就是非加密对称中公私钥的用处，虽然中间人可以得到证书，但私钥是无法获取的，一份公钥是不可能推算出其对应的私钥，中间人即使拿到证书也无法伪装成合法服务端，因为无法对客户端传入的加密数据进行解密。</p>
+<h4 id="4-只有认证机构可以生成证书吗">4. 只有认证机构可以生成证书吗？</h4>
+<p>如果需要浏览器不提示安全风险，那只能使用认证机构签发的证书。但浏览器通常只是提示安全风险，并不限制网站不能访问，所以从技术上谁都可以生成证书，只要有证书就可以完成网站的 HTTPS 传输。例如早期的 12306 采用的便是手动安装私有证书的形式实现 HTTPS 访问。</p>
+<blockquote>
+<p>推荐阅读：<a href="http://mp.weixin.qq.com/s?__biz=MzI3ODcxMzQzMw==&amp;mid=2247491607&amp;idx=2&amp;sn=1788162b81c8b73c91dea63451295b52&amp;chksm=eb506521dc27ec3732b797edbe1837bbb48094176aacfb02633ad6b14b8bef9ba221cd159416&amp;scene=21#wechat_redirect">12306 的架构也太 &ldquo;牛X&rdquo; 了吧！</a></p>
+</blockquote>
+<h3 id="本地随机数被窃取怎么办">本地随机数被窃取怎么办？</h3>
+<p>证书验证是采用非对称加密实现，但是传输过程是采用对称加密，而其中对称加密算法中重要的随机数是由本地生成并且存储于本地的，HTTPS 如何保证随机数不会被窃取？</p>
+<p>其实 HTTPS 并不包含对随机数的安全保证，HTTPS 保证的只是传输过程安全，而随机数存储于本地，本地的安全属于另一安全范畴，应对的措施有安装杀毒软件、反木马、浏览器升级修复漏洞等。</p>
+<h3 id="用了-https-会被抓包吗">用了 HTTPS 会被抓包吗？</h3>
+<p>HTTPS 的数据是加密的，常规下抓包工具代理请求后抓到的包内容是加密状态，无法直接查看。关注微信公众号：Java技术栈，在后台回复：工具，可以获取我整理的 N 篇最新开发工具教程，都是干货。</p>
+<p>但是，正如前文所说，浏览器只会提示安全风险，如果用户授权仍然可以继续访问网站，完成请求。因此，只要客户端是我们自己的终端，我们授权的情况下，便可以组建中间人网络，而抓包工具便是作为中间人的代理。</p>
+<p>通常 HTTPS 抓包工具的使用方法是会生成一个证书，用户需要手动把证书安装到客户端中，然后终端发起的所有请求通过该证书完成与抓包工具的交互，然后抓包工具再转发请求到服务器，最后把服务器返回的结果在控制台输出后再返回给终端，从而完成整个请求的闭环。</p>
+<p><strong>既然 HTTPS 不能防抓包，那 HTTPS 有什么意义？</strong></p>
+<p>A: 客户端发起 HTTPS 请求，服务端返回证书，客户端对证书进行验证，验证通过后本地生成用于改造对称加密算法的随机数，通过证书中的公钥对随机数进行加密传输到服务端，服务端接收后通过私钥解密得到随机数，之后的数据交互通过对称加密算法进行加解密。</p>
+<p>Q: 为什么需要证书？</p>
+<p>A: 防止”中间人“攻击，同时可以为网站提供身份证明。</p>
+<p>Q: 使用 HTTPS 会被抓包吗？</p>
+<p>A: 会被抓包，HTTPS 只防止用户在不知情的情况下通信被监听，如果用户主动授信，是可以构建“中间人”网络，代理软件可以对传输内容进行解密。</p>
+<blockquote>
+<p>出自腾讯云《终于有人把 HTTPS 原理讲清楚了！》<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+</blockquote>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://cloud.tencent.com/developer/article/1601995">https://cloud.tencent.com/developer/article/1601995</a> ↩&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://cold-bin.github.io">cold bin</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/">https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/go%E6%9D%82%E7%83%A9/">Go杂烩</a></li>
+        
+        <li><a href="/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/">集中式与分布式</a></li>
+        
+        <li><a href="/post/API%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9%E6%80%A7%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">API向前兼容性的解决方案</a></li>
+        
+        <li><a href="/post/go%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">Go测试与性能优化</a></li>
+        
+        <li><a href="/post/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95java%E7%89%88/">数据结构与算法（java版）</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/https'>https</a></li>
+                
+                <li><a href='/tags/tls%E8%AF%81%E4%B9%A6'>tls证书</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "my-blog-comment"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+    
+    
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://cold-bin.github.io">cold bin&#39;s blog By cold bin</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.2.8/raphael.min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/flowchart/1.12.2/flowchart.min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+                if (!window.flowchart) return;
+                const blocks = document.querySelectorAll('pre code.language-flowchart, pre code.language-flow');
+                for (let i = 0; i < blocks.length; i++) {
+                    const block = blocks[i];
+                    const rootElement = block.parentNode;
+                    const container = document.createElement('div');
+                    const id = `js-flowchart-diagrams-${i}`;
+                    container.id = id;
+                    container.className = 'align-center';
+                    container.setAttribute("style", "overFlow-x:auto");
+                    rootElement.parentNode.replaceChild(container, rootElement);
+                    const diagram = flowchart.parse(block.childNodes[0].nodeValue);
+                    diagram.drawSVG(id, window.flowchartDiagramsOptions ? window.flowchartDiagramsOptions : {});
+                }
+            })();
+        </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+            if (!window.Diagram) return;
+            const blocks = document.querySelectorAll('pre code.language-sequence');
+            for (let i = 0; i < blocks.length; i++) {
+                const block = blocks[i];
+                
+                const rootElement = block.parentNode;
+                const container = document.createElement('div');
+                const id = `js-sequence-diag-${i}`;
+                container.id = id;
+                container.className = 'align-center';
+                container.setAttribute("style", "overFlow-x:auto");
+                rootElement.parentNode.replaceChild(container, rootElement);
+
+                const diagram = Diagram.parse(block.childNodes[0].nodeValue);
+                diagram.drawSVG(id, window.sequenceDiagramsOptions
+                    ? window.sequenceDiagramsOptions
+                    : { theme: 'simple' });
+            }
+        })();
+        </script><script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://cold-bin.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://cold-bin.github.io">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/" title="Go的结构体内存对齐">Go的结构体内存对齐</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/" title="Flag包的在go项目的实践">Flag包的在go项目的实践</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/Makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/" title="Makefile在go项目的实践">Makefile在go项目的实践</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/Go%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%BA%93flag%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" title="Go语言标准库flag基本使用">Go语言标准库flag基本使用</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/" title="Https在golang的实践">Https在golang的实践</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/go%E6%9D%82%E7%83%A9/" title="Go杂烩">Go杂烩</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/" title="集中式与分布式">集中式与分布式</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/API%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9%E6%80%A7%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" title="API向前兼容性的解决方案">API向前兼容性的解决方案</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/go%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" title="Go测试与性能优化">Go测试与性能优化</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95java%E7%89%88/" title="数据结构与算法（java版）">数据结构与算法（java版）</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (8)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (1)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://cold-bin.github.io/tags/Makefile/">Makefile</a>
+    
+    <a href="https://cold-bin.github.io/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/">api向前兼容</a>
+    
+    <a href="https://cold-bin.github.io/tags/https/">https</a>
+    
+    <a href="https://cold-bin.github.io/tags/tls%E8%AF%81%E4%B9%A6/">tls证书</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">内存对齐</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E9%9B%86%E4%B8%AD%E5%BC%8F/">分布式与集中式</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">单元测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90/">命令行参数解析</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93java/">数据结构与算法总结，java</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/">网络测试</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://github.com/cold-bin" title="GitHub">GitHub</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://blog.csdn.net/qq_57467091" title="CSDN">CSDN</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://cold-bin.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

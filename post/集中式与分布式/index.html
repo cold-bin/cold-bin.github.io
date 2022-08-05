@@ -1,0 +1,1475 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>集中式与分布式 | cold bin&#39;s blog</title>
+    <meta property="og:title" content="集中式与分布式 - cold bin&#39;s blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2022-07-07T17:55:34&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2022-07-07T17:55:34&#43;08:00'>
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="集中式与分布式">
+        
+    <meta name="author" content="cold bin">
+    <meta property="og:url" content="https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://cold-bin.github.io">
+                        cold bin&#39;s blog
+                    </a>
+                
+                
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://cold-bin.github.io">首页</a>
+                    
+                    <a  href="https://cold-bin.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://cold-bin.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+
+
+<aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details >
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">Table of Contents</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#%e9%9b%86%e4%b8%ad%e5%bc%8f%e4%b8%8e%e5%88%86%e5%b8%83%e5%bc%8f" aria-label="集中式与分布式">集中式与分布式</a><ul>
+                            
+                    <li>
+                        <a href="#%e9%9b%86%e4%b8%ad%e5%bc%8f%e7%b3%bb%e7%bb%9f%e6%9e%b6%e6%9e%84" aria-label="集中式系统架构">集中式系统架构</a><ul>
+                            
+                    <li>
+                        <a href="#%e5%8d%95%e4%bd%93%e6%9e%b6%e6%9e%84" aria-label="单体架构">单体架构</a></li>
+                    <li>
+                        <a href="#%e5%8d%95%e6%9c%ba%e5%bc%8f%e7%b3%bb%e7%bb%9f" aria-label="单机式系统">单机式系统</a></li>
+                    <li>
+                        <a href="#%e9%9b%86%e7%be%a4" aria-label="集群">集群</a></li>
+                    <li>
+                        <a href="#%e6%80%bb%e7%bb%93" aria-label="总结">总结</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e5%88%86%e5%b8%83%e5%bc%8f%e7%b3%bb%e7%bb%9f%e6%9e%b6%e6%9e%84" aria-label="分布式系统架构">分布式系统架构</a><ul>
+                            
+                    <li>
+                        <a href="#%e5%88%86%e5%b8%83%e5%bc%8f%e4%b8%8e%e9%9b%86%e7%be%a4" aria-label="分布式与集群">分布式与集群</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e5%be%ae%e6%9c%8d%e5%8a%a1" aria-label="微服务">微服务</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#rpc" aria-label="RPC">RPC</a><ul>
+                            
+                    <li>
+                        <a href="#rpc%e4%b8%8ehttp" aria-label="RPC与HTTP"><code>RPC</code>与<code>HTTP</code></a></li>
+                    <li>
+                        <a href="#protobuf" aria-label="Protobuf"><code>Protobuf</code></a><ul>
+                            
+                    <li>
+                        <a href="#%e8%af%ad%e6%b3%95" aria-label="语法">语法</a><ul>
+                            
+                    <li>
+                        <a href="#message" aria-label="message"><code>message</code></a><ul>
+                            
+                    <li>
+                        <a href="#%e5%b8%b8%e8%a7%81%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b" aria-label="常见数据类型">常见数据类型</a></li>
+                    <li>
+                        <a href="#%e6%9e%9a%e4%b8%be%e7%b1%bb%e5%9e%8b" aria-label="枚举类型">枚举类型</a></li>
+                    <li>
+                        <a href="#oneof%e7%b1%bb%e5%9e%8b" aria-label="Oneof类型"><code>Oneof</code>类型</a></li>
+                    <li>
+                        <a href="#map%e7%b1%bb%e5%9e%8b" aria-label="map类型">map类型</a></li></ul>
+                    </li></ul>
+                    </li></ul>
+                    </li>
+                    <li>
+                        <a href="#grpc" aria-label="gRPC">gRPC</a><ul>
+                            
+                    <li>
+                        <a href="#%e5%ae%89%e8%a3%85grpc%e5%92%8cprotobuf" aria-label="安装grpc和protobuf">安装grpc和protobuf</a></li>
+                    <li>
+                        <a href="#protocol-buffer%e7%bc%96%e8%af%91%e5%99%a8" aria-label="protocol buffer编译器">protocol buffer编译器</a></li>
+                    <li>
+                        <a href="#%e5%ae%89%e8%a3%85protoc" aria-label="安装protoc">安装protoc</a></li>
+                    <li>
+                        <a href="#go%e7%9a%84protoc%e7%bc%96%e8%be%91%e5%99%a8%e6%8f%92%e4%bb%b6" aria-label="go的protoc编辑器插件">go的protoc编辑器插件</a></li>
+                    <li>
+                        <a href="#%e7%ae%80%e5%8d%95%e7%9a%84demo" aria-label="简单的demo">简单的demo</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#begonia" aria-label="Begonia">Begonia</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#referencepartial" aria-label="Reference（partial）">Reference（partial）</a>
+                    </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+<div class="res-cons">
+
+    <article class="post">
+        <div class="res-cons">
+
+        <header>
+            <h1 class="post-title">集中式与分布式</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年7月7日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
+            
+            <span class="meta-category"><a href='/categories/GRPC'>GRPC</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        
+        <div class="post-content">
+            <h1 id="集中式与分布式">集中式与分布式</h1>
+<h2 id="集中式系统架构">集中式系统架构</h2>
+<p>集中式是指由一台或多台主计算机组成的中心节点，数据集中存储于这个中心节点中，并且整个系统的所有业务单元都集中部署在这个中心节点上，系统的所有功能均由其集中处理。在集中式系统中，每个终端或客户端机器仅仅负责数据的录入和输出，而数据的存储与控制处理完全交由主机来完成。</p>
+<p>集中式系统架构在服务器的部署上有两种方式，一种是单机式，一种是集群式。</p>
+<h3 id="单体架构">单体架构</h3>
+<p>跟着学习的大家现在都有单机应用开发的经验了，有些同学在寒假作业中采用了MVC(Model, View, Controller)模式开发，这种属于单体应用开发模式，其特点如下：</p>
+<ul>
+<li>
+<p>所有的代码统一打包成一个部署文件</p>
+</li>
+<li>
+<p>代码调用的api都是本地库或者是代码中的，基本上不存在远程服务调用</p>
+</li>
+<li>
+<p>当需要发布新版本时，必须停下所有业务进行升级</p>
+</li>
+</ul>
+<p>在业务发展的初期，大家使用的初始架构都是单体应用，应用的服务体量小，也不需要考虑高并发、扩展性的问题，仅仅只需要解决业务需求。但是这种单体应用架构随着公司体量的增大和使用人群的扩展，会出现许多问题：</p>
+<ul>
+<li>
+<p>随着业务的增加，代码量也随之增加，代码之间相互调用，对于新人的学习成本增加</p>
+</li>
+<li>
+<p>出现bug时，问题可能出现在代码的每一个角落，排查问题成本增加</p>
+</li>
+<li>
+<p>单体应用的可维护性差，扩展性差，当有新业务接入时，基本上需要修改所有的业务逻辑，牵一发而动全身</p>
+</li>
+</ul>
+<h3 id="单机式系统">单机式系统</h3>
+<p>一个系统业务量很小的时候，把所有的代码都放在一个项目中（也就是说，这个项目采用的是单体架构），而且这个项目只部署在一台服务器上，整个项目所有的服务都由这台服务器提供，并且整个系统中只配置一台计算机和相应的外部设备，这就是单机系统。</p>
+<p>
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161334005.png">
+            <img class="mx-auto" alt="img" src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161334005.png" />
+        </a>
+    </p>
+<p>单机系统的缺点是显而易见的：单机的处理能力是有限的。遇到处理上限问题，我们的第一反应是加钱，上最好的。但就算把硬件资源更换成当前情况下的最好的，当你的业务增长到一定程度的时候，单机的硬件资源也无法满足你的业务需求。</p>
+<p>Linux内核发送TCP的极限包频 ≈ 100万/秒。假设我们有一个300万在线人数的直播间，每个人每秒发一条信息，高负载下服务端发包频率将跟不上用户群产出消息频率。</p>
+<p>所以这种系统只适合对性能，并发等指标要求不高的系统。</p>
+<h3 id="集群">集群</h3>
+<p>加钱的想法是对的，关键在与钱加在哪里。既然一台机子不够，那我们就多加几台机子。</p>
+<p>单机处理到达瓶颈的时候，我们把单机复制几份，这样就构成了一个&quot;集群&quot;。集群中每台服务器就叫做这个集群的一个&quot;&ldquo;节点&rdquo;，所有节点构成了一个集群。每个节点都提供相同的服务，那么这样系统的处理能力就相当于提升了好几倍。集群系统相当于单机的多实例。</p>
+<p>那么新的问题来了，用户的请求究竟由哪个节点来处理呢？最好能够让此时此刻负载较小的节点来处理，这样使得每个节点的压力比较平均。要实现这个功能，就需要在所有节点之前增加一个&quot;调度者&quot;的角色，用户的所有请求都先交给它，然后它根据当前所有节点的负载情况，决定将这个请求交给哪个节点处理。这个&quot;调度者&quot;最后被叫做<strong>负载均衡服务器</strong>。</p>
+<p>集群系统的好处就是系统扩展非常容易。如果随着你们系统业务的发展，当前的系统又支撑不住了，那么给这个集群再增加节点就行了。我们无需改动任何的项目代码，只需要新增服务器部署相同的应用并配置好负载均衡，就可以很好的减轻随着业务增量带来的系统压力，并且可以直接在单机架构上直接进行调整。</p>
+<p>
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161334673.png">
+            <img class="mx-auto" alt="img" src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161334673.png" />
+        </a>
+    </p>
+<p>但是，当你的业务发展到一定程度的时候，你会发现一个问题——无论怎么增加节点，貌似整个集群性能的提升效果并不明显了。这时候，你就需要使用微服务结构了。</p>
+<h3 id="总结">总结</h3>
+<p>集中式系统架构最大的特点是部署结构简单，由于集中式系统往往基于底层性能卓越的<strong>大型主机</strong>，因此，无需考虑如何对服务进行多个节点的部署，也就不用考虑负载均衡问题。但缺点也明显，比如集中式架构在设计上是一个单点，且单服务器的造价昂贵，所以系统横向扩展性差。如果发生单点故障（单机不可用即全部不可用）会导致系统停机，且维护时要暂停全部业务，影响严重。</p>
+<h2 id="分布式系统架构">分布式系统架构</h2>
+<p>为了用廉价的、普通的机器完成单个计算机无法完成的计算、存储任务，分布式系统应运而生。分布式系统是由一组通过网络进行通信、为了完成共同的任务而协调工作的计算机节点组成的系统。其目的是<strong>利用更多的机器，处理更多的数据</strong>。</p>
+<p>分布式结构就是将一个完整的系统，按照业务功能，拆分成一个个独立的子系统，在分布式结构中，每个子系统就被称为“服务”。这些子系统能够独立运行在web容器中，它们之间通过RPC方式通信。从进程角度看，两个程序分别运行在两个台主机的进程上，它们相互协作最终完成同一个服务（或者功能），那么理论上这两个程序所组成的系统，也可以称作是&quot;分布式系统&quot;。</p>
+<p>假设开发一个在线商城。按照微服务的思想，我们需要按照功能模块拆分成多个独立的服务，如：用户服务、产品服务、订单服务、后台管理服务、数据分析服务等等。这一个个服务都是一个个独立的项目，可以独立运行。如果服务之间有依赖关系，那么通过RPC方式调用。</p>
+<p>这样做有很多好处：</p>
+<ul>
+<li>**系统之间的耦合度大大降低：**可以独立开发、独立部署、独立测试，系统与系统之间的边界非常明确，排错也变得相当容易，开发效率大大提升。</li>
+<li>**系统更易于扩展：**我们可以针对性地扩展某些服务。假设这个商城要搞一次大促，下单量可能会大大提升，因此我们可以针对性地提升订单系统、产品系统的节点数量，而对于后台管理系统、数据分析系统而言，节点数量维持原有水平即可。</li>
+<li>**服务的复用性更高：**比如，当我们将用户系统作为单独的服务后，该公司所有的产品都可以使用该系统作为用户系统，无需重复开发。</li>
+</ul>
+<h3 id="分布式与集群">分布式与集群</h3>
+<p>咋一看，是不是觉得分布式和集群很相似：分布式使用多个计算机作为节点，集群也是。</p>
+<p>分布式和集群都是用来提高系统效率的，只是方式不同。</p>
+<ul>
+<li>
+<p>分布式：一个业务拆成多个子业务，部署在不同的服务器上，以缩短单个任务的执行时间来提升效率</p>
+</li>
+<li>
+<p>集群：同一个业务，部署在多个服务器上，通过提高单位时间内执行的任务数来提升效率</p>
+</li>
+</ul>
+<p>例如，如果一个任务由10个子任务组成，每个子任务单独执行需1小时，则在一台服务器上执行改任务需10小时。</p>
+<p>采用分布式方案，提供10台服务器，每台服务器只负责处理一个子任务，不考虑子任务间的依赖关系，执行完这个任务只需一个小时。采用集群方案，同样提供10台服务器，每台服务器都能独立处理这个任务。假设有10个任务同时到达，10个服务器将同时工作，10小时后，10个任务同时完成，这样，整体来看，还是1小时内完成一个任务。</p>
+<p>集群是个物理形态，分布式是个工作方式。只要是一堆机器，就可以叫集群，他们是不是一起协作着干活，这个谁也不知道；一个程序或系统，只要运行在不同的机器上，就可以叫分布式。集群一般是物理集中、统一管理的，而分布式系统则不强调这一点。所以，集群可能运行着一个或多个分布式系统，也可能根本没有运行分布式系统；分布式系统可能运行在一个集群上，也可能运行在不属于一个集群的多台机器上。这两者是不冲突的。</p>
+<p>分布式和集群通常结合起来使用，分布式提供<strong>去中心化</strong>的能力，可以把系统的不同业务拆分出来，不同的服务器提供不同的业务服务，解决了之前单一入口压力过大问题，但当某个服务器出现问题，此服务器中的业务就失效了，集群提供了<strong>高可用性</strong>能力，就可以对每个业务构建集群，这样就保证了业务稳定性，集群同时还有很好的扩展性，当某个业务压力过大时，可以对此业务所在集群动态添加服务器，增强此业务的性能。</p>
+<h2 id="微服务">微服务</h2>
+<p>微服务架构是采用一组服务的方式来构建一个应用，服务独立部署在不同的服务器或者相同服务器的不同进程中。服务之间使用数据进行通信，比如RPC或者HTTP等。不同的服务之间相互不影响，甚至可以使用不同的编程语言进行开发。</p>
+<p>官方给微服务的定义为：</p>
+<ul>
+<li>一些独立的服务共同组成系统</li>
+<li>每个服务单独部署，跑在自己的进程中</li>
+<li>各个服务为独立的业务开发</li>
+<li>分布式管理</li>
+<li>强隔离性。</li>
+</ul>
+<p>微服务相比分布式服务来说，它的粒度更小，服务之间耦合度更低，由于每个微服务都由独立的小团队负责，因此它敏捷性更高，分布式服务最后都会向微服务架构演化，这是一种趋势， 不过服务微服务化后带来的挑战也是显而易见的，例如服务粒度小，数量大，后期运维将会很难。</p>
+<p>一般而可以按两种方式拆分微服务：</p>
+<ul>
+<li>
+<p>**按照不同的业务域进行拆分：**通过对业务进行梳理，根据业务的特性把应用拆开，不同的业务模块独立部署。例如订单、营销、风控、积分资源等。形成独立的业务领域微服务集群</p>
+</li>
+<li>
+<p>**按照一个业务功能里的不同模块或者组件进行拆分：**例如把公共组件拆分成独立的原子服务，下沉到底层，形成相对独立的原子服务层</p>
+</li>
+</ul>
+<h1 id="rpc">RPC</h1>
+<p>我们之前讲了将服务拆分，但是通常来讲服务直接一般会有依赖，这代表两个服务之间需要通信以进行数据交换，这个过程称为远程调用。</p>
+<p>在分布式计算中，<strong>远程过程调用</strong>（英语：<code>Remote Procedure Call</code>，<strong>RPC</strong>）是一个计算机通信协议。该协议允许运行于一台计算机的程序调用另一个地址空间（通常为一个开放网络的一台计算机）的子程序，而程序员就像调用本地程序一样，无需额外地为这个交互作用编程（无需关注细节）。RPC是一种服务器-客户端（<code>Client/Server</code>）模式，经典实现是一个通过<strong>发送请求-接受回应</strong>进行信息交互的系统。如果涉及的软件采用面向对象编程，那么远程过程调用亦可称作<strong>远程调用</strong>或<strong>远程方法调用</strong>。</p>
+<p>RPC是一种进程间通信的模式，程序分布在不同的地址空间里。如果在同一主机里，RPC可以通过不同的虚拟地址空间（即便使用相同的物理地址）进行通讯，而在不同的主机间，则通过不同的物理地址进行交互。许多技术（通常是不兼容）都是基于这种概念而实现的。</p>
+<p>简单的来说是一个节点请求另一个节点提供的服务，并且不需要知道底层的网络技术</p>
+<p><strong>本地过程调用</strong></p>
+<p>RPC就是要像调用本地的函数一样去调远程函数。在研究RPC前，我们先看看本地调用是怎么调的。假设我们要调用函数Multiply来计算lvalue * rvalue的结果:</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#458;font-weight:bold">int</span> <span style="color:#900;font-weight:bold">Multiply</span>(<span style="color:#458;font-weight:bold">int</span> l, <span style="color:#458;font-weight:bold">int</span> r) {
+</span></span><span style="display:flex;"><span>   <span style="color:#458;font-weight:bold">int</span> y = l <span style="color:#000;font-weight:bold">*</span> r
+</span></span><span style="display:flex;"><span>   <span style="color:#000;font-weight:bold">return</span> y
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">main</span>(){
+</span></span><span style="display:flex;"><span>    <span style="color:#458;font-weight:bold">int</span> lvalue = <span style="color:#099">10</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#458;font-weight:bold">int</span> rvalue = <span style="color:#099">20</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#458;font-weight:bold">int</span> l_times_r = <span style="color:#900;font-weight:bold">Multiply</span>(lvalue, rvalue)
+</span></span><span style="display:flex;"><span>    fmt.<span style="color:#900;font-weight:bold">Println</span>(l_times_r)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>那么在第8行时，我们实际上执行了以下操作：</p>
+<ul>
+<li>将 <code>lvalue</code> 和<code>rvalue</code>的值压栈</li>
+<li>进入<code>Multiply</code>函数，取出栈中的值10 和 20，将其赋予 l 和 r</li>
+<li>执行第2行代码，计算<code>l * r</code>，并将结果存在 y</li>
+<li>将 y 的值压栈，然后从<code>Multiply</code>返回</li>
+<li>第8行，从栈中取出返回值 200 ，并赋值给 <code>l_times_r</code></li>
+</ul>
+<p>以上5步就是执行本地调用的过程。（注：以上步骤只是为了说明原理。事实上编译器经常会做优化，对于参数和返回值少的情况会直接将其存放在寄存器，而不需要压栈弹栈的过程，甚至都不需要调用call，而直接做inline操作。仅就原理来说，这5步是没有问题的。）</p>
+<p><strong>远程过程调用带来的新问题</strong></p>
+<p>在远程调用时，我们需要执行的函数体是在远程的机器上的，也就是说，Multiply是在另一个进程中执行的。这就带来了几个新问题：</p>
+<ul>
+<li><strong>Call ID映射</strong>。我们怎么告诉远程机器我们要调用<code>Multiply</code>，而不是<code>Add</code>或者<code>FooBar</code>呢？在本地调用中，函数体是直接通过函数指针来指定的，我们调用<code>Multiply</code>，编译器就自动帮我们调用它相应的函数指针。但是在远程调用中，函数指针是不行的，因为两个进程的地址空间是完全不一样的。所以，在<code>RPC</code>中，所有的函数都必须有自己的一个ID。这个ID在所有进程中都是唯一确定的。客户端在做远程过程调用时，必须附上这个ID。然后我们还需要在客户端和服务端分别维护一个 (函数 &lt;=&gt; <code>Call ID</code>) 的对应表。两者的表不一定需要完全相同，但相同的函数对应的<code>Call ID</code>必须相同。当客户端需要进行远程调用时，它就查一下这个表，找出相应的<code>Call ID</code>，然后把它传给服务端，服务端也通过查表，来确定客户端需要调用的函数，然后执行相应函数的代码。</li>
+<li><strong>序列化和反序列化</strong>。客户端怎么把参数值传给远程的函数呢？在本地调用中，我们只需要把参数压到栈里，然后让函数自己去栈里读就行。但是在远程过程调用时，客户端跟服务端是不同的进程，不能通过内存来传递参数。甚至有时候客户端和服务端使用的都不是同一种语言（比如服务端用<code>C++</code>，客户端用<code>Java</code>或者<code>Python</code>）。这时候就需要客户端把参数先转成一个字节流，传给服务端后，再把字节流转成自己能读取的格式。这个过程叫序列化和反序列化。同理，从服务端返回的值也需要序列化反序列化的过程。</li>
+<li><strong>网络传输</strong>。远程调用往往用在网络上，客户端和服务端是通过网络连接的。所有的数据都需要通过网络传输，因此就需要有一个网络传输层。网络传输层需要把<code>Call ID</code>和序列化后的参数字节流传给服务端，然后再把序列化后的调用结果传回客户端。只要能完成这两者的，都可以作为传输层使用。因此，它所使用的协议其实是不限的，能完成传输就行。尽管大部分<code>RPC</code>框架都使用<code>TCP</code>协议，但其实<code>UDP</code>也可以，而<code>gRPC</code>干脆就用了<code>HTTP2</code>。<code>Java</code>的<code>Netty</code>也属于这层的东西。</li>
+</ul>
+<p>有了这三个机制，就能实现RPC了，具体过程如下：</p>
+<p><strong>Client端</strong></p>
+<ul>
+<li>
+<p>将这个调用映射为<code>Call ID</code>。这里假设用最简单的字符串当<code>Call ID</code>的方法</p>
+</li>
+<li>
+<p>将<code>Call ID</code>，<code>lvalue</code>和<code>rvalue</code>序列化</p>
+</li>
+<li>
+<p>把上一步中得到的数据包发送给Server端对应服务地址+端口</p>
+</li>
+<li>
+<p>等待服务器返回结果</p>
+</li>
+<li>
+<p>如果服务器调用成功，那么就将结果反序列化，并赋给<code>l_times_r</code></p>
+</li>
+</ul>
+<p><strong>Server端</strong></p>
+<ul>
+<li>
+<p>在本地维护一个<code>Call ID</code>到函数指针的映射<code>call_id_map</code></p>
+</li>
+<li>
+<p>等待请求</p>
+</li>
+<li>
+<p>得到一个请求后，将其数据包反序列化，获取调用参数</p>
+</li>
+<li>
+<p>根据<code>Call ID</code>在<code>call_id_map</code>中查找，得到相应的函数指针</p>
+</li>
+<li>
+<p>将<code>value</code>和<code>rvalue</code>反序列化后，在本地调用<code>Multiply</code>函数，得到结果</p>
+</li>
+<li>
+<p>将结果序列化后通过网络返回给Client</p>
+</li>
+</ul>
+<p>所以要实现一个RPC框架，其实只需要按以上流程实现就基本完成了。</p>
+<h2 id="rpc与http"><code>RPC</code>与<code>HTTP</code></h2>
+<p>HTTP 和RPC 是两个维度的东西。HTTP 指的是通信协议， 而RPC 则是远程调用。 RPC 的通信可以用HTTP协议，也可以自定义协议，是不做约束的，其从传输层横跨到应用层。</p>
+<p>构建于HTTP 之上的远程调用解决方案会有更好的通用性，如WebServices 或REST 架构，使用HTTP + JSON 可以说是一个无脑的标准解决方案。选择构建在 HTTP 之上，有两个最大的优势：</p>
+<ul>
+<li>
+<p>HTTP 的语义和可扩展性能很好的满足 RPC 调用需求</p>
+</li>
+<li>
+<p>HTTP 协议几乎被网络上的所有设备所支持，具有很好的协议穿透性</p>
+</li>
+</ul>
+<p>但也存在比较明显的问题：</p>
+<ul>
+<li>
+<p><strong>有用信息占比少</strong></p>
+</li>
+<li>
+<p><strong>效率低</strong></p>
+</li>
+<li>
+<p>使用HTTP协议<strong>调用远程方法比较复杂</strong>，要封装各种参数名和参数值</p>
+</li>
+</ul>
+<p>通用定义的http1.1协议的tcp报文包含太多废信息，一个POST协议的格式大致如下：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">HTTP</span><span style="color:#000;font-weight:bold">/</span><span style="color:#099">1.0</span> <span style="color:#099">200</span> <span style="color:#900;font-weight:bold">OK </span>
+</span></span><span style="display:flex;"><span>Content-Type<span style="color:#000;font-weight:bold">:</span> text/plain
+</span></span><span style="display:flex;"><span>Content-Length<span style="color:#000;font-weight:bold">:</span> 137582
+</span></span><span style="display:flex;"><span>Expires<span style="color:#000;font-weight:bold">:</span> Thu, 05 Dec 1997 16:00:00 GMT
+</span></span><span style="display:flex;"><span>Last-Modified<span style="color:#000;font-weight:bold">:</span> Wed, 5 August 1996 15:55:28 GMT
+</span></span><span style="display:flex;"><span>Server<span style="color:#000;font-weight:bold">:</span> Apache 0.84
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">&lt;html&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a61717;background-color:#e3d2d2">&lt;body&gt;Hello</span> <span style="color:#a61717;background-color:#e3d2d2">World&lt;/body&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">&lt;/html&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如上图所使用的报文中有效字节数仅仅占约 30%，也就是70%的时间用于传输元数据废编码。当然实际情况下报文内容可能会比这个长，但是报头所占的比例也是非常可观的。而假如我们使用自定义的tcp协议的报文，除去上面无用的字段便可以极大地精简传输内容，这也就是为什么后端进程间通常会采用自定义tcp协议的rpc来进行通信的原因。</p>
+<p>公司内部的服务之间调用，一般采用 <code>rpc </code>的方式</p>
+<p>http 的特点是比较通用，像对外的 <code>openAPI</code>，第三方的接口，一般都是<code>http</code>的格式的</p>
+<h2 id="protobuf"><code>Protobuf</code></h2>
+<p>由于在系统底层，数据的传输形式是简单的字节序列形式传递，即在底层，系统不认识对象，只认识字节序列，而为了达到进程通讯的目的，需要先将数据序列化，而序列化就是将对象转化字节序列的过程。相反地，当字节序列被运到相应的进程的时候，进程为了识别这些数据，就要将其反序列化，即把字节序列转化为对象</p>
+<p>
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161335521.jpeg">
+            <img class="mx-auto" alt="img" src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161335521.jpeg" />
+        </a>
+    </p>
+<p>Protobuf 是 Protocol Buffers 的简称, 它是Google 开发的一种跨语言、跨平台、可扩展的用于序列化数据协议， Protobuf 可以用于结构化数据序列化，它序列化出来的数据量少，再加上以K-V 的方式来存储数据，非常适用于在网络通讯中的数据载体。它很适合做数据存储或RPC数据交换格式。也是目前最流行的rpc通信协议。</p>
+<p>相比于 json 和 XML，ProtoBuf 的优势比较明显。例如 json 虽然表达方便，语法清晰，但是，有一个硬伤就是没有 schema，对于 Client-Server 的应用/服务来说，这就意味着双方需要使用其他方式进行沟通 schema，否则将无法正确的交流；XML 确实提供了强大的 Schema 支持，但是，可能因为年纪更大的缘故，XML 自身的语法啰嗦，更别说定义它的 Schema 了，一句话概括，那就是非常得不现代。</p>
+<h3 id="语法">语法</h3>
+<p>Protobuf协议规定：使用该协议进行数据序列化和反序列化操作时，首先定义传输数据的格式，并命名为以<code>.proto</code>为扩展名的消息定义文件，下面是一个proto文件示例：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-protobuf" data-lang="protobuf"><span style="display:flex;"><span>syntax <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;proto3&#34;</span>;  <span style="color:#998;font-style:italic">// 版本声明
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">package</span> <span style="color:#555">grpcinclass</span>; <span style="color:#998;font-style:italic">// 包名，包名可以避免对message类型之间的名字冲突，同名的message可以通过package进行区分
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">option</span> go_package <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;/proto&#34;</span>; <span style="color:#998;font-style:italic">// 生成的go文件的package名（基于一定规则生成）
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span><span style="color:#000;font-weight:bold">message</span> <span style="color:#458;font-weight:bold">LoginResp</span>{ <span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span>	<span style="color:#458;font-weight:bold">bool</span> OK <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">1</span>;<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span>}<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span><span style="color:#000;font-weight:bold">message</span> <span style="color:#458;font-weight:bold">LoginReq</span>{<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span>	<span style="color:#458;font-weight:bold">string</span> UserName <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">1</span>;<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span>	<span style="color:#458;font-weight:bold">string</span> PassWord <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">2</span>;<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span>}<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span><span style="color:#000;font-weight:bold">service</span> Bili{<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span>	<span style="color:#000;font-weight:bold">rpc</span> Login(LoginReq) <span style="color:#000;font-weight:bold">returns</span> (LoginResp){}<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span>}<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>一般禁止将proto文件分开放。若分开放就必须为其编写Makefile，定义输出路径</p>
+<h4 id="message"><code>message</code></h4>
+<p>proto文件就是围绕着消息体进行通信的，与Go语言中的struct类似，不同的协议规则对应不同的描述，我们只介绍&quot;proto3&quot;的规则协议。</p>
+<p>消息体内容组成：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-plain" data-lang="plain"><span style="display:flex;"><span>[字段修饰] 数据类型|消息体|引用外部消息体 名称 = 标识号 [字段可选项];
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>message与message之间可以嵌套定义，相当于go里结构体嵌套匿名结构体</p>
+<p>你也可以使用其它message类型作为字段的类型值，如果要使用的类型在其它proto文件中定义，你需要使用<code>import</code>引入对应的文件</p>
+<p><strong>标识号：</strong></p>
+<p>在消息的定义中，每个字段等号后面都有唯一的标识号，用于在反序列化过程中识别各个字段的，一旦开始使用就不能改变。标识号可以是乱序的，但是我们规定项目中的标识号一定是从1开始且连续，标识号的范围为[1,2^29 – 1]。</p>
+<p>其中[19000-19999]为Protobuf协议预留字段，开发者不建议使用该范围的标识号；一旦使用，在编译时Protoc编译器会报出警告</p>
+<h5 id="常见数据类型">常见数据类型</h5>
+<p>常见的数据类型与protoc协议中的数据类型映射见<a href="https://developers.google.com/protocol-buffers/docs/proto3#scalar">官网</a></p>
+<p><strong>字段修饰</strong></p>
+<p>protoc3只有一种字段修饰词<code>repeated</code>，它表示允许字段重复，对于Go语言来说，它会编译成切片类型。其中类型可以是以下几种类型：</p>
+<ul>
+<li>
+<p>数字类型： <code>double</code>、<code>float</code>、<code>int32</code>、<code>int64</code>、<code>uint32</code>、<code>uint64</code>、<code>sint32</code>、<code>sint64</code></p>
+</li>
+<li>
+<p>存储固定大小的数字类型：<code>fixed32</code>、<code>fixed64</code>、<code>sfixed32</code>、<code>sfixed64</code></p>
+</li>
+<li>
+<p>布尔类型:<code> bool</code></p>
+</li>
+<li>
+<p>字符串: <code>string</code></p>
+</li>
+<li>
+<p>字节数组:<code> bytes</code></p>
+</li>
+<li>
+<p>消息类型: <code>message</code></p>
+</li>
+<li>
+<p>枚举类型:<code>enum</code></p>
+</li>
+<li>
+<p><code>oneof</code></p>
+</li>
+</ul>
+<h5 id="枚举类型">枚举类型</h5>
+<p>proto协议支持使用枚举类型，和正常的编程语言一样，枚举类型可以使用enum关键字定义在.proto文件中：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-protobuf" data-lang="protobuf"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">enum</span> Sex {<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span>    male <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">0</span>;<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span>    female <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">1</span>;<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span>}<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="oneof类型"><code>Oneof</code>类型</h5>
+<p>如果你有一组字段，同时最多允许这一组中的一个字段出现，就可以使用<code>Oneof</code>定义这一组字段，这有像C语言的Union。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-protobuf" data-lang="protobuf"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">message</span> <span style="color:#458;font-weight:bold">OneofMessage</span> {<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span>    <span style="color:#000;font-weight:bold">oneof</span> test_oneof {<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span>      <span style="color:#458;font-weight:bold">string</span> name <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">4</span>;<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span>      <span style="color:#458;font-weight:bold">int64</span> value <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">9</span>;<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span>    }<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2"></span>}<span style="color:#a61717;background-color:#e3d2d2">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="map类型">map类型</h5>
+<p>map类型需要设置键和值的类型，格式是如下：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-plain" data-lang="plain"><span style="display:flex;"><span>map &lt;键类型,值类型&gt; 字段名 = 标识号;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="grpc">gRPC</h2>
+<p>ProtoBuf 除了经常被用于数据保存交换之外，还被用于定义 gRPC 服务，gRPC 也是 Google 公开的高性能 RPC 调用框架，号称高效，支持广。</p>
+<h3 id="安装grpc和protobuf">安装grpc和protobuf</h3>
+<p>用go mod一键sync一下两个库</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span>google.golang.org<span style="color:#000;font-weight:bold">/</span>grpc
+</span></span><span style="display:flex;"><span>google.golang.org<span style="color:#000;font-weight:bold">/</span>protobuf
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="protocol-buffer编译器">protocol buffer编译器</h3>
+<p>这个编译器可以单独下载，但我们也可以使用Goland里面的<code>protocol buffer</code>的编译器插件</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-plain" data-lang="plain"><span style="display:flex;"><span>file-&gt;settings-&gt;plugins-&gt;搜protocol
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="安装protoc">安装protoc</h3>
+<p>到<a href="https://github.com/protocolbuffers/protobuf/releases">protobuf release</a>，选择适合自己操作系统的压缩包文件</p>
+<p>将解压后得到的<code>protoc</code>二进制文件移动到$GOPATH/bin里</p>
+<p>不会有人不知道$GOPATH/bin，也没有将这个文件夹加到path环境变量里吧</p>
+<h3 id="go的protoc编辑器插件">go的protoc编辑器插件</h3>
+<p>具体可以看<a href="https://www.cnblogs.com/hongjijun/p/13724738.html">其他网上教程</a></p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-plain" data-lang="plain"><span style="display:flex;"><span>go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+</span></span><span style="display:flex;"><span>go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="简单的demo">简单的demo</h3>
+<p>我们把讲protobuf语法时的示例文件作为例子，将其改名为<code>login.proto</code>并执行以下命令：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-latex" data-lang="latex"><span style="display:flex;"><span>protoc --go<span style="color:#0086b3">_</span>out=. ./login.proto
+</span></span><span style="display:flex;"><span>protoc --go-grpc<span style="color:#0086b3">_</span>out=. ./login.proto
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这两条命令会生成两个文件<code>login.pb.go</code>和<code>login_grpc.pb.go</code>(放在项目的proto文件夹里)，<strong>服务端和客户端都需要这两个文件</strong>。</p>
+<p><strong>如果已经在服务端部署好了某项服务，在远程或者另外一台服务器上需要调用这个服务器上部署的这个微服务，则需要：首先，将服务端部署好的最新自动生成的那几个文件拉到现在这个服务器，这样服务端和客户端都持有同一份‘’服务协议‘’,根据这个协议就可以使用远程的微服务了</strong></p>
+<p><strong>值得一提的是，protoc支持很多种语言代码生成，也就是说，客户端和服务端可以是不同语言开发的。服务端go语言开发，但是可以通过protoc生成对应java、c++等代码，这样客户端是哪种语言写的只需要拉取相应的protoc代码生成的文件，如果没有，可以拉取proto语法源码，自己本地生成自己需要的代码</strong></p>
+<p><code>login.pb.go</code>放置了将<code>login.proto</code>里的结构翻译成go语言结构体和相关东西。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> LoginReq <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>	state         protoimpl.MessageState
+</span></span><span style="display:flex;"><span>	sizeCache     protoimpl.SizeCache
+</span></span><span style="display:flex;"><span>	unknownFields protoimpl.UnknownFields
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	UserName <span style="color:#458;font-weight:bold">string</span> <span style="color:#d14">`protobuf:&#34;bytes,1,opt,name=UserName,proto3&#34; json:&#34;UserName,omitempty&#34;`</span>
+</span></span><span style="display:flex;"><span>	PassWord <span style="color:#458;font-weight:bold">string</span> <span style="color:#d14">`protobuf:&#34;bytes,2,opt,name=PassWord,proto3&#34; json:&#34;PassWord,omitempty&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> LoginResp <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>	state         protoimpl.MessageState
+</span></span><span style="display:flex;"><span>	sizeCache     protoimpl.SizeCache
+</span></span><span style="display:flex;"><span>	unknownFields protoimpl.UnknownFields
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	OK <span style="color:#458;font-weight:bold">bool</span> <span style="color:#d14">`protobuf:&#34;varint,1,opt,name=OK,proto3&#34; json:&#34;OK,omitempty&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>login_grpc.pb.go</code>放置了gRPC框架封装好的逻辑</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">NewBiliClient</span>(cc grpc.ClientConnInterface) BiliClient {
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">&amp;</span>biliClient{cc}
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> (c <span style="color:#000;font-weight:bold">*</span>biliClient) <span style="color:#900;font-weight:bold">Login</span>(ctx context.Context, in <span style="color:#000;font-weight:bold">*</span>LoginReq, opts <span style="color:#000;font-weight:bold">...</span>grpc.CallOption) (<span style="color:#000;font-weight:bold">*</span>LoginResp, <span style="color:#458;font-weight:bold">error</span>) {
+</span></span><span style="display:flex;"><span>	out <span style="color:#000;font-weight:bold">:=</span> <span style="color:#0086b3">new</span>(LoginResp)
+</span></span><span style="display:flex;"><span>	err <span style="color:#000;font-weight:bold">:=</span> c.cc.<span style="color:#900;font-weight:bold">Invoke</span>(ctx, <span style="color:#d14">&#34;/grpcinclass.Bili/Login&#34;</span>, in, out, opts<span style="color:#000;font-weight:bold">...</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">if</span> err <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">nil</span>, err
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">return</span> out, <span style="color:#000;font-weight:bold">nil</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> BiliServer <span style="color:#000;font-weight:bold">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#900;font-weight:bold">Login</span>(context.Context, <span style="color:#000;font-weight:bold">*</span>LoginReq) (<span style="color:#000;font-weight:bold">*</span>LoginResp, <span style="color:#458;font-weight:bold">error</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#900;font-weight:bold">mustEmbedUnimplementedBiliServer</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">RegisterBiliServer</span>(s grpc.ServiceRegistrar, srv BiliServer) {
+</span></span><span style="display:flex;"><span>	s.<span style="color:#900;font-weight:bold">RegisterService</span>(<span style="color:#000;font-weight:bold">&amp;</span>Bili_ServiceDesc, srv)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>接下来使用下面的server代码起一个rpc服务端：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">//server（被调用rpc的一方）
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">package</span> main
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;context&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;google.golang.org/grpc&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;log&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;net&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">const</span> (
+</span></span><span style="display:flex;"><span>	port = <span style="color:#d14">&#34;:50051&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 监听端口
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	lis, err <span style="color:#000;font-weight:bold">:=</span> net.<span style="color:#900;font-weight:bold">Listen</span>(<span style="color:#d14">&#34;tcp&#34;</span>, port)
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">if</span> err <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+</span></span><span style="display:flex;"><span>		log.<span style="color:#900;font-weight:bold">Fatalf</span>(<span style="color:#d14">&#34;failed to listen: %v&#34;</span>, err)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	s <span style="color:#000;font-weight:bold">:=</span> grpc.<span style="color:#900;font-weight:bold">NewServer</span>() <span style="color:#998;font-style:italic">//获取新服务示例
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	proto.<span style="color:#900;font-weight:bold">RegisterBiliServer</span>(s, <span style="color:#000;font-weight:bold">&amp;</span>server{})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 开始处理
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	<span style="color:#000;font-weight:bold">if</span> err <span style="color:#000;font-weight:bold">:=</span> s.<span style="color:#900;font-weight:bold">Serve</span>(lis); err <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+</span></span><span style="display:flex;"><span>		log.<span style="color:#900;font-weight:bold">Fatalf</span>(<span style="color:#d14">&#34;failed to serve: %v&#34;</span>, err)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> server <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>	proto.UnimplementedBiliServer <span style="color:#998;font-style:italic">// 用于实现proto包里BiliServer接口
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> (s <span style="color:#000;font-weight:bold">*</span>server) <span style="color:#900;font-weight:bold">Login</span>(ctx context.Context, req <span style="color:#000;font-weight:bold">*</span>proto.LoginReq) (<span style="color:#000;font-weight:bold">*</span>proto.LoginResp, <span style="color:#458;font-weight:bold">error</span>) {
+</span></span><span style="display:flex;"><span>	resp <span style="color:#000;font-weight:bold">:=</span> <span style="color:#000;font-weight:bold">&amp;</span>proto.LoginResp{}
+</span></span><span style="display:flex;"><span>	log.<span style="color:#900;font-weight:bold">Println</span>(<span style="color:#d14">&#34;recv:&#34;</span>, req.UserName, req.PassWord)
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">if</span> req.PassWord <span style="color:#000;font-weight:bold">!=</span> <span style="color:#900;font-weight:bold">GetPassWord</span>(req.UserName) {
+</span></span><span style="display:flex;"><span>		resp.OK = <span style="color:#000;font-weight:bold">false</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#000;font-weight:bold">return</span> resp, <span style="color:#000;font-weight:bold">nil</span>
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	resp.OK = <span style="color:#000;font-weight:bold">true</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">return</span> resp, <span style="color:#000;font-weight:bold">nil</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">GetPassWord</span>(userName <span style="color:#458;font-weight:bold">string</span>) (password <span style="color:#458;font-weight:bold">string</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">return</span> userName <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#34;123456&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>接下来使用下面的client代码起一个rpc客户端：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">//client（调用rpc的一方）
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">package</span> main
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;context&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;google.golang.org/grpc&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;google.golang.org/grpc/credentials/insecure&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;log&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">const</span> (
+</span></span><span style="display:flex;"><span>	address = <span style="color:#d14">&#34;localhost:50051&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">main</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#998;font-style:italic">//建立链接
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	conn, err <span style="color:#000;font-weight:bold">:=</span> grpc.<span style="color:#900;font-weight:bold">Dial</span>(address, grpc.<span style="color:#900;font-weight:bold">WithTransportCredentials</span>(insecure.<span style="color:#900;font-weight:bold">NewCredentials</span>()))
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">if</span> err <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+</span></span><span style="display:flex;"><span>		log.<span style="color:#900;font-weight:bold">Fatalf</span>(<span style="color:#d14">&#34;did not connect: %v&#34;</span>, err)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">defer</span> conn.<span style="color:#900;font-weight:bold">Close</span>()
+</span></span><span style="display:flex;"><span>	c <span style="color:#000;font-weight:bold">:=</span> proto.<span style="color:#900;font-weight:bold">NewBiliClient</span>(conn)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">for</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#998;font-style:italic">//这段不重要
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>		fmt.<span style="color:#900;font-weight:bold">Println</span>(<span style="color:#d14">&#34;input username&amp;password:&#34;</span>)
+</span></span><span style="display:flex;"><span>		iptName <span style="color:#000;font-weight:bold">:=</span> <span style="color:#d14">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>		_, _ = fmt.<span style="color:#900;font-weight:bold">Scanln</span>(<span style="color:#000;font-weight:bold">&amp;</span>iptName)
+</span></span><span style="display:flex;"><span>		iptPassword <span style="color:#000;font-weight:bold">:=</span> <span style="color:#d14">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>		_, _ = fmt.<span style="color:#900;font-weight:bold">Scanln</span>(<span style="color:#000;font-weight:bold">&amp;</span>iptPassword)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		loginResp, _ <span style="color:#000;font-weight:bold">:=</span> c.<span style="color:#900;font-weight:bold">Login</span>(context.<span style="color:#900;font-weight:bold">Background</span>(), <span style="color:#000;font-weight:bold">&amp;</span>proto.LoginReq{
+</span></span><span style="display:flex;"><span>			UserName: iptName,
+</span></span><span style="display:flex;"><span>			PassWord: iptPassword,
+</span></span><span style="display:flex;"><span>		})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#000;font-weight:bold">if</span> loginResp.OK {
+</span></span><span style="display:flex;"><span>			fmt.<span style="color:#900;font-weight:bold">Println</span>(<span style="color:#d14">&#34;success&#34;</span>)
+</span></span><span style="display:flex;"><span>			<span style="color:#000;font-weight:bold">break</span>
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>		fmt.<span style="color:#900;font-weight:bold">Println</span>(<span style="color:#d14">&#34;retry&#34;</span>)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>protobuf 3中还有一种数据类型——steam（流），其用于传输流式数据，感兴趣可以参考<a href="https://segmentfault.com/a/1190000016503114">这篇文章</a>(这篇文章是我随便找的用于简要了解)</p>
+<h2 id="begonia">Begonia</h2>
+<p>可以看到，上面讲到的rpc通信协议——Protobuf和rpc框架——gRPC都避免不了编写proto文件+代码生成的操作，而且一旦更改rpc接口，客户端和服务端都要更新相应的文件。</p>
+<p>为了更加方便、快速的起rpc服务，红岩巨佬仓仓子开发了一个轻量级、API友好的RPC框架<a href="https://github.com/MashiroC/begonia">Begonia</a>，详细文档可见<a href="https://github.com/MashiroC/begonia#readme">Begonia README</a>。</p>
+<p>依旧以上面讲的login为例子，如果采用begonia，你只需要以下步骤（前提是你已经安装了<a href="https://github.com/MashiroC/begonia">Begonia</a>）：</p>
+<ol>
+<li>启动服务中心</li>
+</ol>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-plain" data-lang="plain"><span style="display:flex;"><span>bgacenter start
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol>
+<li>编写service代码</li>
+</ol>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">package</span> main
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;github.com/MashiroC/begonia&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;github.com/MashiroC/begonia/app/option&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;time&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">main</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#998;font-style:italic">// 一般情况下，addr是服务中心的地址。
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	s <span style="color:#000;font-weight:bold">:=</span> begonia.<span style="color:#900;font-weight:bold">NewServer</span>(option.<span style="color:#900;font-weight:bold">Addr</span>(<span style="color:#d14">&#34;:12306&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#998;font-style:italic">// 会通过反射的方式把service结构体下面所有公开的方法注册到LoginServer服务上。
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	s.<span style="color:#900;font-weight:bold">Register</span>(<span style="color:#d14">&#34;LoginServer&#34;</span>, <span style="color:#000;font-weight:bold">&amp;</span>service{})
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#998;font-style:italic">// 让服务器持续睡眠，不然service会因为主进程退出而直接结束。
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	<span style="color:#000;font-weight:bold">for</span> {
+</span></span><span style="display:flex;"><span>		time.<span style="color:#900;font-weight:bold">Sleep</span>(<span style="color:#099">1</span> <span style="color:#000;font-weight:bold">*</span> time.Hour)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> service <span style="color:#000;font-weight:bold">struct</span>{}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// Login 函数的参数和返回值会被反射解析，注册为一个远程函数。
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 注册的函数没有特定的格式和写法。
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> (<span style="color:#000;font-weight:bold">*</span>service) <span style="color:#900;font-weight:bold">Login</span>(name <span style="color:#458;font-weight:bold">string</span>, password <span style="color:#458;font-weight:bold">string</span>) <span style="color:#458;font-weight:bold">bool</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">return</span> password <span style="color:#000;font-weight:bold">==</span> <span style="color:#900;font-weight:bold">GetPassWord</span>(name)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">GetPassWord</span>(userName <span style="color:#458;font-weight:bold">string</span>) (password <span style="color:#458;font-weight:bold">string</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">return</span> userName <span style="color:#000;font-weight:bold">+</span> <span style="color:#d14">&#34;123456&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol>
+<li>编写client代码</li>
+</ol>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">55
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">56
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">package</span> main
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;github.com/MashiroC/begonia&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;github.com/MashiroC/begonia/app/client&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;github.com/MashiroC/begonia/app/option&#34;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;log&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">var</span> (
+</span></span><span style="display:flex;"><span>	loginFunc client.RemoteFunSync <span style="color:#998;font-style:italic">// 远程调用函数（这个是同步的），初始化之后就可以重复调用
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">Init</span>() {
+</span></span><span style="display:flex;"><span>	c <span style="color:#000;font-weight:bold">:=</span> begonia.<span style="color:#900;font-weight:bold">NewClient</span>(option.<span style="color:#900;font-weight:bold">Addr</span>(<span style="color:#d14">&#34;:12306&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#998;font-style:italic">// 获取LoginServer服务
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	s, err <span style="color:#000;font-weight:bold">:=</span> c.<span style="color:#900;font-weight:bold">Service</span>(<span style="color:#d14">&#34;LoginServer&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">if</span> err <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#0086b3">panic</span>(err)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#998;font-style:italic">// 获取一个远程函数Login的同步调用
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	loginFunc, err = s.<span style="color:#900;font-weight:bold">FuncSync</span>(<span style="color:#d14">&#34;Login&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">if</span> err <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#0086b3">panic</span>(err)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">main</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#998;font-style:italic">// 初始化
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	<span style="color:#900;font-weight:bold">Init</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">for</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#998;font-style:italic">//这段不重要
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>		fmt.<span style="color:#900;font-weight:bold">Println</span>(<span style="color:#d14">&#34;input username&amp;password:&#34;</span>)
+</span></span><span style="display:flex;"><span>		iptName <span style="color:#000;font-weight:bold">:=</span> <span style="color:#d14">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>		_, _ = fmt.<span style="color:#900;font-weight:bold">Scanln</span>(<span style="color:#000;font-weight:bold">&amp;</span>iptName)
+</span></span><span style="display:flex;"><span>		iptPassword <span style="color:#000;font-weight:bold">:=</span> <span style="color:#d14">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>		_, _ = fmt.<span style="color:#900;font-weight:bold">Scanln</span>(<span style="color:#000;font-weight:bold">&amp;</span>iptPassword)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#998;font-style:italic">// 调用
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>		i, err <span style="color:#000;font-weight:bold">:=</span> <span style="color:#900;font-weight:bold">loginFunc</span>(iptName, iptPassword)
+</span></span><span style="display:flex;"><span>		<span style="color:#000;font-weight:bold">if</span> err <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+</span></span><span style="display:flex;"><span>			log.<span style="color:#900;font-weight:bold">Println</span>(err)
+</span></span><span style="display:flex;"><span>			<span style="color:#000;font-weight:bold">break</span>
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#000;font-weight:bold">if</span> i.(<span style="color:#458;font-weight:bold">bool</span>) {
+</span></span><span style="display:flex;"><span>			fmt.<span style="color:#900;font-weight:bold">Println</span>(<span style="color:#d14">&#34;success&#34;</span>)
+</span></span><span style="display:flex;"><span>			<span style="color:#000;font-weight:bold">break</span>
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>		fmt.<span style="color:#900;font-weight:bold">Println</span>(<span style="color:#d14">&#34;retry&#34;</span>)
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="referencepartial">Reference（partial）</h1>
+<p><a href="https://colobu.com/2019/10/03/protobuf-ultimate-tutorial-in-go/">Protobuf 终极教程</a></p>
+<p>[<a href="https://www.cnblogs.com/xybaby/p/7787034.html">什么是分布式系统，如何学习分布式系统</a>](<a href="https://www.cnblogs.com/xybaby/p/7787034.html">https://www.cnblogs.com/xybaby/p/7787034.html</a>)</p>
+<p><a href="https://www.yinxiang.com/everhub/note/1f39cf3a-4799-4d60-9f65-38f4042aad8c">分布式与微服务</a></p>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://cold-bin.github.io">cold bin</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/">https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/API%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9%E6%80%A7%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/">API向前兼容性的解决方案</a></li>
+        
+        <li><a href="/post/go%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">Go测试与性能优化</a></li>
+        
+        <li><a href="/post/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95java%E7%89%88/">数据结构与算法（java版）</a></li>
+        
+        <li><a href="/about/">关于</a></li>
+        
+        <li><a href="/archives/">归档</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E9%9B%86%E4%B8%AD%E5%BC%8F'>分布式与集中式</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "my-blog-comment"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+    
+    
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://cold-bin.github.io">cold bin&#39;s blog By cold bin</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.2.8/raphael.min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/flowchart/1.12.2/flowchart.min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+                if (!window.flowchart) return;
+                const blocks = document.querySelectorAll('pre code.language-flowchart, pre code.language-flow');
+                for (let i = 0; i < blocks.length; i++) {
+                    const block = blocks[i];
+                    const rootElement = block.parentNode;
+                    const container = document.createElement('div');
+                    const id = `js-flowchart-diagrams-${i}`;
+                    container.id = id;
+                    container.className = 'align-center';
+                    container.setAttribute("style", "overFlow-x:auto");
+                    rootElement.parentNode.replaceChild(container, rootElement);
+                    const diagram = flowchart.parse(block.childNodes[0].nodeValue);
+                    diagram.drawSVG(id, window.flowchartDiagramsOptions ? window.flowchartDiagramsOptions : {});
+                }
+            })();
+        </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+            if (!window.Diagram) return;
+            const blocks = document.querySelectorAll('pre code.language-sequence');
+            for (let i = 0; i < blocks.length; i++) {
+                const block = blocks[i];
+                
+                const rootElement = block.parentNode;
+                const container = document.createElement('div');
+                const id = `js-sequence-diag-${i}`;
+                container.id = id;
+                container.className = 'align-center';
+                container.setAttribute("style", "overFlow-x:auto");
+                rootElement.parentNode.replaceChild(container, rootElement);
+
+                const diagram = Diagram.parse(block.childNodes[0].nodeValue);
+                diagram.drawSVG(id, window.sequenceDiagramsOptions
+                    ? window.sequenceDiagramsOptions
+                    : { theme: 'simple' });
+            }
+        })();
+        </script><script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://cold-bin.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://cold-bin.github.io">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/" title="Go的结构体内存对齐">Go的结构体内存对齐</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/" title="Flag包的在go项目的实践">Flag包的在go项目的实践</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/Makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/" title="Makefile在go项目的实践">Makefile在go项目的实践</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/Go%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%BA%93flag%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" title="Go语言标准库flag基本使用">Go语言标准库flag基本使用</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/" title="Https在golang的实践">Https在golang的实践</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/go%E6%9D%82%E7%83%A9/" title="Go杂烩">Go杂烩</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/" title="集中式与分布式">集中式与分布式</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/API%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9%E6%80%A7%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" title="API向前兼容性的解决方案">API向前兼容性的解决方案</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/go%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" title="Go测试与性能优化">Go测试与性能优化</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95java%E7%89%88/" title="数据结构与算法（java版）">数据结构与算法（java版）</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (8)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (1)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://cold-bin.github.io/tags/Makefile/">Makefile</a>
+    
+    <a href="https://cold-bin.github.io/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/">api向前兼容</a>
+    
+    <a href="https://cold-bin.github.io/tags/https/">https</a>
+    
+    <a href="https://cold-bin.github.io/tags/tls%E8%AF%81%E4%B9%A6/">tls证书</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">内存对齐</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E9%9B%86%E4%B8%AD%E5%BC%8F/">分布式与集中式</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">单元测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90/">命令行参数解析</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93java/">数据结构与算法总结，java</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/">网络测试</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://github.com/cold-bin" title="GitHub">GitHub</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://blog.csdn.net/qq_57467091" title="CSDN">CSDN</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://cold-bin.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
