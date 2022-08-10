@@ -6,7 +6,16 @@
     <description>Recent content in Posts on cold bin&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 17 Jul 2022 15:26:09 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 10 Aug 2022 14:23:15 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>详解Go中的rune类型</title>
+      <link>https://cold-bin.github.io/post/%E8%AF%A6%E8%A7%A3Go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/</link>
+      <pubDate>Wed, 10 Aug 2022 14:23:15 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E8%AF%A6%E8%A7%A3Go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/</guid>
+      <description>Unicode编码和utf-8编码的关系 需要注意的是，Unicode 只是一个符号集，它只规定了符号的二进制代码，却没有规定这个二进制代码应该如何存储。 比如，汉字&amp;rsquo;严&amp;rsquo;的 Unicode 是十六进制数4E25，转换成二进制数足足有15位（100111000100101），也</description>
+    </item>
+    
     <item>
       <title>Go的结构体内存对齐</title>
       <link>https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/</link>
