@@ -6,7 +6,25 @@
     <description>Recent content on cold bin&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 10 Aug 2022 14:23:15 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 19 Aug 2022 10:13:32 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>微服务一些概念</title>
+      <link>https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/</link>
+      <pubDate>Fri, 19 Aug 2022 10:13:32 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/</guid>
+      <description>微服务概念 微服务的粒度小，服务之间耦合度低，由于每个微服务都由独立的小团队负责，因此它敏捷性更高，分布式服务最后都会向微服务架构演化，这是一种趋势， 不过服务微服务化后带来的挑战也是显而易见的，例如服务粒度小，数量大，后期运维将会比较困难。所以又有容器+微服务的出现。 这里就不细说容</description>
+    </item>
+    
+    <item>
+      <title>Golang编程思想集锦</title>
+      <link>https://cold-bin.github.io/post/Golang%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E9%9B%86%E9%94%A6/</link>
+      <pubDate>Wed, 10 Aug 2022 17:13:38 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/Golang%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E9%9B%86%E9%94%A6/</guid>
+      <description>一、go面向对象 封装 结构体与方法 多态 接口来实现多态，不同结构体可以实现相同的接口。这样就能拥有同种行为的不同具体状态 &amp;ndash;&amp;gt; 多态 继承、覆盖 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 // 标准包里的实现，大概是直接把文件里的所有内容给提取出</description>
+    </item>
+    
     <item>
       <title>详解Go中的rune类型</title>
       <link>https://cold-bin.github.io/post/%E8%AF%A6%E8%A7%A3Go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/</link>
@@ -67,7 +85,7 @@
       <pubDate>Fri, 15 Jul 2022 14:19:32 +0800</pubDate>
       
       <guid>https://cold-bin.github.io/post/go%E6%9D%82%E7%83%A9/</guid>
-      <description>Golang杂烩 一、结构体 和 C/C++ 的结构体类似，Go 语言的结构体 struct 是一种聚合的数据类型，可以包含任意类型的值。 自动转换 先定义一个 struct 1 2 3 4 type Person struct { Name string Age int } 初始化 1 2 3 4 5 6 7 8 9 10 11 12 13 func main() { me := &amp;amp;Person{ Name: &amp;#34;HF&amp;#34;, Age: 1, } fmt.Printf(&amp;#34;type of me: %T\n&amp;#34;, me) fmt.Printf(&amp;#34;my name: %s, type of my name: %T\n&amp;#34;, (*me).Name, (*me).Name) fmt.Printf(&amp;#34;my age: %d, type of my age: %T\n&amp;#34;, (*me).Age, (*me).Age) fmt.Printf(&amp;#34;my name: %s, type of my name: %T\n&amp;#34;, me.Name, me.Name) fmt.Printf(&amp;#34;my age:</description>
+      <description>Golang杂烩 一、结构体 和 C/C++ 的结构体类似，Go 语言的结构体 struct 是一种聚合的数据类型，可以包含任意类型的值。 方法 值接收者（go语言特有） 所谓值接收者，指的是，当调用值接收者的方法时，会临时copy一份当前对象的副本，然后在这个副本的基础上再操作。显然，这个副本已经与原来的对象没有指</description>
     </item>
     
     <item>

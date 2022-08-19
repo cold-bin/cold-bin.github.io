@@ -92,13 +92,19 @@
                         <a href="#%e4%b8%80%e7%bb%93%e6%9e%84%e4%bd%93" aria-label="一、结构体">一、结构体</a><ul>
                             
                     <li>
+                        <a href="#%e6%96%b9%e6%b3%95" aria-label="方法">方法</a></li>
+                    <li>
                         <a href="#%e8%87%aa%e5%8a%a8%e8%bd%ac%e6%8d%a2" aria-label="自动转换">自动转换</a></li>
                     <li>
                         <a href="#%e5%86%85%e5%ad%98%e5%88%86%e9%85%8d" aria-label="内存分配">内存分配</a></li>
                     <li>
                         <a href="#%e7%bb%93%e6%9e%84%e4%bd%93%e6%af%94%e8%be%83" aria-label="结构体比较">结构体比较</a></li>
                     <li>
-                        <a href="#%e7%bb%a7%e6%89%bf%e5%b5%8c%e5%85%a5" aria-label="继承（嵌入）">继承（嵌入）</a></li>
+                        <a href="#%e7%bb%a7%e6%89%bf%e5%b5%8c%e5%85%a5--%e5%8c%bf%e5%90%8d%e7%bb%93%e6%9e%84%e4%bd%93" aria-label="继承（嵌入）&amp;ndash;匿名结构体">继承（嵌入）&ndash;匿名结构体</a><ul>
+                            
+                    <li>
+                        <a href="#%e5%b5%8c%e5%a5%97%e5%b8%a6%e6%9c%89%e6%96%b9%e6%b3%95%e7%9a%84%e5%8c%bf%e5%90%8d%e7%bb%93%e6%9e%84%e4%bd%93" aria-label="嵌套带有方法的匿名结构体">嵌套带有方法的匿名结构体</a></li></ul>
+                    </li>
                     <li>
                         <a href="#%e5%8f%8d%e5%b0%84" aria-label="反射">反射</a></li>
                     <li>
@@ -253,6 +259,111 @@
             <h2 id="golang杂烩">Golang杂烩</h2>
 <h3 id="一结构体">一、结构体</h3>
 <p>和 C/C++ 的结构体类似，Go 语言的结构体 struct 是一种聚合的数据类型，可以包含任意类型的值。</p>
+<h4 id="方法">方法</h4>
+<ul>
+<li>
+<p>值接收者（go语言特有）</p>
+<p>所谓值接收者，指的是，当调用值接收者的方法时，会临时copy一份当前对象的副本，然后在这个副本的基础上再操作。<strong>显然，这个副本已经与原来的对象没有指向关系了，修改副本属性，无法更改原对象的值。</strong></p>
+<p>应用场景：当对象主要运用于读数据，而非写数据时；当前对象的内存开销比较小</p>
+</li>
+<li>
+<p>指针接收者</p>
+<p>应用场景：当对象需要修改对象属性时，需要使用指针接收者；当对象内存开销比较大。</p>
+<p>注：不能一味使用指针接收者，有时候，指针接收者带来的开销可能比值接收者还要大</p>
+</li>
+<li>
+<p>两者实现某接口时的区别</p>
+<p><strong>指针接收者实现某接口时，在类型转换上，只能使用指针类型的接收者；而值接收者实现某接口时，在类型转换上，无论是值接收者还是指针接收者都可以</strong></p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">package</span> main
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#d14">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> AnimalInterface <span style="color:#000;font-weight:bold">interface</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#900;font-weight:bold">bake</span>(<span style="color:#458;font-weight:bold">string</span>) <span style="color:#458;font-weight:bold">error</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">//Dog ...
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">type</span> Dog <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>	name <span style="color:#458;font-weight:bold">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> (dog Dog) <span style="color:#900;font-weight:bold">bake</span>(w <span style="color:#458;font-weight:bold">string</span>) <span style="color:#458;font-weight:bold">error</span> {
+</span></span><span style="display:flex;"><span>	fmt.<span style="color:#900;font-weight:bold">Printf</span>(<span style="color:#d14">&#34;%s bake %s \n&#34;</span>, dog.name, w)
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">nil</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> Cat <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>	name <span style="color:#458;font-weight:bold">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> (cat <span style="color:#000;font-weight:bold">*</span>Cat) <span style="color:#900;font-weight:bold">bake</span>(w <span style="color:#458;font-weight:bold">string</span>) <span style="color:#458;font-weight:bold">error</span> {
+</span></span><span style="display:flex;"><span>	fmt.<span style="color:#900;font-weight:bold">Printf</span>(<span style="color:#d14">&#34;%s bake %s \n&#34;</span>, cat.name, w)
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">nil</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">main</span>() {
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">var</span> dogBig AnimalInterface = Dog{
+</span></span><span style="display:flex;"><span>		name: <span style="color:#d14">&#34;大黄&#34;</span>,
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	dogBig.<span style="color:#900;font-weight:bold">bake</span>(<span style="color:#d14">&#34;吴奇隆&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">var</span> dogLittle AnimalInterface = <span style="color:#000;font-weight:bold">&amp;</span>Dog{
+</span></span><span style="display:flex;"><span>		name: <span style="color:#d14">&#34;小黄&#34;</span>,
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	dogLittle.<span style="color:#900;font-weight:bold">bake</span>(<span style="color:#d14">&#34;李易峰&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#998;font-style:italic">// cannot use Cat literal (type Cat) as type AnimalInterface in assignment:Cat does not implement AnimalInterface (bake method has pointer receiver)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	<span style="color:#000;font-weight:bold">var</span> catHua AnimalInterface = Cat{
+</span></span><span style="display:flex;"><span>		name: <span style="color:#d14">&#34;小花&#34;</span>,
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	catHua.<span style="color:#900;font-weight:bold">bake</span>(<span style="color:#d14">&#34;刘亦菲&#34;</span>)
+</span></span><span style="display:flex;"><span>	<span style="color:#000;font-weight:bold">var</span> catBlue AnimalInterface = <span style="color:#000;font-weight:bold">&amp;</span>Cat{
+</span></span><span style="display:flex;"><span>		name: <span style="color:#d14">&#34;小蓝&#34;</span>,
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	catBlue.<span style="color:#900;font-weight:bold">bake</span>(<span style="color:#d14">&#34;张园园&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
 <h4 id="自动转换">自动转换</h4>
 <p>先定义一个 struct</p>
 <div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
@@ -436,7 +547,7 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>上下两种写法是等价的。</p>
-<h4 id="继承嵌入">继承（嵌入）</h4>
+<h4 id="继承嵌入--匿名结构体">继承（嵌入）&ndash;匿名结构体</h4>
 <p>一个结构体可以继承多个结构体。 <strong>继承的结构体不能有同名字段。</strong></p>
 <div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
 <table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -456,7 +567,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> Request <span style="color:#000;font-weight:bold">struct</span>{}
 </span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> T <span style="color:#000;font-weight:bold">struct</span> {
 </span></span><span style="display:flex;"><span>    http.Request <span style="color:#998;font-style:italic">// field name is &#34;Request&#34;
-</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    Request <span style="color:#998;font-style:italic">// field name is &#34;Request&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    Request <span style="color:#998;font-style:italic">// field name is &#34;Request&#34; 
 </span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>}
 </span></span></code></pre></td></tr></table>
 </div>
@@ -500,7 +611,7 @@
 </span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>}
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>但是这样类似文件目录递进的访问形式略显繁琐，得益于匿名成员的特性，直接访问子字段而不必给出完整的路径：</p>
+</div><p><strong>但是这样类似文件目录递进的访问形式略显繁琐，得益于匿名成员的特性，直接访问子字段而不必给出完整的路径</strong>：</p>
 <div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
 <table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
 <pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
@@ -520,6 +631,64 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>所有的内置类型和自定义类型都是可以作为匿名字段的，但是结构体面值并不支持省略写法。</p>
+<h5 id="嵌套带有方法的匿名结构体">嵌套带有方法的匿名结构体</h5>
+<ul>
+<li>
+<p>示例</p>
+<p>嵌入的匿名结构的方法将被父结构体拥有；而且，切入的匿名结构的方法，还可以被父级结构体再实现一遍，但是实现过后，会被覆盖</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> Name <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>    FirstName <span style="color:#458;font-weight:bold">string</span>
+</span></span><span style="display:flex;"><span>    LastName  <span style="color:#458;font-weight:bold">string</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> (n <span style="color:#000;font-weight:bold">*</span>Name) <span style="color:#0086b3">string</span>() <span style="color:#458;font-weight:bold">string</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> n.FirstName<span style="color:#000;font-weight:bold">+</span><span style="color:#d14">&#34; &#34;</span><span style="color:#000;font-weight:bold">+</span>n.LastName
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> Person <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>    Name
+</span></span><span style="display:flex;"><span>    Age <span style="color:#458;font-weight:bold">int</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 覆盖匿名结构体方法
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> (p <span style="color:#000;font-weight:bold">*</span>Person) <span style="color:#0086b3">string</span>() <span style="color:#458;font-weight:bold">string</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> <span style="color:#d14">&#34;已被覆盖&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>好处</p>
+<p>上面的例子还没体现出匿名结构体的用途。</p>
+<p>试想这样一个场景：已经开发好了某一个工具类A，但是由于业务增长、扩容，原有的部分实现遇到性能瓶颈，那么怎么更好的修改这块代码呢？</p>
+<ul>
+<li>一种方案是：直接在原有的实现基础上，将有性能瓶颈的代码块进行更改，但是对代码侵入性比较大；</li>
+<li>另一种方案是：依然保留原方案的实现，在原方案的基础上，提供一个新的方案，将源对象作为匿名结构体嵌入到新方案的结构体，然后“重写”那些有性能瓶颈的方法，以实现更新换代。</li>
+</ul>
+</li>
+</ul>
 <h4 id="反射">反射</h4>
 <p>Go 语言通过 reflect 包实现运行时的反射，允许程序操作任意类型的对象。 典型用法是用静态类型 interface{} 保存一个值，通过调用 <code>TypeOf()</code> 方法获取其动态类型信息，返回一个 Type 类型值。调用 <code>ValueOf </code>方法返回一个 Value 类型值，该值代表运行时的数据。</p>
 <div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
@@ -1151,8 +1320,8 @@
 <li>存储的值的类型</li>
 </ul>
 <p>如下图： 
-        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161337230.svg">
-            <img class="mx-auto" alt="img" src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161337230.svg" />
+        <a data-fancybox="gallery" href="https://pic.crazytaxii.com/interface.svg">
+            <img class="mx-auto" alt="img" src="https://pic.crazytaxii.com/interface.svg" />
         </a>
     </p>
 <p>图中可以清楚地看到接口的三个部分：<code>_type</code> 是类型信息，<code>*data</code> 是指向真实值的指针，<code>itab</code> 包含方法集。</p>
@@ -1165,8 +1334,8 @@
 <p><code>reflect.TypeOf()</code> 函数用来提取值的类型。既然它唯一的参数是空接口，传递给它的参数将被分配成一个接口，因此就有了类型、方法集和值。</p>
 <p><code>reflect.TypeOf()</code> 函数返回 <code>reflect.Type</code>，它有些方法可以让你查出值的类型。</p>
 <p>
-        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161337060.svg">
-            <img class="mx-auto" alt="img" src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161337060.svg" />
+        <a data-fancybox="gallery" href="https://pic.crazytaxii.com/reflect-type.svg">
+            <img class="mx-auto" alt="img" src="https://pic.crazytaxii.com/reflect-type.svg" />
         </a>
     </p>
 <div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
@@ -1261,8 +1430,8 @@
 </div><h4 id="reflectmethod检查方法集">reflect.Method（检查方法集）</h4>
 <p><code>reflect.Type</code> 类型也允许访问 <code>itab</code> 部分来提取接口的方法信息。</p>
 <p>
-        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161336220.svg">
-            <img class="mx-auto" alt="img" src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161336220.svg" />
+        <a data-fancybox="gallery" href="https://pic.crazytaxii.com/reflect-method.svg">
+            <img class="mx-auto" alt="img" src="https://pic.crazytaxii.com/reflect-method.svg" />
         </a>
     </p>
 <div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
@@ -1356,8 +1525,8 @@
 <p>到此为止我们已经讨论了如何查看类型和方法，最后 <code>reflect.Value</code> 提供了接口中存储的真实值的信息。</p>
 <p>与 <code>reflect.Value</code> 相关的方法必然将类型信息与真实值联合。举个例子，要提取结构体的字段，反射包必须结合接口的布局信息——尤其是字段的信息和 <code>_type</code> 中存储的字段偏移量还有 <code>*data</code> 指向的真实值。</p>
 <p>
-        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161338608.svg">
-            <img class="mx-auto" alt="img" src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207161338608.svg" />
+        <a data-fancybox="gallery" href="https://pic.crazytaxii.com/reflect-value.svg">
+            <img class="mx-auto" alt="img" src="https://pic.crazytaxii.com/reflect-value.svg" />
         </a>
     </p>
 <div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
@@ -1713,6 +1882,14 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/" title="微服务一些概念">微服务一些概念</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/Golang%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E9%9B%86%E9%94%A6/" title="Golang编程思想集锦">Golang编程思想集锦</a>
+    </li>
+    
+    <li>
         <a href="https://cold-bin.github.io/post/%E8%AF%A6%E8%A7%A3Go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/" title="详解Go中的rune类型">详解Go中的rune类型</a>
     </li>
     
@@ -1744,14 +1921,6 @@
         <a href="https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/" title="集中式与分布式">集中式与分布式</a>
     </li>
     
-    <li>
-        <a href="https://cold-bin.github.io/post/API%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9%E6%80%A7%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" title="API向前兼容性的解决方案">API向前兼容性的解决方案</a>
-    </li>
-    
-    <li>
-        <a href="https://cold-bin.github.io/post/go%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" title="Go测试与性能优化">Go测试与性能优化</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -1763,7 +1932,7 @@
     
     <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
     
-    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (9)</a></li>
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (11)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (1)</a></li>
     
@@ -1778,6 +1947,8 @@
     
     <a href="https://cold-bin.github.io/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/">api向前兼容</a>
     
+    <a href="https://cold-bin.github.io/tags/go%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/">go编程思想</a>
+    
     <a href="https://cold-bin.github.io/tags/https/">https</a>
     
     <a href="https://cold-bin.github.io/tags/rune%E7%B1%BB%E5%9E%8B/">rune类型</a>
@@ -1791,6 +1962,8 @@
     <a href="https://cold-bin.github.io/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">单元测试</a>
     
     <a href="https://cold-bin.github.io/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90/">命令行参数解析</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
     
     <a href="https://cold-bin.github.io/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
     
