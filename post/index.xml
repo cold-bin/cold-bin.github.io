@@ -35,6 +35,15 @@
     </item>
     
     <item>
+      <title>RPC与微服务</title>
+      <link>https://cold-bin.github.io/post/RPC%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/</link>
+      <pubDate>Sat, 06 Aug 2022 13:52:34 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/RPC%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/</guid>
+      <description>RPC与微服务 一、RPC 1. 什么是RPC RPC(即：Remote Procedure Call) 远程过程调用，简单地理解是一个节点请求另一个节点提供的服务。当然这两个节点可能部署在不同的主机上，也可能是相同的主机上，但是两个节点是进程隔离级别。 对应RPC的是，本地过程调用。调用本地代码里的某个函数就是最常见的</description>
+    </item>
+    
+    <item>
       <title>Go的结构体内存对齐</title>
       <link>https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/</link>
       <pubDate>Sun, 17 Jul 2022 15:26:09 +0800</pubDate>
