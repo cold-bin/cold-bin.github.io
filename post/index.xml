@@ -6,7 +6,16 @@
     <description>Recent content in Posts on cold bin&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 19 Aug 2022 10:13:32 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 21 Aug 2022 13:52:34 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>RPC与微服务</title>
+      <link>https://cold-bin.github.io/post/RPC%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/</link>
+      <pubDate>Sun, 21 Aug 2022 13:52:34 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/RPC%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/</guid>
+      <description>RPC与微服务 一、RPC 1. 什么是RPC RPC(即：Remote Procedure Call) 远程过程调用，简单地理解是一个节点请求另一个节点提供的服务。当然这两个节点可能部署在不同的主机上，也可能是相同的主机上，但是两个节点是进程隔离级别。 对应RPC的是，本地过程调用。调用本地代码里的某个函数就是最常见的</description>
+    </item>
+    
     <item>
       <title>微服务一些概念</title>
       <link>https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/</link>
@@ -32,15 +41,6 @@
       
       <guid>https://cold-bin.github.io/post/%E8%AF%A6%E8%A7%A3Go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/</guid>
       <description>Unicode编码和utf-8编码的关系 需要注意的是，Unicode 只是一个符号集，它只规定了符号的二进制代码，却没有规定这个二进制代码应该如何存储。 比如，汉字&amp;rsquo;严&amp;rsquo;的 Unicode 是十六进制数4E25，转换成二进制数足足有15位（100111000100101），也</description>
-    </item>
-    
-    <item>
-      <title>RPC与微服务</title>
-      <link>https://cold-bin.github.io/post/RPC%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/</link>
-      <pubDate>Sat, 06 Aug 2022 13:52:34 +0800</pubDate>
-      
-      <guid>https://cold-bin.github.io/post/RPC%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/</guid>
-      <description>RPC与微服务 一、RPC 1. 什么是RPC RPC(即：Remote Procedure Call) 远程过程调用，简单地理解是一个节点请求另一个节点提供的服务。当然这两个节点可能部署在不同的主机上，也可能是相同的主机上，但是两个节点是进程隔离级别。 对应RPC的是，本地过程调用。调用本地代码里的某个函数就是最常见的</description>
     </item>
     
     <item>
