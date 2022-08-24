@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>MySQL基础 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/MySQL%E5%9F%BA%E7%A1%80/</link>
+    <description>Recent content in MySQL基础 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 24 Aug 2022 15:37:22 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/MySQL%E5%9F%BA%E7%A1%80/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL基础篇</title>
+      <link>https://cold-bin.github.io/post/MySQL%E5%9F%BA%E7%A1%80%E7%AF%87/</link>
+      <pubDate>Wed, 24 Aug 2022 15:37:22 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/MySQL%E5%9F%BA%E7%A1%80%E7%AF%87/</guid>
+      <description>导入表的问题 导入数据时外键约束问题 数据导入指令： 1 source d:\xxx.sql 通过FOREIGN_KEY_CHECKS解决，用法如下： 1 2 set FOREIGN_KEY_CHECKS=0; #在导入前设置为不检查外键约束 set FOREIGN_KEY_CHECKS=1; #在导入后恢复检查外键约束 第三章_最基本的SELECT语句 1. SQL语言的规则和规范 1) 基本规则 SQL 可以写在一行或者多行。为了提高可读</description>
+    </item>
+    
+  </channel>
+</rss>
