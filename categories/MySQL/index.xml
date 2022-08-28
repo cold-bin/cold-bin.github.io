@@ -16,5 +16,14 @@
       <description>导入表的问题 导入数据时外键约束问题 数据导入指令： 1 source d:\xxx.sql 通过FOREIGN_KEY_CHECKS解决，用法如下： 1 2 set FOREIGN_KEY_CHECKS=0; #在导入前设置为不检查外键约束 set FOREIGN_KEY_CHECKS=1; #在导入后恢复检查外键约束 第三章_最基本的SELECT语句 1. SQL语言的规则和规范 1) 基本规则 SQL 可以写在一行或者多行。为了提高可读</description>
     </item>
     
+    <item>
+      <title>Gorm使用补充点</title>
+      <link>https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E8%A1%A5%E5%85%85%E7%82%B9/</link>
+      <pubDate>Sat, 20 Aug 2022 12:01:57 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E8%A1%A5%E5%85%85%E7%82%B9/</guid>
+      <description>本文主要补充一些gorm的使用技巧，完整的gorm使用移步官方文档gorm官方文档 总结 配置单数表名, 再也不用写TableName 使用DB前先db.model, 万无一失 CreatedAt, UpdatedAt, mysql类型用datetime(3)(毫秒) 支持db.Create创建和批量创建 BeforeCreate创建</description>
+    </item>
+    
   </channel>
 </rss>

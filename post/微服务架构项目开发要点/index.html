@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>微服务架构项目开发要点 | cold bin&#39;s blog</title>
+    <meta property="og:title" content="微服务架构项目开发要点 - cold bin&#39;s blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2022-08-27T15:15:46&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2022-08-27T15:15:46&#43;08:00'>
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="微服务架构项目开发要点">
+        
+    <meta name="author" content="cold bin">
+    <meta property="og:url" content="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E8%A6%81%E7%82%B9/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://cold-bin.github.io">
+                        cold bin&#39;s blog
+                    </a>
+                
+                
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://cold-bin.github.io">首页</a>
+                    
+                    <a  href="https://cold-bin.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://cold-bin.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+
+
+<aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details >
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">Table of Contents</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#%e5%be%ae%e6%9c%8d%e5%8a%a1%e6%9e%b6%e6%9e%84%e9%a1%b9%e7%9b%ae%e5%bc%80%e5%8f%91%e8%a6%81%e7%82%b9" aria-label="微服务架构项目开发要点">微服务架构项目开发要点</a><ul>
+                            
+                    <li>
+                        <a href="#%e8%a6%81%e7%82%b9%e4%b8%80api-%e7%bd%91%e5%85%b3" aria-label="要点一：API 网关">要点一：API 网关</a></li>
+                    <li>
+                        <a href="#%e8%a6%81%e7%82%b9%e4%ba%8c%e6%97%a0%e7%8a%b6%e6%80%81%e5%8c%96" aria-label="要点二：无状态化">要点二：无状态化</a></li>
+                    <li>
+                        <a href="#%e8%a6%81%e7%82%b9%e4%b8%89%e6%95%b0%e6%8d%ae%e5%ba%93%e7%9a%84%e6%a8%aa%e5%90%91%e6%89%a9%e5%b1%95" aria-label="要点三：数据库的横向扩展">要点三：数据库的横向扩展</a></li>
+                    <li>
+                        <a href="#%e8%a6%81%e7%82%b9%e5%9b%9b%e7%bc%93%e5%ad%98" aria-label="要点四：缓存">要点四：缓存</a></li>
+                    <li>
+                        <a href="#%e8%a6%81%e7%82%b9%e4%ba%94%e6%9c%8d%e5%8a%a1%e6%8b%86%e5%88%86%e5%92%8c%e6%9c%8d%e5%8a%a1%e5%8f%91%e7%8e%b0" aria-label="要点五：服务拆分和服务发现">要点五：服务拆分和服务发现</a></li>
+                    <li>
+                        <a href="#%e8%a6%81%e7%82%b9%e5%85%ad%e6%9c%8d%e5%8a%a1%e7%bc%96%e6%8e%92%e4%b8%8e%e5%bc%b9%e6%80%a7%e4%bc%b8%e7%bc%a9" aria-label="要点六：服务编排与弹性伸缩">要点六：服务编排与弹性伸缩</a></li>
+                    <li>
+                        <a href="#%e8%a6%81%e7%82%b9%e4%b8%83%e7%bb%9f%e4%b8%80%e9%85%8d%e7%bd%ae%e4%b8%ad%e5%bf%83" aria-label="要点七：统一配置中心">要点七：统一配置中心</a></li>
+                    <li>
+                        <a href="#%e8%a6%81%e7%82%b9%e5%85%ab%e7%bb%9f%e4%b8%80%e7%9a%84%e6%97%a5%e5%bf%97%e4%b8%ad%e5%bf%83" aria-label="要点八：统一的日志中心">要点八：统一的日志中心</a></li>
+                    <li>
+                        <a href="#%e8%a6%81%e7%82%b9%e4%b9%9d%e7%86%94%e6%96%ad%e9%99%90%e6%b5%81%e9%99%8d%e7%ba%a7" aria-label="要点九：熔断，限流，降级">要点九：熔断，限流，降级</a></li>
+                    <li>
+                        <a href="#%e8%a6%81%e7%82%b9%e5%8d%81%e5%85%a8%e6%96%b9%e4%bd%8d%e7%9a%84%e7%9b%91%e6%8e%a7" aria-label="要点十：全方位的监控">要点十：全方位的监控</a></li>
+                    <li>
+                        <a href="#%e7%a4%ba%e4%be%8b%e6%9e%b6%e6%9e%84" aria-label="示例架构">示例架构</a>
+                    </li>
+                </ul>
+                </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+<div class="res-cons">
+
+    <article class="post">
+        <div class="res-cons">
+
+        <header>
+            <h1 class="post-title">微服务架构项目开发要点</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年8月27日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1'>微服务</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        
+        <div class="post-content">
+            <h2 id="微服务架构项目开发要点">微服务架构项目开发要点</h2>
+<p>随着系统用户逐日增长，原来的单机架构集群部署的方式，虽然能够顶得住流量顶峰地倾泄，但是，系统越来越复杂。集群方式部署的单机架构，终究是单机架构，当系统设计得很复杂时，我们需要把整个单机系统都停掉，然后修bug、添加新功能、回归测试、上线发布。试想一下：在这个过程里，如果出现了一个小小的bug，你就不得不为了修复bug而把所有服务都停掉，这样的作法显然对用户得体验不好。归根结底，是因为项目是单机架构的。如果采用分布式、微服务架构来进行开发并部署项目，那么，原来单机架构项目的诸多功能被拆分成多个服务分别开发、分别部署，每个独立的服务都分布在不同的进程空间、甚至不同的主机上。这样，一个服务挂掉或者修复bug测试等，显然不会再影响其他服务的运行。将原来粒度高的单价架构项目演变成粒度更小的微服务架构，这样就方便开发、部署和维护了。</p>
+<h3 id="要点一api-网关">要点一：API 网关</h3>
+<blockquote>
+<p>在实施微服务的过程中，不免要面临服务的聚合与拆分，当后端服务的拆分相对比较频繁的时候，往往需要一个统一的入口，将不同的请求路由到不同的服务，这就不得不提到API网关，</p>
+<p>API网关优势：</p>
+<p>简单的数据聚合可以在网关层完成，避免后台复杂调用
+进行统一的认证和鉴权，尽管服务之间的相互调用比较复杂，接口也会比较多，API 网关往往只暴露必须的对外接口，并且对接口进行统一的认证和鉴权，使得内部的服务相互访问的时候，不用再进行认证和鉴权，效率会比较高。
+设定一定的策略，进行 A/B 测试，蓝绿发布，预发环境导流等等。API 网关往往是无状态的，可以横向扩展，从而不会成为性能瓶颈。</p>
+</blockquote>
+<h3 id="要点二无状态化">要点二：无状态化</h3>
+<blockquote>
+<p>影响应用迁移和横向扩展的重要因素就是应用的状态，无状态服务，是要把这个状态往外移，将 Session 数据，文件数据，结构化数据保存在后端统一的存储中，从而应用仅仅包含商务逻辑。
+状态是不可避免的，例如 ZooKeeper, DB，Cache 等，把这些所有有状态的东西收敛在一个非常集中的集群里面，因此整个业务就分两部分，一个是无状态的部分，一个是有状态的部分。
+无状态的部分能实现两点，一是跨机房随意地部署，也即迁移性，一是弹性伸缩，很容易地进行扩容。
+有状态的部分，如 DB，Cache，ZooKeeper 有自己的高可用机制，要利用到他们自己高可用的机制来实现这个状态的集群。
+虽说无状态化，但是当前处理的数据，还是会在内存里面的，当前的进程挂掉数据，肯定也是有一部分丢失的，为了实现这一点，服务要有重试的机制，接口要有幂等的机制，通过服务发现机制，重新调用一次后端服务的另一个实例就可以了。</p>
+</blockquote>
+<h3 id="要点三数据库的横向扩展">要点三：数据库的横向扩展</h3>
+<blockquote>
+<p>数据库保存状态，是最重要的也是最容易出现瓶颈的。有了分布式数据库可以使数据库的性能可以随着节点增加线性地增加。
+分布式数据库最最下面是 RDS，是主备的，通过 MySql 的内核开发能力，我们能够实现主备切换数据零丢失，所以数据落在这个 RDS 里面，是非常放心的，哪怕是挂了一个节点，切换完了以后，你的数据也是不会丢的。
+双机房的部署，DDB 开发了一个数据运河 NDC 的组件，可以使得不同的 DDB 之间在不同的机房里面进行同步，这时候不但在一个数据中心里面是分布式的，在多个数据中心里面也会有一个类似双活的一个备份，高可用性有非常好的保证。</p>
+</blockquote>
+<h3 id="要点四缓存">要点四：缓存</h3>
+<blockquote>
+<p>在高并发场景下缓存是非常重要的。要有层次的缓存，使得数据尽量靠近用户。数据越靠近用户能承载的并发量也越大，响应时间越短。尤其对于静态数据，可以过一段时间去取一次，而且也没必要到数据中心去取，可以通过 CDN，将数据缓存在距离客户端最近的节点上，进行就近下载。有时候 CDN 里面没有，还是要回到数据中心去下载，称为回源，在数据中心的最外层，我们称为接入层，可以设置一层缓存，将大部分的请求拦截，从而不会对后台的数据库造成压力。
+如果是动态数据，还是需要访问应用，通过应用中的商务逻辑生成，或者去数据库读取，为了减轻数据库的压力，应用可以使用本地的缓存，也可以使用分布式缓存，如 Memcached 或者 Redis，使得大部分请求读取缓存即可，不必访问数据库。
+当然动态数据还可以做一定的静态化，也即降级成静态数据，从而减少后端的压力。</p>
+</blockquote>
+<h3 id="要点五服务拆分和服务发现">要点五：服务拆分和服务发现</h3>
+<blockquote>
+<p>当应用变化快的时候，往往要考虑将比较大的服务拆分为一系列小的服务。每个微服务之间是独立的，不耦合，例如一般不会出现多个服务对同一个MySQL数据库进行操作。
+这样第一个好处就是开发比较独立，当非常多的人在维护同一个代码仓库的时候，往往对代码的修改就会相互影响，常常会出现我没改什么测试就不通过了，而且代码提交的时候，经常会出现冲突，需要进行代码合并，大大降低了开发的效率。
+另一个好处就是上线独立，物流模块对接了一家新的快递公司，需要连同下单一起上线，这是非常不合理的行为，我没改还要我重启，我没改还让我发布，我没改还要我开会，都是应该拆分的时机。
+另外再就是高并发时段的扩容，往往只有最关键的下单和支付流程是核心，只要将关键的交易链路进行扩容即可，如果这时候附带很多其他的服务，扩容即是不经济的，也是很有风险的。
+再就是容灾和降级，在大促的时候，可能需要牺牲一部分的边角功能，但是如果所有的代码耦合在一起，很难将边角的部分功能进行降级。
+当然拆分完毕以后，应用之间的关系就更加复杂了，因而需要服务发现的机制，来管理应用相互的关系，实现自动的修复，自动的关联，自动的负载均衡，自动的容错切换。</p>
+</blockquote>
+<h3 id="要点六服务编排与弹性伸缩">要点六：服务编排与弹性伸缩</h3>
+<blockquote>
+<p>服务拆分了，进程就会非常的多，因而需要服务编排来管理服务之间的依赖关系，以及将服务的部署代码化，也就是我们常说的基础设施即代码。这样对于服务的发布，更新，回滚，扩容，缩容，都可以通过修改编排文件来实现，从而增加了可追溯性，易管理性，和自动化的能力。
+既然编排文件也可以用代码仓库进行管理，就可以实现一百个服务中，更新其中五个服务，只要修改编排文件中的五个服务的配置就可以，当编排文件提交的时候，代码仓库自动触发自动部署升级脚本，从而更新线上的环境，当发现新的环境有问题时，当然希望将这五个服务原子性地回滚，如果没有编排文件，需要人工记录这次升级了哪五个服务。有了编排文件，只要在代码仓库里面 revert，就回滚到上一个版本了。所有的操作在代码仓库里都是可以看到的。</p>
+</blockquote>
+<h3 id="要点七统一配置中心">要点七：统一配置中心</h3>
+<blockquote>
+<p>服务拆分以后，服务的数量非常多，如果所有的配置都以配置文件的方式放在应用本地的话，非常难以管理，可以想象当有几百上千个进程中有一个配置出现了问题，是很难将它找出来的，因而需要有统一的配置中心，来管理所有的配置，进行统一的配置下发。
+在微服务中，配置往往分为几类，一类是几乎不变的配置，这种配置可以直接打在容器镜像里面，第二类是启动时就会确定的配置，这种配置往往通过环境变量，在容器启动的时候传进去，第三类就是统一的配置，需要通过配置中心进行下发，例如在大促的情况下，有些功能需要降级，哪些功能可以降级，哪些功能不能降级，都可以在配置文件中统一配置。</p>
+</blockquote>
+<h3 id="要点八统一的日志中心">要点八：统一的日志中心</h3>
+<blockquote>
+<p>同样是进程数目非常多的时候，很难对成千上百个容器，一个一个登录进去查看日志，所以需要统一的日志中心来收集日志，为了使收集到的日志容易分析，对于日志的规范，需要有一定的要求，当所有的服务都遵守统一的日志规范的时候，在日志中心就可以对一个交易流程进行统一的追溯。例如在最后的日志搜索引擎中，搜索交易号，就能够看到在哪个过程出现了错误或者异常</p>
+</blockquote>
+<h3 id="要点九熔断限流降级">要点九：熔断，限流，降级</h3>
+<blockquote>
+<p>服务要有熔断，限流，降级的能力，当一个服务调用另一个服务，出现超时的时候，应及时返回，而非阻塞在那个地方，从而影响其他用户的交易，可以返回默认的托底数据。
+当一个服务发现被调用的服务，因为过于繁忙，线程池满，连接池满，或者总是出错，则应该及时熔断，防止因为下一个服务的错误或繁忙，导致本服务的不正常，从而逐渐往前传导，导致整个应用的雪崩。
+当发现整个系统的确负载过高的时候，可以选择降级某些功能或某些调用，保证最重要的交易流程的通过，以及最重要的资源全部用于保证最核心的流程。
+还有一种手段就是限流，当既设置了熔断策略，又设置了降级策略，通过全链路的压力测试，应该能够知道整个系统的支撑能力，因而就需要制定限流策略，保证系统在测试过的支撑能力范围内进行服务，超出支撑能力范围的，可拒绝服务。当你下单的时候，系统弹出对话框说 “系统忙，请重试”，并不代表系统挂了，而是说明系统是正常工作的，只不过限流策略起到了作用。</p>
+</blockquote>
+<h3 id="要点十全方位的监控">要点十：全方位的监控</h3>
+<blockquote>
+<p>当系统非常复杂的时候，要有统一的监控，主要有两个方面，一个是是否健康，一个是性能瓶颈在哪里。当系统出现异常的时候，监控系统可以配合告警系统，及时地发现，通知，干预，从而保障系统的顺利运行。
+当压力测试的时候，往往会遭遇瓶颈，也需要有全方位的监控来找出瓶颈点，同时能够保留现场，从而可以追溯和分析，进行全方位的优化。</p>
+</blockquote>
+<h3 id="示例架构">示例架构</h3>
+<p>
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202208271617810.png">
+            <img class="mx-auto" alt="image-20220827161741928" src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202208271617810.png" />
+        </a>
+    </p>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://cold-bin.github.io">cold bin</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E8%A6%81%E7%82%B9/">https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E8%A6%81%E7%82%B9/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/git%E4%B9%8Bcommit%E8%A7%84%E8%8C%83%E6%8C%87%E5%8D%97/">Git之commit规范指南</a></li>
+        
+        <li><a href="/post/git%E5%B7%A5%E4%BD%9C%E6%B5%81/">Git工作流</a></li>
+        
+        <li><a href="/post/MySQL%E5%9F%BA%E7%A1%80%E7%AF%87/">MySQL基础篇</a></li>
+        
+        <li><a href="/post/RPC%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/">RPC与微服务</a></li>
+        
+        <li><a href="/post/gorm%E4%BD%BF%E7%94%A8%E8%A1%A5%E5%85%85%E7%82%B9/">Gorm使用补充点</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            没有标签
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "my-blog-comment"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+    
+    
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://cold-bin.github.io">cold bin&#39;s blog By cold bin</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.2.8/raphael.min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/flowchart/1.12.2/flowchart.min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+                if (!window.flowchart) return;
+                const blocks = document.querySelectorAll('pre code.language-flowchart, pre code.language-flow');
+                for (let i = 0; i < blocks.length; i++) {
+                    const block = blocks[i];
+                    const rootElement = block.parentNode;
+                    const container = document.createElement('div');
+                    const id = `js-flowchart-diagrams-${i}`;
+                    container.id = id;
+                    container.className = 'align-center';
+                    container.setAttribute("style", "overFlow-x:auto");
+                    rootElement.parentNode.replaceChild(container, rootElement);
+                    const diagram = flowchart.parse(block.childNodes[0].nodeValue);
+                    diagram.drawSVG(id, window.flowchartDiagramsOptions ? window.flowchartDiagramsOptions : {});
+                }
+            })();
+        </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+            if (!window.Diagram) return;
+            const blocks = document.querySelectorAll('pre code.language-sequence');
+            for (let i = 0; i < blocks.length; i++) {
+                const block = blocks[i];
+                
+                const rootElement = block.parentNode;
+                const container = document.createElement('div');
+                const id = `js-sequence-diag-${i}`;
+                container.id = id;
+                container.className = 'align-center';
+                container.setAttribute("style", "overFlow-x:auto");
+                rootElement.parentNode.replaceChild(container, rootElement);
+
+                const diagram = Diagram.parse(block.childNodes[0].nodeValue);
+                diagram.drawSVG(id, window.sequenceDiagramsOptions
+                    ? window.sequenceDiagramsOptions
+                    : { theme: 'simple' });
+            }
+        })();
+        </script><script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://cold-bin.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://cold-bin.github.io">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E8%A6%81%E7%82%B9/" title="微服务架构项目开发要点">微服务架构项目开发要点</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/git%E4%B9%8Bcommit%E8%A7%84%E8%8C%83%E6%8C%87%E5%8D%97/" title="Git之commit规范指南">Git之commit规范指南</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/git%E5%B7%A5%E4%BD%9C%E6%B5%81/" title="Git工作流">Git工作流</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/MySQL%E5%9F%BA%E7%A1%80%E7%AF%87/" title="MySQL基础篇">MySQL基础篇</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/RPC%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/" title="RPC与微服务">RPC与微服务</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E8%A1%A5%E5%85%85%E7%82%B9/" title="Gorm使用补充点">Gorm使用补充点</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/" title="微服务一些概念">微服务一些概念</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/Golang%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E9%9B%86%E9%94%A6/" title="Golang编程思想集锦">Golang编程思想集锦</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E8%AF%A6%E8%A7%A3Go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/" title="详解Go中的rune类型">详解Go中的rune类型</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/" title="Go的结构体内存对齐">Go的结构体内存对齐</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (12)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/MySQL/">MySQL (2)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/git/">git (2)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/gorm/">gorm (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (1)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://cold-bin.github.io/tags/GRPC/">GRPC</a>
+    
+    <a href="https://cold-bin.github.io/tags/Makefile/">Makefile</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E5%9F%BA%E7%A1%80/">MySQL基础</a>
+    
+    <a href="https://cold-bin.github.io/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/">api向前兼容</a>
+    
+    <a href="https://cold-bin.github.io/tags/git%E7%9A%84commit%E8%A7%84%E8%8C%83/">git的commit规范</a>
+    
+    <a href="https://cold-bin.github.io/tags/go%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/">go编程思想</a>
+    
+    <a href="https://cold-bin.github.io/tags/https/">https</a>
+    
+    <a href="https://cold-bin.github.io/tags/rune%E7%B1%BB%E5%9E%8B/">rune类型</a>
+    
+    <a href="https://cold-bin.github.io/tags/tls%E8%AF%81%E4%B9%A6/">tls证书</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">内存对齐</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E9%9B%86%E4%B8%AD%E5%BC%8F/">分布式与集中式</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">单元测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90/">命令行参数解析</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93java/">数据结构与算法总结，java</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/">版本控制</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/">网络测试</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://github.com/cold-bin" title="GitHub">GitHub</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://blog.csdn.net/qq_57467091" title="CSDN">CSDN</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://cold-bin.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
