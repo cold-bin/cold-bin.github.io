@@ -203,35 +203,6 @@
     <article class="post">
         <header>
             <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E8%A1%A5%E5%85%85%E7%82%B9/" title="Gorm使用补充点">Gorm使用补充点</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年8月20日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/MySQL'>MySQL</a></span>
-            
-            <span class="meta-category"><a href='/categories/gorm'>gorm</a></span>
-            
-            <span class="meta-category"><a href='/categories/%E6%95%B0%E6%8D%AE%E5%BA%93'>数据库</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            本文主要补充一些gorm的使用技巧，完整的gorm使用移步官方文档gorm官方文档 总结 配置单数表名, 再也不用写TableName 使用DB前先db.model, 万无一失 CreatedAt, UpdatedAt, mysql类型用datetime(3)(毫秒) 支持db.Create创建和批量创建 BeforeCreate创建……
-        </div>
-        <p class="readmore"><a href="https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E8%A1%A5%E5%85%85%E7%82%B9/">阅读全文</a></p>
-    </article>
-    
-    
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
                 <a href="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/" title="微服务一些概念">微服务一些概念</a>
             </h1>
         </header>
@@ -325,6 +296,31 @@
             一. 什么是内存对齐, 为啥要内存对齐？ 在解释什么是内存对齐之前，我们需要先了解一下CPU和内存数据交互的过程。CPU和内存是通过总线进行数据交互的。其中地址总线用来传递CPU需要的数据地址，内存将数据通过数据总线传递给CPU， 或者CPU将数据通过数据总线回传给内存。 首先我们需要知道……
         </div>
         <p class="readmore"><a href="https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/" title="Flag包的在go项目的实践">Flag包的在go项目的实践</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年7月17日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            阅读本文前，需具备flag基础 通常我们有种需求：可以在不修改程序源码的情况下，控制一些程序内部的变化。比如配置文件，我们可以手动更改配置文件，也可以在程序启动时，通过命令行参数在程序运行时，给程序提供一些配置选项，这样可以方便地不需要更改程序源码就可以达到在外部控制程序内部一些变……
+        </div>
+        <p class="readmore"><a href="https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/">阅读全文</a></p>
     </article>
     
     
@@ -425,10 +421,6 @@
     </li>
     
     <li>
-        <a href="https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E8%A1%A5%E5%85%85%E7%82%B9/" title="Gorm使用补充点">Gorm使用补充点</a>
-    </li>
-    
-    <li>
         <a href="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/" title="微服务一些概念">微服务一些概念</a>
     </li>
     
@@ -444,6 +436,10 @@
         <a href="https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/" title="Go的结构体内存对齐">Go的结构体内存对齐</a>
     </li>
     
+    <li>
+        <a href="https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/" title="Flag包的在go项目的实践">Flag包的在go项目的实践</a>
+    </li>
+    
 </ul>
     </section>
 
@@ -457,15 +453,11 @@
     
     <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (12)</a></li>
     
-    <li><a href="https://cold-bin.github.io/categories/MySQL/">MySQL (2)</a></li>
+    <li><a href="https://cold-bin.github.io/categories/MySQL/">MySQL (1)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/git/">git (2)</a></li>
     
-    <li><a href="https://cold-bin.github.io/categories/gorm/">gorm (1)</a></li>
-    
     <li><a href="https://cold-bin.github.io/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务 (1)</a></li>
-    
-    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库 (1)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (1)</a></li>
     
