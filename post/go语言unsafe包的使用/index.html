@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>Go语言unsafe包的使用 | cold bin&#39;s blog</title>
+    <meta property="og:title" content="Go语言unsafe包的使用 - cold bin&#39;s blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2022-08-28T14:18:10&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2022-08-28T14:18:10&#43;08:00'>
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="Go语言unsafe包的使用">
+        
+    <meta name="author" content="cold bin">
+    <meta property="og:url" content="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://cold-bin.github.io">
+                        cold bin&#39;s blog
+                    </a>
+                
+                
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://cold-bin.github.io">首页</a>
+                    
+                    <a  href="https://cold-bin.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://cold-bin.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+
+
+<aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details >
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">Table of Contents</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#unsafe%e4%bd%bf%e7%94%a8%e5%8f%8a%e5%ba%95%e5%b1%82" aria-label="unsafe使用及底层">unsafe使用及底层</a><ul>
+                            
+                    <li>
+                        <a href="#unsafe%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86" aria-label="unsafe实现原理">unsafe实现原理</a></li>
+                    <li>
+                        <a href="#unsafepointer%e5%9f%ba%e6%9c%ac%e4%bd%bf%e7%94%a8" aria-label="unsafe.Pointer基本使用"><strong><code>unsafe.Pointer</code>基本使用</strong></a></li>
+                    <li>
+                        <a href="#sizeofalignofoffsetof%e4%b8%89%e4%b8%aa%e5%87%bd%e6%95%b0%e7%9a%84%e5%9f%ba%e6%9c%ac%e4%bd%bf%e7%94%a8" aria-label="Sizeof、Alignof、Offsetof三个函数的基本使用"><code>Sizeof</code>、<code>Alignof</code>、<code>Offsetof</code>三个函数的基本使用</a></li>
+                    <li>
+                        <a href="#%e7%bb%8f%e5%85%b8%e5%ba%94%e7%94%a8string%e4%b8%8ebyte%e7%9a%84%e7%9b%b8%e4%ba%92%e8%bd%ac%e6%8d%a2" aria-label="经典应用：string与[]byte的相互转换">经典应用：string与[]byte的相互转换</a>
+                    </li>
+                </ul>
+                </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+<div class="res-cons">
+
+    <article class="post">
+        <div class="res-cons">
+
+        <header>
+            <h1 class="post-title">Go语言unsafe包的使用</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年8月28日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        
+        <div class="post-content">
+            <h1 id="unsafe使用及底层">unsafe使用及底层</h1>
+<h2 id="unsafe实现原理">unsafe实现原理</h2>
+<p>在使用之前我们先来看一下unsafe包的源码部分，标准库unsafe包中只提供了3种方法，分别是:</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">Sizeof</span>(x ArbitraryType) <span style="color:#458;font-weight:bold">uintptr</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">Offsetof</span>(x ArbitraryType) <span style="color:#458;font-weight:bold">uintptr</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">Alignof</span>(x ArbitraryType) <span style="color:#458;font-weight:bold">uintptr</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>Sizeof(x ArbitrayType)</code>方法主要作用是用返回类型<code>x</code>所占据的字节数，但并不包含<code>x</code>所指向的内容的大小，与C语言标准库中的<code>Sizeof()</code>方法功能一样</li>
+<li><code>Offsetof(x ArbitraryType)</code>方法主要作用是返回结构体成员在内存中的位置离结构体起始处(结构体的第一个字段的偏移量都是0)的字节数，即偏移量，我们在注释中看一看到其入参必须是一个结构体，其返回值是一个常量。</li>
+<li><code>Alignof(x ArbitratyType)</code>的主要作用是返回一个类型的对齐值，也可以叫做对齐系数或者对齐倍数。对齐值是一个和内存对齐有关的值，合理的内存对齐可以提高内存读写的性能。一般对齐值是2^n^，最大不会超过8(受内存对齐影响). 获取对齐值还可以使用反射包的函数，也就是说：<code>unsafe.Alignof(x)</code>等价于<code>reflect.TypeOf(x).Align()</code>。对于任意类型的变量<code>x</code>，<code>unsafe.Alignof(x)</code>至少为1。对于<code>struct</code>结构体类型的变量<code>x</code>，计算<code>x</code>每一个字段<code>f</code>的<code>unsafe.Alignof(x，f)</code>，<code>unsafe.Alignof(x)</code>等于其中的最大值。对于数组类型的变量<code>x</code>，<code>unsafe.Alignof(x)</code>等于构成数组的元素类型的对齐倍数。没有任何字段的空结构体和没有任何元素的数组占据的内存空间大小为0，不同大小为0的变量可能指向同一块地址。</li>
+</ul>
+<p>细心的朋友会发发现这三个方法返回的都是<code>uintptr</code>类型，这个目的就是可以和<code>unsafe.poniter</code>类型相互转换，因为<code>*T</code>是不能计算偏移量的，也不能进行计算，但是<code>uintptr</code>是可以的，所以可以使用<code>uintptr</code>类型进行计算，这样就可以可以访问特定的内存了，达到对不同的内存读写的目的。三个方法的入参都是<code>ArbitraryType</code>类型，代表着任意类型的意思，同时还提供了一个<code>Pointer</code>指针类型，即像<code>void *</code>一样的通用型指针。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> ArbitraryType <span style="color:#458;font-weight:bold">int</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> Pointer <span style="color:#000;font-weight:bold">*</span>ArbitraryType
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// uintptr 是一个整数类型，它足够大，可以存储指针的值，当然已经不是指针了，不是地址
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">type</span> <span style="color:#458;font-weight:bold">uintptr</span> <span style="color:#458;font-weight:bold">uintptr</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面说了这么多，可能会有点懵，在这里对三种指针类型做一个总结：</p>
+<ul>
+<li><code>*T</code>：普通类型指针类型，用于传递对象地址，不能进行指针运算。</li>
+<li><code>unsafe.poniter</code>：通用指针类型，用于转换不同类型的指针，不能进行指针运算，不能读取内存存储的值(需转换到某一类型的普通指针)</li>
+<li><code>uintptr</code>：用于指针运算，GC不把<code>uintptr</code>当指针，<code>uintptr</code>无法持有对象。<strong><code>uintptr</code>类型的目标会被回收，所以一般不要独立出一个<code>uintptr</code>类型的变量，可能莫名其妙就被GC掉了</strong>。</li>
+</ul>
+<p>三者关系就是：<code>unsafe.Pointer</code>是桥梁，可以让任意类型的指针实现相互转换，也可以将任意类型的指针转换为<code>uintptr</code>进行指针运算，也就说<code>uintptr</code>是用来与<code>unsafe.Pointer</code>打配合，用于指针运算。画个图表示一下：</p>
+<p>
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202208282136228.jpeg">
+            <img class="mx-auto" alt="img" src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202208282136228.jpeg" />
+        </a>
+    </p>
+<p>基本原理就说到这里啦，接下来我们一起来看看如何使用~</p>
+<h2 id="unsafepointer基本使用"><strong><code>unsafe.Pointer</code>基本使用</strong></h2>
+<p>在<code>atomic.Value</code>源码里，看到<code>atomic/value.go</code>中定义了一个<code>ifaceWords</code>结构，其中<code>typ</code>和<code>data</code>字段类型就是<code>unsafe.Poniter</code>，这里使用<code>unsafe.Poniter</code>类型的原因是传入的值就是<code>interface{}</code>类型，使用<code>unsafe.Pointer</code>强转成<code>ifaceWords</code>类型，这样可以把类型和值都保存了下来，方便后面的写入类型检查。截取部分代码如下：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// ifaceWords is interface{} internal representation.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">type</span> ifaceWords <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span> typ  unsafe.Pointer
+</span></span><span style="display:flex;"><span> data unsafe.Pointer
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// Load returns the value set by the most recent Store.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// It returns nil if there has been no call to Store for this Value.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> (v <span style="color:#000;font-weight:bold">*</span>Value) <span style="color:#900;font-weight:bold">Load</span>() (x <span style="color:#000;font-weight:bold">interface</span>{}) {
+</span></span><span style="display:flex;"><span> vp <span style="color:#000;font-weight:bold">:=</span> (<span style="color:#000;font-weight:bold">*</span>ifaceWords)(unsafe.<span style="color:#900;font-weight:bold">Pointer</span>(v))
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">for</span> {
+</span></span><span style="display:flex;"><span>  typ <span style="color:#000;font-weight:bold">:=</span> <span style="color:#900;font-weight:bold">LoadPointer</span>(<span style="color:#000;font-weight:bold">&amp;</span>vp.typ) <span style="color:#998;font-style:italic">// 读取已经存在值的类型
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#998;font-style:italic">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">    ..... 中间省略
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">    **/</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// First store completed. Check type and overwrite data.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>  <span style="color:#000;font-weight:bold">if</span> typ <span style="color:#000;font-weight:bold">!=</span> xp.typ { <span style="color:#998;font-style:italic">//当前类型与要存入的类型做对比
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>   <span style="color:#0086b3">panic</span>(<span style="color:#d14">&#34;sync/atomic: store of inconsistently typed value into Value&#34;</span>)
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面就是源码中使用<code>unsafe.Pointer</code>的一个例子，有一天当你准备读源码时，<code>unsafe.pointer</code>的使用到处可见。好啦，接下来我们写一个简单的例子，看看<code>unsafe.Pointer</code>是如何使用的。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">main</span>()  {
+</span></span><span style="display:flex;"><span> number <span style="color:#000;font-weight:bold">:=</span> <span style="color:#099">5</span>
+</span></span><span style="display:flex;"><span> pointer <span style="color:#000;font-weight:bold">:=</span> <span style="color:#000;font-weight:bold">&amp;</span>number
+</span></span><span style="display:flex;"><span> fmt.<span style="color:#900;font-weight:bold">Printf</span>(<span style="color:#d14">&#34;number:addr:%p, value:%d\n&#34;</span>,pointer,<span style="color:#000;font-weight:bold">*</span>pointer)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> float32Number <span style="color:#000;font-weight:bold">:=</span> (<span style="color:#000;font-weight:bold">*</span><span style="color:#458;font-weight:bold">float32</span>)(unsafe.<span style="color:#900;font-weight:bold">Pointer</span>(pointer))
+</span></span><span style="display:flex;"><span> <span style="color:#000;font-weight:bold">*</span>float32Number = <span style="color:#000;font-weight:bold">*</span>float32Number <span style="color:#000;font-weight:bold">+</span> <span style="color:#099">3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> fmt.<span style="color:#900;font-weight:bold">Printf</span>(<span style="color:#d14">&#34;float64:addr:%p, value:%f\n&#34;</span>,float32Number,<span style="color:#000;font-weight:bold">*</span>float32Number)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>运行结果：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>number:addr:0xc000018090, value:5
+</span></span><span style="display:flex;"><span>float64:addr:0xc000018090, value:3.000000
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>由运行可知使用<code>unsafe.Pointer</code>强制类型转换后指针指向的地址是没有改变，只是类型发生了改变。这个例子本身没什么意义，正常项目中也不会这样使用。</p>
+<p>总结一下基本使用：先把<code>*T</code>类型转换成<code>unsafe.Pointer</code>类型，然后在进行强制转换转成你需要的指针类型即可。</p>
+<h2 id="sizeofalignofoffsetof三个函数的基本使用"><code>Sizeof</code>、<code>Alignof</code>、<code>Offsetof</code>三个函数的基本使用</h2>
+<p>先看一个例子：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> User <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span> Name <span style="color:#458;font-weight:bold">string</span>
+</span></span><span style="display:flex;"><span> Age <span style="color:#458;font-weight:bold">uint32</span>
+</span></span><span style="display:flex;"><span> Gender <span style="color:#458;font-weight:bold">bool</span> <span style="color:#998;font-style:italic">// 男:true 女：false
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">func_example</span>()  {
+</span></span><span style="display:flex;"><span> <span style="color:#998;font-style:italic">// sizeof
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span> fmt.<span style="color:#900;font-weight:bold">Println</span>(unsafe.<span style="color:#900;font-weight:bold">Sizeof</span>(<span style="color:#000;font-weight:bold">true</span>))
+</span></span><span style="display:flex;"><span> fmt.<span style="color:#900;font-weight:bold">Println</span>(unsafe.<span style="color:#900;font-weight:bold">Sizeof</span>(<span style="color:#0086b3">int8</span>(<span style="color:#099">0</span>)))
+</span></span><span style="display:flex;"><span> fmt.<span style="color:#900;font-weight:bold">Println</span>(unsafe.<span style="color:#900;font-weight:bold">Sizeof</span>(<span style="color:#0086b3">int16</span>(<span style="color:#099">10</span>)))
+</span></span><span style="display:flex;"><span> fmt.<span style="color:#900;font-weight:bold">Println</span>(unsafe.<span style="color:#900;font-weight:bold">Sizeof</span>(<span style="color:#0086b3">int</span>(<span style="color:#099">10</span>)))
+</span></span><span style="display:flex;"><span> fmt.<span style="color:#900;font-weight:bold">Println</span>(unsafe.<span style="color:#900;font-weight:bold">Sizeof</span>(<span style="color:#0086b3">int32</span>(<span style="color:#099">190</span>)))
+</span></span><span style="display:flex;"><span> fmt.<span style="color:#900;font-weight:bold">Println</span>(unsafe.<span style="color:#900;font-weight:bold">Sizeof</span>(<span style="color:#d14">&#34;asong&#34;</span>))
+</span></span><span style="display:flex;"><span> fmt.<span style="color:#900;font-weight:bold">Println</span>(unsafe.<span style="color:#900;font-weight:bold">Sizeof</span>([]<span style="color:#458;font-weight:bold">int</span>{<span style="color:#099">1</span>,<span style="color:#099">3</span>,<span style="color:#099">4</span>}))
+</span></span><span style="display:flex;"><span> <span style="color:#998;font-style:italic">// Offsetof
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span> user <span style="color:#000;font-weight:bold">:=</span> User{Name: <span style="color:#d14">&#34;Asong&#34;</span>, Age: <span style="color:#099">23</span>,Gender: <span style="color:#000;font-weight:bold">true</span>}
+</span></span><span style="display:flex;"><span> userNamePointer <span style="color:#000;font-weight:bold">:=</span> unsafe.<span style="color:#900;font-weight:bold">Pointer</span>(<span style="color:#000;font-weight:bold">&amp;</span>user)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> nNamePointer <span style="color:#000;font-weight:bold">:=</span> (<span style="color:#000;font-weight:bold">*</span><span style="color:#458;font-weight:bold">string</span>)(unsafe.<span style="color:#900;font-weight:bold">Pointer</span>(userNamePointer))
+</span></span><span style="display:flex;"><span> <span style="color:#000;font-weight:bold">*</span>nNamePointer = <span style="color:#d14">&#34;Golang梦工厂&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> nAgePointer <span style="color:#000;font-weight:bold">:=</span> (<span style="color:#000;font-weight:bold">*</span><span style="color:#458;font-weight:bold">uint32</span>)(unsafe.<span style="color:#900;font-weight:bold">Pointer</span>(<span style="color:#0086b3">uintptr</span>(userNamePointer) <span style="color:#000;font-weight:bold">+</span> unsafe.<span style="color:#900;font-weight:bold">Offsetof</span>(user.Age)))
+</span></span><span style="display:flex;"><span> <span style="color:#000;font-weight:bold">*</span>nAgePointer = <span style="color:#099">25</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> nGender <span style="color:#000;font-weight:bold">:=</span> (<span style="color:#000;font-weight:bold">*</span><span style="color:#458;font-weight:bold">bool</span>)(unsafe.<span style="color:#900;font-weight:bold">Pointer</span>(<span style="color:#0086b3">uintptr</span>(userNamePointer)<span style="color:#000;font-weight:bold">+</span>unsafe.<span style="color:#900;font-weight:bold">Offsetof</span>(user.Gender)))
+</span></span><span style="display:flex;"><span> <span style="color:#000;font-weight:bold">*</span>nGender = <span style="color:#000;font-weight:bold">false</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> fmt.<span style="color:#900;font-weight:bold">Printf</span>(<span style="color:#d14">&#34;u.Name: %s, u.Age: %d,  u.Gender: %v\n&#34;</span>, user.Name, user.Age,user.Gender)
+</span></span><span style="display:flex;"><span> <span style="color:#998;font-style:italic">// Alignof
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span> <span style="color:#000;font-weight:bold">var</span> b <span style="color:#458;font-weight:bold">bool</span>
+</span></span><span style="display:flex;"><span> <span style="color:#000;font-weight:bold">var</span> i8 <span style="color:#458;font-weight:bold">int8</span>
+</span></span><span style="display:flex;"><span> <span style="color:#000;font-weight:bold">var</span> i16 <span style="color:#458;font-weight:bold">int16</span>
+</span></span><span style="display:flex;"><span> <span style="color:#000;font-weight:bold">var</span> i64 <span style="color:#458;font-weight:bold">int64</span>
+</span></span><span style="display:flex;"><span> <span style="color:#000;font-weight:bold">var</span> f32 <span style="color:#458;font-weight:bold">float32</span>
+</span></span><span style="display:flex;"><span> <span style="color:#000;font-weight:bold">var</span> s <span style="color:#458;font-weight:bold">string</span>
+</span></span><span style="display:flex;"><span> <span style="color:#000;font-weight:bold">var</span> m <span style="color:#000;font-weight:bold">map</span>[<span style="color:#458;font-weight:bold">string</span>]<span style="color:#458;font-weight:bold">string</span>
+</span></span><span style="display:flex;"><span> <span style="color:#000;font-weight:bold">var</span> p <span style="color:#000;font-weight:bold">*</span><span style="color:#458;font-weight:bold">int32</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> fmt.<span style="color:#900;font-weight:bold">Println</span>(unsafe.<span style="color:#900;font-weight:bold">Alignof</span>(b))
+</span></span><span style="display:flex;"><span> fmt.<span style="color:#900;font-weight:bold">Println</span>(unsafe.<span style="color:#900;font-weight:bold">Alignof</span>(i8))
+</span></span><span style="display:flex;"><span> fmt.<span style="color:#900;font-weight:bold">Println</span>(unsafe.<span style="color:#900;font-weight:bold">Alignof</span>(i16))
+</span></span><span style="display:flex;"><span> fmt.<span style="color:#900;font-weight:bold">Println</span>(unsafe.<span style="color:#900;font-weight:bold">Alignof</span>(i64))
+</span></span><span style="display:flex;"><span> fmt.<span style="color:#900;font-weight:bold">Println</span>(unsafe.<span style="color:#900;font-weight:bold">Alignof</span>(f32))
+</span></span><span style="display:flex;"><span> fmt.<span style="color:#900;font-weight:bold">Println</span>(unsafe.<span style="color:#900;font-weight:bold">Alignof</span>(s))
+</span></span><span style="display:flex;"><span> fmt.<span style="color:#900;font-weight:bold">Println</span>(unsafe.<span style="color:#900;font-weight:bold">Alignof</span>(m))
+</span></span><span style="display:flex;"><span> fmt.<span style="color:#900;font-weight:bold">Println</span>(unsafe.<span style="color:#900;font-weight:bold">Alignof</span>(p))
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>为了省事，把三个函数的使用示例放到了一起。</p>
+<ol>
+<li>
+<p><strong>首先看<code>sizeof</code>方法</strong></p>
+<blockquote>
+<p><code>Sizeof</code> 采用任何类型的表达式 x，并返回假设变量 v 的大小（以字节为单位），就好像 v 是通过 <code>var v = x</code> 声明的一样。该大小不包括 x 可能引用的任何内存。例如，如果 x 是切片，则 <code>Sizeof</code> 返回切片描述符的大小，而不是切片引用的内存的大小。</p>
+</blockquote>
+<p>我们可以知道基本类型所占字节大小。这里重点说一下<code>int</code>、<code>string</code>、<code>[]byte</code>类型。</p>
+<ul>
+<li>
+<p>Go语言中的<code>int</code>类型的具体大小是跟机器的CPU位数相关的。如果CPU是32位的，那么<code>int</code>就占4字节，如果CPU是64位的，那么<code>int</code>就占8字节，这里我的电脑是64位的，所以结果就是8字节。</p>
+</li>
+<li>
+<p>Go语言里的<code>string</code>类型，其实是不可变的字符串结构。字符串运行时的结构如下</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> StringHeader <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span> Data <span style="color:#458;font-weight:bold">uintptr</span> <span style="color:#998;font-style:italic">// 示操作系统cpu而定，64位 --&gt; 64位
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span> Len  <span style="color:#458;font-weight:bold">int</span>	  <span style="color:#998;font-style:italic">// 示操作系统cpu而定，64位 --&gt; 64位
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>因此，使用<code>sizeof</code>取<code>string</code>的大小时，其实是对一个结构体的<code>sizeof</code>，始终都是<code>8+8=16</code>个字节。</p>
+</li>
+<li>
+<p>Go语言里的<code>[]byte</code>类型。切片运行时的结构如下</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> SliceHeader <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span> Data <span style="color:#458;font-weight:bold">uintptr</span>
+</span></span><span style="display:flex;"><span> Len  <span style="color:#458;font-weight:bold">int</span>
+</span></span><span style="display:flex;"><span> Cap  <span style="color:#458;font-weight:bold">int</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>因此，使用<code>sizeof</code>取<code>[]byte</code>的大小时，同<code>string</code>理，始终都是<code>8+8+8=24</code>个字节。当然，数组就不会了。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><code>Offsetof</code>函数</p>
+<p>我想要修改结构体中成员变量，第一个成员变量是不需要进行偏移量计算的，直接取出指针后转换为<code>unsafe.pointer</code>，再强制给他转换成字符串类型的指针值即可。如果要修改其他成员变量，需要进行偏移量计算，才可以对其内存地址修改，所以<code>Offsetof</code>方法就可返回成员变量在结构体中的偏移量，也就是返回结构体初始位置到成员变量之间的字节数。</p>
+<p>看代码时大家应该要住<code>uintptr</code>的使用，不可以用一个临时变量存储<code>uintptr</code>类型，前面我们提到过用于指针运算，<code>GC</code>不把<code>uintptr</code>当指针，<code>uintptr</code>无法持有对象。<code>uintptr</code>类型的目标会被回收，所以你不知道他什么时候会被<code>GC</code>掉，那样接下来的内存操作会发生什么样的错误，咱也不知道。比如这样一个例子：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 切记不要这样使用
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>p1 <span style="color:#000;font-weight:bold">:=</span> <span style="color:#0086b3">uintptr</span>(userNamePointer)
+</span></span><span style="display:flex;"><span>nAgePointer <span style="color:#000;font-weight:bold">:=</span> (<span style="color:#000;font-weight:bold">*</span><span style="color:#458;font-weight:bold">uint32</span>)(unsafe.<span style="color:#900;font-weight:bold">Pointer</span>(p1 <span style="color:#000;font-weight:bold">+</span> unsafe.<span style="color:#900;font-weight:bold">Offsetof</span>(user.Age)))
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>最后看一下<code>Alignof</code>函数，主要是获取变量的对齐值.</p>
+</li>
+</ol>
+<p>除了<code>int、uintptr</code>这些依赖CPU位数的类型，基本类型的对齐值都是固定的，结构体中对齐值取他的成员对齐值的最大值，结构体的对齐涉及到内存对齐。</p>
+<h2 id="经典应用string与byte的相互转换">经典应用：string与[]byte的相互转换</h2>
+<p>实现<code>string</code>与<code>byte</code>的转换，正常情况下，我们可能会写出这样的标准转换：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// string to []byte
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>str1 <span style="color:#000;font-weight:bold">:=</span> <span style="color:#d14">&#34;Golang梦工厂&#34;</span>
+</span></span><span style="display:flex;"><span>by <span style="color:#000;font-weight:bold">:=</span> []<span style="color:#0086b3">byte</span>(s1)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// []byte to string
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>str2 <span style="color:#000;font-weight:bold">:=</span> <span style="color:#0086b3">string</span>(by)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用这种方式进行转换都会涉及<strong>底层数值的拷贝</strong>，所以想要实现<strong>零拷贝</strong>，我们可以使用<code>unsafe.Pointer</code>来实现，通过强转换直接完成指针的指向，从而使<code>string</code>和<code>[]byte</code>指向同一个底层数据。在reflect包中有<code>string</code>和<code>slice</code>对应的结构体，他们的分别是：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> StringHeader <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span> Data <span style="color:#458;font-weight:bold">uintptr</span>
+</span></span><span style="display:flex;"><span> Len  <span style="color:#458;font-weight:bold">int</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> SliceHeader <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span> Data <span style="color:#458;font-weight:bold">uintptr</span>
+</span></span><span style="display:flex;"><span> Len  <span style="color:#458;font-weight:bold">int</span>
+</span></span><span style="display:flex;"><span> Cap  <span style="color:#458;font-weight:bold">int</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>StringHeader</code>代表的是<code>string</code>运行时的表现形式(<code>SliceHeader</code>同理)，通过对比<code>string</code>和<code>slice</code>运行时的表达可以看出，他们只有一个<code>Cap</code>字段不同，所以他们的内存布局是对齐的，所以可以通过<code>unsafe.Pointer</code>进行转换，因为可以写出如下代码：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">stringToByte</span>(s <span style="color:#458;font-weight:bold">string</span>) []<span style="color:#458;font-weight:bold">byte</span> {
+</span></span><span style="display:flex;"><span> header <span style="color:#000;font-weight:bold">:=</span> (<span style="color:#000;font-weight:bold">*</span>reflect.StringHeader)(unsafe.<span style="color:#900;font-weight:bold">Pointer</span>(<span style="color:#000;font-weight:bold">&amp;</span>s))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> newHeader <span style="color:#000;font-weight:bold">:=</span> reflect.SliceHeader{
+</span></span><span style="display:flex;"><span>  Data: header.Data,
+</span></span><span style="display:flex;"><span>  Len:  header.Len,
+</span></span><span style="display:flex;"><span>  Cap:  header.Len,
+</span></span><span style="display:flex;"><span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">*</span>(<span style="color:#000;font-weight:bold">*</span>[]<span style="color:#458;font-weight:bold">byte</span>)(unsafe.<span style="color:#900;font-weight:bold">Pointer</span>(<span style="color:#000;font-weight:bold">&amp;</span>newHeader))
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">bytesToString</span>(b []<span style="color:#458;font-weight:bold">byte</span>) <span style="color:#458;font-weight:bold">string</span>{
+</span></span><span style="display:flex;"><span> header <span style="color:#000;font-weight:bold">:=</span> (<span style="color:#000;font-weight:bold">*</span>reflect.SliceHeader)(unsafe.<span style="color:#900;font-weight:bold">Pointer</span>(<span style="color:#000;font-weight:bold">&amp;</span>b))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> newHeader <span style="color:#000;font-weight:bold">:=</span> reflect.StringHeader{
+</span></span><span style="display:flex;"><span>  Data: header.Data,
+</span></span><span style="display:flex;"><span>  Len:  header.Len,
+</span></span><span style="display:flex;"><span> }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">*</span>(<span style="color:#000;font-weight:bold">*</span><span style="color:#458;font-weight:bold">string</span>)(unsafe.<span style="color:#900;font-weight:bold">Pointer</span>(<span style="color:#000;font-weight:bold">&amp;</span>newHeader))
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面的代码我们通过重新构造<code>slice header</code>和<code>string header</code>完成了类型转换，其实<code>[]byte</code>转换成<code>string</code>可以省略掉自己构造<code>StringHeader</code>的方式，直接使用强转就可以，因为<code>string</code>的底层也是<code>[]byte</code>，强转会自动构造，省略后的代码如下：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">bytesToString</span>(b []<span style="color:#458;font-weight:bold">byte</span>) <span style="color:#458;font-weight:bold">string</span> {
+</span></span><span style="display:flex;"><span> <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">*</span>(<span style="color:#000;font-weight:bold">*</span> <span style="color:#458;font-weight:bold">string</span>)(unsafe.<span style="color:#900;font-weight:bold">Pointer</span>(<span style="color:#000;font-weight:bold">&amp;</span>b))
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>虽然这种方式更高效率，但是不推荐大家使用，前面也提高到了，这要是不安全的，使用当不当会出现极大的隐患，一些严重的情况<code>recover</code>也不能捕获。</p>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://cold-bin.github.io">cold bin</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/">https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/">Gorm使用补充点</a></li>
+        
+        <li><a href="/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E8%A6%81%E7%82%B9/">微服务架构项目开发要点</a></li>
+        
+        <li><a href="/post/git%E4%B9%8Bcommit%E8%A7%84%E8%8C%83%E6%8C%87%E5%8D%97/">Git之commit规范指南</a></li>
+        
+        <li><a href="/post/git%E5%B7%A5%E4%BD%9C%E6%B5%81/">Git工作流</a></li>
+        
+        <li><a href="/post/MySQL%E5%9F%BA%E7%A1%80%E7%AF%87/">MySQL基础篇</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/unsafe'>unsafe</a></li>
+                
+                <li><a href='/tags/%E9%9B%B6%E6%8B%B7%E8%B4%9D'>零拷贝</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "my-blog-comment"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+    
+    
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://cold-bin.github.io">cold bin&#39;s blog By cold bin</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.2.8/raphael.min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/flowchart/1.12.2/flowchart.min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+                if (!window.flowchart) return;
+                const blocks = document.querySelectorAll('pre code.language-flowchart, pre code.language-flow');
+                for (let i = 0; i < blocks.length; i++) {
+                    const block = blocks[i];
+                    const rootElement = block.parentNode;
+                    const container = document.createElement('div');
+                    const id = `js-flowchart-diagrams-${i}`;
+                    container.id = id;
+                    container.className = 'align-center';
+                    container.setAttribute("style", "overFlow-x:auto");
+                    rootElement.parentNode.replaceChild(container, rootElement);
+                    const diagram = flowchart.parse(block.childNodes[0].nodeValue);
+                    diagram.drawSVG(id, window.flowchartDiagramsOptions ? window.flowchartDiagramsOptions : {});
+                }
+            })();
+        </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+            if (!window.Diagram) return;
+            const blocks = document.querySelectorAll('pre code.language-sequence');
+            for (let i = 0; i < blocks.length; i++) {
+                const block = blocks[i];
+                
+                const rootElement = block.parentNode;
+                const container = document.createElement('div');
+                const id = `js-sequence-diag-${i}`;
+                container.id = id;
+                container.className = 'align-center';
+                container.setAttribute("style", "overFlow-x:auto");
+                rootElement.parentNode.replaceChild(container, rootElement);
+
+                const diagram = Diagram.parse(block.childNodes[0].nodeValue);
+                diagram.drawSVG(id, window.sequenceDiagramsOptions
+                    ? window.sequenceDiagramsOptions
+                    : { theme: 'simple' });
+            }
+        })();
+        </script><script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://cold-bin.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://cold-bin.github.io">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/" title="Go语言unsafe包的使用">Go语言unsafe包的使用</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/" title="Gorm使用补充点">Gorm使用补充点</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E8%A6%81%E7%82%B9/" title="微服务架构项目开发要点">微服务架构项目开发要点</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/git%E4%B9%8Bcommit%E8%A7%84%E8%8C%83%E6%8C%87%E5%8D%97/" title="Git之commit规范指南">Git之commit规范指南</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/git%E5%B7%A5%E4%BD%9C%E6%B5%81/" title="Git工作流">Git工作流</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/MySQL%E5%9F%BA%E7%A1%80%E7%AF%87/" title="MySQL基础篇">MySQL基础篇</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/RPC%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/" title="RPC与微服务">RPC与微服务</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/" title="微服务一些概念">微服务一些概念</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/Golang%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E9%9B%86%E9%94%A6/" title="Golang编程思想集锦">Golang编程思想集锦</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E8%AF%A6%E8%A7%A3Go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/" title="详解Go中的rune类型">详解Go中的rune类型</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (13)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/MySQL/">MySQL (2)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/git/">git (2)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/gorm/">gorm (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (1)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://cold-bin.github.io/tags/GRPC/">GRPC</a>
+    
+    <a href="https://cold-bin.github.io/tags/Makefile/">Makefile</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E5%9F%BA%E7%A1%80/">MySQL基础</a>
+    
+    <a href="https://cold-bin.github.io/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/">api向前兼容</a>
+    
+    <a href="https://cold-bin.github.io/tags/git%E7%9A%84commit%E8%A7%84%E8%8C%83/">git的commit规范</a>
+    
+    <a href="https://cold-bin.github.io/tags/go%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/">go编程思想</a>
+    
+    <a href="https://cold-bin.github.io/tags/https/">https</a>
+    
+    <a href="https://cold-bin.github.io/tags/rune%E7%B1%BB%E5%9E%8B/">rune类型</a>
+    
+    <a href="https://cold-bin.github.io/tags/tls%E8%AF%81%E4%B9%A6/">tls证书</a>
+    
+    <a href="https://cold-bin.github.io/tags/unsafe/">unsafe</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">内存对齐</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E9%9B%86%E4%B8%AD%E5%BC%8F/">分布式与集中式</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">单元测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90/">命令行参数解析</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93java/">数据结构与算法总结，java</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/">版本控制</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/">网络测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E9%9B%B6%E6%8B%B7%E8%B4%9D/">零拷贝</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://github.com/cold-bin" title="GitHub">GitHub</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://blog.csdn.net/qq_57467091" title="CSDN">CSDN</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://cold-bin.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
