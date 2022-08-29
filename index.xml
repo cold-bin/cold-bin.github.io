@@ -6,7 +6,16 @@
     <description>Recent content on cold bin&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 28 Aug 2022 14:18:10 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 29 Aug 2022 10:40:55 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>sync.pool的使用场景</title>
+      <link>https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/</link>
+      <pubDate>Mon, 29 Aug 2022 10:40:55 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/</guid>
+      <description>sync.Pool 的使用场景 一句话总结：保存和复用临时对象，减少内存分配，降低GC压力。 举个简单的例子： 1 2 3 4 5 6 7 8 9 10 11 12 type Student struct { Name string Age int32 Remark [1024]byte } var buf, _ = json.Marshal(Student{Name: &amp;#34;Geektutu&amp;#34;, Age: 25}) func unmarsh() { stu := &amp;amp;Student{} json.Unmarshal(buf, stu) } json的反序列化在文本解析和网络通信过程中非常常见，当程序并发度非常高的情况下，短时间内需要创建大量的临时对象</description>
+    </item>
+    
     <item>
       <title>Go语言unsafe包的使用</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/</link>

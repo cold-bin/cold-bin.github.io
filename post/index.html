@@ -78,6 +78,33 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/" title="sync.pool的使用场景">sync.pool的使用场景</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年8月29日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
+            
+            <span class="meta-category"><a href='/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B'>Go高性能并发编程</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            sync.Pool 的使用场景 一句话总结：保存和复用临时对象，减少内存分配，降低GC压力。 举个简单的例子： 1 2 3 4 5 6 7 8 9 10 11 12 type Student struct { Name string Age int32 Remark [1024]byte } var buf, _ = json.Marshal(Student{Name: &#34;Geektutu&#34;, Age: 25}) func unmarsh() { stu := &amp;Student{} json.Unmarshal(buf, stu) } json的反序列化在文本解析和网络通信过程中非常常见，当程序并发度非常高的情况下，短时间内需要创建大量的临时对象……
+        </div>
+        <p class="readmore"><a href="https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/" title="Go语言unsafe包的使用">Go语言unsafe包的使用</a>
             </h1>
         </header>
@@ -89,6 +116,8 @@
             <span>|</span>
             
             <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
+            
+            <span class="meta-category"><a href='/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B'>Go高性能并发编程</a></span>
             
         </div>
         
@@ -304,31 +333,6 @@
     
     
     
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/%E8%AF%A6%E8%A7%A3Go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/" title="详解Go中的rune类型">详解Go中的rune类型</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年8月10日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            Unicode编码和utf-8编码的关系 需要注意的是，Unicode 只是一个符号集，它只规定了符号的二进制代码，却没有规定这个二进制代码应该如何存储。 比如，汉字&rsquo;严&rsquo;的 Unicode 是十六进制数4E25，转换成二进制数足足有15位（100111000100101），也……
-        </div>
-        <p class="readmore"><a href="https://cold-bin.github.io/post/%E8%AF%A6%E8%A7%A3Go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/">阅读全文</a></p>
-    </article>
-    
-    
-    
 
 
 
@@ -342,6 +346,10 @@
     
     <li >
         <a href="https://cold-bin.github.io/post/page/2/">2</a>
+    </li>
+    
+    <li >
+        <a href="https://cold-bin.github.io/post/page/3/">3</a>
     </li>
     
 
@@ -405,6 +413,10 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/" title="sync.pool的使用场景">sync.pool的使用场景</a>
+    </li>
+    
+    <li>
         <a href="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/" title="Go语言unsafe包的使用">Go语言unsafe包的使用</a>
     </li>
     
@@ -440,10 +452,6 @@
         <a href="https://cold-bin.github.io/post/Golang%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E9%9B%86%E9%94%A6/" title="Golang编程思想集锦">Golang编程思想集锦</a>
     </li>
     
-    <li>
-        <a href="https://cold-bin.github.io/post/%E8%AF%A6%E8%A7%A3Go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/" title="详解Go中的rune类型">详解Go中的rune类型</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -455,7 +463,9 @@
     
     <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
     
-    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (13)</a></li>
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (14)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">Go高性能并发编程 (2)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/MySQL/">MySQL (2)</a></li>
     
@@ -491,6 +501,8 @@
     <a href="https://cold-bin.github.io/tags/https/">https</a>
     
     <a href="https://cold-bin.github.io/tags/rune%E7%B1%BB%E5%9E%8B/">rune类型</a>
+    
+    <a href="https://cold-bin.github.io/tags/sync.pool/">sync.pool</a>
     
     <a href="https://cold-bin.github.io/tags/tls%E8%AF%81%E4%B9%A6/">tls证书</a>
     
