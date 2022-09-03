@@ -6,7 +6,25 @@
     <description>Recent content in Tags on cold bin&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Mon, 29 Aug 2022 10:40:55 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 02 Sep 2022 19:26:22 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>reflect</title>
+      <link>https://cold-bin.github.io/tags/reflect/</link>
+      <pubDate>Fri, 02 Sep 2022 19:26:22 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/tags/reflect/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>反射</title>
+      <link>https://cold-bin.github.io/tags/%E5%8F%8D%E5%B0%84/</link>
+      <pubDate>Fri, 02 Sep 2022 19:26:22 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/tags/%E5%8F%8D%E5%B0%84/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>sync.pool</title>
       <link>https://cold-bin.github.io/tags/sync.pool/</link>
