@@ -6,7 +6,16 @@
     <description>Recent content in Posts on cold bin&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 02 Sep 2022 19:26:22 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 05 Sep 2022 15:10:32 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL架构篇</title>
+      <link>https://cold-bin.github.io/post/MySQL%E6%9E%B6%E6%9E%84%E7%AF%87/</link>
+      <pubDate>Mon, 05 Sep 2022 15:10:32 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/MySQL%E6%9E%B6%E6%9E%84%E7%AF%87/</guid>
+      <description>第04章_逻辑架构 1. 逻辑架构剖析 1.1 服务器处理客户端请求 首先MySQL是典型的C/S架构，即Client/Server 架构，服务端程序使用的mysqld。 不论客户端进程和服务器进程是采用哪种方式进行通信，最后实现的效果是：客户端进程向服务器进程发送一段文本（SQL语句），服务器进程</description>
+    </item>
+    
     <item>
       <title>Go语言reflect包的使用</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80reflect%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/</link>

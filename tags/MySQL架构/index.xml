@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>MySQL架构 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/MySQL%E6%9E%B6%E6%9E%84/</link>
+    <description>Recent content in MySQL架构 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 05 Sep 2022 15:10:32 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/MySQL%E6%9E%B6%E6%9E%84/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL架构篇</title>
+      <link>https://cold-bin.github.io/post/MySQL%E6%9E%B6%E6%9E%84%E7%AF%87/</link>
+      <pubDate>Mon, 05 Sep 2022 15:10:32 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/MySQL%E6%9E%B6%E6%9E%84%E7%AF%87/</guid>
+      <description>第04章_逻辑架构 1. 逻辑架构剖析 1.1 服务器处理客户端请求 首先MySQL是典型的C/S架构，即Client/Server 架构，服务端程序使用的mysqld。 不论客户端进程和服务器进程是采用哪种方式进行通信，最后实现的效果是：客户端进程向服务器进程发送一段文本（SQL语句），服务器进程</description>
+    </item>
+    
+  </channel>
+</rss>
