@@ -9,21 +9,21 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
     
 
-    <title>Go高性能并发编程 | cold bin&#39;s blog</title>
-    <meta property="og:title" content="Go高性能并发编程 - cold bin&#39;s blog">
+    <title>抓包 | cold bin&#39;s blog</title>
+    <meta property="og:title" content="抓包 - cold bin&#39;s blog">
     <meta property="og:type" content="article">
         
         
     <meta name="Keywords" content="">
-    <meta name="description" content="Go高性能并发编程">
+    <meta name="description" content="抓包">
         
     <meta name="author" content="cold bin">
-    <meta property="og:url" content="https://cold-bin.github.io/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
+    <meta property="og:url" content="https://cold-bin.github.io/categories/%E6%8A%93%E5%8C%85/">
     <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
     <link rel="stylesheet" href='/css/normalize.css'>
     <link rel="stylesheet" href='/css/style.css'>
-    <link rel="alternate" type="application/rss+xml" href="https://cold-bin.github.io/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/index.xml" title="cold bin's blog" />
+    <link rel="alternate" type="application/rss+xml" href="https://cold-bin.github.io/categories/%E6%8A%93%E5%8C%85/index.xml" title="cold bin's blog" />
     <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
@@ -76,7 +76,7 @@
     
     <h3 class="archive-title">
         分类
-        <span class="keyword">Go高性能并发编程</span>
+        <span class="keyword">抓包</span>
         中的文章
     </h3>
     
@@ -85,75 +85,23 @@
     <article class="post">
         <header>
             <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/sync.Pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8F%8A%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Sync.Pool的使用及源码分析</a>
+                <a href="https://cold-bin.github.io/post/BurpsuitePro%E6%8A%93%E5%8C%85%E4%B9%8B%E6%97%85/">BurpsuitePro抓包之旅</a>
             </h1>
         </header>
         <date class="post-meta meta-date">
-            2022年9月24日
+            2022年10月5日
         </date>
         
         <div class="post-meta meta-category">
             |
             
-            <a href='/categories/Golang'>Golang</a>
-            
-            <a href='/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B'>Go高性能并发编程</a>
+            <a href='/categories/%E6%8A%93%E5%8C%85'>抓包</a>
             
         </div>
         
         <div class="post-content">
-            sync.Pool使用及源码浅析 sync.Pool使用 背景 “频繁创建对象，频繁销毁对象”是在项目开发里算比较常见。sync.Pool的出现就是为了解决这个问题。 Go语言从1.3版本开始提供了对象重用的机制，即sync.Pool。sync.Pool是可伸缩的，同时也是并发安全的，其……
-            <p class="readmore"><a href="https://cold-bin.github.io/post/sync.Pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8F%8A%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">阅读全文</a></p>
-        </div>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/">sync.pool的使用场景</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年8月29日
-        </date>
-        
-        <div class="post-meta meta-category">
-            |
-            
-            <a href='/categories/Golang'>Golang</a>
-            
-            <a href='/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B'>Go高性能并发编程</a>
-            
-        </div>
-        
-        <div class="post-content">
-            sync.Pool 的使用场景 一句话总结：保存和复用临时对象，减少内存分配，降低GC压力。 举个简单的例子： 1 2 3 4 5 6 7 8 9 10 11 12 type Student struct { Name string Age int32 Remark [1024]byte } var buf, _ = json.Marshal(Student{Name: &#34;Geektutu&#34;, Age: 25}) func unmarsh() { stu := &amp;Student{} json.Unmarshal(buf, stu) } json的反序列化在文本解析和网络通信过程中非常常见，当程序并发度非常高的情况下，短时间内需要创建大量的临时对象……
-            <p class="readmore"><a href="https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/">阅读全文</a></p>
-        </div>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/">Go语言unsafe包的使用</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年8月28日
-        </date>
-        
-        <div class="post-meta meta-category">
-            |
-            
-            <a href='/categories/Golang'>Golang</a>
-            
-            <a href='/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B'>Go高性能并发编程</a>
-            
-        </div>
-        
-        <div class="post-content">
-            unsafe使用及底层 unsafe实现原理 在使用之前我们先来看一下unsafe包的源码部分，标准库unsafe包中只提供了3种方法，分别是: 1 2 3 func Sizeof(x ArbitraryType) uintptr func Offsetof(x ArbitraryType) uintptr func Alignof(x ArbitraryType) uintptr Sizeof(x ArbitrayType)方法主要作用是用返回类型x所占据的字节数，但并不包含x所指向的内容的大小，与C语言……
-            <p class="readmore"><a href="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/">阅读全文</a></p>
+            burpsuitepro的模块 Proxy 提供一个直观、友好的用户界面，它的代理服务器包含非常详细的拦截规则，并能准确分析 HTTP 消息的结构与内容。 Spide 爬行蜘蛛工具，可以用来抓取目标网站，以显示网站的内容，基本结构，和其他功能。 Scanner Web 应用程序的安全漏洞进行自动发现工具。它被设计用于渗透测试，并密切与……
+            <p class="readmore"><a href="https://cold-bin.github.io/post/BurpsuitePro%E6%8A%93%E5%8C%85%E4%B9%8B%E6%97%85/">阅读全文</a></p>
         </div>
     </article>
     

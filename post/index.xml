@@ -6,7 +6,16 @@
     <description>Recent content in Posts on cold bin&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 24 Sep 2022 15:09:27 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 05 Oct 2022 17:34:18 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>BurpsuitePro抓包之旅</title>
+      <link>https://cold-bin.github.io/post/BurpsuitePro%E6%8A%93%E5%8C%85%E4%B9%8B%E6%97%85/</link>
+      <pubDate>Wed, 05 Oct 2022 17:34:18 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/BurpsuitePro%E6%8A%93%E5%8C%85%E4%B9%8B%E6%97%85/</guid>
+      <description>burpsuitepro的模块 Proxy 提供一个直观、友好的用户界面，它的代理服务器包含非常详细的拦截规则，并能准确分析 HTTP 消息的结构与内容。 Spide 爬行蜘蛛工具，可以用来抓取目标网站，以显示网站的内容，基本结构，和其他功能。 Scanner Web 应用程序的安全漏洞进行自动发现工具。它被设计用于渗透测试，并密切与</description>
+    </item>
+    
     <item>
       <title>Sync.Pool的使用及源码分析</title>
       <link>https://cold-bin.github.io/post/sync.Pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8F%8A%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
