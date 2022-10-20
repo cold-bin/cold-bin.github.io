@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>MySQL事务篇 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/MySQL%E4%BA%8B%E5%8A%A1%E7%AF%87/</link>
+    <description>Recent content in MySQL事务篇 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 20 Oct 2022 22:17:42 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/MySQL%E4%BA%8B%E5%8A%A1%E7%AF%87/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL事务篇</title>
+      <link>https://cold-bin.github.io/post/MySQL%E4%BA%8B%E5%8A%A1%E7%AF%87/</link>
+      <pubDate>Thu, 20 Oct 2022 22:17:42 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/MySQL%E4%BA%8B%E5%8A%A1%E7%AF%87/</guid>
+      <description>第13章_事务基础知识 1. 数据库事务概述 1.1 存储引擎支持情况 SHOW ENGINES 命令来查看当前 MySQL 支持的存储引擎都有哪些，以及这些存储引擎是否支持事务。 能看出在 MySQL 中，只有InnoDB 是支持事务的。 1.2 基本概念 **事务：**一组逻辑操作单元，使数据从一种状态变换到另一种状态。 **事务处理的原则：**保证所</description>
+    </item>
+    
+  </channel>
+</rss>
