@@ -6,22 +6,31 @@
     <description>Recent content in Tags on cold bin&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 20 Oct 2022 22:17:42 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 22 Oct 2022 10:39:18 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>MySQL事务篇</title>
-      <link>https://cold-bin.github.io/tags/MySQL%E4%BA%8B%E5%8A%A1%E7%AF%87/</link>
-      <pubDate>Thu, 20 Oct 2022 22:17:42 +0800</pubDate>
+      <title>MySQL日志与备份篇</title>
+      <link>https://cold-bin.github.io/tags/MySQL%E6%97%A5%E5%BF%97%E4%B8%8E%E5%A4%87%E4%BB%BD%E7%AF%87/</link>
+      <pubDate>Sat, 22 Oct 2022 10:39:18 +0800</pubDate>
       
-      <guid>https://cold-bin.github.io/tags/MySQL%E4%BA%8B%E5%8A%A1%E7%AF%87/</guid>
+      <guid>https://cold-bin.github.io/tags/MySQL%E6%97%A5%E5%BF%97%E4%B8%8E%E5%A4%87%E4%BB%BD%E7%AF%87/</guid>
       <description></description>
     </item>
     
     <item>
       <title>数据库</title>
       <link>https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/</link>
-      <pubDate>Thu, 20 Oct 2022 22:17:42 +0800</pubDate>
+      <pubDate>Sat, 22 Oct 2022 10:39:18 +0800</pubDate>
       
       <guid>https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>MySQL事务篇</title>
+      <link>https://cold-bin.github.io/tags/MySQL%E4%BA%8B%E5%8A%A1%E7%AF%87/</link>
+      <pubDate>Thu, 20 Oct 2022 22:17:42 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/tags/MySQL%E4%BA%8B%E5%8A%A1%E7%AF%87/</guid>
       <description></description>
     </item>
     
