@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Go底层 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/Go%E5%BA%95%E5%B1%82/</link>
+    <description>Recent content in Go底层 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 25 Oct 2022 15:27:13 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/Go%E5%BA%95%E5%B1%82/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>GMP深度解析与协程池构建</title>
+      <link>https://cold-bin.github.io/post/GMP%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%8D%8F%E7%A8%8B%E6%B1%A0%E6%9E%84%E5%BB%BA/</link>
+      <pubDate>Tue, 25 Oct 2022 15:27:13 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/GMP%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%8D%8F%E7%A8%8B%E6%B1%A0%E6%9E%84%E5%BB%BA/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

@@ -78,6 +78,56 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/GMP%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%8D%8F%E7%A8%8B%E6%B1%A0%E6%9E%84%E5%BB%BA/" title="GMP深度解析与协程池构建">GMP深度解析与协程池构建</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年10月25日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            ……
+        </div>
+        <p class="readmore"><a href="https://cold-bin.github.io/post/GMP%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%8D%8F%E7%A8%8B%E6%B1%A0%E6%9E%84%E5%BB%BA/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/HTTP%E5%8D%8F%E8%AE%AE%E7%9F%A5%E8%AF%86%E7%82%B9/" title="HTTP协议知识点">HTTP协议知识点</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年10月23日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/HTTP%E5%8D%8F%E8%AE%AE'>HTTP协议</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            简介 超文本传输协议（英文：HyperText Transfer Protocol，缩写：HTTP）是一种用于分布式、协作式和超媒体信息系统的应用层协议。HTTP是万维网的数据通信的基础。它是基于TCP协议的应用层传输协议，简单来说就是客户端和服务端进行数据传输的一种规则。 TCP：大家感兴趣的话就去……
+        </div>
+        <p class="readmore"><a href="https://cold-bin.github.io/post/HTTP%E5%8D%8F%E8%AE%AE%E7%9F%A5%E8%AF%86%E7%82%B9/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://cold-bin.github.io/post/MySQL%E6%97%A5%E5%BF%97%E4%B8%8E%E5%A4%87%E4%BB%BD%E7%AF%87/" title="MySQL日志与备份篇">MySQL日志与备份篇</a>
             </h1>
         </header>
@@ -279,62 +329,6 @@
     
     
     
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/" title="Go语言unsafe包的使用">Go语言unsafe包的使用</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年8月28日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
-            
-            <span class="meta-category"><a href='/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B'>Go高性能并发编程</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            unsafe使用及底层 unsafe实现原理 在使用之前我们先来看一下unsafe包的源码部分，标准库unsafe包中只提供了3种方法，分别是: 1 2 3 func Sizeof(x ArbitraryType) uintptr func Offsetof(x ArbitraryType) uintptr func Alignof(x ArbitraryType) uintptr Sizeof(x ArbitrayType)方法主要作用是用返回类型x所占据的字节数，但并不包含x所指向的内容的大小，与C语言……
-        </div>
-        <p class="readmore"><a href="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/">阅读全文</a></p>
-    </article>
-    
-    
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/" title="Gorm使用补充点">Gorm使用补充点</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年8月28日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/MySQL'>MySQL</a></span>
-            
-            <span class="meta-category"><a href='/categories/gorm'>gorm</a></span>
-            
-            <span class="meta-category"><a href='/categories/%E6%95%B0%E6%8D%AE%E5%BA%93'>数据库</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            本文主要补充一些gorm的使用技巧，完整的gorm使用移步官方文档gorm官方文档 总结 配置单数表名, 再也不用写TableName 使用DB前先db.model, 万无一失 CreatedAt, UpdatedAt, mysql类型用datetime(3)(毫秒) 支持db.Create创建和批量创建 BeforeCreate创建……
-        </div>
-        <p class="readmore"><a href="https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/">阅读全文</a></p>
-    </article>
-    
-    
-    
 
 
 
@@ -415,6 +409,14 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://cold-bin.github.io/post/GMP%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%8D%8F%E7%A8%8B%E6%B1%A0%E6%9E%84%E5%BB%BA/" title="GMP深度解析与协程池构建">GMP深度解析与协程池构建</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/HTTP%E5%8D%8F%E8%AE%AE%E7%9F%A5%E8%AF%86%E7%82%B9/" title="HTTP协议知识点">HTTP协议知识点</a>
+    </li>
+    
+    <li>
         <a href="https://cold-bin.github.io/post/MySQL%E6%97%A5%E5%BF%97%E4%B8%8E%E5%A4%87%E4%BB%BD%E7%AF%87/" title="MySQL日志与备份篇">MySQL日志与备份篇</a>
     </li>
     
@@ -446,14 +448,6 @@
         <a href="https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/" title="sync.pool的使用场景">sync.pool的使用场景</a>
     </li>
     
-    <li>
-        <a href="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/" title="Go语言unsafe包的使用">Go语言unsafe包的使用</a>
-    </li>
-    
-    <li>
-        <a href="https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/" title="Gorm使用补充点">Gorm使用补充点</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -465,9 +459,11 @@
     
     <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
     
-    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (16)</a></li>
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (17)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">Go高性能并发编程 (3)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/HTTP%E5%8D%8F%E8%AE%AE/">HTTP协议 (1)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/MySQL/">MySQL (6)</a></li>
     
@@ -491,6 +487,8 @@
 <div class="tagcloud">
     
     <a href="https://cold-bin.github.io/tags/GRPC/">GRPC</a>
+    
+    <a href="https://cold-bin.github.io/tags/Go%E5%BA%95%E5%B1%82/">Go底层</a>
     
     <a href="https://cold-bin.github.io/tags/Makefile/">Makefile</a>
     

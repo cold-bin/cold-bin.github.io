@@ -78,6 +78,62 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/" title="Go语言unsafe包的使用">Go语言unsafe包的使用</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年8月28日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
+            
+            <span class="meta-category"><a href='/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B'>Go高性能并发编程</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            unsafe使用及底层 unsafe实现原理 在使用之前我们先来看一下unsafe包的源码部分，标准库unsafe包中只提供了3种方法，分别是: 1 2 3 func Sizeof(x ArbitraryType) uintptr func Offsetof(x ArbitraryType) uintptr func Alignof(x ArbitraryType) uintptr Sizeof(x ArbitrayType)方法主要作用是用返回类型x所占据的字节数，但并不包含x所指向的内容的大小，与C语言……
+        </div>
+        <p class="readmore"><a href="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/" title="Gorm使用补充点">Gorm使用补充点</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年8月28日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/MySQL'>MySQL</a></span>
+            
+            <span class="meta-category"><a href='/categories/gorm'>gorm</a></span>
+            
+            <span class="meta-category"><a href='/categories/%E6%95%B0%E6%8D%AE%E5%BA%93'>数据库</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            本文主要补充一些gorm的使用技巧，完整的gorm使用移步官方文档gorm官方文档 总结 配置单数表名, 再也不用写TableName 1 2 3 db, err := gorm.Open(mysql.Open(fmt.Sprintf(dsn, un, pwd, host, port, database)), &amp;gorm.Config{ NamingStrategy: schema.NamingStrategy{SingularTable: true}, }) 当然也可以传入其他参数定制命名策略 使用DB前先db.model, 万无一失 创建模型时使用基本类型的指针类型，可以使得零值……
+        </div>
+        <p class="readmore"><a href="https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E8%A6%81%E7%82%B9/" title="微服务架构项目开发要点">微服务架构项目开发要点</a>
             </h1>
         </header>
@@ -275,56 +331,6 @@
     
     
     
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/" title="Go的结构体内存对齐">Go的结构体内存对齐</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年7月17日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            一. 什么是内存对齐, 为啥要内存对齐？ 在解释什么是内存对齐之前，我们需要先了解一下CPU和内存数据交互的过程。CPU和内存是通过总线进行数据交互的。其中地址总线用来传递CPU需要的数据地址，内存将数据通过数据总线传递给CPU， 或者CPU将数据通过数据总线回传给内存。 首先我们需要知道……
-        </div>
-        <p class="readmore"><a href="https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">阅读全文</a></p>
-    </article>
-    
-    
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/" title="Flag包的在go项目的实践">Flag包的在go项目的实践</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年7月17日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            阅读本文前，需具备flag基础 通常我们有种需求：可以在不修改程序源码的情况下，控制一些程序内部的变化。比如配置文件，我们可以手动更改配置文件，也可以在程序启动时，通过命令行参数在程序运行时，给程序提供一些配置选项，这样可以方便地不需要更改程序源码就可以达到在外部控制程序内部一些变……
-        </div>
-        <p class="readmore"><a href="https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/">阅读全文</a></p>
-    </article>
-    
-    
-    
 
 
 
@@ -409,6 +415,14 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://cold-bin.github.io/post/GMP%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%8D%8F%E7%A8%8B%E6%B1%A0%E6%9E%84%E5%BB%BA/" title="GMP深度解析与协程池构建">GMP深度解析与协程池构建</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/HTTP%E5%8D%8F%E8%AE%AE%E7%9F%A5%E8%AF%86%E7%82%B9/" title="HTTP协议知识点">HTTP协议知识点</a>
+    </li>
+    
+    <li>
         <a href="https://cold-bin.github.io/post/MySQL%E6%97%A5%E5%BF%97%E4%B8%8E%E5%A4%87%E4%BB%BD%E7%AF%87/" title="MySQL日志与备份篇">MySQL日志与备份篇</a>
     </li>
     
@@ -440,14 +454,6 @@
         <a href="https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/" title="sync.pool的使用场景">sync.pool的使用场景</a>
     </li>
     
-    <li>
-        <a href="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/" title="Go语言unsafe包的使用">Go语言unsafe包的使用</a>
-    </li>
-    
-    <li>
-        <a href="https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/" title="Gorm使用补充点">Gorm使用补充点</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -459,9 +465,11 @@
     
     <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
     
-    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (16)</a></li>
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (17)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">Go高性能并发编程 (3)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/HTTP%E5%8D%8F%E8%AE%AE/">HTTP协议 (1)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/MySQL/">MySQL (6)</a></li>
     
@@ -485,6 +493,8 @@
 <div class="tagcloud">
     
     <a href="https://cold-bin.github.io/tags/GRPC/">GRPC</a>
+    
+    <a href="https://cold-bin.github.io/tags/Go%E5%BA%95%E5%B1%82/">Go底层</a>
     
     <a href="https://cold-bin.github.io/tags/Makefile/">Makefile</a>
     

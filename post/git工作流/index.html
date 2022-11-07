@@ -125,6 +125,8 @@
                     <li>
                         <a href="#git-clone" aria-label="git clone">git clone</a></li>
                     <li>
+                        <a href="#git-stash" aria-label="git stash">git stash</a></li>
+                    <li>
                         <a href="#git-commit" aria-label="git commit">git commit</a></li>
                     <li>
                         <a href="#git-config" aria-label="git config">git config</a></li>
@@ -486,7 +488,91 @@
 </span></span><span style="display:flex;"><span>$ git clone &lt;远程仓库的网址&gt; -b &lt;分支名称&gt; &lt;本地目录&gt;
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="git-commit">git commit</h3>
+</div><h3 id="git-stash">git stash</h3>
+<p><strong>暂存当前修改</strong></p>
+<p><code>git stash</code>会把所有未提交的修改（包括暂存的和非暂存的）都保存起来，用于后续恢复当前工作目录。
+比如下面的中间状态，通过<code>git stash</code>命令推送一个新的储藏，当前的工作目录就干净了。</p>
+<p>注意：stash是本地的，不会通过<code>git push</code>命令上传到git server上。</p>
+<p>实际应用中推荐给每个stash加一个message，用于记录版本，使用<code>git stash save</code>取代<code>git stash</code>命令。示例如下：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git stash save <span style="color:#d14">&#34;test-cmd-stash&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>重新应用缓存的stash</strong></p>
+<p>可以通过<code>git stash pop</code>命令恢复之前缓存的工作目录</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git stash pop
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个指令将缓存堆栈中的第一个stash删除，并将对应修改应用到当前的工作目录下。</p>
+<p>你也可以使用<code>git stash apply</code>命令，将缓存堆栈中的stash多次应用到工作目录中，但并不删除stash拷贝。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git stash apply
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在使用<code>git stash apply</code>命令时可以通过名字指定使用哪个stash，默认使用最近的stash（即stash@{0}）。</p>
+<p><strong>查看现有stash</strong></p>
+<p>可以使用<code>git stash list</code>命令，一个典型的输出如下：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git stash list
+</span></span><span style="display:flex;"><span>stash@<span style="color:#000;font-weight:bold">{</span>0<span style="color:#000;font-weight:bold">}</span>: WIP on master: 049d078 added the index file
+</span></span><span style="display:flex;"><span>stash@<span style="color:#000;font-weight:bold">{</span>1<span style="color:#000;font-weight:bold">}</span>: WIP on master: c264051 Revert <span style="color:#d14">&#34;added file_size&#34;</span>
+</span></span><span style="display:flex;"><span>stash@<span style="color:#000;font-weight:bold">{</span>2<span style="color:#000;font-weight:bold">}</span>: WIP on master: 21d80a5 added number to log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>移除stash</strong></p>
+<p>可以使用<code>git stash drop</code>命令，后面可以跟着stash名字。下面是一个示例：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ git stash list
+</span></span><span style="display:flex;"><span>stash@<span style="color:#000;font-weight:bold">{</span>0<span style="color:#000;font-weight:bold">}</span>: WIP on master: 049d078 added the index file
+</span></span><span style="display:flex;"><span>stash@<span style="color:#000;font-weight:bold">{</span>1<span style="color:#000;font-weight:bold">}</span>: WIP on master: c264051 Revert <span style="color:#d14">&#34;added file_size&#34;</span>
+</span></span><span style="display:flex;"><span>stash@<span style="color:#000;font-weight:bold">{</span>2<span style="color:#000;font-weight:bold">}</span>: WIP on master: 21d80a5 added number to log
+</span></span><span style="display:flex;"><span>$ git stash drop stash@<span style="color:#000;font-weight:bold">{</span>0<span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>Dropped stash@<span style="color:#000;font-weight:bold">{</span>0<span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">(</span>364e91f3f268f0900bc3ee613f9f733e82aaed43<span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>或者使用<code>git stash clear</code>命令，删除所有缓存的stash。</p>
+<p><strong>暂存未跟踪或忽略的文件</strong></p>
+<p>默认情况下，<code>git stash</code>会缓存下列文件：</p>
+<ul>
+<li>添加到暂存区的修改（staged changes）</li>
+<li>Git跟踪的但并未添加到暂存区的修改（unstaged changes）</li>
+</ul>
+<p>但不会缓存一下文件：</p>
+<ul>
+<li>在工作目录中新的文件（untracked files）</li>
+<li>被忽略的文件（ignored files）</li>
+</ul>
+<p><code>git stash</code>命令提供了参数用于缓存上面两种类型的文件。使用<code>-u</code>或者<code>--include-untracked</code>可以stash untracked文件。使用<code>-a</code>或者<code>--all</code>命令可以stash当前目录下的所有修改。</p>
+<h3 id="git-commit">git commit</h3>
 <p>将索引的当前内容与描述更改的用户和日志消息一起存储在新的提交中。</p>
 <div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
 <table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
@@ -1282,6 +1368,14 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://cold-bin.github.io/post/GMP%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%8D%8F%E7%A8%8B%E6%B1%A0%E6%9E%84%E5%BB%BA/" title="GMP深度解析与协程池构建">GMP深度解析与协程池构建</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/HTTP%E5%8D%8F%E8%AE%AE%E7%9F%A5%E8%AF%86%E7%82%B9/" title="HTTP协议知识点">HTTP协议知识点</a>
+    </li>
+    
+    <li>
         <a href="https://cold-bin.github.io/post/MySQL%E6%97%A5%E5%BF%97%E4%B8%8E%E5%A4%87%E4%BB%BD%E7%AF%87/" title="MySQL日志与备份篇">MySQL日志与备份篇</a>
     </li>
     
@@ -1313,14 +1407,6 @@
         <a href="https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/" title="sync.pool的使用场景">sync.pool的使用场景</a>
     </li>
     
-    <li>
-        <a href="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/" title="Go语言unsafe包的使用">Go语言unsafe包的使用</a>
-    </li>
-    
-    <li>
-        <a href="https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/" title="Gorm使用补充点">Gorm使用补充点</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -1332,9 +1418,11 @@
     
     <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
     
-    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (16)</a></li>
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (17)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">Go高性能并发编程 (3)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/HTTP%E5%8D%8F%E8%AE%AE/">HTTP协议 (1)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/MySQL/">MySQL (6)</a></li>
     
@@ -1358,6 +1446,8 @@
 <div class="tagcloud">
     
     <a href="https://cold-bin.github.io/tags/GRPC/">GRPC</a>
+    
+    <a href="https://cold-bin.github.io/tags/Go%E5%BA%95%E5%B1%82/">Go底层</a>
     
     <a href="https://cold-bin.github.io/tags/Makefile/">Makefile</a>
     
