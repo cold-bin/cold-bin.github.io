@@ -6,7 +6,25 @@
     <description>Recent content on cold bin&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 25 Oct 2022 15:27:13 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 09 Nov 2022 16:46:32 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>锁</title>
+      <link>https://cold-bin.github.io/post/%E9%94%81/</link>
+      <pubDate>Wed, 09 Nov 2022 16:46:32 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E9%94%81/</guid>
+      <description>定义 顾名思义，锁就是可以锁住某些东西的东西。在计算机科学中，锁(lock)是一种同步机制，用于在有许多执行线程的环境中强制对资源的访问限制。锁旨在强制实施互斥排他、并发控制策略。 所谓的锁，可以理解为内存中的一个整型数或者一个结构体对象，拥有两种状态：空闲状态和上锁状态。加锁时，判</description>
+    </item>
+    
+    <item>
+      <title>并发安全之原子操作</title>
+      <link>https://cold-bin.github.io/post/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E4%B9%8B%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/</link>
+      <pubDate>Wed, 09 Nov 2022 16:24:28 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E4%B9%8B%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/</guid>
+      <description>原子操作 并发是业务开发中经常要面对的问题，很多时候我们会直接用一把 sync.Mutex 互斥锁来线性化处理，保证每一时刻进入临界区的 goroutine 只有一个。这样避免了并发，但性能也随着降低。 所以，我们进而又有了 RWMutex 读写锁，保障了多个读请求的并发处理，对共享资源的写操作和读操作则区别看待，并消除了读操作之间的互斥。</description>
+    </item>
+    
     <item>
       <title>GMP深度解析与协程池构建</title>
       <link>https://cold-bin.github.io/post/GMP%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%8D%8F%E7%A8%8B%E6%B1%A0%E6%9E%84%E5%BB%BA/</link>
@@ -275,6 +293,15 @@
       
       <guid>https://cold-bin.github.io/post/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95java%E7%89%88/</guid>
       <description>[TOC] 引子 数据结构包括：线性结构和非线性结构 线性结构 特点：数据元素一对一的线性关系 线性结构有两种不同的存储结构：一种是顺序存储结构，元素处于相邻地址空间，顺序存储的线性表又称为顺序表；另一种是链式存储结构，元素节点保存数据元素和相邻元素地址信息，相邻元素不一定在地址空间上连续。 常见的</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://cold-bin.github.io/post/README/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/README/</guid>
+      <description>notes 学习笔记托管</description>
     </item>
     
     <item>

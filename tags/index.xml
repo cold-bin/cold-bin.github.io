@@ -6,7 +6,34 @@
     <description>Recent content in Tags on cold bin&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 25 Oct 2022 15:27:13 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 09 Nov 2022 16:46:32 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>并发安全</title>
+      <link>https://cold-bin.github.io/tags/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8/</link>
+      <pubDate>Wed, 09 Nov 2022 16:46:32 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/tags/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>锁</title>
+      <link>https://cold-bin.github.io/tags/%E9%94%81/</link>
+      <pubDate>Wed, 09 Nov 2022 16:46:32 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/tags/%E9%94%81/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>原子操作</title>
+      <link>https://cold-bin.github.io/tags/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/</link>
+      <pubDate>Wed, 09 Nov 2022 16:24:28 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/tags/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Go底层</title>
       <link>https://cold-bin.github.io/tags/Go%E5%BA%95%E5%B1%82/</link>
