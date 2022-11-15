@@ -99,8 +99,29 @@
                     <li>
                         <a href="#atomicvalue%e4%bf%9d%e8%af%81%e4%bb%bb%e6%84%8f%e5%80%bc%e7%9a%84%e8%af%bb%e5%86%99%e5%ae%89%e5%85%a8" aria-label="atomic.Value保证任意值的读写安全"><code>atomic.Value</code>保证任意值的读写安全</a></li>
                     <li>
-                        <a href="#%e6%80%bb%e7%bb%93" aria-label="总结">总结</a>
+                        <a href="#%e6%80%bb%e7%bb%93" aria-label="总结">总结</a></li></ul>
                     </li>
+                    <li>
+                        <a href="#%e9%a1%b9%e7%9b%ae%e6%a1%88%e4%be%8b%e5%88%86%e6%9e%90" aria-label="项目案例分析">项目案例分析</a><ul>
+                            
+                    <li>
+                        <a href="#pool" aria-label="Pool"><code>Pool</code></a></li>
+                    <li>
+                        <a href="#pool-1" aria-label="pool"><code>pool</code></a></li>
+                    <li>
+                        <a href="#pool%e7%9a%84%e6%96%b9%e6%b3%95" aria-label="pool的方法"><code>pool</code>的方法</a></li>
+                    <li>
+                        <a href="#worker" aria-label="worker"><code>worker</code></a></li>
+                    <li>
+                        <a href="#worker%e7%9a%84%e6%96%b9%e6%b3%95" aria-label="worker的方法"><code>worker</code>的方法</a><ul>
+                            
+                    <li>
+                        <a href="#run" aria-label="run"><code>run</code></a></li>
+                    <li>
+                        <a href="#%e5%85%b6%e4%bb%96%e6%96%b9%e6%b3%95" aria-label="其他方法">其他方法</a>
+                    </li>
+                </ul>
+                </li>
                 </ul>
                 </li>
                 </ul>
@@ -525,7 +546,472 @@
 <p>如果要更新的是一个复合对象，则应当使用<code>atomic.Value</code>封装好的实现</p>
 </li>
 </ul>
-
+<h2 id="项目案例分析">项目案例分析</h2>
+<p>在<code>net\http</code>官方包里，<code>http.ListenAndServe()</code>里面的逻辑就是：来一个请求就开一个协程去处理它。在高并发的场景下，虽然go可以轻松开启数百万协程，每个协程初始被分配2kb的内存大小。来一个请求就开一个协程，这样的方式太过粗暴，耗费资源。我们可以对goroutine做池化处理：维护cap容量的goroutine工作，当执行的任务小于cap时，这时资源是充足的，可以让每个goroutine对应一个执行任务；当执行任务大于cap时，这时认为资源是不足的，我们需要复用goroutine，也就是会存在一个goroutine执行完当前任务时，就再执行下一个任务，达到复用的目的。</p>
+<h3 id="pool"><code>Pool</code></h3>
+<p><code>Pool</code>是对外暴露的方法集合的接口。内部是<code>pool</code>结构体来实现的</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> Pool <span style="color:#000;font-weight:bold">interface</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// Name returns the corresponding pool name.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#900;font-weight:bold">Name</span>() <span style="color:#458;font-weight:bold">string</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// SetCap sets the goroutine capacity of the pool.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#900;font-weight:bold">SetCap</span>(cap <span style="color:#458;font-weight:bold">int32</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// Go executes f.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#900;font-weight:bold">Go</span>(f <span style="color:#000;font-weight:bold">func</span>())
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// CtxGo executes f and accepts the context.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#900;font-weight:bold">CtxGo</span>(ctx context.Context, f <span style="color:#000;font-weight:bold">func</span>())
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// SetPanicHandler sets the panic handler.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#900;font-weight:bold">SetPanicHandler</span>(f <span style="color:#000;font-weight:bold">func</span>(context.Context, <span style="color:#000;font-weight:bold">interface</span>{}))
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// WorkerCount returns the number of running workers
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#900;font-weight:bold">WorkerCount</span>() <span style="color:#458;font-weight:bold">int32</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>简单看看这几个方法</p>
+<ul>
+<li><code>Name() string</code> 方法是指定当前池的名字</li>
+<li><code>SetCap(cap int32)</code>用来动态扩容，可以看到源码里是并发安全的（原子的将新值加载到<code>pool.cap</code>的）</li>
+<li><code>Go(f func())</code>将函数放到任务链表里，并判断是否需要新开<code>worker</code>（即协程）来分担<code>f</code>所在的任务链表执行</li>
+<li><code>CtxGo(ctx context.Context, f func())</code>同<code>Go(f func()</code></li>
+<li><code>SetPanicHandler(f func(context.Context, interface{}))</code>是自定义panic处理逻辑，如果不定义将会默认调用<code>github.com/bytedance/gopkg/util/logger</code>来处理</li>
+<li><code>WorkerCount() int32</code>动态获取当前运行的<code>worker</code>，也就是正在跑的goroutine数量</li>
+</ul>
+<h3 id="pool-1"><code>pool</code></h3>
+<p><code>pool</code>是内部包自己实现<code>Pool</code>接口的结构体。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> pool <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// The name of the pool
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    name <span style="color:#458;font-weight:bold">string</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// capacity of the pool, the maximum number of goroutines that are actually working
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    cap <span style="color:#458;font-weight:bold">int32</span> <span style="color:#998;font-style:italic">// 也就是限制 worker 的数量
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// Configuration information
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    config <span style="color:#000;font-weight:bold">*</span>Config <span style="color:#998;font-style:italic">// gopool提供默认配置，当任务数大于1时，就新开一个goroutine
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 真正放函数的地方，所有的函数都放在这里
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#998;font-style:italic">// linked list of tasks
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    taskHead  <span style="color:#000;font-weight:bold">*</span>task      <span style="color:#998;font-style:italic">// 头节点
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    taskTail  <span style="color:#000;font-weight:bold">*</span>task      <span style="color:#998;font-style:italic">// 指向最后一个节点，实现一个O(1)的复杂度添加
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    taskLock  sync.Mutex <span style="color:#998;font-style:italic">// 保证并发安全
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    taskCount <span style="color:#458;font-weight:bold">int32</span>      <span style="color:#998;font-style:italic">// 任务数量
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// Record the number of running workers
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    workerCount <span style="color:#458;font-weight:bold">int32</span> <span style="color:#998;font-style:italic">// 正在跑的worker
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// This method will be called when the worker panic
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    panicHandler <span style="color:#000;font-weight:bold">func</span>(context.Context, <span style="color:#000;font-weight:bold">interface</span>{})
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>name</code>是当前池的名字。</li>
+<li><code>cap</code>是当前池的容量，即允许在跑的最大协程数</li>
+<li><code>config</code>标识当前每个<code>worker</code>应当被分配的任务函数个数，包里默认是<code>1</code></li>
+<li><code>taskXXXX</code>是任务链表，<code>taskLock</code>是为了保证代码片段的并发安全，<code>taskCount</code>动态标识当前还未执行的任务函数</li>
+<li><code>workerCount</code>标识当前正在跑的协程数</li>
+<li><code>panicHandler</code>自定义panic处理</li>
+</ul>
+<h3 id="pool的方法"><code>pool</code>的方法</h3>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">55
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">56
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">57
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">58
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">59
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">60
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">61
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">62
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">63
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">64
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">65
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">66
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">67
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">68
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> (p <span style="color:#000;font-weight:bold">*</span>pool) <span style="color:#900;font-weight:bold">Name</span>() <span style="color:#458;font-weight:bold">string</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> p.name
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// SetCap 通过CPU指令集保证是原子的方式存到指定地址，保证并发安全
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> (p <span style="color:#000;font-weight:bold">*</span>pool) <span style="color:#900;font-weight:bold">SetCap</span>(cap <span style="color:#458;font-weight:bold">int32</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 将值原子地设置到p里
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    atomic.<span style="color:#900;font-weight:bold">StoreInt32</span>(<span style="color:#000;font-weight:bold">&amp;</span>p.cap, cap)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> (p <span style="color:#000;font-weight:bold">*</span>pool) <span style="color:#900;font-weight:bold">Go</span>(f <span style="color:#000;font-weight:bold">func</span>()) {
+</span></span><span style="display:flex;"><span>    p.<span style="color:#900;font-weight:bold">CtxGo</span>(context.<span style="color:#900;font-weight:bold">Background</span>(), f)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> (p <span style="color:#000;font-weight:bold">*</span>pool) <span style="color:#900;font-weight:bold">CtxGo</span>(ctx context.Context, f <span style="color:#000;font-weight:bold">func</span>()) {
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 池里取空的对象
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    t <span style="color:#000;font-weight:bold">:=</span> taskPool.<span style="color:#900;font-weight:bold">Get</span>().(<span style="color:#000;font-weight:bold">*</span>task)
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 置新
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    t.ctx = ctx
+</span></span><span style="display:flex;"><span>    t.f = f
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 下面代码逻辑上锁
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    p.taskLock.<span style="color:#900;font-weight:bold">Lock</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 将 task 放到任务链表里，这个过程由于是多个Goroutine操作并发操作，都在往任务链表里塞 task ，
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#998;font-style:italic">// 因此，需要将task入链表的代码锁住，防止并发问题
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">if</span> p.taskHead <span style="color:#000;font-weight:bold">==</span> <span style="color:#000;font-weight:bold">nil</span> { <span style="color:#998;font-style:italic">// 链表为空
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        p.taskHead = t
+</span></span><span style="display:flex;"><span>        p.taskTail = t
+</span></span><span style="display:flex;"><span>    } <span style="color:#000;font-weight:bold">else</span> { <span style="color:#998;font-style:italic">//
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        p.taskTail.next = t
+</span></span><span style="display:flex;"><span>        p.taskTail = t
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    p.taskLock.<span style="color:#900;font-weight:bold">Unlock</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 然后原子更改任务状态，不需要加锁（避免上下文切换），这样可以获得更好的性能
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    atomic.<span style="color:#900;font-weight:bold">AddInt32</span>(<span style="color:#000;font-weight:bold">&amp;</span>p.taskCount, <span style="color:#099">1</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// The following two conditions are met:
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#998;font-style:italic">// 1. the number of tasks is greater than the threshold.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#998;font-style:italic">// 2. The current number of workers is less than the upper limit p.cap.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#998;font-style:italic">// or there are currently no workers.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#998;font-style:italic">// 根据默认的配置：worker数大于等于 p.cap时就会，就不会新建 worker了，此时就会复用已有的worker来执行；
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#998;font-style:italic">// 在小于p.cap时就会每个task新建一个goroutine
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">if</span> (atomic.<span style="color:#900;font-weight:bold">LoadInt32</span>(<span style="color:#000;font-weight:bold">&amp;</span>p.taskCount) <span style="color:#000;font-weight:bold">&gt;=</span> p.config.ScaleThreshold <span style="color:#000;font-weight:bold">&amp;&amp;</span> p.<span style="color:#900;font-weight:bold">WorkerCount</span>() &lt; atomic.<span style="color:#900;font-weight:bold">LoadInt32</span>(<span style="color:#000;font-weight:bold">&amp;</span>p.cap)) <span style="color:#000;font-weight:bold">||</span> p.<span style="color:#900;font-weight:bold">WorkerCount</span>() <span style="color:#000;font-weight:bold">==</span> <span style="color:#099">0</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 新开一个 worker
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        p.<span style="color:#900;font-weight:bold">incWorkerCount</span>()
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 池里拿
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        w <span style="color:#000;font-weight:bold">:=</span> workerPool.<span style="color:#900;font-weight:bold">Get</span>().(<span style="color:#000;font-weight:bold">*</span>worker)
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// p放到worker的pool里
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        w.pool = p
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 再开一个协程跑，取这个worker的任务并执行
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        w.<span style="color:#900;font-weight:bold">run</span>()
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// SetPanicHandler the func here will be called after the panic has been recovered.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> (p <span style="color:#000;font-weight:bold">*</span>pool) <span style="color:#900;font-weight:bold">SetPanicHandler</span>(f <span style="color:#000;font-weight:bold">func</span>(context.Context, <span style="color:#000;font-weight:bold">interface</span>{})) {
+</span></span><span style="display:flex;"><span>    p.panicHandler = f
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> (p <span style="color:#000;font-weight:bold">*</span>pool) <span style="color:#900;font-weight:bold">WorkerCount</span>() <span style="color:#458;font-weight:bold">int32</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> atomic.<span style="color:#900;font-weight:bold">LoadInt32</span>(<span style="color:#000;font-weight:bold">&amp;</span>p.workerCount)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> (p <span style="color:#000;font-weight:bold">*</span>pool) <span style="color:#900;font-weight:bold">incWorkerCount</span>() {
+</span></span><span style="display:flex;"><span>    atomic.<span style="color:#900;font-weight:bold">AddInt32</span>(<span style="color:#000;font-weight:bold">&amp;</span>p.workerCount, <span style="color:#099">1</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> (p <span style="color:#000;font-weight:bold">*</span>pool) <span style="color:#900;font-weight:bold">decWorkerCount</span>() {
+</span></span><span style="display:flex;"><span>    atomic.<span style="color:#900;font-weight:bold">AddInt32</span>(<span style="color:#000;font-weight:bold">&amp;</span>p.workerCount, <span style="color:#000;font-weight:bold">-</span><span style="color:#099">1</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="worker"><code>worker</code></h3>
+<p><code>worker</code>结构体里有一个<code>pool</code>指针，在<code>gopool</code>的逻辑实现里，多个<code>worker</code>的<code>pool</code>指向同一个<code>pool</code>。意思是多个<code>worker</code>针对同一个<code>pool</code>里的任务链表处理</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> worker <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>    pool <span style="color:#000;font-weight:bold">*</span>pool <span style="color:#998;font-style:italic">// 多个worker都指向这个pool
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="worker的方法"><code>worker</code>的方法</h3>
+<h4 id="run"><code>run</code></h4>
+<p>新开一个携程去轮询任务链表，并作panic的处理。值得注意的是：取任务链表里的任务时，必须上锁。因为此时有多个协程并发地取任务链表执行。panic处理也挺有意思，这里是将panic和任务函数调用放到一个匿名函数调用里，这样就可以使得panic地捕获一定是任务函数地panic，而不是捕获<code>run</code>方法里的panic</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> (w <span style="color:#000;font-weight:bold">*</span>worker) <span style="color:#900;font-weight:bold">run</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">go</span> <span style="color:#000;font-weight:bold">func</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">for</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">var</span> t <span style="color:#000;font-weight:bold">*</span>task
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#998;font-style:italic">// 必须上锁，因为可能有多个 worker（也就是多个协程） 同时再对这个pool里的task链表做取出操作，并执行这个task
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>            w.pool.taskLock.<span style="color:#900;font-weight:bold">Lock</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#998;font-style:italic">// 不断拿出 task
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>            <span style="color:#000;font-weight:bold">if</span> w.pool.taskHead <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+</span></span><span style="display:flex;"><span>                t = w.pool.taskHead
+</span></span><span style="display:flex;"><span>                w.pool.taskHead = w.pool.taskHead.next
+</span></span><span style="display:flex;"><span>                <span style="color:#998;font-style:italic">// 原子的减少任务数
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>                atomic.<span style="color:#900;font-weight:bold">AddInt32</span>(<span style="color:#000;font-weight:bold">&amp;</span>w.pool.taskCount, <span style="color:#000;font-weight:bold">-</span><span style="color:#099">1</span>)
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#998;font-style:italic">// 任务取完了
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>            <span style="color:#000;font-weight:bold">if</span> t <span style="color:#000;font-weight:bold">==</span> <span style="color:#000;font-weight:bold">nil</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#998;font-style:italic">// if there&#39;s no task to do, exit
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>                w.<span style="color:#0086b3">close</span>()
+</span></span><span style="display:flex;"><span>                w.pool.taskLock.<span style="color:#900;font-weight:bold">Unlock</span>()
+</span></span><span style="display:flex;"><span>                <span style="color:#998;font-style:italic">// 回收
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>                w.<span style="color:#900;font-weight:bold">Recycle</span>()
+</span></span><span style="display:flex;"><span>                <span style="color:#000;font-weight:bold">return</span>
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#998;font-style:italic">// 释放时机到了
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>            w.pool.taskLock.<span style="color:#900;font-weight:bold">Unlock</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#998;font-style:italic">// 匿名函数调用，退一个栈从而形成独立环境，不让当前的defer去捕获外面函数里的异常，只是捕获这个执行函数的panic
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>            <span style="color:#998;font-style:italic">// 确保这个defer一定是捕获的task的panic
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>            <span style="color:#000;font-weight:bold">func</span>() {
+</span></span><span style="display:flex;"><span>                <span style="color:#998;font-style:italic">// 处理panic
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>                <span style="color:#000;font-weight:bold">defer</span> <span style="color:#000;font-weight:bold">func</span>() {
+</span></span><span style="display:flex;"><span>                    <span style="color:#000;font-weight:bold">if</span> r <span style="color:#000;font-weight:bold">:=</span> <span style="color:#0086b3">recover</span>(); r <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+</span></span><span style="display:flex;"><span>                        <span style="color:#000;font-weight:bold">if</span> w.pool.panicHandler <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+</span></span><span style="display:flex;"><span>                            w.pool.<span style="color:#900;font-weight:bold">panicHandler</span>(t.ctx, r)
+</span></span><span style="display:flex;"><span>                        } <span style="color:#000;font-weight:bold">else</span> {
+</span></span><span style="display:flex;"><span>                            msg <span style="color:#000;font-weight:bold">:=</span> fmt.<span style="color:#900;font-weight:bold">Sprintf</span>(<span style="color:#d14">&#34;GOPOOL: panic in pool: %s: %v: %s&#34;</span>, w.pool.name, r, debug.<span style="color:#900;font-weight:bold">Stack</span>())
+</span></span><span style="display:flex;"><span>                            logger.<span style="color:#900;font-weight:bold">CtxErrorf</span>(t.ctx, msg)
+</span></span><span style="display:flex;"><span>                        }
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                }()
+</span></span><span style="display:flex;"><span>                <span style="color:#998;font-style:italic">// 真正地执行函数
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>                t.<span style="color:#900;font-weight:bold">f</span>()
+</span></span><span style="display:flex;"><span>            }()
+</span></span><span style="display:flex;"><span>            <span style="color:#998;font-style:italic">// 回收task
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>            t.<span style="color:#900;font-weight:bold">Recycle</span>()
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="其他方法">其他方法</h4>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 协程数减一
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> (w <span style="color:#000;font-weight:bold">*</span>worker) <span style="color:#0086b3">close</span>() {
+</span></span><span style="display:flex;"><span>    w.pool.<span style="color:#900;font-weight:bold">decWorkerCount</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> (w <span style="color:#000;font-weight:bold">*</span>worker) <span style="color:#900;font-weight:bold">zero</span>() {
+</span></span><span style="display:flex;"><span>    w.pool = <span style="color:#000;font-weight:bold">nil</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// Recycle 回收worker
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> (w <span style="color:#000;font-weight:bold">*</span>worker) <span style="color:#900;font-weight:bold">Recycle</span>() {
+</span></span><span style="display:flex;"><span>    w.<span style="color:#900;font-weight:bold">zero</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 放回池里
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    workerPool.<span style="color:#900;font-weight:bold">Put</span>(w)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>task</code></p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> task <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>    ctx context.Context
+</span></span><span style="display:flex;"><span>    f   <span style="color:#000;font-weight:bold">func</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    next <span style="color:#000;font-weight:bold">*</span>task
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">func</span> (t <span style="color:#000;font-weight:bold">*</span>task) <span style="color:#900;font-weight:bold">zero</span>() {
+</span></span><span style="display:flex;"><span>    t.ctx = <span style="color:#000;font-weight:bold">nil</span>
+</span></span><span style="display:flex;"><span>    t.f = <span style="color:#000;font-weight:bold">nil</span>
+</span></span><span style="display:flex;"><span>    t.next = <span style="color:#000;font-weight:bold">nil</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// Recycle 回收到 sync.Pool里
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> (t <span style="color:#000;font-weight:bold">*</span>task) <span style="color:#900;font-weight:bold">Recycle</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// task 置空
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    t.<span style="color:#900;font-weight:bold">zero</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 放到池里
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    taskPool.<span style="color:#900;font-weight:bold">Put</span>(t)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
         </div>
 
         
