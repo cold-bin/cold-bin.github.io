@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>汇编 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/</link>
+    <description>Recent content in 汇编 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 30 Nov 2022 11:01:12 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>汇编之寄存器</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/</link>
+      <pubDate>Wed, 30 Nov 2022 11:01:12 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/</guid>
+      <description>寄存器 概述 一个典型的CPU主要由运算器，控制器，寄存器等器件构成，它们靠内部总线相连（内部总线实现CPU内部各机器件间的联系，外部总线实现CPU和主板上其他器件之间的联系）。 本篇博文叙述CPU中的寄存器，程序员可以通过指令读写寄存器，从而实现对CPU的控制。不同的CPU其寄存器的</description>
+    </item>
+    
+    <item>
+      <title>汇编之概述</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/</link>
+      <pubDate>Tue, 29 Nov 2022 15:43:09 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/</guid>
+      <description>汇编基础术语 什么是汇编语言？汇编语言就是直接工作硬件之上的编程语言。 机器语言 机器语言就是机器指令的集合。电子计算机的机器指令是一串二进制数字，而且不同的微处理器有不同的机器指令集，也就是机器语言。 早期的程序都是编写一大段01的二进制代码，也就是机器语言，显然不利于人工的记忆和操作</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>汇编之寄存器 | cold bin&#39;s blog</title>
+    <meta property="og:title" content="汇编之寄存器 - cold bin&#39;s blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2022-11-30T11:01:12&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2022-11-30T11:01:12&#43;08:00'>
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="汇编之寄存器">
+        
+    <meta name="author" content="cold bin">
+    <meta property="og:url" content="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://cold-bin.github.io">
+                        cold bin&#39;s blog
+                    </a>
+                
+                
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://cold-bin.github.io">首页</a>
+                    
+                    <a  href="https://cold-bin.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://cold-bin.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+
+
+<aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details >
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">Table of Contents</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#%e5%af%84%e5%ad%98%e5%99%a8" aria-label="寄存器">寄存器</a><ul>
+                            
+                    <li>
+                        <a href="#%e6%a6%82%e8%bf%b0" aria-label="概述">概述</a></li>
+                    <li>
+                        <a href="#%e9%80%9a%e7%94%a8%e5%af%84%e5%ad%98%e5%99%a8" aria-label="通用寄存器">通用寄存器</a></li>
+                    <li>
+                        <a href="#%e4%bb%a3%e7%a0%81%e6%ae%b5%e5%af%84%e5%ad%98%e5%99%a8%e4%b8%8e%e6%8c%87%e4%bb%a4%e6%8c%87%e9%92%88%e5%af%84%e5%ad%98%e5%99%a8" aria-label="代码段寄存器与指令指针寄存器">代码段寄存器与指令指针寄存器</a><ul>
+                            
+                    <li>
+                        <a href="#%e7%89%a9%e7%90%86%e5%9c%b0%e5%9d%80" aria-label="物理地址">物理地址</a></li>
+                    <li>
+                        <a href="#16%e4%bd%8d%e7%bb%93%e6%9e%84%e7%9a%84cpu" aria-label="16位结构的CPU">16位结构的CPU</a></li>
+                    <li>
+                        <a href="#8086cpu%e7%bb%99%e5%87%ba%e7%9a%84%e7%89%a9%e7%90%86%e5%9c%b0%e5%9d%80%e6%96%b9%e6%b3%95%e5%88%86%e6%ae%b5%e7%bb%93%e6%9e%84" aria-label="8086CPU给出的物理地址方法（分段结构）">8086CPU给出的物理地址方法（分段结构）</a></li>
+                    <li>
+                        <a href="#%e4%bb%a3%e7%a0%81%e6%ae%b5%e5%af%84%e5%ad%98%e5%99%a8cs%e6%8c%87%e4%bb%a4%e6%8c%87%e9%92%88%e5%af%84%e5%ad%98%e5%99%a8ip" aria-label="代码段寄存器CS，指令指针寄存器IP">代码段寄存器CS，指令指针寄存器IP</a></li>
+                    <li>
+                        <a href="#%e4%bf%ae%e6%94%b9csip%e7%9a%84%e6%8c%87%e4%bb%a4" aria-label="修改CS、IP的指令">修改CS、IP的指令</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e6%95%b0%e6%8d%ae%e6%ae%b5%e5%af%84%e5%ad%98%e5%99%a8ds%e5%92%8c%e5%81%8f%e7%a7%bb%e5%9c%b0%e5%9d%80address" aria-label="数据段寄存器DS和偏移地址[address]">数据段寄存器DS和偏移地址[address]</a></li>
+                    <li>
+                        <a href="#%e6%a0%88%e5%af%84%e5%ad%98%e5%99%a8" aria-label="栈寄存器">栈寄存器</a><ul>
+                            
+                    <li>
+                        <a href="#%e5%87%ba%e6%a0%88%e5%85%a5%e6%a0%88%e6%8c%87%e4%bb%a4" aria-label="出栈入栈指令">出栈入栈指令</a></li>
+                    <li>
+                        <a href="#%e6%a0%88%e6%ae%b5%e5%af%84%e5%ad%98%e5%99%a8ss%e4%b8%8e%e5%81%8f%e7%a7%bb%e5%af%84%e5%ad%98%e5%99%a8sp" aria-label="栈段寄存器SS与偏移寄存器SP">栈段寄存器SS与偏移寄存器SP</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#debug%e5%b7%a5%e5%85%b7" aria-label="Debug工具">Debug工具</a><ul>
+                            
+                    <li>
+                        <a href="#-r%e5%91%bd%e4%bb%a4" aria-label="-r命令">-r命令</a></li>
+                    <li>
+                        <a href="#-d%e5%91%bd%e4%bb%a4" aria-label="-d命令">-d命令</a></li>
+                    <li>
+                        <a href="#-e%e5%91%bd%e4%bb%a4" aria-label="-e命令">-e命令</a></li>
+                    <li>
+                        <a href="#-a%e5%91%bd%e4%bb%a4" aria-label="-a命令">-a命令</a></li>
+                    <li>
+                        <a href="#-t%e5%91%bd%e4%bb%a4" aria-label="-t命令">-t命令</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e5%b0%8f%e7%bb%93" aria-label="小结">小结</a>
+                    </li>
+                </ul>
+                </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+<div class="res-cons">
+
+    <article class="post">
+        <div class="res-cons">
+
+        <header>
+            <h1 class="post-title">汇编之寄存器</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年11月30日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E6%B1%87%E7%BC%96'>汇编</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        
+        <div class="post-content">
+            <h2 id="寄存器">寄存器</h2>
+<h3 id="概述">概述</h3>
+<p>一个典型的CPU主要由运算器，控制器，<a href="https://so.csdn.net/so/search?q=%E5%AF%84%E5%AD%98%E5%99%A8&amp;spm=1001.2101.3001.7020">寄存器</a>等器件构成，它们靠内部总线相连（内部总线实现CPU内部各机器件间的联系，外部总线实现CPU和主板上其他器件之间的联系）。</p>
+<p>本篇博文叙述CPU中的寄存器，程序员可以通过指令读写寄存器，从而实现对CPU的控制。不同的CPU其寄存器的个数与结构也不相同，以8086CPU为例，其有14各寄存器，每个寄存器有一个名称，且所有寄存器都是16位的，可以存放两个字节，分别为：AX、BX、CX、DX、SI、DI、SP、BP、IP、CS、SS、DS、ES、PSW，后面将一一进行介绍。</p>
+<h3 id="通用寄存器">通用寄存器</h3>
+<p>AX，BX，CX，DX为四个通用寄存器，用于存放一般性数据（所谓一般性数据指的是那些并非用于CPU控制的数据）。如前所述，8086CPU使用的是16位寄存器，为了兼容之前针对8位CPU编写的程序，每个通用寄存器都可以分为两个8位寄存器来独立使用，即AX可分为AH和AL，BX可分为BH和BL，CX可分为CH和CL,DX可分为DH和DL。如下图所示： 
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/2019090319524311.png">
+            <img class="mx-auto" alt="img" src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/2019090319524311.png" />
+        </a>
+    </p>
+<p>通过<a href="https://so.csdn.net/so/search?q=%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80&amp;spm=1001.2101.3001.7020">汇编语言</a>使用通用寄存器：（汇编语言中不能直接相加两个数字，而是要通过寄存器来做加法）</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 18 + 2
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>MOV AX <span style="color:#099">18</span> <span style="color:#998;font-style:italic">// 将18送入寄存器AX
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>add ax <span style="color:#099">8</span>  <span style="color:#998;font-style:italic">// 将AX中的数值加上8
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 或如下写法
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>MOV AX <span style="color:#099">18</span>
+</span></span><span style="display:flex;"><span>MOV BX <span style="color:#099">2</span>
+</span></span><span style="display:flex;"><span>add ax bx <span style="color:#998;font-style:italic">// 将AX和BX中的数值相加，结果保存在AX中
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>**【注】：**在写一条汇编指令或一个寄存器名称时不区分大小写。</p>
+<h3 id="代码段寄存器与指令指针寄存器">代码段寄存器与指令指针寄存器</h3>
+<p>要说明这两个寄存器，首先我们要理解一下几个概念。</p>
+<h4 id="物理地址">物理地址</h4>
+<p>每个内存单元都有一个编号，而这就是内存单元唯一的地址，也就是物理地址。</p>
+<h4 id="16位结构的cpu">16位结构的CPU</h4>
+<p>一个16位结构的CPU意味着该CPU具有以下特征：</p>
+<ul>
+<li>运算器一次最多可以处理16位的数据</li>
+<li>寄存器的最大宽度位16位</li>
+<li>寄存器与运算器之间的通路为16位</li>
+</ul>
+<h4 id="8086cpu给出的物理地址方法分段结构">8086CPU给出的物理地址方法（分段结构）</h4>
+<p>8086CPU的物理总线的宽度为20，而CPU内部只能处理和传输16位地址，那么如果将地址从内部简单的发出，那么只能送出16位的地址，表现出的寻址能力只有64KB，因此，8080CPU添加了了一个地址加法器，将两个16位地址合并为一个20位的物理地址。其中两个16位地址分别位段地址和偏移地址，地址加法器的计算方法为：<code>物理地址 = 段地址 * 16 + 偏移地址</code>， 即<code>物理地址 = 段地址 &lt;&lt; (20 - 16) + 偏移地址</code>。如下图所示：</p>
+<p>
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20190907114343977.png">
+            <img class="mx-auto" alt="img" src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20190907114343977.png" />
+        </a>
+    </p>
+<h4 id="代码段寄存器cs指令指针寄存器ip">代码段寄存器CS，指令指针寄存器IP</h4>
+<p>8086CPU含有4个段寄存器(存放段地址)：CS，DS，SS，ES。本节只说明CS。CS为代码段寄存器，IP为指令指针寄存器，8086CPU从<code>CS*16 + IP</code>单元开始读取一条指令并执行，即<strong>通过CS寄存器找到段地址，IP则记录的是偏移地址</strong>，通过二者可以找到要执行的指令代码。</p>
+<p>**其过程如下：**将段地址和偏移地址送至地址加法器，之后通过地址总线送至内存芯片，随后内存芯片将对应地址空间中的内容（指令）通过数据总线送达CPU，此时CPU将增加IP寄存器的值（增加值为所读取指令的长度），以便读入下一条指令。</p>
+<h4 id="修改csip的指令">修改CS、IP的指令</h4>
+<p>mov指令可以用于修改大部分寄存器的值，但不可以用于修改CS、IP的内容。若想修改，可以使用如下语法：<em><strong>*jmp 段地址 ： 偏移地址*</strong></em>，例如：<code>jmp 2AE3:3</code> 执行后 <code>cs = 2AE3H</code>, <code>IP = 0003H</code>。若仅想修改IP的内容，可用形如：<em><strong>*jmp 某一合法寄存器*</strong></em> 来完成，比如 <code>jmp ax</code>或 <code>jmp bx</code> ，那么该语句执行后便会用寄存器中的值修改IP寄存器。</p>
+<h3 id="数据段寄存器ds和偏移地址address">数据段寄存器DS和偏移地址[address]</h3>
+<p>8086CPU中有一个DS寄存器，通常用于存放要访问数据的段地址，在配合偏移地址[address]来使用，则可以读取指定内存单元中的数据，如：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-scss" data-lang="scss"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 读取10000H单元的内容
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000080">mov</span> <span style="color:#000080">bx</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000080">1000H</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">mov</span> <span style="color:#000080">ds</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000080">bx</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">mov</span> <span style="color:#000080">al</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000;font-weight:bold">[</span><span style="color:#000080">0</span><span style="color:#000;font-weight:bold">]</span>  <span style="color:#000;font-weight:bold">//</span> <span style="color:#000;font-weight:bold">[</span><span style="color:#000080">adderss</span><span style="color:#000;font-weight:bold">]</span><span style="color:#000080">表示偏移地址</span>
+</span></span><span style="display:flex;"><span><span style="color:#000080">mov</span> <span style="color:#000;font-weight:bold">[</span><span style="color:#000080">0</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000080">cx</span>;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上述代码描述了mov指令可以完成的四种操作：1）將数据直接写入寄存器；2）将一个寄存器中的内容送至另一个寄存器；3）将一个内存单元中的内容送至寄存器；4）将寄存器中的数据送入内存单元。</p>
+<p>**【注】：**8086CPU不支持将数据直接送入段寄存器，因此修改DS寄存器需要从另一个寄存器移入。</p>
+<h3 id="栈寄存器">栈寄存器</h3>
+<h4 id="出栈入栈指令">出栈入栈指令</h4>
+<p>汇编语言的出栈入栈指令为PUSH和POP，其使用方式如下：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-perl" data-lang="perl"><span style="display:flex;"><span><span style="color:#0086b3">push</span><span style="color:#000;font-weight:bold">/</span><span style="color:#0086b3">pop</span> 寄存器<span style="color:#a61717;background-color:#e3d2d2">；</span>
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">push</span><span style="color:#000;font-weight:bold">/</span><span style="color:#0086b3">pop</span> 段寄存器
+</span></span><span style="display:flex;"><span><span style="color:#0086b3">push</span><span style="color:#000;font-weight:bold">/</span><span style="color:#0086b3">pop</span> 内存单元
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="栈段寄存器ss与偏移寄存器sp">栈段寄存器SS与偏移寄存器SP</h4>
+<p>栈顶通过段寄存器ss与偏移寄存器SP指出。在任意时刻SS:SP总是指向栈顶元素，即最后入栈的数据。每次入栈时，push指令都将先移动栈顶指针再写入数据。当栈为空时，栈顶指针SS:SP指向比栈底地址高一个元素大小的位置（栈由高地址向低地址增长）。</p>
+<p>**【注】：**将一段地址当作栈段仅仅是编程时的一种安排，而CPU并不会区别的对待这段内存地址空间。</p>
+<h3 id="debug工具">Debug工具</h3>
+<p>Debug是供程序员使用的程序调试工具，可以用它检查内存中任何地方的字节以及修改任何地方的字节。</p>
+<h4 id="-r命令">-r命令</h4>
+<p>r命令用于查看和改变CPU寄存器的内容，使用如下图所示</p>
+<p>
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20200226213429245.png">
+            <img class="mx-auto" alt="img" src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20200226213429245.png" />
+        </a>
+    </p>
+<h4 id="-d命令">-d命令</h4>
+<p>可以通过&quot;d 段地址：偏移地址&quot;的格式查看从指定地址起的内存块中的内容。</p>
+<h4 id="-e命令">-e命令</h4>
+<p>改写内存单元的内容</p>
+<h4 id="-a命令">-a命令</h4>
+<p>以汇编指令的形式改写指定的内存单元。如下所示：</p>
+<p>
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20200226214743365.png">
+            <img class="mx-auto" alt="img" src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20200226214743365.png" />
+        </a>
+    </p>
+<h4 id="-t命令">-t命令</h4>
+<p>执行-t命令后，CPU将执行CS:IP指向的指令。如下图所示：</p>
+<p>
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20200226215328387.png">
+            <img class="mx-auto" alt="img" src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20200226215328387.png" />
+        </a>
+    </p>
+<h3 id="小结">小结</h3>
+<blockquote>
+<ul>
+<li>CPU访问内存时，必须向内存提供内存单元的物理地址。8086CPU在内部用段地址和偏移地址移位相加的方法形成最终的物理地址</li>
+</ul>
+<p>结论：CPU可以使用不同的段地址和偏移地址形成同一个物理地址</p>
+<ul>
+<li>
+<p>偏移地址16位，变化范围为0~FFFFH，仅用偏移地址来寻址最多可寻64kb个内存单元</p>
+</li>
+<li>
+<p>在8086PC机，存储单元的地址用两个元素来表述————段地址和偏移地址</p>
+</li>
+<li>
+<p>可以根据需要，将地址连续，起始地址为16的倍数的一组内存单元定义为一个段</p>
+</li>
+<li>
+<p>段地址在8086CPU的段寄存器中存放。当8086CPU要访问内存时，由段寄存器提供内存单元的段地址。8086CPU有四个段寄存器，其中CS用来存放指令的段地址</p>
+</li>
+<li>
+<p>CS存放指令的段地址，IP存放指令的偏移地址</p>
+</li>
+</ul>
+<p>8086机中，任意时刻，CPU将CS:IP指向的内容当作指令来执行</p>
+<ul>
+<li>8086CPU的工作执行过程：</li>
+</ul>
+<ol>
+<li>从CS:IP指向的内存单元读取指令，读取的指令进入指令缓冲器</li>
+<li>IP指向下一条指令</li>
+<li>执行指令（转到步骤1，重复这个过程）</li>
+</ol>
+<ul>
+<li>8086CPU提供转移指令修改CS:IP的值（jmp指令）</li>
+</ul>
+</blockquote>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://cold-bin.github.io">cold bin</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/">https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/">汇编之概述</a></li>
+        
+        <li><a href="/post/MongoDB%E5%9F%BA%E7%A1%80%E7%AF%87/">MongoDB基础篇</a></li>
+        
+        <li><a href="/post/%E5%AD%98%E5%82%A8%E4%B9%8B%E8%A1%8C%E5%88%97%E5%AD%98%E5%82%A8/">存储之行列存储</a></li>
+        
+        <li><a href="/post/%E5%B8%B8%E8%A7%81%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/">常见摘要算法</a></li>
+        
+        <li><a href="/post/%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%A6%82%E5%BF%B5/">常见加密算法原理及概念</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/%E6%B1%87%E7%BC%96%E5%AF%84%E5%AD%98%E5%99%A8'>汇编寄存器</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "my-blog-comment"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+    
+    
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://cold-bin.github.io">cold bin&#39;s blog By cold bin</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.2.8/raphael.min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/flowchart/1.12.2/flowchart.min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+                if (!window.flowchart) return;
+                const blocks = document.querySelectorAll('pre code.language-flowchart, pre code.language-flow');
+                for (let i = 0; i < blocks.length; i++) {
+                    const block = blocks[i];
+                    const rootElement = block.parentNode;
+                    const container = document.createElement('div');
+                    const id = `js-flowchart-diagrams-${i}`;
+                    container.id = id;
+                    container.className = 'align-center';
+                    container.setAttribute("style", "overFlow-x:auto");
+                    rootElement.parentNode.replaceChild(container, rootElement);
+                    const diagram = flowchart.parse(block.childNodes[0].nodeValue);
+                    diagram.drawSVG(id, window.flowchartDiagramsOptions ? window.flowchartDiagramsOptions : {});
+                }
+            })();
+        </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+            if (!window.Diagram) return;
+            const blocks = document.querySelectorAll('pre code.language-sequence');
+            for (let i = 0; i < blocks.length; i++) {
+                const block = blocks[i];
+                
+                const rootElement = block.parentNode;
+                const container = document.createElement('div');
+                const id = `js-sequence-diag-${i}`;
+                container.id = id;
+                container.className = 'align-center';
+                container.setAttribute("style", "overFlow-x:auto");
+                rootElement.parentNode.replaceChild(container, rootElement);
+
+                const diagram = Diagram.parse(block.childNodes[0].nodeValue);
+                diagram.drawSVG(id, window.sequenceDiagramsOptions
+                    ? window.sequenceDiagramsOptions
+                    : { theme: 'simple' });
+            }
+        })();
+        </script><script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://cold-bin.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://cold-bin.github.io">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/" title="汇编之寄存器">汇编之寄存器</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/" title="汇编之概述">汇编之概述</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/MongoDB%E5%9F%BA%E7%A1%80%E7%AF%87/" title="MongoDB基础篇">MongoDB基础篇</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%AD%98%E5%82%A8%E4%B9%8B%E8%A1%8C%E5%88%97%E5%AD%98%E5%82%A8/" title="存储之行列存储">存储之行列存储</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/" title="常见摘要算法">常见摘要算法</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%A6%82%E5%BF%B5/" title="常见加密算法原理及概念">常见加密算法原理及概念</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E9%94%81/" title="锁">锁</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E4%B9%8B%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/" title="并发安全之原子操作">并发安全之原子操作</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/GMP%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%8D%8F%E7%A8%8B%E6%B1%A0%E6%9E%84%E5%BB%BA/" title="GMP深度解析与协程池构建">GMP深度解析与协程池构建</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/HTTP%E5%8D%8F%E8%AE%AE%E7%9F%A5%E8%AF%86%E7%82%B9/" title="HTTP协议知识点">HTTP协议知识点</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (19)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">Go高性能并发编程 (3)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/HTTP%E5%8D%8F%E8%AE%AE/">HTTP协议 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/MongoDB/">MongoDB (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/MySQL/">MySQL (6)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/git/">git (2)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/gorm/">gorm (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/">加密算法 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%AD%98%E5%82%A8/">存储 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%8A%93%E5%8C%85/">抓包 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/">摘要算法 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库 (3)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/">汇编 (2)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://cold-bin.github.io/tags/GRPC/">GRPC</a>
+    
+    <a href="https://cold-bin.github.io/tags/Go%E5%BA%95%E5%B1%82/">Go底层</a>
+    
+    <a href="https://cold-bin.github.io/tags/Makefile/">Makefile</a>
+    
+    <a href="https://cold-bin.github.io/tags/MongoDB/">MongoDB</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E4%BA%8B%E5%8A%A1%E7%AF%87/">MySQL事务篇</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E5%9F%BA%E7%A1%80/">MySQL基础</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E6%97%A5%E5%BF%97%E4%B8%8E%E5%A4%87%E4%BB%BD%E7%AF%87/">MySQL日志与备份篇</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E6%9E%B6%E6%9E%84/">MySQL架构</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E7%B4%A2%E5%BC%95%E5%8F%8A%E8%B0%83%E4%BC%98/">MySQL索引及调优</a>
+    
+    <a href="https://cold-bin.github.io/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/">api向前兼容</a>
+    
+    <a href="https://cold-bin.github.io/tags/git%E7%9A%84commit%E8%A7%84%E8%8C%83/">git的commit规范</a>
+    
+    <a href="https://cold-bin.github.io/tags/go%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/">go编程思想</a>
+    
+    <a href="https://cold-bin.github.io/tags/https/">https</a>
+    
+    <a href="https://cold-bin.github.io/tags/reflect/">reflect</a>
+    
+    <a href="https://cold-bin.github.io/tags/rune%E7%B1%BB%E5%9E%8B/">rune类型</a>
+    
+    <a href="https://cold-bin.github.io/tags/sync.pool/">sync.pool</a>
+    
+    <a href="https://cold-bin.github.io/tags/tls%E8%AF%81%E4%B9%A6/">tls证书</a>
+    
+    <a href="https://cold-bin.github.io/tags/unsafe/">unsafe</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">内存对齐</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E9%9B%86%E4%B8%AD%E5%BC%8F/">分布式与集中式</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%88%97%E5%AD%98%E5%82%A8/">列存储</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">单元测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/">原子操作</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8F%8D%E5%B0%84/">反射</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90/">命令行参数解析</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8/">并发安全</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93java/">数据结构与算法总结，java</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%AF%84%E5%AD%98%E5%99%A8/">汇编寄存器</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E6%A6%82%E8%BF%B0/">汇编概述</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/">版本控制</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/">网络测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E8%A1%8C%E5%AD%98%E5%82%A8/">行存储</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E9%94%81/">锁</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E9%9B%B6%E6%8B%B7%E8%B4%9D/">零拷贝</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://github.com/cold-bin" title="GitHub">GitHub</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://blog.csdn.net/qq_57467091" title="CSDN">CSDN</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://cold-bin.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

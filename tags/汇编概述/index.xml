@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>汇编概述 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E6%A6%82%E8%BF%B0/</link>
+    <description>Recent content in 汇编概述 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 29 Nov 2022 15:43:09 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E6%A6%82%E8%BF%B0/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>汇编之概述</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/</link>
+      <pubDate>Tue, 29 Nov 2022 15:43:09 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/</guid>
+      <description>汇编基础术语 什么是汇编语言？汇编语言就是直接工作硬件之上的编程语言。 机器语言 机器语言就是机器指令的集合。电子计算机的机器指令是一串二进制数字，而且不同的微处理器有不同的机器指令集，也就是机器语言。 早期的程序都是编写一大段01的二进制代码，也就是机器语言，显然不利于人工的记忆和操作</description>
+    </item>
+    
+  </channel>
+</rss>

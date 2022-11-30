@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>汇编寄存器 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%AF%84%E5%AD%98%E5%99%A8/</link>
+    <description>Recent content in 汇编寄存器 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 30 Nov 2022 11:01:12 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%AF%84%E5%AD%98%E5%99%A8/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>汇编之寄存器</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/</link>
+      <pubDate>Wed, 30 Nov 2022 11:01:12 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/</guid>
+      <description>寄存器 概述 一个典型的CPU主要由运算器，控制器，寄存器等器件构成，它们靠内部总线相连（内部总线实现CPU内部各机器件间的联系，外部总线实现CPU和主板上其他器件之间的联系）。 本篇博文叙述CPU中的寄存器，程序员可以通过指令读写寄存器，从而实现对CPU的控制。不同的CPU其寄存器的</description>
+    </item>
+    
+  </channel>
+</rss>

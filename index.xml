@@ -6,7 +6,43 @@
     <description>Recent content on cold bin&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 17 Nov 2022 12:42:15 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 30 Nov 2022 11:01:12 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>汇编之寄存器</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/</link>
+      <pubDate>Wed, 30 Nov 2022 11:01:12 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/</guid>
+      <description>寄存器 概述 一个典型的CPU主要由运算器，控制器，寄存器等器件构成，它们靠内部总线相连（内部总线实现CPU内部各机器件间的联系，外部总线实现CPU和主板上其他器件之间的联系）。 本篇博文叙述CPU中的寄存器，程序员可以通过指令读写寄存器，从而实现对CPU的控制。不同的CPU其寄存器的</description>
+    </item>
+    
+    <item>
+      <title>汇编之概述</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/</link>
+      <pubDate>Tue, 29 Nov 2022 15:43:09 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/</guid>
+      <description>汇编基础术语 什么是汇编语言？汇编语言就是直接工作硬件之上的编程语言。 机器语言 机器语言就是机器指令的集合。电子计算机的机器指令是一串二进制数字，而且不同的微处理器有不同的机器指令集，也就是机器语言。 早期的程序都是编写一大段01的二进制代码，也就是机器语言，显然不利于人工的记忆和操作</description>
+    </item>
+    
+    <item>
+      <title>MongoDB基础篇</title>
+      <link>https://cold-bin.github.io/post/MongoDB%E5%9F%BA%E7%A1%80%E7%AF%87/</link>
+      <pubDate>Fri, 25 Nov 2022 20:20:04 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/MongoDB%E5%9F%BA%E7%A1%80%E7%AF%87/</guid>
+      <description>MongoDB背景 1、MongoDB是什么？ MongoDB是一款为web应用程序和互联网基础设施设计的数据库管理系统。没错MongoDB就是数据库，是NoSQL类型的数据库 2、为什么要用MongoDB？ （1）MongoDB提出的是文档、集合的概念，使用BSON（类JSON）作为其</description>
+    </item>
+    
+    <item>
+      <title>存储之行列存储</title>
+      <link>https://cold-bin.github.io/post/%E5%AD%98%E5%82%A8%E4%B9%8B%E8%A1%8C%E5%88%97%E5%AD%98%E5%82%A8/</link>
+      <pubDate>Fri, 25 Nov 2022 15:47:28 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E5%AD%98%E5%82%A8%E4%B9%8B%E8%A1%8C%E5%88%97%E5%AD%98%E5%82%A8/</guid>
+      <description>一.数据处理类型 联机事务处理 OLTP(on-line transaction processing) 联机分析处理 OLAP(On-Line Analytical Processing) 区别： OLTP 是传统关系型数据库的主要应用，用来执行一些基本的、日常的事务处理，比如数据库记录的增、删、改、查等等 OLAP 则是分布式数据库的主要应用，它对实时性要求不高，但处理的数据量大，通常应用于复杂的动态报表系统上。 二.行式存储和列式存</description>
+    </item>
+    
     <item>
       <title>常见摘要算法</title>
       <link>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/</link>

@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>汇编之概述 | cold bin&#39;s blog</title>
+    <meta property="og:title" content="汇编之概述 - cold bin&#39;s blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2022-11-29T15:43:09&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2022-11-29T15:43:09&#43;08:00'>
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="汇编之概述">
+        
+    <meta name="author" content="cold bin">
+    <meta property="og:url" content="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://cold-bin.github.io">
+                        cold bin&#39;s blog
+                    </a>
+                
+                
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://cold-bin.github.io">首页</a>
+                    
+                    <a  href="https://cold-bin.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://cold-bin.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+
+
+<aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details >
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">Table of Contents</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#%e6%b1%87%e7%bc%96%e5%9f%ba%e7%a1%80%e6%9c%af%e8%af%ad" aria-label="汇编基础术语">汇编基础术语</a><ul>
+                            
+                    <li>
+                        <a href="#%e6%9c%ba%e5%99%a8%e8%af%ad%e8%a8%80" aria-label="机器语言">机器语言</a></li>
+                    <li>
+                        <a href="#%e6%b1%87%e7%bc%96%e8%af%ad%e8%a8%80" aria-label="汇编语言">汇编语言</a></li>
+                    <li>
+                        <a href="#%e5%ad%98%e5%82%a8%e5%99%a8" aria-label="存储器">存储器</a></li>
+                    <li>
+                        <a href="#%e6%8c%87%e4%bb%a4%e5%92%8c%e6%95%b0%e6%8d%ae" aria-label="指令和数据">指令和数据</a></li>
+                    <li>
+                        <a href="#%e5%ad%98%e5%82%a8%e5%8d%95%e5%85%83" aria-label="存储单元">存储单元</a></li>
+                    <li>
+                        <a href="#cpu%e5%af%b9%e5%ad%98%e5%82%a8%e5%99%a8%e7%9a%84%e8%af%bb%e5%86%99" aria-label="CPU对存储器的读写">CPU对存储器的读写</a></li>
+                    <li>
+                        <a href="#%e5%9c%b0%e5%9d%80%e6%80%bb%e7%ba%bf" aria-label="地址总线">地址总线</a></li>
+                    <li>
+                        <a href="#%e6%95%b0%e6%8d%ae%e6%80%bb%e7%ba%bf" aria-label="数据总线">数据总线</a></li>
+                    <li>
+                        <a href="#%e6%8e%a7%e5%88%b6%e6%80%bb%e7%ba%bf" aria-label="控制总线">控制总线</a></li>
+                    <li>
+                        <a href="#%e4%b8%bb%e6%9d%bf" aria-label="主板">主板</a></li>
+                    <li>
+                        <a href="#%e6%8e%a5%e5%8f%a3%e5%8d%a1" aria-label="接口卡">接口卡</a></li>
+                    <li>
+                        <a href="#%e5%90%84%e7%b1%bb%e5%ad%98%e5%82%a8%e5%99%a8%e8%8a%af%e7%89%87" aria-label="各类存储器芯片">各类存储器芯片</a></li>
+                    <li>
+                        <a href="#cpu%e7%9a%84%e5%86%85%e5%ad%98%e5%9c%b0%e5%9d%80%e7%a9%ba%e9%97%b4" aria-label="CPU的内存地址空间">CPU的内存地址空间</a>
+                    </li>
+                </ul>
+                </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+<div class="res-cons">
+
+    <article class="post">
+        <div class="res-cons">
+
+        <header>
+            <h1 class="post-title">汇编之概述</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年11月29日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E6%B1%87%E7%BC%96'>汇编</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        
+        <div class="post-content">
+            <h2 id="汇编基础术语">汇编基础术语</h2>
+<p>什么是汇编语言？汇编语言就是直接工作硬件之上的编程语言。</p>
+<h3 id="机器语言">机器语言</h3>
+<p>机器语言就是机器指令的集合。电子计算机的机器指令是一串二进制数字，而且不同的微处理器有不同的机器指令集，也就是机器语言。</p>
+<p>早期的程序都是编写一大段01的二进制代码，也就是机器语言，显然不利于人工的记忆和操作。为了解决机器语言的晦涩难记的问题，人们想出了汇编语言。</p>
+<h3 id="汇编语言">汇编语言</h3>
+<p>汇编语言的主体是汇编指令。汇编指令和机器指令的差别在于指令的表示方法上。当然，汇编语言是人来设计的，机器是看不懂的，需要经过汇编语言的编译器，将汇编代码翻译成机器指令集，然后机器才可以执行代码。</p>
+<p>
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20221129200848.png">
+            <img class="mx-auto" alt="" src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20221129200848.png" />
+        </a>
+    </p>
+<p><strong>汇编语言的组成：</strong></p>
+<ul>
+<li>汇编指令：机器码的助记符，有对应的机器码（核心）</li>
+<li>伪指令：没有对应的机器码，由编译器执行，计算机并不执行</li>
+<li>其他符号：如+、-、*、/等，有编译器识别，没有对应的机器码</li>
+</ul>
+<h3 id="存储器">存储器</h3>
+<p>CPU是计算机的核心部件，它控制整个计算机的运作并进行计算。要想让一个CPU工作，就必须向它提供指令和数据。指令和数据就放在存储器里，当然也指内存。CPU是与内存打交道，磁盘不能直接与CPU进行数据交换，中间需要存取速度更快的内存。</p>
+<h3 id="指令和数据">指令和数据</h3>
+<p>在内存或磁盘上，指令和数据没有任何区别，都是二进制信息。CPU在工作的时候将有些信息看成指令，有些看成数据。</p>
+<h3 id="存储单元">存储单元</h3>
+<p>存储器被划分为若干个存储单元，每个存储单元从0开始顺序编号，例如一个存储器有128个存储单元，编号从0~127.</p>
+<p>一般一个存储单元就是一个字节</p>
+<h3 id="cpu对存储器的读写">CPU对存储器的读写</h3>
+<p>存储器被划分为多个存储单元，存储单元从零开始顺序编号，这些编号可以看作是存储单元在存储器的地址。</p>
+<p>CPU要从内存中读写数据，首先要指定存储单元的地址，然后需要明确进行何种操作。</p>
+<p>也就是说，CPU对数据进行读写时，必须和外部器件进行3类信息的交互</p>
+<ul>
+<li>存储单元的地址信息（地址信息）</li>
+<li>器件的选择，读或写的命令（控制信息）</li>
+<li>读或写的数据（数据信息）</li>
+</ul>
+<p>那么，CPU通过什么将地址、数据和控制信息传到存储器的呢？——总线。</p>
+<p>总线从物理上来讲，就是一根根导线的集合。根据传送信息的不同，总线从逻辑上又分为3类：地址总线、控制总线、数据总线。</p>
+<p>
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20221129205642312.png">
+            <img class="mx-auto" alt="image-20221129205642312" src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20221129205642312.png" />
+        </a>
+    </p>
+<p>CPU读数据：</p>
+<ol>
+<li>CPU通过地址线将地址信息3发出</li>
+<li>CPU通过控制线发出内存读命令，选中存储器芯片并通知它，将要从中读取数据</li>
+<li>存储器将3号单元里的数据8通过数据线送入CPU</li>
+</ol>
+<p>CPU写数据：</p>
+<ol>
+<li>CPU通过地址线将地址信息3发出</li>
+<li>CPU通过控制线发出内存写命令，选中存储器芯片并通知它，将要从中写入数据</li>
+<li>CPU通过数据线将数据26送入内存的3号单元中</li>
+</ol>
+<h3 id="地址总线">地址总线</h3>
+<p>CPU通过地址总线来指定存储单元，由此可推知，地址总线上能传递多少种不同的信息，CPU就可以对多少个存储单元进行寻址，假设一个CPU有10根地址总线，那么其寻址空间为0 ~1023，即2^10个存储单元。即地址总线的宽度决定了CPU的寻址范围。</p>
+<h3 id="数据总线">数据总线</h3>
+<p>CPU和其它器件之间的数据传递是通过数据总线进行传递的，数据总线的宽度决定了CPU和其它器件间数据传送速度。8根数据总线一次可以传送一个8位二进制数据，因为每一根总线只能传递一个高电平或低电平来代表0或1，即1根总线一次只能传递一位。</p>
+<h3 id="控制总线">控制总线</h3>
+<p>CPU对外部器件的控制是通过控制总线完成的，有多少根控制总线就意味着CPU对外部器件有多少种控制。即控制总线的宽度对外部器件的控制能力。</p>
+<h3 id="主板">主板</h3>
+<p>每台PC都有一个主板，每个主板上都存在一些核心器件：CPU，存储器，外围芯片组，扩展卡槽等。扩展卡槽上一般有RAM内存条和各类接口卡。这些器件通过总线相连。</p>
+<h3 id="接口卡">接口卡</h3>
+<p>CPU对于诸如：显示器，音箱，打印机这样的外设不能直接控制，直接控制这些设备工作的是插在扩展插槽上的接口卡，由于扩展插槽通过总线和CPU相连，所以接口卡也通过总线和CPU相连。之后CPU通过总线向接口卡发送命令，接口卡在根据CPU的命令控制外设进行工作。（例：比如一个音箱通过USB插槽连接到了电脑，而该插槽通过总线和CPU相连，此时当要播放声音时会将数据指令等通过数据总线发送到卡槽，即音箱内的接口卡也会收到，之后控制音箱工作）</p>
+<h3 id="各类存储器芯片">各类存储器芯片</h3>
+<p>存储器从读写属性上可以分为随机存储器（RAM）和只读存储器(ROM)，其中随机存储器（RAM）可读可写但必须带电存储，关机后存储内容会丢失。只读存储器只能读取，不能写入，关机后其内容不会丢失。</p>
+<p>而从功能和连接方式看又可以分为以下3类：</p>
+<ul>
+<li>随机存储器（内存）：用于存放供CPU使用的绝大部分程序和数据</li>
+<li>装有BIOS的ROM：BIOS（基本输入/输出系统）是由主板和各类接口卡厂商提供的软件系统，可以通过BIOS使用硬件设备进行最基本的输入输出。在主板和某写接口卡上插有存储相应BIOS的ROM，如：主板上的ROM中存储着主板的BIOS（通常即系统BIOS），显卡上的ROM存储着显卡的BIOS，网卡上装有网卡的BIOS。</li>
+<li>接口卡上的RAM：有的接口卡需要对大批量的输入输出数据进行进行暂存，因此需要RAM。最典型的就是显卡上的RAM,一般称为显存。显卡随时将显存中的数据输出到显示器上。</li>
+</ul>
+<h3 id="cpu的内存地址空间">CPU的内存地址空间</h3>
+<p>假设一个CPU的地址总线宽度为10，那么其寻址范围为1024个内存单元，而这1024个内存单元就构成了这个CPU的内存地址空间。</p>
+<p>各类物理上独立的器件都是通过总线与CPU相连的，CPU操作它们时也是将它们当作内存来看待的，每个物理存储器占用CPU的内存地址空间中的一部分，当CPU在某个物理器件对应的地址空间中读写数据，实际上就是在对应的物理存储器中读写数据。</p>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://cold-bin.github.io">cold bin</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/">https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/MongoDB%E5%9F%BA%E7%A1%80%E7%AF%87/">MongoDB基础篇</a></li>
+        
+        <li><a href="/post/%E5%AD%98%E5%82%A8%E4%B9%8B%E8%A1%8C%E5%88%97%E5%AD%98%E5%82%A8/">存储之行列存储</a></li>
+        
+        <li><a href="/post/%E5%B8%B8%E8%A7%81%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/">常见摘要算法</a></li>
+        
+        <li><a href="/post/%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%A6%82%E5%BF%B5/">常见加密算法原理及概念</a></li>
+        
+        <li><a href="/post/%E9%94%81/">锁</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/%E6%B1%87%E7%BC%96%E6%A6%82%E8%BF%B0'>汇编概述</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "my-blog-comment"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+    
+    
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://cold-bin.github.io">cold bin&#39;s blog By cold bin</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.2.8/raphael.min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/flowchart/1.12.2/flowchart.min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+                if (!window.flowchart) return;
+                const blocks = document.querySelectorAll('pre code.language-flowchart, pre code.language-flow');
+                for (let i = 0; i < blocks.length; i++) {
+                    const block = blocks[i];
+                    const rootElement = block.parentNode;
+                    const container = document.createElement('div');
+                    const id = `js-flowchart-diagrams-${i}`;
+                    container.id = id;
+                    container.className = 'align-center';
+                    container.setAttribute("style", "overFlow-x:auto");
+                    rootElement.parentNode.replaceChild(container, rootElement);
+                    const diagram = flowchart.parse(block.childNodes[0].nodeValue);
+                    diagram.drawSVG(id, window.flowchartDiagramsOptions ? window.flowchartDiagramsOptions : {});
+                }
+            })();
+        </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+            if (!window.Diagram) return;
+            const blocks = document.querySelectorAll('pre code.language-sequence');
+            for (let i = 0; i < blocks.length; i++) {
+                const block = blocks[i];
+                
+                const rootElement = block.parentNode;
+                const container = document.createElement('div');
+                const id = `js-sequence-diag-${i}`;
+                container.id = id;
+                container.className = 'align-center';
+                container.setAttribute("style", "overFlow-x:auto");
+                rootElement.parentNode.replaceChild(container, rootElement);
+
+                const diagram = Diagram.parse(block.childNodes[0].nodeValue);
+                diagram.drawSVG(id, window.sequenceDiagramsOptions
+                    ? window.sequenceDiagramsOptions
+                    : { theme: 'simple' });
+            }
+        })();
+        </script><script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://cold-bin.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://cold-bin.github.io">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/" title="汇编之寄存器">汇编之寄存器</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/" title="汇编之概述">汇编之概述</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/MongoDB%E5%9F%BA%E7%A1%80%E7%AF%87/" title="MongoDB基础篇">MongoDB基础篇</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%AD%98%E5%82%A8%E4%B9%8B%E8%A1%8C%E5%88%97%E5%AD%98%E5%82%A8/" title="存储之行列存储">存储之行列存储</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/" title="常见摘要算法">常见摘要算法</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%A6%82%E5%BF%B5/" title="常见加密算法原理及概念">常见加密算法原理及概念</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E9%94%81/" title="锁">锁</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E4%B9%8B%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/" title="并发安全之原子操作">并发安全之原子操作</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/GMP%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%8D%8F%E7%A8%8B%E6%B1%A0%E6%9E%84%E5%BB%BA/" title="GMP深度解析与协程池构建">GMP深度解析与协程池构建</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/HTTP%E5%8D%8F%E8%AE%AE%E7%9F%A5%E8%AF%86%E7%82%B9/" title="HTTP协议知识点">HTTP协议知识点</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (19)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">Go高性能并发编程 (3)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/HTTP%E5%8D%8F%E8%AE%AE/">HTTP协议 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/MongoDB/">MongoDB (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/MySQL/">MySQL (6)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/git/">git (2)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/gorm/">gorm (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/">加密算法 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%AD%98%E5%82%A8/">存储 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%8A%93%E5%8C%85/">抓包 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/">摘要算法 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库 (3)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/">汇编 (2)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://cold-bin.github.io/tags/GRPC/">GRPC</a>
+    
+    <a href="https://cold-bin.github.io/tags/Go%E5%BA%95%E5%B1%82/">Go底层</a>
+    
+    <a href="https://cold-bin.github.io/tags/Makefile/">Makefile</a>
+    
+    <a href="https://cold-bin.github.io/tags/MongoDB/">MongoDB</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E4%BA%8B%E5%8A%A1%E7%AF%87/">MySQL事务篇</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E5%9F%BA%E7%A1%80/">MySQL基础</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E6%97%A5%E5%BF%97%E4%B8%8E%E5%A4%87%E4%BB%BD%E7%AF%87/">MySQL日志与备份篇</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E6%9E%B6%E6%9E%84/">MySQL架构</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E7%B4%A2%E5%BC%95%E5%8F%8A%E8%B0%83%E4%BC%98/">MySQL索引及调优</a>
+    
+    <a href="https://cold-bin.github.io/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/">api向前兼容</a>
+    
+    <a href="https://cold-bin.github.io/tags/git%E7%9A%84commit%E8%A7%84%E8%8C%83/">git的commit规范</a>
+    
+    <a href="https://cold-bin.github.io/tags/go%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/">go编程思想</a>
+    
+    <a href="https://cold-bin.github.io/tags/https/">https</a>
+    
+    <a href="https://cold-bin.github.io/tags/reflect/">reflect</a>
+    
+    <a href="https://cold-bin.github.io/tags/rune%E7%B1%BB%E5%9E%8B/">rune类型</a>
+    
+    <a href="https://cold-bin.github.io/tags/sync.pool/">sync.pool</a>
+    
+    <a href="https://cold-bin.github.io/tags/tls%E8%AF%81%E4%B9%A6/">tls证书</a>
+    
+    <a href="https://cold-bin.github.io/tags/unsafe/">unsafe</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">内存对齐</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E9%9B%86%E4%B8%AD%E5%BC%8F/">分布式与集中式</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%88%97%E5%AD%98%E5%82%A8/">列存储</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">单元测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/">原子操作</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8F%8D%E5%B0%84/">反射</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90/">命令行参数解析</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8/">并发安全</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93java/">数据结构与算法总结，java</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%AF%84%E5%AD%98%E5%99%A8/">汇编寄存器</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E6%A6%82%E8%BF%B0/">汇编概述</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/">版本控制</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/">网络测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E8%A1%8C%E5%AD%98%E5%82%A8/">行存储</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E9%94%81/">锁</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E9%9B%B6%E6%8B%B7%E8%B4%9D/">零拷贝</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://github.com/cold-bin" title="GitHub">GitHub</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://blog.csdn.net/qq_57467091" title="CSDN">CSDN</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://cold-bin.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
