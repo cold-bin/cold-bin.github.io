@@ -6,7 +6,16 @@
     <description>Recent content in 汇编 on cold bin&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 30 Nov 2022 11:01:12 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 06 Dec 2022 17:43:13 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>汇编之第一个程序</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/</link>
+      <pubDate>Tue, 06 Dec 2022 17:43:13 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/</guid>
+      <description>汇编之第一个程序 一个源程序从写出到执行的过程 一个汇编语言程序从写出到最终执行的简要过程： 编写 -&amp;gt; 编译连接 -&amp;gt; 执行 对源程序进行编译连接： 使用汇编语言编译程序（MASM.EXE）对源程序文件中的源程序进行编译，产生目标文件【.obj文件】 再用连接程序（LINK.EXE）对目标文件进行连接</description>
+    </item>
+    
     <item>
       <title>汇编之寄存器</title>
       <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/</link>

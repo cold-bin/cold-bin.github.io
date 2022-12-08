@@ -372,16 +372,59 @@
 </ul>
 <p>8086机中，任意时刻，CPU将CS:IP指向的内容当作指令来执行</p>
 <ul>
-<li>8086CPU的工作执行过程：</li>
-</ul>
+<li>
+<p>8086CPU的工作执行过程：</p>
 <ol>
 <li>从CS:IP指向的内存单元读取指令，读取的指令进入指令缓冲器</li>
 <li>IP指向下一条指令</li>
 <li>执行指令（转到步骤1，重复这个过程）</li>
 </ol>
-<ul>
-<li>8086CPU提供转移指令修改CS:IP的值（jmp指令）</li>
+</li>
+<li>
+<p>8086CPU提供转移指令修改CS:IP的值（jmp指令）</p>
+</li>
+<li>
+<p>字在内存里存储时，要用两个连续的地址单元来存储，字的低位字节存放在低地址单元中，高位字节存放在地址单元中</p>
+</li>
+<li>
+<p>用mov指令访问内存单元，可以在mov指令中只给出内存单元的偏移地址，此时，段地址默认在DS寄存器中</p>
+</li>
+<li>
+<p>[address]表示一个偏移地址为address的内存单元</p>
+</li>
+<li>
+<p>在内存和寄存器之间传送字型数据时，高地址单元和高8位寄存器，低地址单元和低8位寄存器相对应</p>
+</li>
+<li>
+<p>mov、add、sub是具有两个操作对象的指令。jmp是具有一个操作对象的指令</p>
+</li>
+<li>
+<p>在8086CPU提供了栈操作机制：SS段寄存器存放栈顶的段地址，在SP寄存器里存放栈顶的偏移地址。提供入栈和出栈的指令，它们根据SS:IP指示的地址，按照栈的方式访问内存单元</p>
+</li>
+<li>
+<p>push：①SP=SP-2;②向SS:IP指向的字单元中送入数据</p>
+</li>
+<li>
+<p>pop：①从SS:IP指向的字单元中读取数据;②SP=SP+2</p>
+</li>
+<li>
+<p>任意时刻，SS:IP指向的栈顶元素</p>
+</li>
+<li>
+<p>8086CPU只记录栈顶，栈顶空间大小，是否栈溢出等需要我们自己管理</p>
+</li>
+<li>
+<p>可以用栈来保存需要恢复寄存器的内容</p>
+</li>
+<li>
+<p>我们可以将一段内存定义为一个段，用一个段地址指示段，用偏移地址访问段内的内存单元。</p>
+</li>
 </ul>
+<p>我们可以用一个段存放数据，将他定义为“数据段”</p>
+<p>我们可以用一个段存放代码，将他定义为“代码段”</p>
+<p>我们可以用一个段当作栈，将他定义为“栈段”</p>
+<p>不管我们如何安排，CPU将内存中的某些内容当作代码，是因为CS:IP指向了那里；CPU将内存中的某些内容当作栈，是因为CS:IP指向了那里</p>
+<p>所以，一段内存既可以是代码的存储空间，又可以是数据的存储空间，还可以是栈空间，也可以是栈空间，也可以什么都不是。关键在于CPU寄存器的设置，即CS、IP、SS、SP、DS的指向。</p>
 </blockquote>
 
         </div>
@@ -551,6 +594,10 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/" title="汇编之第一个程序">汇编之第一个程序</a>
+    </li>
+    
+    <li>
         <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/" title="汇编之寄存器">汇编之寄存器</a>
     </li>
     
@@ -584,10 +631,6 @@
     
     <li>
         <a href="https://cold-bin.github.io/post/GMP%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E5%8D%8F%E7%A8%8B%E6%B1%A0%E6%9E%84%E5%BB%BA/" title="GMP深度解析与协程池构建">GMP深度解析与协程池构建</a>
-    </li>
-    
-    <li>
-        <a href="https://cold-bin.github.io/post/HTTP%E5%8D%8F%E8%AE%AE%E7%9F%A5%E8%AF%86%E7%82%B9/" title="HTTP协议知识点">HTTP协议知识点</a>
     </li>
     
 </ul>
@@ -629,7 +672,7 @@
     
     <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (1)</a></li>
     
-    <li><a href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/">汇编 (2)</a></li>
+    <li><a href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/">汇编 (3)</a></li>
     
 </ul>
     </section>
@@ -701,6 +744,8 @@
     <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%AF%84%E5%AD%98%E5%99%A8/">汇编寄存器</a>
     
     <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E6%A6%82%E8%BF%B0/">汇编概述</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/">汇编第一个程序</a>
     
     <a href="https://cold-bin.github.io/tags/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/">版本控制</a>
     

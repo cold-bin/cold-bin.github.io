@@ -9,20 +9,20 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
     
 
-    <title>MongoDB基础篇 | cold bin&#39;s blog</title>
-    <meta property="og:title" content="MongoDB基础篇 - cold bin&#39;s blog">
+    <title>汇编之第一个程序 | cold bin&#39;s blog</title>
+    <meta property="og:title" content="汇编之第一个程序 - cold bin&#39;s blog">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content='2022-11-25T20:20:04&#43;08:00'>
+    <meta property="article:published_time" content='2022-12-06T17:43:13&#43;08:00'>
         
         
-    <meta property="article:modified_time" content='2022-11-25T20:20:04&#43;08:00'>
+    <meta property="article:modified_time" content='2022-12-06T17:43:13&#43;08:00'>
         
     <meta name="Keywords" content="">
-    <meta name="description" content="MongoDB基础篇">
+    <meta name="description" content="汇编之第一个程序">
         
     <meta name="author" content="cold bin">
-    <meta property="og:url" content="https://cold-bin.github.io/post/MongoDB%E5%9F%BA%E7%A1%80%E7%AF%87/">
+    <meta property="og:url" content="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/">
     <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
     <link rel="stylesheet" href='/css/normalize.css'>
@@ -86,24 +86,23 @@
 
             <div class="inner"><ul>
                     <li>
-                        <a href="#mongodb%e8%83%8c%e6%99%af" aria-label="MongoDB背景">MongoDB背景</a><ul>
+                        <a href="#%e6%b1%87%e7%bc%96%e4%b9%8b%e7%ac%ac%e4%b8%80%e4%b8%aa%e7%a8%8b%e5%ba%8f" aria-label="汇编之第一个程序">汇编之第一个程序</a><ul>
                             
                     <li>
-                        <a href="#1mongodb%e6%98%af%e4%bb%80%e4%b9%88" aria-label="1、MongoDB是什么？"><strong>1、MongoDB是什么？</strong></a></li>
+                        <a href="#%e4%b8%80%e4%b8%aa%e6%ba%90%e7%a8%8b%e5%ba%8f%e4%bb%8e%e5%86%99%e5%87%ba%e5%88%b0%e6%89%a7%e8%a1%8c%e7%9a%84%e8%bf%87%e7%a8%8b" aria-label="一个源程序从写出到执行的过程">一个源程序从写出到执行的过程</a></li>
                     <li>
-                        <a href="#2%e4%b8%ba%e4%bb%80%e4%b9%88%e8%a6%81%e7%94%a8mongodb" aria-label="2、为什么要用MongoDB？"><strong>2、为什么要用MongoDB？</strong></a></li>
+                        <a href="#%e6%ba%90%e7%a8%8b%e5%ba%8f%e7%9a%84%e4%b8%bb%e8%a6%81%e7%bb%93%e6%9e%84" aria-label="源程序的主要结构">源程序的主要结构</a></li>
                     <li>
-                        <a href="#3%e4%b8%bb%e8%a6%81%e7%89%b9%e6%80%a7" aria-label="3、主要特性"><strong>3、主要特性</strong></a></li>
+                        <a href="#%e4%bb%a5%e7%ae%80%e5%8c%96%e7%9a%84%e6%96%b9%e5%bc%8f%e8%bf%9b%e8%a1%8c%e6%b1%87%e7%bc%96%e5%92%8c%e8%bf%9e%e6%8e%a5" aria-label="以简化的方式进行汇编和连接">以简化的方式进行汇编和连接</a></li>
                     <li>
-                        <a href="#4cs%e6%9c%8d%e5%8a%a1%e6%a8%a1%e5%9e%8b" aria-label="4、C/S服务模型"><strong>4、C/S服务模型</strong></a></li>
+                        <a href="#%e6%b1%87%e7%bc%96%e5%92%8c%e8%bf%9e%e6%8e%a5%e7%9a%84%e4%bd%9c%e7%94%a8" aria-label="汇编和连接的作用">汇编和连接的作用</a></li>
                     <li>
-                        <a href="#5%e5%ae%8c%e5%96%84%e7%9a%84%e5%91%bd%e4%bb%a4%e8%a1%8c%e5%b7%a5%e5%85%b7" aria-label="5、完善的命令行工具"><strong>5、完善的命令行工具</strong></a></li>
+                        <a href="#%e5%8f%af%e6%89%a7%e8%a1%8c%e6%96%87%e4%bb%b6%e4%b8%ad%e7%9a%84%e7%a8%8b%e5%ba%8f%e8%a3%85%e5%85%a5%e5%86%85%e5%ad%98%e5%b9%b6%e8%bf%90%e8%a1%8c%e7%9a%84%e5%8e%9f%e7%90%86" aria-label="可执行文件中的程序装入内存并运行的原理">可执行文件中的程序装入内存并运行的原理</a></li>
                     <li>
-                        <a href="#6%e5%87%a0%e4%b8%aashell%e5%ae%9e%e6%93%8d" aria-label="6、几个shell实操"><strong>6、几个shell实操</strong></a></li></ul>
+                        <a href="#exe%e6%96%87%e4%bb%b6%e4%b8%ad%e7%9a%84%e7%a8%8b%e5%ba%8f%e7%9a%84%e5%8a%a0%e8%bd%bd%e8%bf%87%e7%a8%8b" aria-label="EXE文件中的程序的加载过程">EXE文件中的程序的加载过程</a>
                     </li>
-                    <li>
-                        <a href="#mongodb%e5%9f%ba%e7%a1%80%e6%93%8d%e4%bd%9c" aria-label="MongoDB基础操作">MongoDB基础操作</a>
-                    </li>
+                </ul>
+                </li>
                 </ul>
             </div>
         </details>
@@ -174,18 +173,16 @@
         <div class="res-cons">
 
         <header>
-            <h1 class="post-title">MongoDB基础篇</h1>
+            <h1 class="post-title">汇编之第一个程序</h1>
         </header>
         <date class="post-meta meta-date">
-            2022年11月25日
+            2022年12月6日
         </date>
         
         <div class="post-meta">
             <span>|</span>
             
-            <span class="meta-category"><a href='/categories/%E6%95%B0%E6%8D%AE%E5%BA%93'>数据库</a></span>
-            
-            <span class="meta-category"><a href='/categories/MongoDB'>MongoDB</a></span>
+            <span class="meta-category"><a href='/categories/%E6%B1%87%E7%BC%96'>汇编</a></span>
             
         </div>
         
@@ -198,164 +195,227 @@
         
         
         <div class="post-content">
-            <h2 id="mongodb背景">MongoDB背景</h2>
-<h3 id="1mongodb是什么"><strong>1、MongoDB是什么？</strong></h3>
-<p>MongoDB是一款为web应用程序和互联网基础设施设计的数据库管理系统。没错MongoDB就是数据库，是NoSQL类型的数据库</p>
-<h3 id="2为什么要用mongodb"><strong>2、为什么要用MongoDB？</strong></h3>
-<p>（1）MongoDB提出的是文档、集合的概念，使用BSON（类JSON）作为其数据模型结构，其结构是面向对象的而不是二维表，存储一个用户在MongoDB中是这样子的。</p>
+            <h1 id="汇编之第一个程序">汇编之第一个程序</h1>
+<h2 id="一个源程序从写出到执行的过程">一个源程序从写出到执行的过程</h2>
+<ol>
+<li>
+<p>一个<a href="https://so.csdn.net/so/search?q=%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80&amp;spm=1001.2101.3001.7020">汇编语言</a>程序从写出到最终执行的简要过程：
+编写 -&gt; 编译连接 -&gt; 执行</p>
+</li>
+<li>
+<p>对源程序进行编译连接：</p>
+<ol>
+<li>使用汇编语言编译程序（MASM.EXE）对源程序文件中的源程序进行编译，产生目标文件【.obj文件】</li>
+<li>再用连接程序（LINK.EXE）对目标文件进行连接，生成可在操作系统中直接运行的可执行文件【.EXE文件】</li>
+</ol>
+</li>
+<li>
+<p><a href="https://so.csdn.net/so/search?q=%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6&amp;spm=1001.2101.3001.7020">可执行文件</a>包含两部分内容：</p>
+<ol>
+<li>程序（从源程序的汇编指令翻译过来的机器码）和数据（源程序中定义的数据）；</li>
+<li>相关的描述信息（比如：程序有多大、要占多少内存空间等）；</li>
+</ol>
+</li>
+<li>
+<p>执行可执行文件中的程序：</p>
+<ol>
+<li>在操作系统（如：MSDOS）中，执行可执行文件中的程序；</li>
+<li>操作系统依照可执行文件中的描述信息，将可执行文件中的机器码和数据加载入内存，并进行相关的初始化（比如：设置 CS:IP 指向第一条要执行的指令），然后由 CPU 执行程序；</li>
+</ol>
+</li>
+</ol>
+<h2 id="源程序的主要结构">源程序的主要结构</h2>
+<p>
+        <a data-fancybox="gallery" href="https://img-blog.csdnimg.cn/002516c2a04d4edd8bf2bf6aba71c06b.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_16,color_FFFFFF,t_70,g_se,x_16">
+            <img class="mx-auto" alt="img" src="https://img-blog.csdnimg.cn/002516c2a04d4edd8bf2bf6aba71c06b.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_16,color_FFFFFF,t_70,g_se,x_16" />
+        </a>
+    
+源程序由“ 汇编指令+伪指令+宏指令 ”组成：
+伪指令：编译器处理；
+汇编指令：编译为机器码；</p>
+<ol>
+<li>
+<p>伪指令：</p>
+<ol>
+<li>没有对应的机器码的指令，不能由 CPU 直接执行；</li>
+<li>伪指令是由编译器来执行的指令，编译器根据伪指令来进行相关的编译工作；</li>
+</ol>
+</li>
+<li>
+<p>segment 和 ends【定义一个段】</p>
+<ol>
+<li>
+<p>segment 和 ends 是一对成对使用的伪指令；</p>
+</li>
+<li>
+<p>编写汇编程序【<strong>必须</strong>】使用到的指令；</p>
+</li>
+<li>
+<p>segment 和 ends 的功能是定义一个段：</p>
+<ul>
+<li>segment：说明一个段开始；</li>
+<li>ends：说明一个段结束；</li>
+</ul>
+</li>
+<li>
+<p>一个段必须有一个名称来标识，使用格式为</p>
+<pre tabindex="0"><code>段名 segment
+段名 ends
+</code></pre></li>
+<li>
+<p>一个汇编程序由多个段组成：
+这些段用来存放【代码，数据或当作栈空间】来使用，一个有意义的汇编程序至少要有一个段，这个段用来存放代码。</p>
+</li>
+</ol>
+</li>
+<li>
+<p>end【真正的没了】</p>
+<ol>
+<li>end 是一个汇编程序的结束标记；</li>
+<li>编译器在编译汇编程序的过程中，如果碰到了伪指令 end，就结束对源程序的编译；</li>
+<li>如果程序写完了，要在结尾处加上伪指令 end，否则，编译器无法知道程序在何处结束；</li>
+<li>【切记】不要把 end 和 ends 搞混了！
+<ul>
+<li>end：汇编程序的结束标记；</li>
+<li>ends：与 segment 成对出现，表示一个段结束；</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p>assume【寄存器和段的关联假设】</p>
+<ol>
+<li>它假设某一段寄存器和程序中的某一个用 segment…ends 定义的段相关联；</li>
+<li>通过 assume 说明这种关联，在需要的情况下，编译程序可以将段寄存器和某一具体的段相联系；</li>
+</ol>
+</li>
+<li>
+<p>程序和源程序</p>
+<ol>
+<li>我们将源程序文件中的所有内容称为【源程序】</li>
+<li>将源程序中最终由计算机执行处理的指令或数据称为【程序】</li>
+<li>程序最先以汇编指令的形式，存储在源程序中，然后经过编译、连接后转变为机器码，存储在可执行文件中；
+
+        <a data-fancybox="gallery" href="https://img-blog.csdnimg.cn/41c8c597636040c6a1fe0c71d075630f.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_20,color_FFFFFF,t_70,g_se,x_16">
+            <img class="mx-auto" alt="img" src="https://img-blog.csdnimg.cn/41c8c597636040c6a1fe0c71d075630f.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_20,color_FFFFFF,t_70,g_se,x_16" />
+        </a>
+    </li>
+</ol>
+</li>
+<li>
+<p>标号，标号与段名称有所区别：</p>
+<ol>
+<li>一个标号指代了一个地址，即是段名称，类似指针。</li>
+<li>段名称（codesg）放在 segment 的前面，作为一个段的名称，这个段的名称最终将被汇编、连接程序处理为一个段的段地址；</li>
+</ol>
+</li>
+</ol>
+<p>任务：编程运算 23；</p>
 <div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
 <table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
 <pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
 </span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
 </span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
 </span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>{
-</span></span><span style="display:flex;"><span>    username:&#39;123&#39;,
-</span></span><span style="display:flex;"><span>    password:&#39;123&#39;
-</span></span><span style="display:flex;"><span>｝
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">assume</span> <span style="color:#008080">cs</span>:<span style="color:#008080">abc</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">abc</span> <span style="color:#008080">segment</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span>,<span style="color:#099">2</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">add</span> <span style="color:#008080">ax</span>,<span style="color:#008080">ax</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">add</span> <span style="color:#008080">ax</span>,<span style="color:#008080">ax</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">abc</span> <span style="color:#008080">ends</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">end</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>使用这样的数据模型，使得MongoDB能在生产环境中提供高读写的能力，吞吐量较于mysql等SQL数据库大大增强。</p>
-<p>（2）易伸缩，自动故障转移。易伸缩指的是提供了分片能力，能对数据集进行分片，数据的存储压力分摊给多台服务器。自动故障转移是副本集的概念，MongoDB能检测主节点是否存活，当失活时能自动提升从节点为主节点，达到故障转移。</p>
-<p>（3）数据模型因为是面向对象的，所以可以表示丰富的、有层级的数据结构，比如博客系统中能把“评论”直接怼到“文章“的文档中，而不必像myqsl一样创建三张表来描述这样的关系。</p>
-<h3 id="3主要特性"><strong>3、主要特性</strong></h3>
-<blockquote>
-<p>（1）文档数据类型</p>
-</blockquote>
-<p>SQL类型的数据库是正规化的，可以通过主键或者外键的约束保证数据的完整性与唯一性，所以SQL类型的数据库常用于对数据完整性较高的系统。MongoDB在这一方面是不如SQL类型的数据库，且MongoDB没有固定的Schema，正因为MongoDB少了一些这样的约束条件，可以让数据的存储数据结构更灵活，存储速度更加快。</p>
-<blockquote>
-<p>（2）即时查询能力</p>
-</blockquote>
-<p>MongoDB保留了关系型数据库即时查询的能力，保留了索引（底层是基于B tree）的能力。这一点汲取了关系型数据库的优点，相比于同类型的NoSQL redis 并没有上述的能力。</p>
-<blockquote>
-<p>（3）复制能力</p>
-</blockquote>
-<p>MongoDB自身提供了副本集能将数据分布在多台机器上实现冗余，目的是可以提供自动故障转移、扩展读能力。</p>
-<blockquote>
-<p>（4）速度与持久性</p>
-</blockquote>
-<p>MongoDB的驱动实现一个写入语义 fire and forget ，即通过驱动调用写入时，可以立即得到返回得到成功的结果（即使是报错），这样让写入的速度更加快，当然会有一定的不安全性，完全依赖网络。</p>
-<p>MongoDB提供了Journaling日志的概念，实际上像mysql的bin-log日志，当需要插入的时候会先往日志里面写入记录，再完成实际的数据操作，这样如果出现停电，进程突然中断的情况，可以保障数据不会错误，可以通过修复功能读取Journaling日志进行修复。</p>
-<blockquote>
-<p>（5）数据扩展</p>
-</blockquote>
-<p>MongoDB使用分片技术对数据进行扩展，MongoDB能自动分片、自动转移分片里面的数据块，让每一个服务器里面存储的数据都是一样大小。</p>
-<h3 id="4cs服务模型"><strong>4、C/S服务模型</strong></h3>
-<p>MongoDB核心服务器主要是通过mongod程序启动的，而且在启动时不需对MongoDB使用的内存进行配置，因为其设计哲学是内存管理最好是交给操作系统，缺少内存配置是MongoDB的设计亮点，另外，还可通过mongos路由服务器使用分片功能。</p>
-<p>MongoDB的主要客户端是可以交互的js shell 通过mongo启动，使用js shell能使用js直接与MongoDB进行交流，像使用sql语句查询mysql数据一样使用js语法查询MongoDB的数据，另外还提供了各种语言的驱动包，方便各种语言的接入。</p>
-<h3 id="5完善的命令行工具"><strong>5、完善的命令行工具</strong></h3>
-<p>mongodump和mongorestore,备份和恢复数据库的标准工具。输出BSON格式，迁移数据库。</p>
-<p>mongoexport和mongoimport，用来导入导出JSON、CSV和TSV数据，数据需要支持多格式时有用。mongoimport还能用与大数据集的初始导入，但是在导入前顺便还要注意一下，为了能充分利用好mongoDB通常需要对数据模型做一些调整。</p>
-<p>mongosniff,网络嗅探工具，用来观察发送到数据库的操作。基本就是把网络上传输的BSON转换为易于人们阅读的shell语句。</p>
-<p>因此，可以总结得到，MongoDB结合键值存储和关系数据库的最好特性。因为简单，所以数据极快，而且相对容易伸缩，还提供复杂查询机制的数据库。MongoDB需要跑在64位的服务器上面，且最好单独部署，因为是数据库，所以也需要对其进行热备、冷备处理。</p>
-<h3 id="6几个shell实操"><strong>6、几个shell实操</strong></h3>
-<p>因为本篇文章不是API手册，所有这里对shell的使用也是基础的介绍什么功能可以用什么语句，主要是为了展示使用MongoDB shell的方便性，如果需要知道具体的MongoDB shell语法可以查阅官方文档。</p>
-<blockquote>
-<p>1、切换数据库</p>
-</blockquote>
-<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
-<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
-</span></code></pre></td>
-<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>use dba
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>创建数据库并不是必须的操作，数据库与集合只有在第一次插入文档时才会被创建，与对数据的动态处理方式是一致的。简化并加速开发过程，而且有利于动态分配命名空间。如果担心数据库或集合被意外创建，可以开启严格模式</p>
-<blockquote>
-<p>2、插入语法</p>
-</blockquote>
+</div><ol>
+<li>
+<p>DOS 中的程序运行：</p>
+<ol>
+<li>
+<p>DOS 是一个单任务操作系统：</p>
+<p>1） 一个程序 P2 在可执行文件中，则必须有一个正在运行的程序 P1，将 P2 从可执行文件中加载入内存后，将 CPU 的控制权交给 P2，P2 才能得以运行。P2 开始运行后，P1 暂停运行。</p>
+<p>2） 而当 P2 运行完毕后，应该将 CPU 的控制权交还给使它得以运行的程序 P1，此后，P1 继续运行。</p>
+</li>
+<li>
+<p>一个程序结束后，将 CPU 的控制权交还给是他得以运行的程序，称这个过程为：程序返回；</p>
+</li>
+</ol>
+</li>
+<li>
+<p>程序返回
+应该在程序的末尾添加返回的程序段。</p>
 <div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
 <table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
 <pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
 </span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>1 db.users.insert({username:&#34;smith&#34;})
-</span></span><span style="display:flex;"><span>2 db.users.save({username:&#34;smith&#34;})
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">4</span><span style="color:#008080">c00H</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">int</span> <span style="color:#099">21</span><span style="color:#008080">H</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><blockquote>
-<p>3、查找语法</p>
-</blockquote>
+</div><p>【中断机制】是 DOS 最伟大的机制，Windows 系统上是【消息机制】，这两条指令所实现的功能就是程序返回；</p>
+</li>
+<li>
+<p>几个和结束相关的内容：</p>
+<ol>
+<li>
+<p>段结束：伪指令
+通知编译器一个段的结束【ends】</p>
+</li>
+<li>
+<p>程序结束：伪指令
+通知编译器程序的结束【end】</p>
+</li>
+<li>
+<p>程序返回：汇编指令</p>
 <div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
 <table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
 <pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
 </span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>1 db.users.find()
-</span></span><span style="display:flex;"><span>2 db.users.count()
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span>,<span style="color:#099">4</span><span style="color:#008080">c00H</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">int</span> <span style="color:#099">21</span><span style="color:#008080">H</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><blockquote>
-<p>4、更新语法</p>
-</blockquote>
-<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
-<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
-</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
-</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
-</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
-</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
-</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
-</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
-</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
-</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
-</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
-</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
-</span></code></pre></td>
-<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span> 1 db.users.update({username:&#34;smith&#34;},{$set:{country:&#34;Canada&#34;}})
-</span></span><span style="display:flex;"><span> 2 //把用户名为smith的用户的国家改成Canada
-</span></span><span style="display:flex;"><span> 3
-</span></span><span style="display:flex;"><span> 4 db.users.update({username:&#34;smith&#34;},{$unset:{country:1}})
-</span></span><span style="display:flex;"><span> 5 //把用户名为smith的用户的国家字段给移除
-</span></span><span style="display:flex;"><span> 6
-</span></span><span style="display:flex;"><span> 7 db.users.update({username:&#34;jones&#34;},{$set:{favorites:{movies:[&#34;casablance&#34;,&#34;rocky&#34;]}}})
-</span></span><span style="display:flex;"><span> 8 //这里主要体现多值修改，在favorties字段中添加多个值
-</span></span><span style="display:flex;"><span> 9
-</span></span><span style="display:flex;"><span>10 db.users.update({&#34;favorites.movies&#34;:&#34;casablance&#34;},{$addToSet:{favorites.movies:&#34;the maltese&#34;}},false,true)
-</span></span><span style="display:flex;"><span>11 //多项更新
-</span></span></code></pre></td></tr></table>
-</div>
-</div><blockquote>
-<p>5、删除语法</p>
-</blockquote>
-<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
-<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
-</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
-</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
-</span></code></pre></td>
-<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>1 db.foo.remove() //删除所有数据
-</span></span><span style="display:flex;"><span>2 db.foo.remove({favorties.cities:&#34;cheyene&#34;}) //根据条件进行删除
-</span></span><span style="display:flex;"><span>3 db.drop() //删除整个集合
-</span></span></code></pre></td></tr></table>
-</div>
-</div><blockquote>
-<p>6、索引相关语法</p>
-</blockquote>
-<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
-<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
-<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
-</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
-</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
-</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
-</span></code></pre></td>
-<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>1 db.numbers.ensureIndex({num:1})
-</span></span><span style="display:flex;"><span>2 //创建一个升序索引
-</span></span><span style="display:flex;"><span>3 db.numbers.getIndexes()
-</span></span><span style="display:flex;"><span>4 //获取全部索引
-</span></span></code></pre></td></tr></table>
-</div>
-</div><blockquote>
-<p>7、基本管理语法</p>
-</blockquote>
+</div></li>
+</ol>
+</li>
+<li>
+<p>语法错误和逻辑错误：</p>
+<ol>
+<li>语法错误
+<ol>
+<li>程序在编译时被编译器发现的错误；</li>
+<li>容易发现；</li>
+</ol>
+</li>
+<li>逻辑错误
+<ol>
+<li>在编写时不会表现出来的错误、在运行时会发生的错误；</li>
+<li>不容易发现；</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="以简化的方式进行汇编和连接">以简化的方式进行汇编和连接</h2>
+<p>汇编使用的程序：<a href="https://so.csdn.net/so/search?q=masm&amp;spm=1001.2101.3001.7020">masm</a>.exe
+连接使用的程序：link.exe
+简化方式进行汇编和连接的程序：ml.exe</p>
+<p><a href="https://pan.baidu.com/s/14KdamaAjiWN9db3qVGSwbw">MASM下载链接</a>，提取码：gd2c；</p>
+<p>跟之前 <a href="https://blog.csdn.net/weixin_46263782/article/details/120327753">汇编（三）：DEBUG</a> 中提到的操作一样，修改配置文件，自动挂载 MASM 目录，可以输入 <code>dir</code> 进行验证；</p>
+<p>
+        <a data-fancybox="gallery" href="https://img-blog.csdnimg.cn/87c08a13cbea42df9ab5d2f6340fe603.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_12,color_FFFFFF,t_70,g_se,x_16">
+            <img class="mx-auto" alt="img" src="https://img-blog.csdnimg.cn/87c08a13cbea42df9ab5d2f6340fe603.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_12,color_FFFFFF,t_70,g_se,x_16" />
+        </a>
+    </p>
+<p>编写一个 Hello World 程序：</p>
 <div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
 <table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
 <pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
@@ -372,27 +432,95 @@
 </span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
 </span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
 </span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
-</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
 </span></code></pre></td>
 <td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
-<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span> 1 show dbs
-</span></span><span style="display:flex;"><span> 2 //查询所有数据库
-</span></span><span style="display:flex;"><span> 3 show collections
-</span></span><span style="display:flex;"><span> 4 //显示所有表
-</span></span><span style="display:flex;"><span> 5 db.stats()
-</span></span><span style="display:flex;"><span> 6 //显示数据库状态信息
-</span></span><span style="display:flex;"><span> 7 db.numbers.stats()
-</span></span><span style="display:flex;"><span> 8 //显示集合表状态信息
-</span></span><span style="display:flex;"><span> 9 db,shutdownServer()
-</span></span><span style="display:flex;"><span>10 //停止数据库
-</span></span><span style="display:flex;"><span>11 db.help()
-</span></span><span style="display:flex;"><span>12 //获取数据库操作命令
-</span></span><span style="display:flex;"><span>13 db.foo.help()
-</span></span><span style="display:flex;"><span>14 //获取表操作命令
-</span></span><span style="display:flex;"><span>15 tab 键 //能自动帮我们补全命令
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#008080">.model</span> <span style="color:#008080">small</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">.data</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">strs</span> <span style="color:#008080">DB</span> <span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#008080">hello</span> <span style="color:#008080">world</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>,<span style="color:#099">13</span>,<span style="color:#099">10</span>,<span style="color:#a61717;background-color:#e3d2d2">&#39;</span><span style="color:#008080">$</span><span style="color:#a61717;background-color:#e3d2d2">&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">.code</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">start:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span>,<span style="color:#a61717;background-color:#e3d2d2">@</span><span style="color:#008080">data</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ds</span>,<span style="color:#008080">ax</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">dx</span>,<span style="color:#008080">offset</span> <span style="color:#008080">strs</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ah</span>,<span style="color:#099">09</span><span style="color:#008080">h</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">int</span> <span style="color:#099">21</span><span style="color:#008080">h</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ah</span>,<span style="color:#099">4</span><span style="color:#008080">ch</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">int</span> <span style="color:#099">21</span><span style="color:#008080">h</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">end</span> <span style="color:#008080">start</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="mongodb基础操作">MongoDB基础操作</h2>
+</div><p>先复制到 txt 文本中，然后将后缀改成 asm，使用 <code>masm 1.asm</code> 命令进行汇编；
+
+        <a data-fancybox="gallery" href="https://img-blog.csdnimg.cn/5ffd5caa99264ad4b5ce0e2898def156.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_20,color_FFFFFF,t_70,g_se,x_16">
+            <img class="mx-auto" alt="img" src="https://img-blog.csdnimg.cn/5ffd5caa99264ad4b5ce0e2898def156.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_20,color_FFFFFF,t_70,g_se,x_16" />
+        </a>
+    
+然后通过 <code>link 1.obj</code> 进行链接；</p>
+<p>
+        <a data-fancybox="gallery" href="https://img-blog.csdnimg.cn/b2ab0c4a7bc143619e544fc019f88ac8.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_20,color_FFFFFF,t_70,g_se,x_16">
+            <img class="mx-auto" alt="img" src="https://img-blog.csdnimg.cn/b2ab0c4a7bc143619e544fc019f88ac8.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_20,color_FFFFFF,t_70,g_se,x_16" />
+        </a>
+    
+最后执行所生成的 exe 文件；
+
+        <a data-fancybox="gallery" href="https://img-blog.csdnimg.cn/641596a480554e7ab433c2af5ee63471.png">
+            <img class="mx-auto" alt="img" src="https://img-blog.csdnimg.cn/641596a480554e7ab433c2af5ee63471.png" />
+        </a>
+    </p>
+<h2 id="汇编和连接的作用">汇编和连接的作用</h2>
+<p>连接的作用：</p>
+<ol>
+<li>当源程序很大时，可以将他们分成多个源程序文件夹编译，每个源程序编译成为目标文件后，再用连接程序将它们连接在一起，生成一个可执行文件；</li>
+<li>程序中调用了某个库文件中的子程序，需要将这个库文件和该程序生成的目标文件连接到一起，生成一个可执行文件；</li>
+<li>一个源程序编译后，得到了存有机器码的目标文件，目标文件中的有些内容还不能直接用来生成可执行文件，连接程序将这些内容处理为最终的可执行信息。所以在只有一个源程序文件，而又不需要调用某个库中的子程序的情况下，也必须用连接程序对目标文件进行处理，生成可执行文件；</li>
+</ol>
+<h2 id="可执行文件中的程序装入内存并运行的原理">可执行文件中的程序装入内存并运行的原理</h2>
+<ol>
+<li>
+<p>在 DOS 中，可执行文件中的程序 P1 若要运行，必须有一个正在运行的程序 P2，将 P1 从可执行文件中加载入内存，将 CP U的控制权交给P1，P1 才能得以运行；</p>
+</li>
+<li>
+<p>当 P1 运行完毕后，应该将 CPU 的控制权交还给使他得以运行的程序；</p>
+</li>
+<li>
+<p>操作系统的外壳：</p>
+<ol>
+<li>操作系统是由多个功能模块组成的庞大、复杂的软件系统，任何通用的操作系统，都需要提供一个称为 shell（外壳）的程序，用户（操作人员）使用这个程序来操作计算机系统工作；</li>
+<li>DOS 中有一个程序 command.com，这个程序在 DOS 中称为命令解释器，也就是 DOS 系统的 shell；</li>
+</ol>
+</li>
+<li>
+<p>执行可执行文件 1.exe 时，
+（1）什么程序将 CPU 的控制权交给了 1.exe？
+（2）将程序 1.exe 加载入内存后，如何使程序得以运行？
+（3）1.exe 程序运行结束后，返回到了哪里？</p>
+<ol>
+<li>在 DOS 中直接执行 1.exe 时，是正在运行的 cmd.exe 将 1.exe 中的程序加载入内存；</li>
+<li>cmd.exe 设置 CPU 的 CS:IP 指向程序的第一条指令（即，程序的入口），从而使程序得以运行；</li>
+<li>程序运行结束后，返回 cmd.exe 中，CPU 继续运行 cmd.exe；</li>
+</ol>
+</li>
+</ol>
+<p>汇编程序从写出到执行的过程：
+
+        <a data-fancybox="gallery" href="https://img-blog.csdnimg.cn/9a3441e44dcd4153a4b4399e7c250a36.png">
+            <img class="mx-auto" alt="img" src="https://img-blog.csdnimg.cn/9a3441e44dcd4153a4b4399e7c250a36.png" />
+        </a>
+    </p>
+<h2 id="exe文件中的程序的加载过程">EXE文件中的程序的加载过程</h2>
+<p>
+        <a data-fancybox="gallery" href="https://img-blog.csdnimg.cn/ee7159059ecd41d390f23c1c2f516bc7.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_20,color_FFFFFF,t_70,g_se,x_16">
+            <img class="mx-auto" alt="img" src="https://img-blog.csdnimg.cn/ee7159059ecd41d390f23c1c2f516bc7.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_20,color_FFFFFF,t_70,g_se,x_16" />
+        </a>
+    </p>
+<ul>
+<li>程序加载后，ds 中存放着程序所在内存区的段地址，这个内存区的偏移地址为 0 ，则程序所在的内存区的地址为：<code>ds:0</code>；</li>
+<li>这个内存区的前256个字节中存放的是 PSP，dos 用来和程序进行通信。</li>
+<li>从 256字节处向后的空间存放的是程序。</li>
+<li>所以，我们从 ds 中可以得到 PSP 的段地址 SA，PSP 的偏移地址为 0，则物理地址为 SA×16+0。</li>
+<li>因为 PSP 占256（100H）字节，所以程序的物理地址是：SA×16+0+256= SA×16+16×16=（SA+16）×16+0，可用段地址和偏移地址表示为：SA+10:0。</li>
+</ul>
 
         </div>
 
@@ -400,7 +528,7 @@
 <div class="post-archive">
     <ul class="post-copyright">
         <li><strong>原文作者：</strong><a rel="author" href="https://cold-bin.github.io">cold bin</a></li>
-        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://cold-bin.github.io/post/MongoDB%E5%9F%BA%E7%A1%80%E7%AF%87/">https://cold-bin.github.io/post/MongoDB%E5%9F%BA%E7%A1%80%E7%AF%87/</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/">https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/</a></li>
         <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
     </ul>
 </div>
@@ -415,15 +543,15 @@
     <h2>See Also</h2>
     <ul class="listing">
         
+        <li><a href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/">汇编之寄存器</a></li>
+        
+        <li><a href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/">汇编之概述</a></li>
+        
+        <li><a href="/post/MongoDB%E5%9F%BA%E7%A1%80%E7%AF%87/">MongoDB基础篇</a></li>
+        
         <li><a href="/post/%E5%AD%98%E5%82%A8%E4%B9%8B%E8%A1%8C%E5%88%97%E5%AD%98%E5%82%A8/">存储之行列存储</a></li>
         
         <li><a href="/post/%E5%B8%B8%E8%A7%81%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/">常见摘要算法</a></li>
-        
-        <li><a href="/post/%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%A6%82%E5%BF%B5/">常见加密算法原理及概念</a></li>
-        
-        <li><a href="/post/%E9%94%81/">锁</a></li>
-        
-        <li><a href="/post/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E4%B9%8B%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/">并发安全之原子操作</a></li>
         
     </ul>
 </div>
@@ -433,7 +561,7 @@
             
             <ul class="clearfix">
                 
-                <li><a href='/tags/MongoDB'>MongoDB</a></li>
+                <li><a href='/tags/%E6%B1%87%E7%BC%96%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F'>汇编第一个程序</a></li>
                 
             </ul>
             
