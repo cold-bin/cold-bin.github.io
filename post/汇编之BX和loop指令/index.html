@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>汇编之BX和loop指令 | cold bin&#39;s blog</title>
+    <meta property="og:title" content="汇编之BX和loop指令 - cold bin&#39;s blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2022-12-09T21:58:07&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2022-12-09T21:58:07&#43;08:00'>
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="汇编之BX和loop指令">
+        
+    <meta name="author" content="cold bin">
+    <meta property="og:url" content="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8BBX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://cold-bin.github.io">
+                        cold bin&#39;s blog
+                    </a>
+                
+                
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://cold-bin.github.io">首页</a>
+                    
+                    <a  href="https://cold-bin.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://cold-bin.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+
+
+<aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details >
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">Table of Contents</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#bx" aria-label="[bx]">[bx]</a></li>
+                    <li>
+                        <a href="#loop%e6%8c%87%e4%bb%a4" aria-label="Loop指令">Loop指令</a></li>
+                    <li>
+                        <a href="#debug-%e5%92%8c%e6%b1%87%e7%bc%96%e7%bc%96%e8%af%91%e5%99%a8-masm-%e5%af%b9%e6%8c%87%e4%bb%a4%e7%9a%84%e4%b8%8d%e5%90%8c%e5%a4%84%e7%90%86" aria-label="Debug 和汇编编译器 Masm 对指令的不同处理">Debug 和汇编编译器 Masm 对指令的不同处理</a></li>
+                    <li>
+                        <a href="#loop-%e5%92%8c-bx-%e7%9a%84%e8%81%94%e5%90%88%e5%ba%94%e7%94%a8" aria-label="loop 和 [bx] 的联合应用">loop 和 [bx] 的联合应用</a></li>
+                    <li>
+                        <a href="#%e6%ae%b5%e5%89%8d%e7%bc%80" aria-label="段前缀">段前缀</a></li>
+                    <li>
+                        <a href="#%e4%b8%80%e6%ae%b5%e5%ae%89%e5%85%a8%e7%9a%84%e7%a9%ba%e9%97%b4" aria-label="一段安全的空间">一段安全的空间</a></li>
+                    <li>
+                        <a href="#%e6%ae%b5%e5%89%8d%e7%bc%80%e7%9a%84%e4%bd%bf%e7%94%a8" aria-label="段前缀的使用">段前缀的使用</a>
+                    </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+<div class="res-cons">
+
+    <article class="post">
+        <div class="res-cons">
+
+        <header>
+            <h1 class="post-title">汇编之BX和loop指令</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年12月9日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E6%B1%87%E7%BC%96'>汇编</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        
+        <div class="post-content">
+            <h2 id="bx">[bx]</h2>
+<p>1、[bx]是什么呢？</p>
+<p>和[0]类似，[0]表示<a href="https://so.csdn.net/so/search?q=%E5%86%85%E5%AD%98&amp;spm=1001.2101.3001.7020">内存</a>单元，它的偏移地址是0；</p>
+<p>2、内存单元的描述</p>
+<p>我们要完整地描述一个内存单元，需要两种信息：
+（1）内存单元的地址；
+（2）内存单元的长度（类型）；</p>
+<p>用[0]表示一个内存单元时，0表示单元的偏移地址，段地址默认在 ds 中，单元的长度（类型）可以由具体指令中的其他操作对象（比如说<a href="https://so.csdn.net/so/search?q=%E5%AF%84%E5%AD%98%E5%99%A8&amp;spm=1001.2101.3001.7020">寄存器</a>）指出；</p>
+<p>[bx]同样也表示一个内存单元，它的偏移地址在bx中，比如下面的指令：</p>
+<ul>
+<li>mov ax,[bx]</li>
+<li>mov al,[bx]</li>
+</ul>
+<p>3、 描述性符号“()”</p>
+<p>为了描述上的简洁，以后将使用一个描述性的符号 “() ”来表示一个寄存器或一个内存单元中的内容。比如：</p>
+<p>（1）ax 中的内容为0010H，我们可以这样来描述：<code>(ax)=0010H</code>；
+（2）2000:1000 处的内容为0010H，我们可以这样来描述：<code>(21000H)=0010H</code>；
+（3）对于 <code>mov ax,[2]</code> 的功能，我们可以这样来描述：<code>(ax)=((ds)*16+2)</code>；
+（4）对于 <code>mov [2],ax</code> 的功能，我们可以这样来描述：<code>((ds)*16+2)=(ax)</code>；
+（5）对于 <code>add ax,2</code> 的功能，我们可以这样来描述：<code>(ax)=(ax)+2</code>；
+（6）对于 <code>add ax,bx</code> 的功能，我们可以这样来描述：<code>(ax)=(ax)+(bx)</code>；
+（7）对于 <code>push ax</code> 的功能，我们可以这样来描述：<code>(sp) = (sp)-2 ((ss)*16＋(sp))=(ax)</code>
+（8）对于 <code>pop ax</code> 的功能，我们可以这样来描述：<code>(ax)=((ss)*16+(sp)) (sp)=(sp)+2</code></p>
+<p>4、约定符号 idata 表示常量</p>
+<p>我们在 Debug 中写过类似的指令：<code>mov ax,[0]</code>，表示将 <code>ds:0</code> 处的数据送入 ax 中。指令中，在“[…]”里用一个常量0表示内存单元的偏移地址。以后，我们用 <code>idata</code> 表示常量。</p>
+<p>例如：</p>
+<ul>
+<li><code>mov ax,[idata]</code> 就代表 <code>mov ax,[1]</code>、<code>mov ax,[2]</code>、<code>mov ax,[3]</code> 等；</li>
+<li><code>mov bx,idata</code>就代表 <code>mov bx,1</code>、<code>mov bx,2</code>、<code>mov bx,3</code> 等；</li>
+<li><code>mov ds,idata</code>就代表 <code>mov ds,1</code>、<code>mov ds,2</code> 等；</li>
+</ul>
+<p>我们之前的用法都是非法指令；</p>
+<p>5、[bx]</p>
+<pre tabindex="0"><code>mov [bx],ax
+</code></pre><p>功能：bx 中存放的数据作为一个偏移地址 EA，段地址 SA 默认在 ds 中，将 ax 中的数据送入内存 SA:EA 处，即：<code>(ds*16 +(bx)) = (ax)</code>；</p>
+<p>问题：程序和内存中的情况如下图所示，写出程序执行后，21000H~21007H 单元中的内容。
+
+        <a data-fancybox="gallery" href="https://img-blog.csdnimg.cn/07c78c66e7594fdbbffc174d1b0fcebe.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_20,color_FFFFFF,t_70,g_se,x_16">
+            <img class="mx-auto" alt="img" src="https://img-blog.csdnimg.cn/07c78c66e7594fdbbffc174d1b0fcebe.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_20,color_FFFFFF,t_70,g_se,x_16" />
+        </a>
+    </p>
+<p>（1）先看一下程序的前三条指令：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span>,<span style="color:#099">2000</span><span style="color:#008080">H</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ds</span>,<span style="color:#008080">ax</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">bx</span>,<span style="color:#099">1000</span><span style="color:#008080">H</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这三条指令执行后，<code>ds=2000H,bx=1000H</code>；</p>
+<p>（2）再看第四条指令：<code>mov ax,[bx]</code>，</p>
+<ul>
+<li>指令执行前：
+<ul>
+<li><code>ds=2000H</code>，<code>bx=1000H</code>，则 <code>mov ax,[bx]</code> 将把内存2000:1000处的字型数据送入 ax 中；</li>
+</ul>
+</li>
+<li>指令执行后:
+<ul>
+<li><code>ax=00beH</code>；</li>
+</ul>
+</li>
+</ul>
+<p>（3）再看第五六两条指令：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">inc</span> <span style="color:#008080">bx</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">inc</span> <span style="color:#008080">bx</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>指令执行前：
+<ul>
+<li><code>bx=1000H</code>；</li>
+</ul>
+</li>
+<li>指令执行后:
+<ul>
+<li><code>bx=0002H</code>；</li>
+</ul>
+</li>
+</ul>
+<p>（4）再看第七条指令：<code>mov [bx],ax</code>，</p>
+<ul>
+<li>指令执行前：
+<ul>
+<li><code>ds=2000H</code>，<code>bx=1002H</code>，则 <code>mov [bx],ax</code> 将把 ax 中的数据送入内存2000:1002处；</li>
+</ul>
+</li>
+<li>指令执行后:
+<ul>
+<li>2000:1002单元的内容为<code>BE</code>，2000:1003单元的内容为<code>00</code>；</li>
+</ul>
+</li>
+</ul>
+<p>之后的操作类似，最终结果：
+
+        <a data-fancybox="gallery" href="https://img-blog.csdnimg.cn/a22a7d5d910d4ba189e30eb6d710bd99.png">
+            <img class="mx-auto" alt="img" src="https://img-blog.csdnimg.cn/a22a7d5d910d4ba189e30eb6d710bd99.png" />
+        </a>
+    </p>
+<h2 id="loop指令">Loop指令</h2>
+<p>这个指令和循环有关；</p>
+<p>1、指令的格式是：loop 标号，CPU 执行 loop 指令的时候，要进行两步操作：</p>
+<ul>
+<li><code>(cx)=(cx)-1</code>;</li>
+<li>判断 cx 中的值，若不为零，则转至标号处执行；程序若为零，则向下执行。</li>
+</ul>
+<p>2、通常，loop 指令实现循环，cx 中存放循环的次数；</p>
+<p>问题：编程计算212；</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span> <span style="color:#900;font-weight:bold">assume</span> <span style="color:#008080">cs</span>:<span style="color:#008080">code</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">code</span> <span style="color:#008080">segment</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span>,<span style="color:#099">2</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">cx</span>,<span style="color:#099">11</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">s:</span>  <span style="color:#900;font-weight:bold">add</span> <span style="color:#008080">ax</span>,<span style="color:#008080">ax</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">loop</span> <span style="color:#008080">s</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span>,<span style="color:#099">4</span><span style="color:#008080">c00h</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">int</span> <span style="color:#099">21</span><span style="color:#008080">h</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">code</span> <span style="color:#008080">ends</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>分析：</p>
+<p>（1）标号：在汇编语言中，标号代表一个地址，此程序中有一个标号 s 。它实际上标识了一个地址，这个地址处有一条指令：<code>add ax,ax</code>；</p>
+<p>（2）<code>loop s</code>：CPU 执行 <code>loop s</code> 的时候，要进行两步操作：</p>
+<ul>
+<li><code>(cx)=(cx)-1</code>；</li>
+<li>判断 cx 中的值，不为0则转至标号 s 所标识的地址处执行(这里的指令是 <code>add ax,ax</code>)，如果为0则执行下一条指令(下一条指令是 <code>mov ax,4c00h</code>)；</li>
+</ul>
+<p>总结：</p>
+<p>（1）在 cx 中存放循环次数；
+（2）loop 指令中的标号所标识地址要在前面；
+（3）要循环执行的程序段，要写在标号和 loop 指令的中间；</p>
+<p>用 cx 和 loop 指令相配合实现循环功能的程序框架如下：</p>
+<pre tabindex="0"><code>mov cx,循环次数
+s:
+循环执行的程序段
+loop s
+</code></pre><p>3、在 Debug 中跟踪供 loop 指令实现的循环程序</p>
+<p>注意：在汇编程序中，数据不能以字母开头，如果要输入像 FFFFH 这样的数，则要在前面添加一个0；</p>
+<p>在 debug 程序中引入 G 命令和 P 命令：</p>
+<ol>
+<li>
+<p>G命令</p>
+<ul>
+<li>G命令如果后面不带参数，则一直执行程序，直到程序结束；</li>
+<li>G命令后面如果带参数，则执行到 ip 为那个参数地址停止；</li>
+</ul>
+</li>
+<li>
+<p>P命令</p>
+<ul>
+<li>T命令相当于单步进入（step into）；</li>
+<li>P命令相当于单步通过（step over）；</li>
+</ul>
+</li>
+</ol>
+<h2 id="debug-和汇编编译器-masm-对指令的不同处理">Debug 和汇编编译器 Masm 对指令的不同处理</h2>
+<p>1、在 debug 中，可以直接用指令 <code>mov ax,[0]</code> 将偏移地址为0号单元的内容赋值给 ax；</p>
+<p>2、但通过 masm 编译器，<code>mov ax,[0]</code> 会被编译成 <code>mov ax,0</code>；</p>
+<ul>
+<li>
+<p>要写成这样才能实现：<code>mov ax,ds:[0]</code>；</p>
+</li>
+<li>
+<p>也可以写成这样：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ASM" data-lang="ASM"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">bx</span>,<span style="color:#099">0</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span>,[<span style="color:#008080">bx</span>]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>或者</p>
+<pre tabindex="0"><code>mov ax,ds:[bx]
+</code></pre></li>
+</ul>
+<h2 id="loop-和-bx-的联合应用">loop 和 [bx] 的联合应用</h2>
+<p>计算 ffff:0~ffff:b 单元中的数据的和，结果存储在 dx 中：</p>
+<p>1、注意两个问题：</p>
+<ul>
+<li>12个8位数据加载一起，最后的结果可能会超出8位（越界），故要用16位寄存器存放结果；</li>
+<li>将一个8位的数据加入到16位寄存器中，类型不匹配，8位的数据不能与16位相加；</li>
+</ul>
+<p>2、【解决办法】</p>
+<ul>
+<li>把原来8位的数据，先通过通用寄存器 ax，将它们转化成16位的；</li>
+</ul>
+<p>3、代码如下：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">assume</span> <span style="color:#008080">cs</span>:<span style="color:#008080">codesg</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">codesg</span> <span style="color:#008080">segment</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">start:</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#998;font-style:italic">;指定数据段
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	<span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span>,<span style="color:#099">0</span><span style="color:#008080">ffffh</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ds</span>,<span style="color:#008080">ax</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#998;font-style:italic">;初始化
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	<span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span>,<span style="color:#099">0</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">dx</span>,<span style="color:#099">0</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">bx</span>,<span style="color:#099">0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#998;font-style:italic">;指定循环次数 12次
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	<span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">cx</span>,<span style="color:#099">0</span><span style="color:#008080">ch</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">circ:</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#998;font-style:italic">;把8位数据存入al中,即ax中存放的是[bx]转化之后的16位数据，前8位都是0
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	<span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">al</span>,[<span style="color:#008080">bx</span>]
+</span></span><span style="display:flex;"><span>	<span style="color:#998;font-style:italic">;进行累加
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	<span style="color:#900;font-weight:bold">add</span> <span style="color:#008080">dx</span>,<span style="color:#008080">ax</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#998;font-style:italic">;bx自增，变化内存的偏移地址
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	<span style="color:#900;font-weight:bold">inc</span> <span style="color:#008080">bx</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#900;font-weight:bold">loop</span> <span style="color:#008080">circ</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#998;font-style:italic">;程序返回
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	<span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span>,<span style="color:#099">4</span><span style="color:#008080">c00h</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#900;font-weight:bold">int</span> <span style="color:#099">21</span><span style="color:#008080">H</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">codesg</span> <span style="color:#008080">ends</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">end</span> <span style="color:#008080">start</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="段前缀">段前缀</h2>
+<ol>
+<li>
+<p>指令 <code>mov ax,[bx]</code> 中，内存单元的偏移地址由 bx 给出，而段地址默认在 ds 中；</p>
+</li>
+<li>
+<p>我们可以在访问内存单元的指令中，显式地给出内存单元的段地址所在的段寄存器，比如 <code>mov ax,ds:[0]</code>，<code>mov ax,ds:[bx]</code> 这里的 ds 就叫做【段前缀】；</p>
+</li>
+</ol>
+<h2 id="一段安全的空间">一段安全的空间</h2>
+<ol>
+<li>
+<p>8086模式中，随意向一段内存空间写入内容是很危险的，因为这段空间中可能存放着【重要的系统数据或代码】；</p>
+</li>
+<li>
+<p>在一般的 PC 机中，DOS 方式下，DOS 和其他合法的程序一般都不会使用【0:200~0:2FF】的256个字节的空间。所以，我们使用这段空间是安全的；</p>
+</li>
+</ol>
+<h2 id="段前缀的使用">段前缀的使用</h2>
+<p>将内存 ffff:0~ffff:b 段元中的数据拷贝到 0:200~0:20b 单元中；</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">assume</span> <span style="color:#008080">cs</span>:<span style="color:#008080">code</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">code</span> <span style="color:#008080">segment</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">bx</span>,<span style="color:#099">0</span>            <span style="color:#998;font-style:italic">; (bx)=0，偏移地址从0开始
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#008080">mov</span> <span style="color:#008080">cx</span>,<span style="color:#099">12</span>           <span style="color:#998;font-style:italic">; (cx)=12，循环12次
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">s:</span>  <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span>,<span style="color:#008080">offffh</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ds</span>,<span style="color:#008080">ax</span>           <span style="color:#998;font-style:italic">; (ds)=0ffffh
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#008080">mov</span> <span style="color:#008080">dl</span>,[<span style="color:#008080">bx</span>]         <span style="color:#998;font-style:italic">; (dl)= ((ds)*16+(bx))，将ffff:bx中的数据送入dl
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span>,<span style="color:#099">0020</span><span style="color:#008080">h</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ds</span>,<span style="color:#008080">ax</span>           <span style="color:#998;font-style:italic">; (ds)=0020h
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#008080">mov</span> [<span style="color:#008080">bx</span>],<span style="color:#008080">dl</span>         <span style="color:#998;font-style:italic">; ((ds)*16+(bx))=(dl)，将中dl的数据送入0020:bx
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">inc</span> <span style="color:#008080">bx</span>              <span style="color:#998;font-style:italic">; (bx)=(bx)+1
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#008080">loop</span> <span style="color:#008080">s</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span>,<span style="color:#099">4</span><span style="color:#008080">c00h</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">int</span> <span style="color:#099">21</span><span style="color:#008080">h</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">code</span> <span style="color:#008080">ends</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>由于上述效率不高，因此进行如下优化：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">assume</span> <span style="color:#008080">cs</span>:<span style="color:#008080">code</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">code</span> <span style="color:#008080">segment</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span>,<span style="color:#008080">offffh</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ds</span>,<span style="color:#008080">ax</span>           <span style="color:#998;font-style:italic">; (ds)=0ffffh
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span>,<span style="color:#099">0020</span><span style="color:#008080">h</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">es</span>,<span style="color:#008080">ax</span>           <span style="color:#998;font-style:italic">; (es)=0020h
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">bx</span>,<span style="color:#099">0</span>            <span style="color:#998;font-style:italic">; (bx)=0，此时ds:bx指向ffff:0，es:bx指向0020:0
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#008080">mov</span> <span style="color:#008080">cx</span>,<span style="color:#099">12</span>           <span style="color:#998;font-style:italic">; (cx)=12，循环12次
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">s:</span>  <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">dl</span>,[<span style="color:#008080">bx</span>]         <span style="color:#998;font-style:italic">; (dl)= ((ds)*16+(bx))，将ffff:bx中的数据送入dl
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#008080">mov</span> <span style="color:#008080">es</span>:[<span style="color:#008080">bx</span>],<span style="color:#008080">dl</span>      <span style="color:#998;font-style:italic">; ((es)*16+(bx))=(dl)，将中dl的数据送入0020:bx
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#008080">inc</span> <span style="color:#008080">bx</span>              <span style="color:#998;font-style:italic">; (bx)=(bx)+1
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#008080">loop</span> <span style="color:#008080">s</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span>,<span style="color:#099">4</span><span style="color:#008080">c00h</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">int</span> <span style="color:#099">21</span><span style="color:#008080">h</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">code</span> <span style="color:#008080">ends</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://cold-bin.github.io">cold bin</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8BBX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/">https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8BBX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/">汇编之第一个程序</a></li>
+        
+        <li><a href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/">汇编之寄存器</a></li>
+        
+        <li><a href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/">汇编之概述</a></li>
+        
+        <li><a href="/post/MongoDB%E5%9F%BA%E7%A1%80%E7%AF%87/">MongoDB基础篇</a></li>
+        
+        <li><a href="/post/%E5%AD%98%E5%82%A8%E4%B9%8B%E8%A1%8C%E5%88%97%E5%AD%98%E5%82%A8/">存储之行列存储</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/%E6%B1%87%E7%BC%96BX%E5%92%8Cloop%E6%8C%87%E4%BB%A4'>汇编BX和loop指令</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "my-blog-comment"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+    
+    
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2022 <a href="https://cold-bin.github.io">cold bin&#39;s blog By cold bin</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.2.8/raphael.min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/flowchart/1.12.2/flowchart.min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+                if (!window.flowchart) return;
+                const blocks = document.querySelectorAll('pre code.language-flowchart, pre code.language-flow');
+                for (let i = 0; i < blocks.length; i++) {
+                    const block = blocks[i];
+                    const rootElement = block.parentNode;
+                    const container = document.createElement('div');
+                    const id = `js-flowchart-diagrams-${i}`;
+                    container.id = id;
+                    container.className = 'align-center';
+                    container.setAttribute("style", "overFlow-x:auto");
+                    rootElement.parentNode.replaceChild(container, rootElement);
+                    const diagram = flowchart.parse(block.childNodes[0].nodeValue);
+                    diagram.drawSVG(id, window.flowchartDiagramsOptions ? window.flowchartDiagramsOptions : {});
+                }
+            })();
+        </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+            if (!window.Diagram) return;
+            const blocks = document.querySelectorAll('pre code.language-sequence');
+            for (let i = 0; i < blocks.length; i++) {
+                const block = blocks[i];
+                
+                const rootElement = block.parentNode;
+                const container = document.createElement('div');
+                const id = `js-sequence-diag-${i}`;
+                container.id = id;
+                container.className = 'align-center';
+                container.setAttribute("style", "overFlow-x:auto");
+                rootElement.parentNode.replaceChild(container, rootElement);
+
+                const diagram = Diagram.parse(block.childNodes[0].nodeValue);
+                diagram.drawSVG(id, window.sequenceDiagramsOptions
+                    ? window.sequenceDiagramsOptions
+                    : { theme: 'simple' });
+            }
+        })();
+        </script><script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://cold-bin.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://cold-bin.github.io">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8BBX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/" title="汇编之BX和loop指令">汇编之BX和loop指令</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/" title="汇编之第一个程序">汇编之第一个程序</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/" title="汇编之寄存器">汇编之寄存器</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/" title="汇编之概述">汇编之概述</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/MongoDB%E5%9F%BA%E7%A1%80%E7%AF%87/" title="MongoDB基础篇">MongoDB基础篇</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%AD%98%E5%82%A8%E4%B9%8B%E8%A1%8C%E5%88%97%E5%AD%98%E5%82%A8/" title="存储之行列存储">存储之行列存储</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/" title="常见摘要算法">常见摘要算法</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%A6%82%E5%BF%B5/" title="常见加密算法原理及概念">常见加密算法原理及概念</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E9%94%81/" title="锁">锁</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E4%B9%8B%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/" title="并发安全之原子操作">并发安全之原子操作</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (19)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">Go高性能并发编程 (3)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/HTTP%E5%8D%8F%E8%AE%AE/">HTTP协议 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/MongoDB/">MongoDB (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/MySQL/">MySQL (6)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/git/">git (2)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/gorm/">gorm (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/">加密算法 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%AD%98%E5%82%A8/">存储 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%8A%93%E5%8C%85/">抓包 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/">摘要算法 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库 (3)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/">汇编 (4)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://cold-bin.github.io/tags/GRPC/">GRPC</a>
+    
+    <a href="https://cold-bin.github.io/tags/Go%E5%BA%95%E5%B1%82/">Go底层</a>
+    
+    <a href="https://cold-bin.github.io/tags/Makefile/">Makefile</a>
+    
+    <a href="https://cold-bin.github.io/tags/MongoDB/">MongoDB</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E4%BA%8B%E5%8A%A1%E7%AF%87/">MySQL事务篇</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E5%9F%BA%E7%A1%80/">MySQL基础</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E6%97%A5%E5%BF%97%E4%B8%8E%E5%A4%87%E4%BB%BD%E7%AF%87/">MySQL日志与备份篇</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E6%9E%B6%E6%9E%84/">MySQL架构</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E7%B4%A2%E5%BC%95%E5%8F%8A%E8%B0%83%E4%BC%98/">MySQL索引及调优</a>
+    
+    <a href="https://cold-bin.github.io/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/">api向前兼容</a>
+    
+    <a href="https://cold-bin.github.io/tags/git%E7%9A%84commit%E8%A7%84%E8%8C%83/">git的commit规范</a>
+    
+    <a href="https://cold-bin.github.io/tags/go%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/">go编程思想</a>
+    
+    <a href="https://cold-bin.github.io/tags/https/">https</a>
+    
+    <a href="https://cold-bin.github.io/tags/reflect/">reflect</a>
+    
+    <a href="https://cold-bin.github.io/tags/rune%E7%B1%BB%E5%9E%8B/">rune类型</a>
+    
+    <a href="https://cold-bin.github.io/tags/sync.pool/">sync.pool</a>
+    
+    <a href="https://cold-bin.github.io/tags/tls%E8%AF%81%E4%B9%A6/">tls证书</a>
+    
+    <a href="https://cold-bin.github.io/tags/unsafe/">unsafe</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">内存对齐</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E9%9B%86%E4%B8%AD%E5%BC%8F/">分布式与集中式</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%88%97%E5%AD%98%E5%82%A8/">列存储</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">单元测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/">原子操作</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8F%8D%E5%B0%84/">反射</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90/">命令行参数解析</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8/">并发安全</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93java/">数据结构与算法总结，java</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96BX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/">汇编BX和loop指令</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%AF%84%E5%AD%98%E5%99%A8/">汇编寄存器</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E6%A6%82%E8%BF%B0/">汇编概述</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/">汇编第一个程序</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/">版本控制</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/">网络测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E8%A1%8C%E5%AD%98%E5%82%A8/">行存储</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E9%94%81/">锁</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E9%9B%B6%E6%8B%B7%E8%B4%9D/">零拷贝</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://github.com/cold-bin" title="GitHub">GitHub</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://blog.csdn.net/qq_57467091" title="CSDN">CSDN</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://cold-bin.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
