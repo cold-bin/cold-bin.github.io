@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>包含多个段的程序 | cold bin&#39;s blog</title>
+    <meta property="og:title" content="包含多个段的程序 - cold bin&#39;s blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2023-01-07T20:37:19&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2023-01-07T20:37:19&#43;08:00'>
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="包含多个段的程序">
+        
+    <meta name="author" content="cold bin">
+    <meta property="og:url" content="https://cold-bin.github.io/post/%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://cold-bin.github.io">
+                        cold bin&#39;s blog
+                    </a>
+                
+                
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://cold-bin.github.io">首页</a>
+                    
+                    <a  href="https://cold-bin.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://cold-bin.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+
+
+<aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details >
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">Table of Contents</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#%e5%a4%9a%e4%b8%aa%e6%ae%b5%e7%a8%8b%e5%ba%8f" aria-label="多个段程序">多个段程序</a><ul>
+                            
+                    <li>
+                        <a href="#%e5%9c%a8%e4%bb%a3%e7%a0%81%e6%ae%b5%e4%b8%ad%e4%bd%bf%e7%94%a8%e6%95%b0%e6%8d%ae" aria-label="在代码段中使用数据">在代码段中使用数据</a></li>
+                    <li>
+                        <a href="#%e5%9c%a8%e4%bb%a3%e7%a0%81%e6%ae%b5%e4%b8%ad%e4%bd%bf%e7%94%a8%e6%a0%88" aria-label="在代码段中使用栈">在代码段中使用栈</a></li>
+                    <li>
+                        <a href="#%e5%b0%86%e6%95%b0%e6%8d%ae%e4%bb%a3%e7%a0%81%e6%a0%88%e6%94%be%e5%85%a5%e4%b8%8d%e5%90%8c%e7%9a%84%e6%ae%b5" aria-label="将数据、代码、栈放入不同的段">将数据、代码、栈放入不同的段</a>
+                    </li>
+                </ul>
+                </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+<div class="res-cons">
+
+    <article class="post">
+        <div class="res-cons">
+
+        <header>
+            <h1 class="post-title">包含多个段的程序</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2023年1月7日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E6%B1%87%E7%BC%96'>汇编</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        
+        <div class="post-content">
+            <h2 id="多个段程序">多个段程序</h2>
+<p>程序中对段名的引用，将被编译器处理为一个表示段地址的数值。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ax</span>, <span style="color:#008080">data</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">ds</span>, <span style="color:#008080">ax</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">bx</span>, <span style="color:#008080">ds</span>:[<span style="color:#099">6</span>]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="在代码段中使用数据">在代码段中使用数据</h3>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#998;font-style:italic">;计算 8 个数据的和存到 ax 寄存器
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#900;font-weight:bold">assume</span> <span style="color:#008080">cs</span>:<span style="color:#008080">code</span> 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">code</span> <span style="color:#008080">segment</span> 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#008080">dw</span> <span style="color:#099">0123</span><span style="color:#008080">h</span>,<span style="color:#099">0456</span><span style="color:#008080">h</span>,<span style="color:#099">0789</span><span style="color:#008080">h</span>,<span style="color:#099">0</span><span style="color:#008080">abch</span>,<span style="color:#099">0</span><span style="color:#008080">defh</span>,<span style="color:#099">0</span><span style="color:#008080">fedh</span>,<span style="color:#099">0</span><span style="color:#008080">cbah</span>,<span style="color:#099">0987</span><span style="color:#008080">h</span> <span style="color:#998;font-style:italic">;define word 定义8个字形数据
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span>	<span style="color:#900;font-weight:bold">start:</span>	<span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">bx</span>, <span style="color:#099">0</span>  <span style="color:#998;font-style:italic">;标号start
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>			<span style="color:#008080">mov</span> <span style="color:#008080">ax</span>, <span style="color:#099">0</span>  
+</span></span><span style="display:flex;"><span>			
+</span></span><span style="display:flex;"><span>			<span style="color:#008080">mov</span> <span style="color:#008080">cx</span>, <span style="color:#099">8</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#900;font-weight:bold">s:</span>		<span style="color:#900;font-weight:bold">add</span> <span style="color:#008080">ax</span>, <span style="color:#008080">cs</span>:[<span style="color:#008080">bx</span>]
+</span></span><span style="display:flex;"><span>			<span style="color:#900;font-weight:bold">add</span> <span style="color:#008080">bx</span>, <span style="color:#099">2</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#900;font-weight:bold">loop</span> <span style="color:#008080">s</span> 
+</span></span><span style="display:flex;"><span>			
+</span></span><span style="display:flex;"><span>			<span style="color:#008080">mov</span> <span style="color:#008080">ax</span>, <span style="color:#099">4</span><span style="color:#008080">c00h</span> 
+</span></span><span style="display:flex;"><span>			<span style="color:#008080">int</span> <span style="color:#099">21</span><span style="color:#008080">h</span> 
+</span></span><span style="display:flex;"><span><span style="color:#008080">code</span> <span style="color:#008080">ends</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">end</span> <span style="color:#008080">start</span>    
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">;end除了通知编译器程序结束外，还可以通知编译器程序的入口在什么地方
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">;用end指令指明了程序的入口在标号start处，也就是说，“mov bx，0”是程序的第一条指令。
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="在代码段中使用栈">在代码段中使用栈</h3>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#998;font-style:italic">;利用栈，将程序中定义的数据逆序存放。
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#900;font-weight:bold">assume</span> <span style="color:#008080">cs</span>:<span style="color:#008080">codesg</span> 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">codesg</span> <span style="color:#008080">segment</span> 
+</span></span><span style="display:flex;"><span>	<span style="color:#008080">dw</span> <span style="color:#099">0123</span><span style="color:#008080">h</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0456</span><span style="color:#008080">h</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0789</span><span style="color:#008080">h</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#008080">abch</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#008080">defh</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#008080">fedh</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#008080">cbah</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0987</span><span style="color:#008080">h</span> <span style="color:#998;font-style:italic">; 0-15单元
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>	<span style="color:#008080">dw</span> <span style="color:#099">0</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">0</span> <span style="color:#998;font-style:italic">; 16-47单元作为栈使用
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>			
+</span></span><span style="display:flex;"><span>	<span style="color:#008080">start</span>:	<span style="color:#008080">mov</span> <span style="color:#008080">ax</span>, <span style="color:#008080">cs</span> 
+</span></span><span style="display:flex;"><span>			<span style="color:#008080">mov</span> <span style="color:#008080">ss</span>, <span style="color:#008080">ax</span> 
+</span></span><span style="display:flex;"><span>			<span style="color:#008080">mov</span> <span style="color:#008080">sp</span>, <span style="color:#099">30</span><span style="color:#008080">h</span> <span style="color:#998;font-style:italic">;将设置栈顶ss:sp指向栈底cs:30。   30h = 48d
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>			<span style="color:#008080">mov</span> <span style="color:#008080">bx</span>, <span style="color:#099">0</span>
+</span></span><span style="display:flex;"><span>			
+</span></span><span style="display:flex;"><span>			<span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">cx</span>, <span style="color:#099">8</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#900;font-weight:bold">s:</span>		<span style="color:#900;font-weight:bold">push</span> <span style="color:#008080">cs</span>:[<span style="color:#008080">bx</span>]
+</span></span><span style="display:flex;"><span>			<span style="color:#900;font-weight:bold">add</span> <span style="color:#008080">bx</span>, <span style="color:#099">2</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#900;font-weight:bold">loop</span> <span style="color:#008080">s</span>    <span style="color:#998;font-style:italic">;以上将代码段0~15单元中的8个字型数据依次入栈
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>			
+</span></span><span style="display:flex;"><span>			<span style="color:#008080">mov</span> <span style="color:#008080">bx</span>, <span style="color:#099">0</span>
+</span></span><span style="display:flex;"><span>			
+</span></span><span style="display:flex;"><span>			<span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">cx</span>, <span style="color:#099">8</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#900;font-weight:bold">s0:</span>		<span style="color:#900;font-weight:bold">pop</span> <span style="color:#008080">cs</span>:[<span style="color:#008080">bx</span>]		
+</span></span><span style="display:flex;"><span>			<span style="color:#008080">add</span> <span style="color:#008080">bx</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">2</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#900;font-weight:bold">loop</span> <span style="color:#008080">s0</span>   <span style="color:#998;font-style:italic">;以上依次出栈8个字型数据到代码段0~15单元中
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>			
+</span></span><span style="display:flex;"><span>			<span style="color:#008080">mov</span> <span style="color:#008080">ax</span><span style="color:#a61717;background-color:#e3d2d2">，</span><span style="color:#099">4</span><span style="color:#008080">c00h</span> 
+</span></span><span style="display:flex;"><span>			<span style="color:#008080">int</span> <span style="color:#099">21</span><span style="color:#008080">h</span> 
+</span></span><span style="display:flex;"><span><span style="color:#008080">codesg</span> <span style="color:#008080">ends</span> 
+</span></span><span style="display:flex;"><span><span style="color:#008080">end</span> <span style="color:#008080">start</span>	<span style="color:#998;font-style:italic">;指明程序的入口在start处
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="将数据代码栈放入不同的段">将数据、代码、栈放入不同的段</h3>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">assume</span> <span style="color:#008080">cs</span>:<span style="color:#008080">code</span>,<span style="color:#008080">ds</span>:<span style="color:#008080">data</span>,<span style="color:#008080">ss</span>:<span style="color:#008080">stack</span> 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">data</span> <span style="color:#008080">segment</span> 
+</span></span><span style="display:flex;"><span>	<span style="color:#008080">dw</span> <span style="color:#099">0123</span><span style="color:#008080">h</span>,<span style="color:#099">0456</span><span style="color:#008080">h</span>,<span style="color:#099">0789</span><span style="color:#008080">h</span>,<span style="color:#099">0</span><span style="color:#008080">abch</span>,<span style="color:#099">0</span><span style="color:#008080">defh</span>,<span style="color:#099">0</span><span style="color:#008080">fedh</span>,<span style="color:#099">0</span><span style="color:#008080">cbah</span>,<span style="color:#099">0987</span><span style="color:#008080">h</span> <span style="color:#998;font-style:italic">;0-15单元
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#008080">data</span> <span style="color:#008080">ends</span> 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">stack</span> <span style="color:#008080">segment</span> 
+</span></span><span style="display:flex;"><span>	<span style="color:#008080">dw</span> <span style="color:#099">0</span>,<span style="color:#099">0</span>,<span style="color:#099">0</span>,<span style="color:#099">0</span>,<span style="color:#099">0</span>,<span style="color:#099">0</span>,<span style="color:#099">0</span>,<span style="color:#099">0</span>,<span style="color:#099">0</span>,<span style="color:#099">0</span>,<span style="color:#099">0</span>,<span style="color:#099">0</span>,<span style="color:#099">0</span>,<span style="color:#099">0</span>,<span style="color:#099">0</span>,<span style="color:#099">0</span> <span style="color:#998;font-style:italic">;0-31单元
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#008080">stack</span> <span style="color:#008080">ends</span> 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#008080">code</span> <span style="color:#008080">segment</span> 
+</span></span><span style="display:flex;"><span>	<span style="color:#008080">start</span>:	<span style="color:#008080">mov</span> <span style="color:#008080">ax</span>, <span style="color:#008080">stack</span><span style="color:#998;font-style:italic">;将名称为“stack”的段的段地址送入ax
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>			<span style="color:#008080">mov</span> <span style="color:#008080">ss</span>, <span style="color:#008080">ax</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">sp</span>, <span style="color:#099">20</span><span style="color:#008080">h</span>  <span style="color:#998;font-style:italic">;设置栈顶ss:sp指向stack:20。 20h = 32d
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>			
+</span></span><span style="display:flex;"><span>			<span style="color:#008080">mov</span> <span style="color:#008080">ax</span>, <span style="color:#008080">data</span> <span style="color:#998;font-style:italic">;将名称为“data”的段的段地址送入ax
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>			<span style="color:#008080">mov</span> <span style="color:#008080">ds</span>, <span style="color:#008080">ax</span>   <span style="color:#998;font-style:italic">;ds指向data段
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>			
+</span></span><span style="display:flex;"><span>			<span style="color:#008080">mov</span> <span style="color:#008080">bx</span>, <span style="color:#099">0</span>    <span style="color:#998;font-style:italic">;ds:bx指向data段中的第一个单元
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>			
+</span></span><span style="display:flex;"><span>			<span style="color:#008080">mov</span> <span style="color:#008080">cx</span>, <span style="color:#099">8</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#900;font-weight:bold">s:</span>	    <span style="color:#900;font-weight:bold">push</span> [<span style="color:#008080">bx</span>]
+</span></span><span style="display:flex;"><span>			<span style="color:#900;font-weight:bold">add</span> <span style="color:#008080">bx</span>, <span style="color:#099">2</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#900;font-weight:bold">loop</span> <span style="color:#008080">s</span>       <span style="color:#998;font-style:italic">;以上将data段中的0~15单元中的8个字型数据依次入栈
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>			
+</span></span><span style="display:flex;"><span>			<span style="color:#008080">mov</span> <span style="color:#008080">bx</span>, <span style="color:#099">0</span>
+</span></span><span style="display:flex;"><span>			
+</span></span><span style="display:flex;"><span>			<span style="color:#900;font-weight:bold">mov</span> <span style="color:#008080">cx</span>, <span style="color:#099">8</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#900;font-weight:bold">s0:</span>		<span style="color:#900;font-weight:bold">pop</span> [<span style="color:#008080">bx</span>]
+</span></span><span style="display:flex;"><span>			<span style="color:#900;font-weight:bold">add</span> <span style="color:#008080">bx</span>, <span style="color:#099">2</span>
+</span></span><span style="display:flex;"><span>			<span style="color:#900;font-weight:bold">loop</span> <span style="color:#008080">s0</span>      <span style="color:#998;font-style:italic">;以上依次出栈8个字型数据到data段的0~15单元中
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>			
+</span></span><span style="display:flex;"><span>			<span style="color:#008080">mov</span> <span style="color:#008080">ax</span>, <span style="color:#099">4</span><span style="color:#008080">c00h</span> 
+</span></span><span style="display:flex;"><span>			<span style="color:#008080">int</span> <span style="color:#099">21</span><span style="color:#008080">h</span> 
+</span></span><span style="display:flex;"><span><span style="color:#008080">code</span> <span style="color:#008080">ends</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">end</span> <span style="color:#008080">start</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">;“end start”说明了程序的入口，这个入口将被写入可执行文件的描述信息，
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">;可执行文件中的程序被加载入内存后，CPU的CS:IP被设置指向这个入口，从而开始执行程序中的第一条指令
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://cold-bin.github.io">cold bin</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://cold-bin.github.io/post/%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/">https://cold-bin.github.io/post/%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/%E6%B1%87%E7%BC%96%E4%B9%8BBX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/">汇编之BX和loop指令</a></li>
+        
+        <li><a href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/">汇编之第一个程序</a></li>
+        
+        <li><a href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/">汇编之寄存器</a></li>
+        
+        <li><a href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/">汇编之概述</a></li>
+        
+        <li><a href="/post/MongoDB%E5%9F%BA%E7%A1%80%E7%AF%87/">MongoDB基础篇</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/%E6%B1%87%E7%BC%96%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%A8%8B%E5%BA%8F'>汇编多个段程序</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "my-blog-comment"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+    
+    
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2023 <a href="https://cold-bin.github.io">cold bin&#39;s blog By cold bin</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.2.8/raphael.min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/flowchart/1.12.2/flowchart.min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+                if (!window.flowchart) return;
+                const blocks = document.querySelectorAll('pre code.language-flowchart, pre code.language-flow');
+                for (let i = 0; i < blocks.length; i++) {
+                    const block = blocks[i];
+                    const rootElement = block.parentNode;
+                    const container = document.createElement('div');
+                    const id = `js-flowchart-diagrams-${i}`;
+                    container.id = id;
+                    container.className = 'align-center';
+                    container.setAttribute("style", "overFlow-x:auto");
+                    rootElement.parentNode.replaceChild(container, rootElement);
+                    const diagram = flowchart.parse(block.childNodes[0].nodeValue);
+                    diagram.drawSVG(id, window.flowchartDiagramsOptions ? window.flowchartDiagramsOptions : {});
+                }
+            })();
+        </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+            if (!window.Diagram) return;
+            const blocks = document.querySelectorAll('pre code.language-sequence');
+            for (let i = 0; i < blocks.length; i++) {
+                const block = blocks[i];
+                
+                const rootElement = block.parentNode;
+                const container = document.createElement('div');
+                const id = `js-sequence-diag-${i}`;
+                container.id = id;
+                container.className = 'align-center';
+                container.setAttribute("style", "overFlow-x:auto");
+                rootElement.parentNode.replaceChild(container, rootElement);
+
+                const diagram = Diagram.parse(block.childNodes[0].nodeValue);
+                diagram.drawSVG(id, window.sequenceDiagramsOptions
+                    ? window.sequenceDiagramsOptions
+                    : { theme: 'simple' });
+            }
+        })();
+        </script><script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://cold-bin.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://cold-bin.github.io">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/" title="包含多个段的程序">包含多个段的程序</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8BBX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/" title="汇编之BX和loop指令">汇编之BX和loop指令</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/" title="汇编之第一个程序">汇编之第一个程序</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/" title="汇编之寄存器">汇编之寄存器</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/" title="汇编之概述">汇编之概述</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/MongoDB%E5%9F%BA%E7%A1%80%E7%AF%87/" title="MongoDB基础篇">MongoDB基础篇</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%AD%98%E5%82%A8%E4%B9%8B%E8%A1%8C%E5%88%97%E5%AD%98%E5%82%A8/" title="存储之行列存储">存储之行列存储</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/" title="常见摘要算法">常见摘要算法</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%A6%82%E5%BF%B5/" title="常见加密算法原理及概念">常见加密算法原理及概念</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E9%94%81/" title="锁">锁</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (19)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">Go高性能并发编程 (3)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/HTTP%E5%8D%8F%E8%AE%AE/">HTTP协议 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/MongoDB/">MongoDB (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/MySQL/">MySQL (6)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/git/">git (2)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/gorm/">gorm (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/">加密算法 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%AD%98%E5%82%A8/">存储 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%8A%93%E5%8C%85/">抓包 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/">摘要算法 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库 (3)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/">汇编 (5)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://cold-bin.github.io/tags/GRPC/">GRPC</a>
+    
+    <a href="https://cold-bin.github.io/tags/Go%E5%BA%95%E5%B1%82/">Go底层</a>
+    
+    <a href="https://cold-bin.github.io/tags/Makefile/">Makefile</a>
+    
+    <a href="https://cold-bin.github.io/tags/MongoDB/">MongoDB</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E4%BA%8B%E5%8A%A1%E7%AF%87/">MySQL事务篇</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E5%9F%BA%E7%A1%80/">MySQL基础</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E6%97%A5%E5%BF%97%E4%B8%8E%E5%A4%87%E4%BB%BD%E7%AF%87/">MySQL日志与备份篇</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E6%9E%B6%E6%9E%84/">MySQL架构</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E7%B4%A2%E5%BC%95%E5%8F%8A%E8%B0%83%E4%BC%98/">MySQL索引及调优</a>
+    
+    <a href="https://cold-bin.github.io/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/">api向前兼容</a>
+    
+    <a href="https://cold-bin.github.io/tags/git%E7%9A%84commit%E8%A7%84%E8%8C%83/">git的commit规范</a>
+    
+    <a href="https://cold-bin.github.io/tags/go%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/">go编程思想</a>
+    
+    <a href="https://cold-bin.github.io/tags/https/">https</a>
+    
+    <a href="https://cold-bin.github.io/tags/reflect/">reflect</a>
+    
+    <a href="https://cold-bin.github.io/tags/rune%E7%B1%BB%E5%9E%8B/">rune类型</a>
+    
+    <a href="https://cold-bin.github.io/tags/sync.pool/">sync.pool</a>
+    
+    <a href="https://cold-bin.github.io/tags/tls%E8%AF%81%E4%B9%A6/">tls证书</a>
+    
+    <a href="https://cold-bin.github.io/tags/unsafe/">unsafe</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">内存对齐</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E9%9B%86%E4%B8%AD%E5%BC%8F/">分布式与集中式</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%88%97%E5%AD%98%E5%82%A8/">列存储</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">单元测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/">原子操作</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8F%8D%E5%B0%84/">反射</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90/">命令行参数解析</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8/">并发安全</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93java/">数据结构与算法总结，java</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96BX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/">汇编BX和loop指令</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%A8%8B%E5%BA%8F/">汇编多个段程序</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%AF%84%E5%AD%98%E5%99%A8/">汇编寄存器</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E6%A6%82%E8%BF%B0/">汇编概述</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/">汇编第一个程序</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/">版本控制</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/">网络测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E8%A1%8C%E5%AD%98%E5%82%A8/">行存储</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E9%94%81/">锁</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E9%9B%B6%E6%8B%B7%E8%B4%9D/">零拷贝</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://github.com/cold-bin" title="GitHub">GitHub</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://blog.csdn.net/qq_57467091" title="CSDN">CSDN</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://cold-bin.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

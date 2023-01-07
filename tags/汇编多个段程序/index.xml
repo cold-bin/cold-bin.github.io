@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>汇编多个段程序 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%A8%8B%E5%BA%8F/</link>
+    <description>Recent content in 汇编多个段程序 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sat, 07 Jan 2023 20:37:19 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%A8%8B%E5%BA%8F/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>包含多个段的程序</title>
+      <link>https://cold-bin.github.io/post/%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/</link>
+      <pubDate>Sat, 07 Jan 2023 20:37:19 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/</guid>
+      <description>多个段程序 程序中对段名的引用，将被编译器处理为一个表示段地址的数值。 1 2 3 mov ax, data mov ds, ax mov bx, ds:[6] 在代码段中使用数据 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 ;计算 8 个数据的和存到 ax 寄存器 assume cs:code code segment dw 0123h,0456h,0789h,0abch,0defh,0fedh,0cbah,0987h ;define word 定义8个字形数据 start: mov bx, 0 ;标号start mov ax, 0 mov cx, 8 s: add ax, cs:[bx] add bx, 2 loop s mov ax, 4c00h int 21h code</description>
+    </item>
+    
+  </channel>
+</rss>

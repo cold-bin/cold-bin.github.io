@@ -6,7 +6,16 @@
     <description>Recent content in Tags on cold bin&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 09 Dec 2022 21:58:07 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 07 Jan 2023 20:37:19 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>汇编多个段程序</title>
+      <link>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%A8%8B%E5%BA%8F/</link>
+      <pubDate>Sat, 07 Jan 2023 20:37:19 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%A8%8B%E5%BA%8F/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>汇编BX和loop指令</title>
       <link>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96BX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/</link>

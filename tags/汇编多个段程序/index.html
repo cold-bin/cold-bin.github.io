@@ -9,20 +9,21 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
     
 
-    <title>新书 | cold bin&#39;s blog</title>
-    <meta property="og:title" content="新书 - cold bin&#39;s blog">
+    <title>汇编多个段程序 | cold bin&#39;s blog</title>
+    <meta property="og:title" content="汇编多个段程序 - cold bin&#39;s blog">
     <meta property="og:type" content="article">
         
         
     <meta name="Keywords" content="">
-    <meta name="description" content="新发表文章页面">
+    <meta name="description" content="汇编多个段程序">
         
     <meta name="author" content="cold bin">
-    <meta property="og:url" content="https://cold-bin.github.io/books/">
+    <meta property="og:url" content="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%A8%8B%E5%BA%8F/">
     <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
 
     <link rel="stylesheet" href='/css/normalize.css'>
     <link rel="stylesheet" href='/css/style.css'>
+    <link rel="alternate" type="application/rss+xml" href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%A8%8B%E5%BA%8F/index.xml" title="cold bin's blog" />
     <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     
@@ -71,82 +72,45 @@
 
                 <div class="col-8" id="main">
                     
-
-
-
 <div class="res-cons">
+    
+    <h3 class="archive-title">
+        包含标签
+        <span class="keyword">汇编多个段程序</span>
+        的文章
+    </h3>
+    
 
+    
     <article class="post">
-        <div class="res-cons">
-
         <header>
-            <h1 class="post-title">新书</h1>
+            <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/">包含多个段的程序</a>
+            </h1>
         </header>
         <date class="post-meta meta-date">
-            1年1月1日
+            2023年1月7日
         </date>
         
-        
-        <div class="post-meta">
-            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
-                    阅读</span></span>
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/%E6%B1%87%E7%BC%96'>汇编</a>
+            
         </div>
-        
-        
         
         <div class="post-content">
-            <p>每一个平凡的日常
-都是连续发生中的奇迹</p>
-
-        </div>
-
-        
-
-
-        
-
-
-<div class="post-archive">
-    <h2>See Also</h2>
-    <ul class="listing">
-        
-        <li><a href="/post/%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/">包含多个段的程序</a></li>
-        
-        <li><a href="/post/%E6%B1%87%E7%BC%96%E4%B9%8BBX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/">汇编之BX和loop指令</a></li>
-        
-        <li><a href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/">汇编之第一个程序</a></li>
-        
-        <li><a href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/">汇编之寄存器</a></li>
-        
-        <li><a href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/">汇编之概述</a></li>
-        
-    </ul>
-</div>
-
-
-        <div class="post-meta meta-tags">
-            
-            没有标签
-            
+            多个段程序 程序中对段名的引用，将被编译器处理为一个表示段地址的数值。 1 2 3 mov ax, data mov ds, ax mov bx, ds:[6] 在代码段中使用数据 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 ;计算 8 个数据的和存到 ax 寄存器 assume cs:code code segment dw 0123h,0456h,0789h,0abch,0defh,0fedh,0cbah,0987h ;define word 定义8个字形数据 start: mov bx, 0 ;标号start mov ax, 0 mov cx, 8 s: add ax, cs:[bx] add bx, 2 loop s mov ax, 4c00h int 21h code……
+            <p class="readmore"><a href="https://cold-bin.github.io/post/%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/">阅读全文</a></p>
         </div>
     </article>
     
-    
 
     
-    
-    <div class="post bg-white">
-      <script src="https://utteranc.es/client.js"
-            repo= "my-blog-comment"
-            issue-term="pathname"
-            theme="github-light"
-            crossorigin="anonymous"
-            async>
-      </script>
-    </div>
-    
-    
-    
+
+
+
+
 
 </div>
 
@@ -170,59 +134,6 @@
 </footer>
 
 
-    
-    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.2.8/raphael.min.js" crossorigin="anonymous"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/flowchart/1.12.2/flowchart.min.js" crossorigin="anonymous"></script>
-        <script>(function () {
-                if (!window.flowchart) return;
-                const blocks = document.querySelectorAll('pre code.language-flowchart, pre code.language-flow');
-                for (let i = 0; i < blocks.length; i++) {
-                    const block = blocks[i];
-                    const rootElement = block.parentNode;
-                    const container = document.createElement('div');
-                    const id = `js-flowchart-diagrams-${i}`;
-                    container.id = id;
-                    container.className = 'align-center';
-                    container.setAttribute("style", "overFlow-x:auto");
-                    rootElement.parentNode.replaceChild(container, rootElement);
-                    const diagram = flowchart.parse(block.childNodes[0].nodeValue);
-                    diagram.drawSVG(id, window.flowchartDiagramsOptions ? window.flowchartDiagramsOptions : {});
-                }
-            })();
-        </script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js" crossorigin="anonymous"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js" crossorigin="anonymous"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js" crossorigin="anonymous"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js" crossorigin="anonymous"></script>
-        <script>(function () {
-            if (!window.Diagram) return;
-            const blocks = document.querySelectorAll('pre code.language-sequence');
-            for (let i = 0; i < blocks.length; i++) {
-                const block = blocks[i];
-                
-                const rootElement = block.parentNode;
-                const container = document.createElement('div');
-                const id = `js-sequence-diag-${i}`;
-                container.id = id;
-                container.className = 'align-center';
-                container.setAttribute("style", "overFlow-x:auto");
-                rootElement.parentNode.replaceChild(container, rootElement);
-
-                const diagram = Diagram.parse(block.childNodes[0].nodeValue);
-                diagram.drawSVG(id, window.sequenceDiagramsOptions
-                    ? window.sequenceDiagramsOptions
-                    : { theme: 'simple' });
-            }
-        })();
-        </script><script type="text/javascript">
-        window.MathJax = {
-            tex2jax: {
-                inlineMath: [['$', '$']],
-                processEscapes: true
-                }
-            };
-    </script>
-    <script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
 
 <a id="rocket" href="#top"></a>
 <script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>

@@ -225,8 +225,15 @@
 </ul>
 <p>我们之前的用法都是非法指令；</p>
 <p>5、[bx]</p>
-<pre tabindex="0"><code>mov [bx],ax
-</code></pre><p>功能：bx 中存放的数据作为一个偏移地址 EA，段地址 SA 默认在 ds 中，将 ax 中的数据送入内存 SA:EA 处，即：<code>(ds*16 +(bx)) = (ax)</code>；</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">mov</span> [<span style="color:#008080">bx</span>],<span style="color:#008080">ax</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>功能：bx 中存放的数据作为一个偏移地址 EA，段地址 SA 默认在 ds 中，将 ax 中的数据送入内存 SA:EA 处，即：<code>(ds*16 +(bx)) = (ax)</code>；</p>
 <p>问题：程序和内存中的情况如下图所示，写出程序执行后，21000H~21007H 单元中的内容。
 
         <a data-fancybox="gallery" href="https://img-blog.csdnimg.cn/07c78c66e7594fdbbffc174d1b0fcebe.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_20,color_FFFFFF,t_70,g_se,x_16">
@@ -658,7 +665,7 @@ loop s
 
                     <footer id="footer">
     <div>
-        &copy; 2022 <a href="https://cold-bin.github.io">cold bin&#39;s blog By cold bin</a>
+        &copy; 2023 <a href="https://cold-bin.github.io">cold bin&#39;s blog By cold bin</a>
         
     </div>
     <br />
@@ -758,6 +765,10 @@ loop s
 <ul class="widget-list">
     
     <li>
+        <a href="https://cold-bin.github.io/post/%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/" title="包含多个段的程序">包含多个段的程序</a>
+    </li>
+    
+    <li>
         <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8BBX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/" title="汇编之BX和loop指令">汇编之BX和loop指令</a>
     </li>
     
@@ -791,10 +802,6 @@ loop s
     
     <li>
         <a href="https://cold-bin.github.io/post/%E9%94%81/" title="锁">锁</a>
-    </li>
-    
-    <li>
-        <a href="https://cold-bin.github.io/post/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E4%B9%8B%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/" title="并发安全之原子操作">并发安全之原子操作</a>
     </li>
     
 </ul>
@@ -836,7 +843,7 @@ loop s
     
     <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (1)</a></li>
     
-    <li><a href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/">汇编 (4)</a></li>
+    <li><a href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/">汇编 (5)</a></li>
     
 </ul>
     </section>
@@ -906,6 +913,8 @@ loop s
     <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93java/">数据结构与算法总结，java</a>
     
     <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96BX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/">汇编BX和loop指令</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%A8%8B%E5%BA%8F/">汇编多个段程序</a>
     
     <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%AF%84%E5%AD%98%E5%99%A8/">汇编寄存器</a>
     
