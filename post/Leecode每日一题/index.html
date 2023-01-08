@@ -709,7 +709,15 @@
                             <ul>
                             
                     <li>
-                        <a href="#134-%e5%8a%a0%e6%b2%b9%e7%ab%99httpsleetcodecnproblemsgas-station" aria-label="134. 加油站"><a href="https://leetcode.cn/problems/gas-station/">134. 加油站</a></a>
+                        <a href="#134-%e5%8a%a0%e6%b2%b9%e7%ab%99httpsleetcodecnproblemsgas-station" aria-label="134. 加油站"><a href="https://leetcode.cn/problems/gas-station/">134. 加油站</a></a></li></ul>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#day74" aria-label="day74">day74</a><ul>
+                            <ul>
+                            
+                    <li>
+                        <a href="#135-%e5%88%86%e5%8f%91%e7%b3%96%e6%9e%9chttpsleetcodecnproblemscandy" aria-label="135. 分发糖果"><a href="https://leetcode.cn/problems/candy/">135. 分发糖果</a></a>
                     </li>
                 </ul>
                 </li>
@@ -11446,7 +11454,154 @@ $$
 </li>
 <li>
 <p>解法</p>
-<p><a href="https://leetcode.cn/problems/gas-station/solution/jia-you-zhan-by-leetcode-solution/">数学证明，提高时间复杂度</a></p>
+<p><a href="https://leetcode.cn/problems/gas-station/solution/jia-you-zhan-by-leetcode-solution/">数学证明，降低时间复杂度</a></p>
+</li>
+</ul>
+<h2 id="day74">day74</h2>
+<h4 id="135-分发糖果httpsleetcodecnproblemscandy"><a href="https://leetcode.cn/problems/candy/">135. 分发糖果</a></h4>
+<ul>
+<li>
+<p>题目</p>
+<p><code>n</code> 个孩子站成一排。给你一个整数数组 <code>ratings</code> 表示每个孩子的评分。</p>
+<p>你需要按照以下要求，给这些孩子分发糖果：</p>
+<ul>
+<li>每个孩子至少分配到 <code>1</code> 个糖果。</li>
+<li>相邻两个孩子评分更高的孩子会获得更多的糖果。</li>
+</ul>
+<p>请你给每个孩子分发糖果，计算并返回需要准备的 <strong>最少糖果数目</strong> 。</p>
+<p><strong>示例 1：</strong></p>
+<pre tabindex="0"><code>输入：ratings = [1,0,2]
+输出：5
+解释：你可以分别给第一个、第二个、第三个孩子分发 2、1、2 颗糖果。
+</code></pre><p><strong>示例 2：</strong></p>
+<pre tabindex="0"><code>输入：ratings = [1,2,2]
+输出：4
+解释：你可以分别给第一个、第二个、第三个孩子分发 1、2、1 颗糖果。
+     第三个孩子只得到 1 颗糖果，这满足题面中的两个条件。
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>n == ratings.length</code></li>
+<li><code>1 &lt;= n &lt;= 2 * 104</code></li>
+<li><code>0 &lt;= ratings[i] &lt;= 2 * 104</code></li>
+</ul>
+</li>
+<li>
+<p>解法</p>
+<p><strong>方法一：两次遍历</strong></p>
+<p>我们可以将「相邻的孩子中，评分高的孩子必须获得更多的糖果」这句话拆分为两个规则，分别处理。</p>
+<ul>
+<li>左规则：当 $\textit{ratings}[i - 1] &lt; \textit{ratings}[i]$ 时，i 号学生的糖果数量将比 i - 1 号孩子的糖果数量多。</li>
+<li>右规则：当 $\textit{ratings}[i] &gt; \textit{ratings}[i + 1]$ 时，i 号学生的糖果数量将比 i + 1 号孩子的糖果数量多。</li>
+</ul>
+<p>我们遍历该数组两次，处理出每一个学生分别满足左规则或右规则时，最少需要被分得的糖果数量。每个人最终分得的糖果数量即为这两个数量的最大值。</p>
+<p>具体地，以左规则为例：我们从左到右遍历该数组，假设当前遍历到位置 i，如果有 $\textit{ratings}[i - 1] &lt; \textit{ratings}[i]$ 那么 i 号学生的糖果数量将比 i - 1 号孩子的糖果数量多，我们令 $\textit{left}[i] = \textit{left}[i - 1] + 1$ 即可，否则我们令 $\textit{left}[i] = 1$。</p>
+<p>在实际代码中，我们先计算出左规则 $\textit{left}$ 数组，在计算右规则的时候只需要用单个变量记录当前位置的右规则，同时计算答案即可。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 形式一
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">Solution</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> <span style="color:#458;font-weight:bold">int</span> <span style="color:#900;font-weight:bold">candy</span><span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">int</span><span style="color:#000;font-weight:bold">[]</span> ratings<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 每人先发一个糖果
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        <span style="color:#458;font-weight:bold">int</span> sum <span style="color:#000;font-weight:bold">=</span> ratings<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">length</span><span style="color:#000;font-weight:bold">;</span> 
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 挨个比较相邻评分的大小，分高者糖果数+1
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        <span style="color:#458;font-weight:bold">int</span><span style="color:#000;font-weight:bold">[]</span> matrix <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> <span style="color:#458;font-weight:bold">int</span><span style="color:#000;font-weight:bold">[</span>ratings<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">length</span><span style="color:#000;font-weight:bold">];</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">for</span><span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">int</span> i<span style="color:#000;font-weight:bold">=</span>1<span style="color:#000;font-weight:bold">;</span>i<span style="color:#000;font-weight:bold">&lt;</span>ratings<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">length</span><span style="color:#000;font-weight:bold">;</span>i<span style="color:#000;font-weight:bold">++){</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">if</span><span style="color:#000;font-weight:bold">(</span>ratings<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">]&gt;</span>ratings<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">-</span>1<span style="color:#000;font-weight:bold">]&amp;&amp;</span>matrix<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">]&lt;=</span>matrix<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">-</span>1<span style="color:#000;font-weight:bold">]){</span>
+</span></span><span style="display:flex;"><span>                    matrix<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">]=</span>matrix<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">-</span>1<span style="color:#000;font-weight:bold">]+</span>1<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// System.out.println(Arrays.toString(matrix));
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        <span style="color:#000;font-weight:bold">for</span><span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">int</span> i<span style="color:#000;font-weight:bold">=</span>ratings<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">length</span><span style="color:#000;font-weight:bold">-</span>2<span style="color:#000;font-weight:bold">;</span>i<span style="color:#000;font-weight:bold">&gt;=</span>0<span style="color:#000;font-weight:bold">;</span>i<span style="color:#000;font-weight:bold">--){</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">if</span><span style="color:#000;font-weight:bold">(</span>ratings<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">]&gt;</span>ratings<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">+</span>1<span style="color:#000;font-weight:bold">]&amp;&amp;</span>matrix<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">]&lt;=</span>matrix<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">+</span>1<span style="color:#000;font-weight:bold">]){</span>
+</span></span><span style="display:flex;"><span>                    matrix<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">]=</span>matrix<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">+</span>1<span style="color:#000;font-weight:bold">]+</span>1<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// System.out.println(Arrays.toString(matrix));
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        <span style="color:#000;font-weight:bold">for</span><span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">int</span> i<span style="color:#000;font-weight:bold">=</span>0<span style="color:#000;font-weight:bold">;</span>i<span style="color:#000;font-weight:bold">&lt;</span>matrix<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">length</span><span style="color:#000;font-weight:bold">;</span>i<span style="color:#000;font-weight:bold">++){</span>sum<span style="color:#000;font-weight:bold">+=</span>matrix<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">];}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">return</span> sum<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// 形式二
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">Solution</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> <span style="color:#458;font-weight:bold">int</span> <span style="color:#900;font-weight:bold">candy</span><span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">int</span><span style="color:#000;font-weight:bold">[]</span> ratings<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#458;font-weight:bold">int</span> n <span style="color:#000;font-weight:bold">=</span> ratings<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">length</span><span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#458;font-weight:bold">int</span><span style="color:#000;font-weight:bold">[]</span> left <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">new</span> <span style="color:#458;font-weight:bold">int</span><span style="color:#000;font-weight:bold">[</span>n<span style="color:#000;font-weight:bold">];</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">for</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">int</span> i <span style="color:#000;font-weight:bold">=</span> 0<span style="color:#000;font-weight:bold">;</span> i <span style="color:#000;font-weight:bold">&lt;</span> n<span style="color:#000;font-weight:bold">;</span> i<span style="color:#000;font-weight:bold">++)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>i <span style="color:#000;font-weight:bold">&gt;</span> 0 <span style="color:#000;font-weight:bold">&amp;&amp;</span> ratings<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">&gt;</span> ratings<span style="color:#000;font-weight:bold">[</span>i <span style="color:#000;font-weight:bold">-</span> 1<span style="color:#000;font-weight:bold">])</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>                left<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">=</span> left<span style="color:#000;font-weight:bold">[</span>i <span style="color:#000;font-weight:bold">-</span> 1<span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">+</span> 1<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">else</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>                left<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">=</span> 1<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#458;font-weight:bold">int</span> right <span style="color:#000;font-weight:bold">=</span> 0<span style="color:#000;font-weight:bold">,</span> ret <span style="color:#000;font-weight:bold">=</span> 0<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">for</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">int</span> i <span style="color:#000;font-weight:bold">=</span> n <span style="color:#000;font-weight:bold">-</span> 1<span style="color:#000;font-weight:bold">;</span> i <span style="color:#000;font-weight:bold">&gt;=</span> 0<span style="color:#000;font-weight:bold">;</span> i<span style="color:#000;font-weight:bold">--)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">(</span>i <span style="color:#000;font-weight:bold">&lt;</span> n <span style="color:#000;font-weight:bold">-</span> 1 <span style="color:#000;font-weight:bold">&amp;&amp;</span> ratings<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">&gt;</span> ratings<span style="color:#000;font-weight:bold">[</span>i <span style="color:#000;font-weight:bold">+</span> 1<span style="color:#000;font-weight:bold">])</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>                right<span style="color:#000;font-weight:bold">++;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span> <span style="color:#000;font-weight:bold">else</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>                right <span style="color:#000;font-weight:bold">=</span> 1<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>            ret <span style="color:#000;font-weight:bold">+=</span> Math<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">max</span><span style="color:#000;font-weight:bold">(</span>left<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">],</span> right<span style="color:#000;font-weight:bold">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">return</span> ret<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>方法二：常数空间遍历</strong></p>
+<p><a href="https://leetcode.cn/problems/candy/solution/fen-fa-tang-guo-by-leetcode-solution-f01p/">https://leetcode.cn/problems/candy/solution/fen-fa-tang-guo-by-leetcode-solution-f01p/</a></p>
 </li>
 </ul>
 
