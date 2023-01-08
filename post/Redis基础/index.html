@@ -161,7 +161,13 @@
                     <li>
                         <a href="#28geo%e7%b1%bb%e5%9e%8b" aria-label="2.8.GEO类型">2.8.GEO类型</a></li>
                     <li>
-                        <a href="#29stream%e7%b1%bb%e5%9e%8b" aria-label="2.9.Stream类型">2.9.Stream类型</a></li></ul>
+                        <a href="#29stream%e7%b1%bb%e5%9e%8b" aria-label="2.9.Stream类型">2.9.Stream类型</a></li>
+                    <li>
+                        <a href="#210bitmap%e4%bd%8d%e5%9b%be%e6%93%8d%e4%bd%9c" aria-label="2.10.bitmap位图操作">2.10.bitmap位图操作</a><ul>
+                            
+                    <li>
+                        <a href="#2101%e4%bd%8d%e5%9b%be%e5%ba%94%e7%94%a8%e5%8e%9f%e7%90%86" aria-label="2.10.1.位图应用原理">2.10.1.位图应用原理</a></li></ul>
+                    </li></ul>
                     </li>
                     <li>
                         <a href="#3redis%e7%9a%84java%e5%ae%a2%e6%88%b7%e7%ab%af" aria-label="3.Redis的Java客户端">3.Redis的Java客户端</a><ul>
@@ -1187,6 +1193,68 @@ WantedBy=multi-user.target
 <li>XINFO - 查看流和消费者组的相关信息；</li>
 <li>XINFO GROUPS - 打印消费者组的信息；</li>
 <li>XINFO STREAM - 打印流信息</li>
+</ul>
+<h2 id="210bitmap位图操作">2.10.bitmap位图操作</h2>
+<p>在平时开发过程中，经常会有一些 bool 类型数据需要存取。比如记录用户一年内签到的次数，签了是 1，没签是 0。如果使用 key-value 来存储，那么每个用户都要记录 365 次，当用户成百上亿时，需要的存储空间将非常巨大。为了解决这个问题，Redis 提供了位图结构。</p>
+<p>位图（bitmap）同样属于 string 数据类型。Redis 中一个字符串类型的值最多能存储 512 MB 的内容，每个字符串由多个字节组成，每个字节又由 8 个 Bit 位组成。位图结构正是使用“位”来实现存储的，它通过将比特位设置为 0 或 1来达到数据存取的目的，这大大增加了 value 存储数量，它存储上限为<code>2^32 </code>。</p>
+<p>位图本质上就是一个普通的字节串，也就是 bytes 数组。您可以使用<code>getbit/setbit</code>命令来处理这个位数组，位图的结构如下所示：</p>
+<p>
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/1333395108-0.gif">
+            <img class="mx-auto" alt="位数组" src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/1333395108-0.gif" />
+        </a>
+    </p>
+<p>位图适用于一些特定的应用场景，比如用户签到次数、或者登录次数等。上图是表示一位用户 10 天内来网站的签到次数，1 代表签到，0 代表未签到，这样可以很轻松地统计出用户的活跃程度。相比于直接使用字符串而言，位图中的每一条记录仅占用一个 bit 位，从而大大降低了内存空间使用率。</p>
+<p>Redis 官方也做了一个实验，他们模拟了一个拥有 1 亿 2 千 8 百万用户的系统，然后使用 Redis 的位图来统计“日均用户数量”，最终所用时间的约为 50ms，且仅仅占用 16 MB内存。</p>
+<h3 id="2101位图应用原理">2.10.1.位图应用原理</h3>
+<p>某网站要统计一个用户一年的签到记录，若用 sring 类型存储，则需要 365 个键值对。若使用位图存储，用户签到就存 1，否则存 0。最后会生成 11010101&hellip; 这样的存储结果，其中每天的记录只占一位，一年就是 365 位，约为 46 个字节。如果只想统计用户签到的天数，那么统计 1 的个数即可。</p>
+<blockquote>
+<p>位图操作的优势，相比于字符串而言，它不仅效率高，而且还非常的节省空间。</p>
+</blockquote>
+<p>Redis 的位数组是自动扩展的，如果设置了某个偏移位置超出了现有的内容范围，位数组就会自动扩充。</p>
+<p>下面设置一个名为 a 的 key，我们对这个 key 进行位图操作，使得 a 的对应的 value 变为“he”。</p>
+<p>首先我们分别获取字符“h”和字符“e”的八位二进制码，如下所示：</p>
+<pre tabindex="0"><code>&gt;&gt;&gt; bin(ord(&#34;h&#34;))
+&#39;0b1101000&#39;
+&gt;&gt;&gt; bin(ord(&#34;e&#34;))
+&#39;0b1100101&#39;
+</code></pre><p>接下来，只要对需值为 1 的位进行操作即可。如下图所示：</p>
+<p>
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/1333393T4-1.gif">
+            <img class="mx-auto" alt="bitmap位图应用" src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/1333393T4-1.gif" />
+        </a>
+    </p>
+<p>把 h 和 e 的二进制码连接在一起，第一位的下标是 0，依次递增至 15，然后将数字为 1 的位置标记出来，得到 1/2/4/9/10/13/15，我们把这组数字称为位的“偏置数”，最后按照上述偏置数对字符 a 进行如下位图操作。注意，key 的初始二进制位全部为 0。</p>
+<pre tabindex="0"><code>C:\Users\Administrator&gt;redis-cli
+127.0.0.1:6379&gt; SETBIT a 1 1
+(integer) 0
+127.0.0.1:6379&gt; SETBIT a 2 1
+(integer) 0
+127.0.0.1:6379&gt; SETBIT a 4 1
+(integer) 0
+127.0.0.1:6379&gt; get hello
+&#34;h&#34;
+127.0.0.1:6379&gt; SETBIT a 9 1
+(integer) 0
+127.0.0.1:6379&gt; SETBIT a 10 1
+(integer) 0
+127.0.0.1:6379&gt; SETBIT a 13 1
+(integer) 0
+127.0.0.1:6379&gt; SETBIT a 15 1
+(integer) 0
+127.0.0.1:6379&gt; get hello
+&#34;he&#34;
+</code></pre><p>从上述示例可以得出，位图操作会自动对 key 进行扩容。</p>
+<p>如果对应位的字节是不可以被打印的，那么 Redis 会以该字符的十六进制数来表示它，如下所示：</p>
+<pre tabindex="0"><code>127.0.0.1:6379&gt; SETBIT b 0 1
+(integer) 0
+127.0.0.1:6379&gt; SETBIT b 1 1
+(integer) 0
+127.0.0.1:6379&gt; get b &#34;\xc0&#34;
+</code></pre><p><strong>常用命令：</strong></p>
+<ul>
+<li>SETBIT key offset value：用来设置或者清除某一位上的值，其返回值是原来位上存储的值。key 在初始状态下所有的位都为 0</li>
+<li>GETBIT key offset：用来获取某一位上的值。当偏移量 offset 比字符串的长度大，或者当 key 不存在时，返回 0。</li>
+<li>BITCOUNT key [start end]：统计指定位区间上，值为 1 的个数。通过指定的 start 和 end 参数，可以让计数只在特定的字节上进行。start 和 end 参数和 <a href="http://c.biancheng.net/redis2/getrange.html">GETRANGE</a> 命令的参数类似，都可以使用负数，比如 -1 表示倒数第一个位， -2 表示倒数第二个位。</li>
 </ul>
 <h1 id="3redis的java客户端">3.Redis的Java客户端</h1>
 <p>在Redis官网中提供了各种语言的客户端，地址：https://redis.io/docs/clients/</p>
