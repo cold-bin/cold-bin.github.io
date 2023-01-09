@@ -3,18 +3,24 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://cold-bin.github.io/categories/</loc>
-    <lastmod>2023-01-09T10:33:48+08:00</lastmod>
+    <lastmod>2023-01-09T10:48:47+08:00</lastmod>
   </url><url>
     <loc>https://cold-bin.github.io/</loc>
-    <lastmod>2023-01-09T10:33:48+08:00</lastmod>
+    <lastmod>2023-01-09T10:48:47+08:00</lastmod>
+  </url><url>
+    <loc>https://cold-bin.github.io/post/</loc>
+    <lastmod>2023-01-09T10:48:47+08:00</lastmod>
+  </url><url>
+    <loc>https://cold-bin.github.io/categories/Redis/</loc>
+    <lastmod>2023-01-09T10:48:47+08:00</lastmod>
+  </url><url>
+    <loc>https://cold-bin.github.io/post/Redis%E5%BA%94%E7%94%A8/</loc>
+    <lastmod>2023-01-09T10:48:47+08:00</lastmod>
   </url><url>
     <loc>https://cold-bin.github.io/categories/Golang/</loc>
     <lastmod>2023-01-09T10:33:48+08:00</lastmod>
   </url><url>
     <loc>https://cold-bin.github.io/post/mod%E5%92%8Cgopath%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</loc>
-    <lastmod>2023-01-09T10:33:48+08:00</lastmod>
-  </url><url>
-    <loc>https://cold-bin.github.io/post/</loc>
     <lastmod>2023-01-09T10:33:48+08:00</lastmod>
   </url><url>
     <loc>https://cold-bin.github.io/tags/</loc>
@@ -77,10 +83,13 @@
     <loc>https://cold-bin.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/</loc>
     <lastmod>2023-01-08T17:34:02+08:00</lastmod>
   </url><url>
-    <loc>https://cold-bin.github.io/categories/Redis/</loc>
+    <loc>https://cold-bin.github.io/tags/bitmap/</loc>
     <lastmod>2023-01-08T10:27:07+08:00</lastmod>
   </url><url>
-    <loc>https://cold-bin.github.io/tags/Redis%E5%9F%BA%E7%A1%80/</loc>
+    <loc>https://cold-bin.github.io/tags/jedis%E5%AE%A2%E6%88%B7%E7%AB%AF/</loc>
+    <lastmod>2023-01-08T10:27:07+08:00</lastmod>
+  </url><url>
+    <loc>https://cold-bin.github.io/tags/Redis%E5%90%84%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</loc>
     <lastmod>2023-01-08T10:27:07+08:00</lastmod>
   </url><url>
     <loc>https://cold-bin.github.io/post/Redis%E5%9F%BA%E7%A1%80/</loc>

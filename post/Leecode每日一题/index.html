@@ -717,7 +717,15 @@
                             <ul>
                             
                     <li>
-                        <a href="#135-%e5%88%86%e5%8f%91%e7%b3%96%e6%9e%9chttpsleetcodecnproblemscandy" aria-label="135. 分发糖果"><a href="https://leetcode.cn/problems/candy/">135. 分发糖果</a></a>
+                        <a href="#135-%e5%88%86%e5%8f%91%e7%b3%96%e6%9e%9chttpsleetcodecnproblemscandy" aria-label="135. 分发糖果"><a href="https://leetcode.cn/problems/candy/">135. 分发糖果</a></a></li></ul>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#day75" aria-label="day75">day75</a><ul>
+                            <ul>
+                            
+                    <li>
+                        <a href="#376-%e6%91%86%e5%8a%a8%e5%ba%8f%e5%88%97httpsleetcodecnproblemswiggle-subsequence" aria-label="376. 摆动序列"><a href="https://leetcode.cn/problems/wiggle-subsequence/">376. 摆动序列</a></a>
                     </li>
                 </ul>
                 </li>
@@ -11604,6 +11612,110 @@ $$
 <p><a href="https://leetcode.cn/problems/candy/solution/fen-fa-tang-guo-by-leetcode-solution-f01p/">https://leetcode.cn/problems/candy/solution/fen-fa-tang-guo-by-leetcode-solution-f01p/</a></p>
 </li>
 </ul>
+<h2 id="day75">day75</h2>
+<h4 id="376-摆动序列httpsleetcodecnproblemswiggle-subsequence"><a href="https://leetcode.cn/problems/wiggle-subsequence/">376. 摆动序列</a></h4>
+<ul>
+<li>
+<p>题目</p>
+<p>如果连续数字之间的差严格地在正数和负数之间交替，则数字序列称为 **摆动序列 。**第一个差（如果存在的话）可能是正数或负数。仅有一个元素或者含两个不等元素的序列也视作摆动序列。</p>
+<ul>
+<li>例如， <code>[1, 7, 4, 9, 2, 5]</code> 是一个 <strong>摆动序列</strong> ，因为差值 <code>(6, -3, 5, -7, 3)</code> 是正负交替出现的。</li>
+<li>相反，<code>[1, 4, 7, 2, 5]</code> 和 <code>[1, 7, 4, 5, 5]</code> 不是摆动序列，第一个序列是因为它的前两个差值都是正数，第二个序列是因为它的最后一个差值为零。</li>
+</ul>
+<p><strong>子序列</strong> 可以通过从原始序列中删除一些（也可以不删除）元素来获得，剩下的元素保持其原始顺序。</p>
+<p>给你一个整数数组 <code>nums</code> ，返回 <code>nums</code> 中作为 <strong>摆动序列</strong> 的 <strong>最长子序列的长度</strong> 。</p>
+<p><strong>示例 1：</strong></p>
+<pre tabindex="0"><code>输入：nums = [1,7,4,9,2,5]
+输出：6
+解释：整个序列均为摆动序列，各元素之间的差值为 (6, -3, 5, -7, 3) 。
+</code></pre><p><strong>示例 2：</strong></p>
+<pre tabindex="0"><code>输入：nums = [1,17,5,10,13,15,10,5,16,8]
+输出：7
+解释：这个序列包含几个长度为 7 摆动序列。
+其中一个是 [1, 17, 10, 13, 10, 16, 8] ，各元素之间的差值为 (16, -7, 3, -3, 6, -8) 。
+</code></pre><p><strong>示例 3：</strong></p>
+<pre tabindex="0"><code>输入：nums = [1,2,3,4,5,6,7,8,9]
+输出：2
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>1 &lt;= nums.length &lt;= 1000</code></li>
+<li><code>0 &lt;= nums[i] &lt;= 1000</code></li>
+</ul>
+<p>**进阶：**你能否用 <code>O(n)</code> 时间复杂度完成此题?</p>
+</li>
+<li>
+<p>解法</p>
+<p><a href="https://leetcode.cn/problems/wiggle-subsequence/solution/bai-dong-xu-lie-by-leetcode-solution-yh2m/">动态规划\贪心算法</a></p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">class</span> <span style="color:#458;font-weight:bold">Solution</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">public</span> <span style="color:#458;font-weight:bold">int</span> <span style="color:#900;font-weight:bold">wiggleMaxLength</span><span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">int</span><span style="color:#000;font-weight:bold">[]</span> nums<span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#998;font-style:italic">// 顺序遍历，“峰”才算上：一旦遇到非递增数据或者非递减数据，就算做最长子序列的一个元素
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        <span style="color:#000;font-weight:bold">if</span><span style="color:#000;font-weight:bold">(</span>nums<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">length</span><span style="color:#000;font-weight:bold">==</span>1<span style="color:#000;font-weight:bold">){</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">return</span> 1<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span><span style="color:#000;font-weight:bold">else</span> <span style="color:#000;font-weight:bold">if</span><span style="color:#000;font-weight:bold">(</span>nums<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">length</span><span style="color:#000;font-weight:bold">==</span>2<span style="color:#000;font-weight:bold">&amp;&amp;</span>nums<span style="color:#000;font-weight:bold">[</span>0<span style="color:#000;font-weight:bold">]!=</span>nums<span style="color:#000;font-weight:bold">[</span>1<span style="color:#000;font-weight:bold">]){</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">return</span> 2<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#458;font-weight:bold">int</span> ans <span style="color:#000;font-weight:bold">=</span> 1<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#458;font-weight:bold">int</span> state <span style="color:#000;font-weight:bold">=</span> 0<span style="color:#000;font-weight:bold">;</span> <span style="color:#998;font-style:italic">//表示先前的状态：0表示前面的两个数差为0，1表示差为正，-1表示差为负
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        <span style="color:#998;font-style:italic">// 只需计数“峰”的数量即可
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>        <span style="color:#000;font-weight:bold">for</span><span style="color:#000;font-weight:bold">(</span><span style="color:#458;font-weight:bold">int</span> i<span style="color:#000;font-weight:bold">=</span>1<span style="color:#000;font-weight:bold">;</span>i<span style="color:#000;font-weight:bold">&lt;</span>nums<span style="color:#000;font-weight:bold">.</span><span style="color:#008080">length</span><span style="color:#000;font-weight:bold">;</span>i<span style="color:#000;font-weight:bold">++){</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">if</span><span style="color:#000;font-weight:bold">(</span>nums<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">]&lt;</span>nums<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">-</span>1<span style="color:#000;font-weight:bold">]&amp;&amp;</span>state<span style="color:#000;font-weight:bold">==</span>1<span style="color:#000;font-weight:bold">){</span>
+</span></span><span style="display:flex;"><span>                ans<span style="color:#000;font-weight:bold">++;</span>
+</span></span><span style="display:flex;"><span>                state <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">-</span>1<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span><span style="color:#000;font-weight:bold">else</span> <span style="color:#000;font-weight:bold">if</span><span style="color:#000;font-weight:bold">(</span>nums<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">]&gt;</span>nums<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">-</span>1<span style="color:#000;font-weight:bold">]&amp;&amp;</span>state<span style="color:#000;font-weight:bold">==-</span>1<span style="color:#000;font-weight:bold">){</span>
+</span></span><span style="display:flex;"><span>                ans<span style="color:#000;font-weight:bold">++;</span>
+</span></span><span style="display:flex;"><span>                state <span style="color:#000;font-weight:bold">=</span> 1<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span><span style="color:#000;font-weight:bold">else</span> <span style="color:#000;font-weight:bold">if</span><span style="color:#000;font-weight:bold">(</span>nums<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">]&gt;</span>nums<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">-</span>1<span style="color:#000;font-weight:bold">]&amp;&amp;</span>state<span style="color:#000;font-weight:bold">==</span>0<span style="color:#000;font-weight:bold">){</span>
+</span></span><span style="display:flex;"><span>                ans<span style="color:#000;font-weight:bold">++;</span>
+</span></span><span style="display:flex;"><span>                state <span style="color:#000;font-weight:bold">=</span> 1<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span><span style="color:#000;font-weight:bold">else</span> <span style="color:#000;font-weight:bold">if</span><span style="color:#000;font-weight:bold">(</span>nums<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">]&lt;</span>nums<span style="color:#000;font-weight:bold">[</span>i<span style="color:#000;font-weight:bold">-</span>1<span style="color:#000;font-weight:bold">]&amp;&amp;</span>state<span style="color:#000;font-weight:bold">==</span>0<span style="color:#000;font-weight:bold">){</span>
+</span></span><span style="display:flex;"><span>                ans<span style="color:#000;font-weight:bold">++;</span>
+</span></span><span style="display:flex;"><span>                state <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">-</span>1<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">return</span> ans<span style="color:#000;font-weight:bold">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
 
         </div>
 
@@ -11772,6 +11884,10 @@ $$
 <ul class="widget-list">
     
     <li>
+        <a href="https://cold-bin.github.io/post/Redis%E5%BA%94%E7%94%A8/" title="Redis应用">Redis应用</a>
+    </li>
+    
+    <li>
         <a href="https://cold-bin.github.io/post/mod%E5%92%8Cgopath%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/" title="Mod和gopath依赖管理">Mod和gopath依赖管理</a>
     </li>
     
@@ -11807,10 +11923,6 @@ $$
         <a href="https://cold-bin.github.io/post/%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/" title="包含多个段的程序">包含多个段的程序</a>
     </li>
     
-    <li>
-        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8BBX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/" title="汇编之BX和loop指令">汇编之BX和loop指令</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -11836,7 +11948,7 @@ $$
     
     <li><a href="https://cold-bin.github.io/categories/MySQL/">MySQL (6)</a></li>
     
-    <li><a href="https://cold-bin.github.io/categories/Redis/">Redis (1)</a></li>
+    <li><a href="https://cold-bin.github.io/categories/Redis/">Redis (2)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/git/">git (2)</a></li>
     
@@ -11889,9 +12001,11 @@ $$
     
     <a href="https://cold-bin.github.io/tags/MySQL%E7%B4%A2%E5%BC%95%E5%8F%8A%E8%B0%83%E4%BC%98/">MySQL索引及调优</a>
     
-    <a href="https://cold-bin.github.io/tags/Redis%E5%9F%BA%E7%A1%80/">Redis基础</a>
+    <a href="https://cold-bin.github.io/tags/Redis%E5%90%84%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">Redis各大数据类型</a>
     
     <a href="https://cold-bin.github.io/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/">api向前兼容</a>
+    
+    <a href="https://cold-bin.github.io/tags/bitmap/">bitmap</a>
     
     <a href="https://cold-bin.github.io/tags/colly%E6%A1%86%E6%9E%B6/">colly框架</a>
     
@@ -11902,6 +12016,8 @@ $$
     <a href="https://cold-bin.github.io/tags/go%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/">go编程思想</a>
     
     <a href="https://cold-bin.github.io/tags/https/">https</a>
+    
+    <a href="https://cold-bin.github.io/tags/jedis%E5%AE%A2%E6%88%B7%E7%AB%AF/">jedis客户端</a>
     
     <a href="https://cold-bin.github.io/tags/reflect/">reflect</a>
     
