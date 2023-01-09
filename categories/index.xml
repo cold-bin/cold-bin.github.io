@@ -6,7 +6,16 @@
     <description>Recent content in Categories on cold bin&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Mon, 09 Jan 2023 10:48:47 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 09 Jan 2023 21:39:32 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>汇编</title>
+      <link>https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/</link>
+      <pubDate>Mon, 09 Jan 2023 21:39:32 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Redis</title>
       <link>https://cold-bin.github.io/categories/Redis/</link>
@@ -76,15 +85,6 @@
       <pubDate>Sun, 08 Jan 2023 17:34:02 +0800</pubDate>
       
       <guid>https://cold-bin.github.io/categories/Leecode/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>汇编</title>
-      <link>https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/</link>
-      <pubDate>Sat, 07 Jan 2023 20:37:19 +0800</pubDate>
-      
-      <guid>https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/</guid>
       <description></description>
     </item>
     

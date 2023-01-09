@@ -77,6 +77,31 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/" title="包含多个段的程序">包含多个段的程序</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2023年1月7日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E6%B1%87%E7%BC%96'>汇编</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            多个段程序 程序中对段名的引用，将被编译器处理为一个表示段地址的数值。 1 2 3 mov ax, data mov ds, ax mov bx, ds:[6] 在代码段中使用数据 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 ;计算 8 个数据的和存到 ax 寄存器 assume cs:code code segment dw 0123h,0456h,0789h,0abch,0defh,0fedh,0cbah,0987h ;define word 定义8个字形数据 start: mov bx, 0 ;标号start mov ax, 0 mov cx, 8 s: add ax, cs:[bx] add bx, 2 loop s mov ax, 4c00h int 21h code……
+        </div>
+        <p class="readmore"><a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8BBX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/" title="汇编之BX和loop指令">汇编之BX和loop指令</a>
             </h1>
         </header>
@@ -303,31 +328,6 @@
     
     
     
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E4%B9%8B%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/" title="并发安全之原子操作">并发安全之原子操作</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年11月9日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            原子操作 并发是业务开发中经常要面对的问题，很多时候我们会直接用一把 sync.Mutex 互斥锁来线性化处理，保证每一时刻进入临界区的 goroutine 只有一个。这样避免了并发，但性能也随着降低。 所以，我们进而又有了 RWMutex 读写锁，保障了多个读请求的并发处理，对共享资源的写操作和读操作则区别看待，并消除了读操作之间的互斥。……
-        </div>
-        <p class="readmore"><a href="https://cold-bin.github.io/post/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E4%B9%8B%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/">阅读全文</a></p>
-    </article>
-    
-    
-    
 
 
 
@@ -424,6 +424,10 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%85%B6%E4%BB%96%E5%AE%9A%E4%BD%8D%E5%9C%B0%E5%9D%80%E6%96%B9%E6%B3%95/" title="汇编之其他定位地址方法">汇编之其他定位地址方法</a>
+    </li>
+    
+    <li>
         <a href="https://cold-bin.github.io/post/Redis%E5%BA%94%E7%94%A8/" title="Redis应用">Redis应用</a>
     </li>
     
@@ -457,10 +461,6 @@
     
     <li>
         <a href="https://cold-bin.github.io/post/Redis%E5%9F%BA%E7%A1%80/" title="Redis基础">Redis基础</a>
-    </li>
-    
-    <li>
-        <a href="https://cold-bin.github.io/post/%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/" title="包含多个段的程序">包含多个段的程序</a>
     </li>
     
 </ul>
@@ -512,7 +512,7 @@
     
     <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (3)</a></li>
     
-    <li><a href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/">汇编 (5)</a></li>
+    <li><a href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/">汇编 (6)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/%E7%88%AC%E8%99%AB/">爬虫 (2)</a></li>
     
@@ -602,6 +602,8 @@
     <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93java/">数据结构与算法总结，java</a>
     
     <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96BX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/">汇编BX和loop指令</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%9C%B0%E5%9D%80%E5%AE%9A%E4%BD%8D/">汇编地址定位</a>
     
     <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%A8%8B%E5%BA%8F/">汇编多个段程序</a>
     
