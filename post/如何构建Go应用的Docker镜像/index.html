@@ -1,0 +1,911 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>如何构建Go应用的Docker镜像 | cold bin&#39;s blog</title>
+    <meta property="og:title" content="如何构建Go应用的Docker镜像 - cold bin&#39;s blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2023-01-09T10:31:00&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2023-01-09T10:31:00&#43;08:00'>
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="如何构建Go应用的Docker镜像">
+        
+    <meta name="author" content="cold bin">
+    <meta property="og:url" content="https://cold-bin.github.io/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAGo%E5%BA%94%E7%94%A8%E7%9A%84Docker%E9%95%9C%E5%83%8F/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://cold-bin.github.io">
+                        cold bin&#39;s blog
+                    </a>
+                
+                
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://cold-bin.github.io">首页</a>
+                    
+                    <a  href="https://cold-bin.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://cold-bin.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+
+
+<aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details >
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">Table of Contents</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#%e5%a6%82%e4%bd%95%e6%9e%84%e5%bb%ba-go-%e5%ba%94%e7%94%a8%e7%9a%84-docker-%e9%95%9c%e5%83%8f" aria-label="如何构建 Go 应用的 Docker 镜像">如何构建 Go 应用的 Docker 镜像</a><ul>
+                            
+                    <li>
+                        <a href="#%e5%88%9b%e5%bb%ba%e4%b8%80%e4%b8%aa%e7%ae%80%e5%8d%95%e7%9a%84-go-%e5%ba%94%e7%94%a8" aria-label="创建一个简单的 Go 应用">创建一个简单的 Go 应用</a><ul>
+                            
+                    <li>
+                        <a href="#%e6%96%b9%e5%bc%8f%e4%b8%80%e4%b8%8b%e8%bd%bd%e6%ba%90%e7%a0%81" aria-label="方式一：下载源码">方式一：下载源码</a></li>
+                    <li>
+                        <a href="#%e6%96%b9%e5%bc%8f%e4%ba%8c%e4%bb%8e%e9%9b%b6%e7%bc%96%e5%86%99-go-%e5%ba%94%e7%94%a8" aria-label="方式二：从零编写 Go 应用">方式二：从零编写 Go 应用</a></li>
+                    <li>
+                        <a href="#%e6%b5%8b%e8%af%95-go-%e5%ba%94%e7%94%a8" aria-label="测试 Go 应用">测试 Go 应用</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e4%b8%ba-go-%e5%ba%94%e7%94%a8%e5%88%9b%e5%bb%ba%e4%b8%80%e4%b8%aa-dockerfile" aria-label="为 Go 应用创建一个 Dockerfile">为 Go 应用创建一个 Dockerfile</a><ul>
+                            
+                    <li>
+                        <a href="#%e4%bb%8e%e9%9b%b6%e5%88%9b%e5%bb%ba-dockerfile" aria-label="从零创建 Dockerfile">从零创建 Dockerfile</a></li>
+                    <li>
+                        <a href="#%e5%ae%8c%e6%95%b4%e7%9a%84-dockerfile" aria-label="完整的 Dockerfile">完整的 Dockerfile</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e6%9e%84%e5%bb%ba%e9%95%9c%e5%83%8f" aria-label="构建镜像">构建镜像</a><ul>
+                            
+                    <li>
+                        <a href="#%e6%9e%84%e5%bb%ba%e9%95%9c%e5%83%8f-1" aria-label="构建镜像">构建镜像</a></li>
+                    <li>
+                        <a href="#%e4%b8%ba%e9%95%9c%e5%83%8f%e8%ae%be%e7%bd%ae%e6%a0%87%e7%ad%be" aria-label="为镜像设置标签">为镜像设置标签</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e5%8d%95%e5%85%83%e6%b5%8b%e8%af%95" aria-label="单元测试">单元测试</a></li>
+                    <li>
+                        <a href="#%e5%a4%9a%e9%98%b6%e6%ae%b5%e6%9e%84%e5%bb%ba" aria-label="多阶段构建">多阶段构建</a><ul>
+                            
+                    <li>
+                        <a href="#%e5%a4%9a%e9%98%b6%e6%ae%b5%e6%9e%84%e5%bb%ba-dockerfile" aria-label="多阶段构建 Dockerfile">多阶段构建 Dockerfile</a></li>
+                    <li>
+                        <a href="#%e4%ba%a4%e5%8f%89%e7%bc%96%e8%af%91" aria-label="交叉编译">交叉编译</a><ul>
+                            
+                    <li>
+                        <a href="#cgo_enabled" aria-label="CGO_ENABLED">CGO_ENABLED</a></li>
+                    <li>
+                        <a href="#goos-%e5%92%8c-goarch" aria-label="GOOS 和 GOARCH">GOOS 和 GOARCH</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e6%9e%84%e5%bb%ba%e9%95%9c%e5%83%8f-2" aria-label="构建镜像">构建镜像</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e8%bf%90%e8%a1%8c-go-%e9%95%9c%e5%83%8f" aria-label="运行 Go 镜像">运行 Go 镜像</a></li>
+                    <li>
+                        <a href="#%e4%bd%bf%e7%94%a8-makefile-%e7%ae%80%e5%8c%96%e6%9e%84%e5%bb%ba%e6%b5%81%e7%a8%8b" aria-label="使用 Makefile 简化构建流程">使用 Makefile 简化构建流程</a></li>
+                    <li>
+                        <a href="#%e6%80%bb%e7%bb%93" aria-label="总结">总结</a>
+                    </li>
+                </ul>
+                </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+<div class="res-cons">
+
+    <article class="post">
+        <div class="res-cons">
+
+        <header>
+            <h1 class="post-title">如何构建Go应用的Docker镜像</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2023年1月9日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
+            
+            <span class="meta-category"><a href='/categories/Docker'>Docker</a></span>
+            
+            <span class="meta-category"><a href='/categories/%E5%AE%B9%E5%99%A8'>容器</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        
+        <div class="post-content">
+            <h1 id="如何构建-go-应用的-docker-镜像">如何构建 Go 应用的 Docker 镜像</h1>
+<p><strong>简介：</strong> 在部署 Go 应用时，我们通常会使用 Docker 镜像来部署，那么如何构建一个 Go 应用的 Docker 镜像呢？镜像构建过程中有没有什么最佳实践呢？</p>
+<p>在部署 Go 应用时，我们通常会使用 Docker 镜像来部署，那么如何构建一个 Go 应用的 Docker 镜像呢？镜像构建过程中有没有什么最佳实践呢？</p>
+<p>这正是本文想要讲解的内容。总的来说，本文会包含 Dockerfile 编写、镜像构建、多阶段构建、交叉编译以及使用 Makefile 简化构建流程等知识点。</p>
+<h2 id="创建一个简单的-go-应用">创建一个简单的 Go 应用</h2>
+<p>为了说明整个镜像构建流程，让我们先从一个简单的 Go REST 应用开始。</p>
+<p>该应用主要有以下功能：</p>
+<ul>
+<li>访问 <code>/</code>，返回  <code>Hello, Docker! &lt;3</code>；</li>
+<li>访问 <code>/ping</code> ，返回 JSON 字符串 <code>{&quot;Status&quot;:&quot;OK&quot;}</code>；</li>
+<li>可以通过环境变量设置 HTTP_PORT，默认值为8080。</li>
+</ul>
+<p>应用源码地址在 <a href="https://github.com/nodejh/docker-go-server-ping">https://github.com/nodejh/docker-go-server-ping</a> ，你可以直接下载使用，也可以按照下面的步骤从零开始编写代码。</p>
+<h3 id="方式一下载源码">方式一：下载源码</h3>
+<pre tabindex="0"><code>$ git clone git@github.com:nodejh/docker-go-server-ping.git
+</code></pre><p>安装依赖模块：</p>
+<pre tabindex="0"><code>$ go mod download
+</code></pre><h3 id="方式二从零编写-go-应用">方式二：从零编写 Go 应用</h3>
+<p>新建一个 <code>docker-go-server-ping</code> 目录，然后初始化 Go 模块：</p>
+<pre tabindex="0"><code>$ mkdir docker-go-server-ping &amp;&amp; cd docker-go-server-ping
+$ go mod init github.com/nodejh/docker-go-server-ping
+</code></pre><p>安装 <a href="https://github.com/labstack/echo">Echo</a> 模块：</p>
+<pre tabindex="0"><code>$ go get github.com/labstack/echo/v4
+</code></pre><p>接下来创建一个 <code>main.go</code> 文件，并实现一个简单的 Go 服务：</p>
+<pre tabindex="0"><code>package main
+import (
+ &#34;net/http&#34;
+ &#34;os&#34;
+ &#34;github.com/labstack/echo/v4&#34;
+ &#34;github.com/labstack/echo/v4/middleware&#34;
+)
+func main() {
+ e := echo.New()
+ e.Use(middleware.Logger())
+ e.Use(middleware.Recover())
+ e.GET(&#34;/&#34;, func(c echo.Context) error {
+    return c.HTML(http.StatusOK, &#34;Hello, Docker! &lt;3&#34;)
+ })
+ e.GET(&#34;/ping&#34;, func(c echo.Context) error {
+    return c.JSON(http.StatusOK, struct{ Status string }{Status: &#34;OK&#34;})
+ })
+ httpPort := os.Getenv(&#34;HTTP_PORT&#34;)
+ if httpPort == &#34;&#34; {
+    httpPort = &#34;8080&#34;
+ }
+ e.Logger.Fatal(e.Start(&#34;:&#34; + httpPort))
+}
+</code></pre><p>接下来可能需要执行 <code>go mod tidy</code> 来确保 <code>go.mod</code> 和源码中的模块一致：</p>
+<pre tabindex="0"><code>$ go mod tidy
+</code></pre><h3 id="测试-go-应用">测试 Go 应用</h3>
+<p>让我们启动我们的 Go 应用并确保它正常运行。进入项目目录并通过 <code>go run</code> 命令执行源码：</p>
+<pre tabindex="0"><code>$ go run main.go 
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.6.1
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+</code></pre><p>让我们对应用进行一个简单的测试，打开一个新的终端，使用 curl 命令或在浏览器打开 <code>http://localhost:8080/</code> 进行测试。以 <code>curl</code> 为例：</p>
+<pre tabindex="0"><code>$ curl http://localhost:8080/
+Hello, Docker! &lt;3
+</code></pre><p>可以看到应用正常返回了，正如开头描述的那样。</p>
+<p>确定服务器正在运行并且可以访问后，我们就可以继续针对应用构建 Docker 镜像了。</p>
+<h2 id="为-go-应用创建一个-dockerfile">为 Go 应用创建一个 Dockerfile</h2>
+<p>Dockerfile 是 Docker 镜像的描述文件，是一个文本文件。当我们执行 <code>docker build</code> 构建镜像时，Docker 就会读取 Dockerfile 中的指令来创建 Docker 镜像。</p>
+<h3 id="从零创建-dockerfile">从零创建 Dockerfile</h3>
+<p>让我们先来看一下创建 Dockerfile 的详细过程。</p>
+<p>在项目根目录中创建一个名为 Dockerfile 的文件并在编辑器中打开。</p>
+<p>添加到 Dockerfile 的第一行是 <code># syntax</code> 解析器指令，这是一个可选项，表示 Docker 构建器在解析 Dockerfile 时使用什么语法。解析器指令必须在 Dockerfile 其他任何注释、空格或指令之前，并且应该是 Dockerfile 的第一行。建议使用 <code>docker/dockerfile:1</code> ，它始终指向版本 <code>1</code> 语法的最新版本。</p>
+<pre tabindex="0"><code># syntax=docker/dockerfile:1
+</code></pre><p>接下来在 Dockerfile 中再添加一行，告诉 Docker 我们的应用使用什么基础镜像：</p>
+<pre tabindex="0"><code># syntax=docker/dockerfile:1
+FROM golang:1.16-alpine
+</code></pre><p>这里我们使用了 <a href="https://hub.docker.com/_/golang">Golang 官方镜像</a> 中的 <code>1.16-alpine</code> 版本作为基础镜像，alpine 是专门为容器设计的小型 Linux 发行版。使用基础镜像的好处是，基础镜像中内置了 Go 运行环境和工具，我们就不用自己再去安装了。</p>
+<p>为了更好地在镜像中管理我们的应用程序，让我们在镜像中创建一个工作目录，之后源码或编译产物都存放在该目录中：</p>
+<pre tabindex="0"><code>WORKDIR /app
+</code></pre><p>接下来我们就需要在镜像中编译 Go 应用，这样做是为了保证编译和最终运行的环境一致。</p>
+<p>通常我们编译 Go 应用的第一步是安装依赖，所以要先把 <code>go.mod</code> 和 <code>go.sum</code> 复制到镜像中：</p>
+<pre tabindex="0"><code>COPY go.mod ./
+COPY go.sum ./
+</code></pre><p><code>COPY</code> 命令可以把文件复制到镜像中，这里的 <code>./</code> 对应的目录就是上一个命令 <code>WORKDIR</code> 指定的 <code>/app</code> 目录。</p>
+<p>然后通过 <code>RUN</code> 命令在镜像中执行 <code>go mod download</code> 安装依赖，这与我们在本机直接运行命令的作用完全相同，不同的是这次会将依赖安装在镜像中：</p>
+<pre tabindex="0"><code>RUN go mod download
+</code></pre><p>此时我们已经有了一个基于 Go 1.16 的镜像，并安装了 Go 应用所需的依赖。下一步要做的就是把源码复制到镜像中：</p>
+<pre tabindex="0"><code>RUN COPY *.go ./
+</code></pre><p>该 COPY 命令使用通配符将本机当前目录（即 Dockerfile 所在目录）中后缀为 <code>.go</code> 的文件全部复制到镜像中。</p>
+<p>接下来我们就可以编译 Go 应用了，依然使用熟悉的 <code>RUN</code> 命令：</p>
+<pre tabindex="0"><code>RUN go build -o /docker-go-server-ping
+</code></pre><p>该命令的结果就是产生一个名为 <code>docker-go-server-ping</code> 的二进制文件，并存放在镜像的系统根目录中。当然你也可以将二进制文件放在其他任何位置，根目录在这里没有特殊意义，只是它的路径较短且保持了可读性，使用起来更方便。</p>
+<p>现在，剩下要做的就是告诉 Docker 当我们用该镜像来启动容器时要执行什么命令，这时可以使用 CMD 命令：</p>
+<pre tabindex="0"><code>CMD [ &#34;/docker-go-server-ping&#34; ]
+</code></pre><h3 id="完整的-dockerfile">完整的 Dockerfile</h3>
+<pre tabindex="0"><code># syntax=docker/dockerfile:1
+FROM golang:1.16-alpine
+WORKDIR /app
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
+COPY *.go ./
+RUN go build -o /docker-go-server-ping
+EXPOSE 8080
+CMD [ &#34;/docker-go-server-ping&#34; ]
+</code></pre><h2 id="构建镜像">构建镜像</h2>
+<p>Dockerfile 编写完成后就可以使用 <code>docker build</code> 命令来构建镜像了。</p>
+<h3 id="构建镜像-1">构建镜像</h3>
+<p>让我们进入 Dockerfile 所在目录构建镜像，并通过可选的 <code>--tag</code> 给镜像定义一个方便阅读和识别的名字和标签，格式为 <code>&lt;镜像名称&gt;:&lt;标签&gt;</code>，默认是标签 latest：</p>
+<pre tabindex="0"><code>$ docker build --tag docker-go-server-ping:latest .
+[+] Building 32.2s (16/16) FINISHED 
+ =&gt; [internal] load build definition from Dockerfile                                                                             0.1s
+ =&gt; =&gt; transferring dockerfile: 37B                                                                                              0.0s
+ =&gt; [internal] load .dockerignore                                                                                                0.0s
+ =&gt; =&gt; transferring context: 2B                                                                                                  0.0s
+ =&gt; resolve image config for docker.io/docker/dockerfile:1                                                                      15.2s
+ =&gt; CACHED docker-image://docker.io/docker/dockerfile:1@sha256:42399d4635eddd7a9b8a24be879d2f9a930d0ed040a61324cfdf59ef1357b3b2  0.0s
+ =&gt; [internal] load build definition from Dockerfile                                                                             0.0s
+ =&gt; [internal] load .dockerignore                                                                                                0.0s
+ =&gt; [internal] load metadata for docker.io/library/golang:1.16-alpine                                                           15.6s
+ =&gt; [1/7] FROM docker.io/library/golang:1.16-alpine@sha256:45412fe3f5016509fc448b83faefc34e6f9e9bcc8ca1db1c54505d5528264e16      0.0s
+ =&gt; [internal] load build context                                                                                                0.1s
+ =&gt; =&gt; transferring context: 80B                                                                                                 0.0s
+ =&gt; CACHED [2/7] WORKDIR /app                                                                                                    0.0s
+ =&gt; CACHED [3/7] COPY go.mod ./                                                                                                  0.0s
+ =&gt; CACHED [4/7] COPY go.sum ./                                                                                                  0.0s
+ =&gt; CACHED [5/7] RUN go mod download                                                                                             0.0s
+ =&gt; CACHED [6/7] COPY *.go ./                                                                                                    0.0s
+ =&gt; CACHED [7/7] RUN go build -o /docker-go-server-ping                                                                          0.0s
+ =&gt; exporting to image                                                                                                           0.1s
+ =&gt; =&gt; exporting layers                                                                                                          0.0s
+ =&gt; =&gt; writing image sha256:17fa05342ccef20e73abc48210fff449cc49683ffd817ccc6aef35500cf91ae2                                     0.0s
+ =&gt; =&gt; naming to docker.io/library/docker-go-server-ping
+</code></pre><p>构建完成后可以通过 <code>docker image ls</code> （或 <code>docker images</code> 简写）来查看镜像列表：</p>
+<pre tabindex="0"><code>$ docker image ls
+REPOSITORY                   TAG            IMAGE ID       CREATED         SIZE
+docker-go-server-ping        latest         17fa05342cce   9 minutes ago   407MB
+</code></pre><h3 id="为镜像设置标签">为镜像设置标签</h3>
+<p>我们也可以通过 <code>docker image tag</code> 命令来为镜像设置新的标签，例如：</p>
+<pre tabindex="0"><code>$ docker image tag docker-go-server-ping:latest docker-go-server-ping:v1.0.0
+</code></pre><p>这时通过 <code>docker image ls</code> 就可以看到 docker-go-server-ping 镜像的两个标签：</p>
+<pre tabindex="0"><code>$ docker image ls
+REPOSITORY                   TAG            IMAGE ID       CREATED         SIZE
+docker-go-server-ping        latest         17fa05342cce   12 minutes ago   407MB
+docker-go-server-ping        v1.0.0         17fa05342cce   1 minutes ago   407MB
+</code></pre><p>我们还可以通过 <code>docker image rm</code> （简写为 <code>docker rmi</code>）删除镜像：</p>
+<pre tabindex="0"><code>$ docker image rm docker-go-server-ping:v1.0.0
+Untagged: docker-go-server-ping:v1.0.0
+</code></pre><p>这时再查看镜像列表，<code>v1.0.0</code> 版本的镜像已被删除，只剩下 <code>latest</code> 版本了：</p>
+<pre tabindex="0"><code>$ docker image ls
+REPOSITORY                   TAG            IMAGE ID       CREATED         SIZE
+docker-go-server-ping        latest         17fa05342cce   15 minutes ago   407MB
+</code></pre><h2 id="单元测试">单元测试</h2>
+<p>既然本文主要将 Go 的 Docker 镜像，这样就顺便简单说明如何使用 <a href="https://github.com/ory/dockertest/">dockertest</a> 对 Go 应用进行单元测试。</p>
+<p><a href="https://github.com/ory/dockertest/">dockertest</a> 可以在 Docker 容器中启动 Go 应用镜像并执行测试用例。</p>
+<p>相关测试用例可以参考 <a href="https://github.com/nodejh/docker-go-server-ping/blob/main/main_test.go">main_test.go</a> 。</p>
+<p>在 main_test.go 中我们使用了 <code>docker-go-server-ping:latest</code> 镜像来运行 Go 应用：</p>
+<pre tabindex="0"><code>resource, err := pool.Run(&#34;docker-go-server-ping&#34;, &#34;latest&#34;, []string{})
+</code></pre><p>所以在执行 <code>go test</code> 之前，需要先构建 <code>docker-go-server-ping:latest</code> 镜像：</p>
+<pre tabindex="0"><code>$ docker build --tag docker-go-server-ping:latest .
+...
+$ go test -v ./
+=== RUN   TestRespondsWithLove
+body
+Hello, Docker! &lt;3
+--- PASS: TestRespondsWithLove (1.12s)
+=== RUN   TestHealthCheck
+    main_test.go:85: container not ready, waiting...
+--- PASS: TestHealthCheck (1.66s)
+PASS
+ok      command-line-arguments  2.799s
+</code></pre><h2 id="多阶段构建">多阶段构建</h2>
+<p>可能你已经注意到了，docker-go-server-ping 镜像的大小有 407MB，这着实有点大，并且镜像中还有全套的 Go 工具、Go 应用的依赖等，但实际我们应用运行时不需要这些文件，只需要编译后的二进制文件。那么能不能减小镜像的体积呢？</p>
+<p>要减小镜像体积，我们可以使用多阶段构建。Docker 在 17.05 版本以后，新增了多阶段构建功能。多阶段构建实际上是允许一个 Dockerfile 中出现多个 FROM 指令。通常我们使用多阶段构建时，会先使用一个（或多个）镜像来构建一些中间制品，然后再将中间制品放入另一个最新且更小的镜像中，这个最新的镜像就只包含最终需要的构建制品。</p>
+<h3 id="多阶段构建-dockerfile">多阶段构建 Dockerfile</h3>
+<p>项目实例：https://github.com/liuhaibin123456789/last-homework-in-last-term.git</p>
+<p>我们先创建一个多阶段构建的 Dockerfile，名为 <code>Dockerfile.multistage</code>，文件名中的 <code>multistage</code> 没有特殊含义，只是为了和之前的 Dockerfile 作区分，下面是完整的 Dockerfile：</p>
+<pre tabindex="0"><code># syntax=docker/dockerfile:1
+##
+## Build
+##
+FROM golang:1.16-alpine AS build
+WORKDIR /app
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
+COPY *.go ./
+RUN CGO_ENABLED=0 GOOS=linux go build -o /docker-go-server-ping
+##
+## Deploy
+##
+FROM scratch
+WORKDIR /
+COPY --from=build /docker-go-server-ping /docker-go-server-ping
+EXPOSE 8080
+ENTRYPOINT [&#34;/docker-go-server-ping&#34;]
+</code></pre><p>在 <code>Dockerfile.multistage</code> 中使用了两次 FROM 指令，分别对应两个构建阶段。第一个阶段构建的 FROM 指令依然使用 <code>golang:1.16-alpine</code> 作为基础镜像，并将该阶段命名为 <code>build</code>。第二个构建阶段的 FROM 指令使用 <code>scratch</code> 作为基础镜像，告诉 Docker 接下来从一个全新的基础镜像开始构建，scratch 镜像是 Docker 项目预定义的最小的镜像。第二阶段构建主要是将上个阶段中编译好的二进制文件复制到新的镜像中。</p>
+<p>在 Go 应用中，多阶段构建非常常见，可以减小镜像的体积、节省大量的存储空间。</p>
+<p>在 <code>Dockerfile.multistage</code> 中需要额外关注的是 <code>RUN</code> 指令，这里使用到了交叉编译。</p>
+<h3 id="交叉编译">交叉编译</h3>
+<p>交叉编译是指在一个平台上生成另一个平台的可执行程序。</p>
+<p>在其他编程语言中进行交叉编译可能要借助第三方工具，但 Go 内置了交叉编译工具，使用起来非常方便，通常设置 CGO_ENABLED、GOOS 和 GOARCH 这几个环境变量就够了。</p>
+<h4 id="cgo_enabled">CGO_ENABLED</h4>
+<p>默认值是 <code>1</code>，即默认开启 cgo，允许在 Go 代码中调用 C 代码。</p>
+<ul>
+<li>当 <code>CGO_ENABLED=1</code> 进行编译时，会将文件中引用 libc 的库（比如常用的 net 包）以动态链接的方式生成目标文件；</li>
+<li>当 <code>CGO_ENABLED=0</code> 进行编译时，则会把在目标文件中未定义的符号（如外部函数）一起链接到可执行文件中。</li>
+</ul>
+<p>所以交叉编译时，我们需要将 CGO_ENABLED 设置为 0。</p>
+<p><strong>注意：编译go应用程序时，需将CGO_ENABLED设置为0，这样多阶段构建镜像时，如果在前一阶段编译成可执行文件时，如果指定该值为0，在下一阶段拉取的可执行文件，会因少了执行时必要的依赖而不能执行。同时，还应指定GOPROXY为七牛云地址，有些mod依赖国外下不了</strong></p>
+<h4 id="goos-和-goarch">GOOS 和 GOARCH</h4>
+<p>GOOS 是目标平台的操作系统，如 linux、windows，注意 macOS 的值是 darwin。默认是当前操作系统。</p>
+<p>GOARCH 是目标平台的 CPU 架构，如 amd64、arm、386 等。默认值是当前平台的 CPU 架构。</p>
+<p>Go 支持的所有操作系统和 CPU 架构可以查看 <a href="https://github.com/golang/go/blob/master/src/go/build/syslist.go">syslist.go</a> 。</p>
+<p>我们可以使用 <code>go env</code> 命令获取当前 GOOS 和 GOARCH 的值。例如我当前的操作系统是 macOS：</p>
+<pre tabindex="0"><code>$ go env GOOS GOARCH
+darwin
+amd64
+</code></pre><p>所以在本文的多阶段构建 <code>Dockerfile.multistage</code> 中，构建命令是：</p>
+<pre tabindex="0"><code>CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /docker-go-server-ping
+</code></pre><h3 id="构建镜像-2">构建镜像</h3>
+<p>由于我们现在有两个 Dockerfile，所以我们必须告诉 Docker 我们要使用新的 Dockerfile 进行构建。</p>
+<pre tabindex="0"><code>$ docker build -t docker-go-server-ping:multistage -f Dockerfile.multistage .
+</code></pre><p>构建完成后，你会发现 docker-go-server-ping:multistage 只有不到 8MB，比 docker-go-server-ping:latest 小了几十倍。</p>
+<pre tabindex="0"><code>$ docker image ls
+REPOSITORY                   TAG            IMAGE ID       CREATED         SIZE
+docker-go-server-ping        latest         17fa05342cce   20 minutes ago   407MB
+docker-go-server-ping        multistage     55fa4ded3360   1 minutes ago    7.93MB
+</code></pre><h2 id="运行-go-镜像">运行 Go 镜像</h2>
+<p>现在我们有了 Go 应用的镜像，接下来就可以运行 Go 镜像查看应用程序是否正常运行。</p>
+<p>要在 Docker 容器中运行镜像，我们可以使用 <code>docker run</code> 命令，参数是镜像名称：</p>
+<pre tabindex="0"><code>$ docker run -p 8080:8080 docker-go-server-ping:multistage
+   ____    __
+  / __/___/ /  ___
+ / _// __/ _ \/ _ \
+/___/\__/_//_/\___/ v4.6.1
+High performance, minimalist Go web framework
+https://echo.labstack.com
+____________________________________O/_______
+                                    O\
+⇨ http server started on [::]:8080
+</code></pre><p>可以看到 Go 应用成功启动了。</p>
+<p>让我们再打开一个新的终端，通过 curl 向 Go 服务器发起一个请求：</p>
+<pre tabindex="0"><code>$ curl http://localhost:8080
+Hello, Docker! &lt;3
+</code></pre><h2 id="使用-makefile-简化构建流程">使用 Makefile 简化构建流程</h2>
+<p>在前面的步骤中，我们使用到了非常多的命令，维护起来非常麻烦，这时我们就可以使用 make 来简化构建流程。</p>
+<p>make 是一个自动化构建工具，会在根据当前目录下名为 Makefile（或 makefile）的文件来执行相应的构建任务。</p>
+<p>所以让我们先创建一个 Makefile 文件，内容如下：</p>
+<pre tabindex="0"><code>APP=docker-go-server-ping
+all: clean test build-docker-multistage
+test:
+ go test -v ./
+run: clean
+ go build -o ${APP}
+ ./${APP}
+deps:
+ go mod download
+clean:
+ go clean
+build-docker:
+ docker build -t ${APP}:latest -f Dockerfile .
+build-docker-multistage:
+ docker build -t ${APP}:multistage -f Dockerfile.multistage .
+</code></pre><p>接下来就可以通过 <code>make</code> 命令进行测试或构建了。</p>
+<p>例如：</p>
+<ul>
+<li><code>make</code>：执行 <code>all</code> 中定义的命令</li>
+<li><code>make test</code>：执行单元测试</li>
+<li><code>make build-docker</code>：构建 Docker 镜像</li>
+<li><code>build-docker-multistage</code>：多阶段构建镜像，构建的镜像通常用于生产环境</li>
+</ul>
+<p>当然你也可以在 Makefile 中定义其他命令。</p>
+<h2 id="总结">总结</h2>
+<p>在本文中，我们首先开发了一个简单的 Go REST 服务应用，然后针对该应用详细讲解了如何构建 Docker 镜像。要构建镜像首先需要编写 Dockerfile，但基础的 Dockerfile 体积过大，所以我们又学习了如何通过多阶段构建减小镜像体积。在多阶段构建时，由于构建机和部署服务器可能存在操作系统和 CPU 架构的差异，又学习了如何通过交叉编译构建出可在其他平台直接使用的二进制文件。最后由于整个构建流程涉及命令比较多，真实 Go 项目可能构建流程会更复杂，所以学习了如何通过 Makefile 简化构建流程。</p>
+<p>最后感谢你的阅读，希望本文的内容能让你有所收获。</p>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://cold-bin.github.io">cold bin</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://cold-bin.github.io/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAGo%E5%BA%94%E7%94%A8%E7%9A%84Docker%E9%95%9C%E5%83%8F/">https://cold-bin.github.io/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAGo%E5%BA%94%E7%94%A8%E7%9A%84Docker%E9%95%9C%E5%83%8F/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/%E5%9F%BA%E4%BA%8Ego%E7%9A%84selenium%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/">基于go的selenium使用详解</a></li>
+        
+        <li><a href="/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/">常见算法总结</a></li>
+        
+        <li><a href="/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">自动化接口文档swag使用指南</a></li>
+        
+        <li><a href="/post/Go%E7%88%AC%E8%99%AB/">Go爬虫</a></li>
+        
+        <li><a href="/post/Leecode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/">Leecode每日一题</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/%E5%AE%B9%E5%99%A8'>容器</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "my-blog-comment"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+    
+    
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2023 <a href="https://cold-bin.github.io">cold bin&#39;s blog By cold bin</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.2.8/raphael.min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/flowchart/1.12.2/flowchart.min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+                if (!window.flowchart) return;
+                const blocks = document.querySelectorAll('pre code.language-flowchart, pre code.language-flow');
+                for (let i = 0; i < blocks.length; i++) {
+                    const block = blocks[i];
+                    const rootElement = block.parentNode;
+                    const container = document.createElement('div');
+                    const id = `js-flowchart-diagrams-${i}`;
+                    container.id = id;
+                    container.className = 'align-center';
+                    container.setAttribute("style", "overFlow-x:auto");
+                    rootElement.parentNode.replaceChild(container, rootElement);
+                    const diagram = flowchart.parse(block.childNodes[0].nodeValue);
+                    diagram.drawSVG(id, window.flowchartDiagramsOptions ? window.flowchartDiagramsOptions : {});
+                }
+            })();
+        </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+            if (!window.Diagram) return;
+            const blocks = document.querySelectorAll('pre code.language-sequence');
+            for (let i = 0; i < blocks.length; i++) {
+                const block = blocks[i];
+                
+                const rootElement = block.parentNode;
+                const container = document.createElement('div');
+                const id = `js-sequence-diag-${i}`;
+                container.id = id;
+                container.className = 'align-center';
+                container.setAttribute("style", "overFlow-x:auto");
+                rootElement.parentNode.replaceChild(container, rootElement);
+
+                const diagram = Diagram.parse(block.childNodes[0].nodeValue);
+                diagram.drawSVG(id, window.sequenceDiagramsOptions
+                    ? window.sequenceDiagramsOptions
+                    : { theme: 'simple' });
+            }
+        })();
+        </script><script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://cold-bin.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://cold-bin.github.io">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/mod%E5%92%8Cgopath%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/" title="Mod和gopath依赖管理">Mod和gopath依赖管理</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAGo%E5%BA%94%E7%94%A8%E7%9A%84Docker%E9%95%9C%E5%83%8F/" title="如何构建Go应用的Docker镜像">如何构建Go应用的Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%9F%BA%E4%BA%8Ego%E7%9A%84selenium%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/" title="基于go的selenium使用详解">基于go的selenium使用详解</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/" title="常见算法总结">常见算法总结</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" title="自动化接口文档swag使用指南">自动化接口文档swag使用指南</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/Go%E7%88%AC%E8%99%AB/" title="Go爬虫">Go爬虫</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/Leecode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/" title="Leecode每日一题">Leecode每日一题</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/Redis%E5%9F%BA%E7%A1%80/" title="Redis基础">Redis基础</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/" title="包含多个段的程序">包含多个段的程序</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8BBX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/" title="汇编之BX和loop指令">汇编之BX和loop指令</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://cold-bin.github.io/categories/Docker/">Docker (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (24)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">Go高性能并发编程 (3)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/HTTP%E5%8D%8F%E8%AE%AE/">HTTP协议 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Leecode/">Leecode (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/MongoDB/">MongoDB (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/MySQL/">MySQL (6)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Redis/">Redis (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/git/">git (2)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/gorm/">gorm (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/">加密算法 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%AD%98%E5%82%A8/">存储 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%AE%B9%E5%99%A8/">容器 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%8A%93%E5%8C%85/">抓包 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3/">接口文档 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/">摘要算法 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库 (3)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (3)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/">汇编 (5)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E7%88%AC%E8%99%AB/">爬虫 (2)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://cold-bin.github.io/tags/GRPC/">GRPC</a>
+    
+    <a href="https://cold-bin.github.io/tags/Go%E5%BA%95%E5%B1%82/">Go底层</a>
+    
+    <a href="https://cold-bin.github.io/tags/Makefile/">Makefile</a>
+    
+    <a href="https://cold-bin.github.io/tags/MongoDB/">MongoDB</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E4%BA%8B%E5%8A%A1%E7%AF%87/">MySQL事务篇</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E5%9F%BA%E7%A1%80/">MySQL基础</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E6%97%A5%E5%BF%97%E4%B8%8E%E5%A4%87%E4%BB%BD%E7%AF%87/">MySQL日志与备份篇</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E6%9E%B6%E6%9E%84/">MySQL架构</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E7%B4%A2%E5%BC%95%E5%8F%8A%E8%B0%83%E4%BC%98/">MySQL索引及调优</a>
+    
+    <a href="https://cold-bin.github.io/tags/Redis%E5%9F%BA%E7%A1%80/">Redis基础</a>
+    
+    <a href="https://cold-bin.github.io/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/">api向前兼容</a>
+    
+    <a href="https://cold-bin.github.io/tags/colly%E6%A1%86%E6%9E%B6/">colly框架</a>
+    
+    <a href="https://cold-bin.github.io/tags/git%E7%9A%84commit%E8%A7%84%E8%8C%83/">git的commit规范</a>
+    
+    <a href="https://cold-bin.github.io/tags/goquery/">goquery</a>
+    
+    <a href="https://cold-bin.github.io/tags/go%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/">go编程思想</a>
+    
+    <a href="https://cold-bin.github.io/tags/https/">https</a>
+    
+    <a href="https://cold-bin.github.io/tags/reflect/">reflect</a>
+    
+    <a href="https://cold-bin.github.io/tags/rune%E7%B1%BB%E5%9E%8B/">rune类型</a>
+    
+    <a href="https://cold-bin.github.io/tags/selenium/">selenium</a>
+    
+    <a href="https://cold-bin.github.io/tags/swagger/">swagger</a>
+    
+    <a href="https://cold-bin.github.io/tags/sync.pool/">sync.pool</a>
+    
+    <a href="https://cold-bin.github.io/tags/tls%E8%AF%81%E4%B9%A6/">tls证书</a>
+    
+    <a href="https://cold-bin.github.io/tags/unsafe/">unsafe</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/">依赖管理</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">内存对齐</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E9%9B%86%E4%B8%AD%E5%BC%8F/">分布式与集中式</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%88%97%E5%AD%98%E5%82%A8/">列存储</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">单元测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/">原子操作</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8F%8D%E5%B0%84/">反射</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90/">命令行参数解析</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%AE%B9%E5%99%A8/">容器</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8/">并发安全</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93java/">数据结构与算法总结，java</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96BX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/">汇编BX和loop指令</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%A8%8B%E5%BA%8F/">汇编多个段程序</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%AF%84%E5%AD%98%E5%99%A8/">汇编寄存器</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E6%A6%82%E8%BF%B0/">汇编概述</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/">汇编第一个程序</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/">版本控制</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/">网络测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E8%A1%8C%E5%AD%98%E5%82%A8/">行存储</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E9%94%81/">锁</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E9%9B%B6%E6%8B%B7%E8%B4%9D/">零拷贝</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://github.com/cold-bin" title="GitHub">GitHub</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://blog.csdn.net/qq_57467091" title="CSDN">CSDN</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://cold-bin.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

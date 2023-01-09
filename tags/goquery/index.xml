@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>goquery on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/goquery/</link>
+    <description>Recent content in goquery on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 09 Jan 2023 10:28:50 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/goquery/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go爬虫</title>
+      <link>https://cold-bin.github.io/post/Go%E7%88%AC%E8%99%AB/</link>
+      <pubDate>Mon, 09 Jan 2023 10:28:50 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/Go%E7%88%AC%E8%99%AB/</guid>
+      <description>Go爬虫 爬虫就是模拟客户端程序访问服务端某个url下的资源，再将资源进行部分提取（使用正则筛选html等），然后在存储至某端，或者放在某网页。 流程： 明确目标url 发送请求，获取应答数据包 保存、过滤数据。提取有用信息（考虑使用正则表达式对html元素进行筛选） 使用、分析得到的数据信</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -85,6 +85,125 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/">sync.pool的使用场景</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年8月29日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/Golang'>Golang</a>
+            
+            <a href='/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B'>Go高性能并发编程</a>
+            
+        </div>
+        
+        <div class="post-content">
+            sync.Pool 的使用场景 一句话总结：保存和复用临时对象，减少内存分配，降低GC压力。 举个简单的例子： 1 2 3 4 5 6 7 8 9 10 11 12 type Student struct { Name string Age int32 Remark [1024]byte } var buf, _ = json.Marshal(Student{Name: &#34;Geektutu&#34;, Age: 25}) func unmarsh() { stu := &amp;Student{} json.Unmarshal(buf, stu) } json的反序列化在文本解析和网络通信过程中非常常见，当程序并发度非常高的情况下，短时间内需要创建大量的临时对象……
+            <p class="readmore"><a href="https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/">Go语言unsafe包的使用</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年8月28日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/Golang'>Golang</a>
+            
+            <a href='/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B'>Go高性能并发编程</a>
+            
+        </div>
+        
+        <div class="post-content">
+            unsafe使用及底层 unsafe实现原理 在使用之前我们先来看一下unsafe包的源码部分，标准库unsafe包中只提供了3种方法，分别是: 1 2 3 func Sizeof(x ArbitraryType) uintptr func Offsetof(x ArbitraryType) uintptr func Alignof(x ArbitraryType) uintptr Sizeof(x ArbitrayType)方法主要作用是用返回类型x所占据的字节数，但并不包含x所指向的内容的大小，与C语言……
+            <p class="readmore"><a href="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/RPC%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/">RPC与微服务</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年8月21日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/Golang'>Golang</a>
+            
+        </div>
+        
+        <div class="post-content">
+            RPC与微服务 一、RPC 1. 什么是RPC RPC(即：Remote Procedure Call) 远程过程调用，简单地理解是一个节点请求另一个节点提供的服务。当然这两个节点可能部署在不同的主机上，也可能是相同的主机上，但是两个节点是进程隔离级别。 对应RPC的是，本地过程调用。调用本地代码里的某个函数就是最常见的……
+            <p class="readmore"><a href="https://cold-bin.github.io/post/RPC%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/">微服务一些概念</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年8月19日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/Golang'>Golang</a>
+            
+        </div>
+        
+        <div class="post-content">
+            微服务概念 微服务的粒度小，服务之间耦合度低，由于每个微服务都由独立的小团队负责，因此它敏捷性更高，分布式服务最后都会向微服务架构演化，这是一种趋势， 不过服务微服务化后带来的挑战也是显而易见的，例如服务粒度小，数量大，后期运维将会比较困难。所以又有容器+微服务的出现。 这里就不细说容……
+            <p class="readmore"><a href="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/Golang%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E9%9B%86%E9%94%A6/">Golang编程思想集锦</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年8月10日
+        </date>
+        
+        <div class="post-meta meta-category">
+            |
+            
+            <a href='/categories/Golang'>Golang</a>
+            
+        </div>
+        
+        <div class="post-content">
+            一、go面向对象 封装 结构体与方法 多态 接口来实现多态，不同结构体可以实现相同的接口。这样就能拥有同种行为的不同具体状态 &ndash;&gt; 多态 继承、覆盖 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 // 标准包里的实现，大概是直接把文件里的所有内容给提取出……
+            <p class="readmore"><a href="https://cold-bin.github.io/post/Golang%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E9%9B%86%E9%94%A6/">阅读全文</a></p>
+        </div>
+    </article>
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://cold-bin.github.io/post/%E8%AF%A6%E8%A7%A3Go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/">详解Go中的rune类型</a>
             </h1>
         </header>
@@ -197,100 +316,6 @@
         </div>
     </article>
     
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/">Https在golang的实践</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年7月16日
-        </date>
-        
-        <div class="post-meta meta-category">
-            |
-            
-            <a href='/categories/Golang'>Golang</a>
-            
-        </div>
-        
-        <div class="post-content">
-            Golang创建最简单的HTTP和HTTPS服务 HTTP服务 HTTP是基于传输层TCP协议的。 1 2 3 4 5 6 7 8 9 10 11 12 13 14 package main import ( &#34;net/http&#34; &#34;fmt&#34; &#34;log&#34; ) func main() { http.HandleFunc(&#34;/&#34;, func(w http.ResponseWriter, r *http.Request){ fmt.Fprint(w, &#34;Hello world&#34;) }) log.Fatal(http.ListenAndServe(&#34;:5001&#34;, nil)) } HTTPS服务 HTTPS服务不同于HTTP服务，HTTPS是HTTP over SSL或HTTP over TLS。 SSL是“Sec……
-            <p class="readmore"><a href="https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/">阅读全文</a></p>
-        </div>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/go%E6%9D%82%E7%83%A9/">Go杂烩</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年7月15日
-        </date>
-        
-        <div class="post-meta meta-category">
-            |
-            
-            <a href='/categories/Golang'>Golang</a>
-            
-        </div>
-        
-        <div class="post-content">
-            Golang杂烩 一、结构体 和 C/C++ 的结构体类似，Go 语言的结构体 struct 是一种聚合的数据类型，可以包含任意类型的值。 方法 值接收者（go语言特有） 所谓值接收者，指的是，当调用值接收者的方法时，会临时copy一份当前对象的副本，然后在这个副本的基础上再操作。显然，这个副本已经与原来的对象没有指……
-            <p class="readmore"><a href="https://cold-bin.github.io/post/go%E6%9D%82%E7%83%A9/">阅读全文</a></p>
-        </div>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/">集中式与分布式</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年7月7日
-        </date>
-        
-        <div class="post-meta meta-category">
-            |
-            
-            <a href='/categories/Golang'>Golang</a>
-            
-            <a href='/categories/GRPC'>GRPC</a>
-            
-        </div>
-        
-        <div class="post-content">
-            集中式与分布式 集中式系统架构 集中式是指由一台或多台主计算机组成的中心节点，数据集中存储于这个中心节点中，并且整个系统的所有业务单元都集中部署在这个中心节点上，系统的所有功能均由其集中处理。在集中式系统中，每个终端或客户端机器仅仅负责数据的录入和输出，而数据的存储与控制处理完全交由……
-            <p class="readmore"><a href="https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/">阅读全文</a></p>
-        </div>
-    </article>
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/go%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">Go测试与性能优化</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年7月7日
-        </date>
-        
-        <div class="post-meta meta-category">
-            |
-            
-            <a href='/categories/Golang'>Golang</a>
-            
-        </div>
-        
-        <div class="post-content">
-            go测试与性能优化 一、单元测试 不写测试的开发不是好程序员。我个人非常崇尚TDD（Test Driven Development）的，然而可惜的是国内的程序员都不太关注测试这一部分。 这篇文章主要介绍下在Go语言中如何做单元测试和基准测试。 go test工具 Go语言中的测试依赖go test命令。编写测……
-            <p class="readmore"><a href="https://cold-bin.github.io/post/go%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">阅读全文</a></p>
-        </div>
-    </article>
-    
 
     
 
@@ -312,7 +337,15 @@
         <a href="https://cold-bin.github.io/categories/Golang/page/2/">2</a>
     </li>
     
+    <li >
+        <a href="https://cold-bin.github.io/categories/Golang/page/3/">3</a>
+    </li>
+    
 
+    
+    <li class="next">
+        <a href="https://cold-bin.github.io/categories/Golang/page/3/">下一页</a>
+    </li>
     
 </ol>
 
@@ -369,6 +402,30 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://cold-bin.github.io/post/mod%E5%92%8Cgopath%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/" title="Mod和gopath依赖管理">Mod和gopath依赖管理</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAGo%E5%BA%94%E7%94%A8%E7%9A%84Docker%E9%95%9C%E5%83%8F/" title="如何构建Go应用的Docker镜像">如何构建Go应用的Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%9F%BA%E4%BA%8Ego%E7%9A%84selenium%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/" title="基于go的selenium使用详解">基于go的selenium使用详解</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/" title="常见算法总结">常见算法总结</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" title="自动化接口文档swag使用指南">自动化接口文档swag使用指南</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/Go%E7%88%AC%E8%99%AB/" title="Go爬虫">Go爬虫</a>
+    </li>
+    
+    <li>
         <a href="https://cold-bin.github.io/post/Leecode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/" title="Leecode每日一题">Leecode每日一题</a>
     </li>
     
@@ -384,30 +441,6 @@
         <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8BBX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/" title="汇编之BX和loop指令">汇编之BX和loop指令</a>
     </li>
     
-    <li>
-        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/" title="汇编之第一个程序">汇编之第一个程序</a>
-    </li>
-    
-    <li>
-        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/" title="汇编之寄存器">汇编之寄存器</a>
-    </li>
-    
-    <li>
-        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/" title="汇编之概述">汇编之概述</a>
-    </li>
-    
-    <li>
-        <a href="https://cold-bin.github.io/post/MongoDB%E5%9F%BA%E7%A1%80%E7%AF%87/" title="MongoDB基础篇">MongoDB基础篇</a>
-    </li>
-    
-    <li>
-        <a href="https://cold-bin.github.io/post/%E5%AD%98%E5%82%A8%E4%B9%8B%E8%A1%8C%E5%88%97%E5%AD%98%E5%82%A8/" title="存储之行列存储">存储之行列存储</a>
-    </li>
-    
-    <li>
-        <a href="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/" title="常见摘要算法">常见摘要算法</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -417,9 +450,11 @@
         <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
+    <li><a href="https://cold-bin.github.io/categories/Docker/">Docker (1)</a></li>
+    
     <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
     
-    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (19)</a></li>
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (24)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">Go高性能并发编程 (3)</a></li>
     
@@ -441,17 +476,23 @@
     
     <li><a href="https://cold-bin.github.io/categories/%E5%AD%98%E5%82%A8/">存储 (1)</a></li>
     
+    <li><a href="https://cold-bin.github.io/categories/%E5%AE%B9%E5%99%A8/">容器 (1)</a></li>
+    
     <li><a href="https://cold-bin.github.io/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务 (1)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/%E6%8A%93%E5%8C%85/">抓包 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3/">接口文档 (1)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/">摘要算法 (1)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库 (3)</a></li>
     
-    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (2)</a></li>
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (3)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/">汇编 (5)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E7%88%AC%E8%99%AB/">爬虫 (2)</a></li>
     
 </ul>
     </section>
@@ -482,7 +523,11 @@
     
     <a href="https://cold-bin.github.io/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/">api向前兼容</a>
     
+    <a href="https://cold-bin.github.io/tags/colly%E6%A1%86%E6%9E%B6/">colly框架</a>
+    
     <a href="https://cold-bin.github.io/tags/git%E7%9A%84commit%E8%A7%84%E8%8C%83/">git的commit规范</a>
+    
+    <a href="https://cold-bin.github.io/tags/goquery/">goquery</a>
     
     <a href="https://cold-bin.github.io/tags/go%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/">go编程思想</a>
     
@@ -492,11 +537,17 @@
     
     <a href="https://cold-bin.github.io/tags/rune%E7%B1%BB%E5%9E%8B/">rune类型</a>
     
+    <a href="https://cold-bin.github.io/tags/selenium/">selenium</a>
+    
+    <a href="https://cold-bin.github.io/tags/swagger/">swagger</a>
+    
     <a href="https://cold-bin.github.io/tags/sync.pool/">sync.pool</a>
     
     <a href="https://cold-bin.github.io/tags/tls%E8%AF%81%E4%B9%A6/">tls证书</a>
     
     <a href="https://cold-bin.github.io/tags/unsafe/">unsafe</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/">依赖管理</a>
     
     <a href="https://cold-bin.github.io/tags/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">内存对齐</a>
     
@@ -511,6 +562,8 @@
     <a href="https://cold-bin.github.io/tags/%E5%8F%8D%E5%B0%84/">反射</a>
     
     <a href="https://cold-bin.github.io/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90/">命令行参数解析</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%AE%B9%E5%99%A8/">容器</a>
     
     <a href="https://cold-bin.github.io/tags/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8/">并发安全</a>
     

@@ -78,6 +78,160 @@
     <article class="post">
         <header>
             <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/" title="Gorm使用补充点">Gorm使用补充点</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年8月28日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/MySQL'>MySQL</a></span>
+            
+            <span class="meta-category"><a href='/categories/gorm'>gorm</a></span>
+            
+            <span class="meta-category"><a href='/categories/%E6%95%B0%E6%8D%AE%E5%BA%93'>数据库</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            本文主要补充一些gorm的使用技巧，完整的gorm使用移步官方文档gorm官方文档 总结 配置单数表名, 再也不用写TableName 1 2 3 db, err := gorm.Open(mysql.Open(fmt.Sprintf(dsn, un, pwd, host, port, database)), &amp;gorm.Config{ NamingStrategy: schema.NamingStrategy{SingularTable: true}, }) 当然也可以传入其他参数定制命名策略 创建模型迁移表时，针对string类型一定要给出gorm的type约束，否则默认是创……
+        </div>
+        <p class="readmore"><a href="https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E8%A6%81%E7%82%B9/" title="微服务架构项目开发要点">微服务架构项目开发要点</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年8月27日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1'>微服务</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            微服务架构项目开发要点 随着系统用户逐日增长，原来的单机架构集群部署的方式，虽然能够顶得住流量顶峰地倾泄，但是，系统越来越复杂。集群方式部署的单机架构，终究是单机架构，当系统设计得很复杂时，我们需要把整个单机系统都停掉，然后修bug、添加新功能、回归测试、上线发布。试想一下：在这个……
+        </div>
+        <p class="readmore"><a href="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E8%A6%81%E7%82%B9/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/git%E4%B9%8Bcommit%E8%A7%84%E8%8C%83%E6%8C%87%E5%8D%97/" title="Git之commit规范指南">Git之commit规范指南</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年8月25日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/git'>git</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            Git 每次提交代码，都要写 Commit message（提交说明），否则就不允许提交。 1 $ git commit -m &#34;hello world&#34; 上面代码的-m参数，就是用来指定 commit mesage 的。 如果一行不够，可以只执行git commit，就会跳出文本编辑器，让你写多行。 1 $ git commit 基本上，你写什么都行（这里，这里和这里）。 但是，一般来说，commit message……
+        </div>
+        <p class="readmore"><a href="https://cold-bin.github.io/post/git%E4%B9%8Bcommit%E8%A7%84%E8%8C%83%E6%8C%87%E5%8D%97/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/git%E5%B7%A5%E4%BD%9C%E6%B5%81/" title="Git工作流">Git工作流</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年8月25日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/git'>git</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            关于版本控制 什么是版本控制？我为什么要关心它呢？ 版本控制是一种记录一个或若干文件内容变化，以便将来查阅特定版本修订情况的系统。 在本书所展示的例子中，我们仅对保存着软件源代码的文本文件作版本控制管理，但实际上，你可以对任何类型的文件进行版本控制。 如果你是位图形或网页设计师，可能会需……
+        </div>
+        <p class="readmore"><a href="https://cold-bin.github.io/post/git%E5%B7%A5%E4%BD%9C%E6%B5%81/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/MySQL%E5%9F%BA%E7%A1%80%E7%AF%87/" title="MySQL基础篇">MySQL基础篇</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年8月24日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/MySQL'>MySQL</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            导入表的问题 导入数据时外键约束问题 数据导入指令： 1 source d:\xxx.sql 通过FOREIGN_KEY_CHECKS解决，用法如下： 1 2 set FOREIGN_KEY_CHECKS=0; #在导入前设置为不检查外键约束 set FOREIGN_KEY_CHECKS=1; #在导入后恢复检查外键约束 第三章_最基本的SELECT语句 1. SQL语言的规则和规范 1) 基本规则 SQL 可以写在一行或者多行。为了提高可读……
+        </div>
+        <p class="readmore"><a href="https://cold-bin.github.io/post/MySQL%E5%9F%BA%E7%A1%80%E7%AF%87/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
+                <a href="https://cold-bin.github.io/post/RPC%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/" title="RPC与微服务">RPC与微服务</a>
+            </h1>
+        </header>
+        <date class="post-meta meta-date">
+            2022年8月21日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
+            
+        </div>
+        
+        <div class="post-content">
+            RPC与微服务 一、RPC 1. 什么是RPC RPC(即：Remote Procedure Call) 远程过程调用，简单地理解是一个节点请求另一个节点提供的服务。当然这两个节点可能部署在不同的主机上，也可能是相同的主机上，但是两个节点是进程隔离级别。 对应RPC的是，本地过程调用。调用本地代码里的某个函数就是最常见的……
+        </div>
+        <p class="readmore"><a href="https://cold-bin.github.io/post/RPC%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/">阅读全文</a></p>
+    </article>
+    
+    
+    
+    <article class="post">
+        <header>
+            <h1 class="post-title">
                 <a href="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/" title="微服务一些概念">微服务一些概念</a>
             </h1>
         </header>
@@ -175,158 +329,6 @@
     
     
     
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/" title="Flag包的在go项目的实践">Flag包的在go项目的实践</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年7月17日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            阅读本文前，需具备flag基础 通常我们有种需求：可以在不修改程序源码的情况下，控制一些程序内部的变化。比如配置文件，我们可以手动更改配置文件，也可以在程序启动时，通过命令行参数在程序运行时，给程序提供一些配置选项，这样可以方便地不需要更改程序源码就可以达到在外部控制程序内部一些变……
-        </div>
-        <p class="readmore"><a href="https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/">阅读全文</a></p>
-    </article>
-    
-    
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/Makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/" title="Makefile在go项目的实践">Makefile在go项目的实践</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年7月16日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            Make介绍 make命令是GNU的工程化编译工具，用以实现工程化的管理，提高开发效率。 Make解释Makefile 中的指令（应该说是规则）。在Makefile文件中描述了整个工程所有文件的编译顺序、编译规则。Makefile 有自己的书写格式、关键字、函数。像C 语言有自己的格式、关……
-        </div>
-        <p class="readmore"><a href="https://cold-bin.github.io/post/Makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/">阅读全文</a></p>
-    </article>
-    
-    
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/Go%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%BA%93flag%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/" title="Go语言标准库flag基本使用">Go语言标准库flag基本使用</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年7月16日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            Go语言内置的flag包实现了命令行参数的解析，flag包使得开发命令行工具更为简单。 os.Args 如果你只是简单的想要获取命令行参数，可以像下面的代码示例一样使用os.Args来获取命令行参数。 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 package main import ( &#34;fmt&#34; &#34;os&#34; ) //os.Args demo func main() { //os.Args是一个[]string……
-        </div>
-        <p class="readmore"><a href="https://cold-bin.github.io/post/Go%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%BA%93flag%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/">阅读全文</a></p>
-    </article>
-    
-    
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/" title="Https在golang的实践">Https在golang的实践</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年7月16日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            Golang创建最简单的HTTP和HTTPS服务 HTTP服务 HTTP是基于传输层TCP协议的。 1 2 3 4 5 6 7 8 9 10 11 12 13 14 package main import ( &#34;net/http&#34; &#34;fmt&#34; &#34;log&#34; ) func main() { http.HandleFunc(&#34;/&#34;, func(w http.ResponseWriter, r *http.Request){ fmt.Fprint(w, &#34;Hello world&#34;) }) log.Fatal(http.ListenAndServe(&#34;:5001&#34;, nil)) } HTTPS服务 HTTPS服务不同于HTTP服务，HTTPS是HTTP over SSL或HTTP over TLS。 SSL是“Sec……
-        </div>
-        <p class="readmore"><a href="https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/">阅读全文</a></p>
-    </article>
-    
-    
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/go%E6%9D%82%E7%83%A9/" title="Go杂烩">Go杂烩</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年7月15日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            Golang杂烩 一、结构体 和 C/C++ 的结构体类似，Go 语言的结构体 struct 是一种聚合的数据类型，可以包含任意类型的值。 方法 值接收者（go语言特有） 所谓值接收者，指的是，当调用值接收者的方法时，会临时copy一份当前对象的副本，然后在这个副本的基础上再操作。显然，这个副本已经与原来的对象没有指……
-        </div>
-        <p class="readmore"><a href="https://cold-bin.github.io/post/go%E6%9D%82%E7%83%A9/">阅读全文</a></p>
-    </article>
-    
-    
-    
-    <article class="post">
-        <header>
-            <h1 class="post-title">
-                <a href="https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/" title="集中式与分布式">集中式与分布式</a>
-            </h1>
-        </header>
-        <date class="post-meta meta-date">
-            2022年7月7日
-        </date>
-        
-        <div class="post-meta">
-            <span>|</span>
-            
-            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
-            
-            <span class="meta-category"><a href='/categories/GRPC'>GRPC</a></span>
-            
-        </div>
-        
-        <div class="post-content">
-            集中式与分布式 集中式系统架构 集中式是指由一台或多台主计算机组成的中心节点，数据集中存储于这个中心节点中，并且整个系统的所有业务单元都集中部署在这个中心节点上，系统的所有功能均由其集中处理。在集中式系统中，每个终端或客户端机器仅仅负责数据的录入和输出，而数据的存储与控制处理完全交由……
-        </div>
-        <p class="readmore"><a href="https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/">阅读全文</a></p>
-    </article>
-    
-    
-    
 
 
 
@@ -419,6 +421,30 @@
 <ul class="widget-list">
     
     <li>
+        <a href="https://cold-bin.github.io/post/mod%E5%92%8Cgopath%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/" title="Mod和gopath依赖管理">Mod和gopath依赖管理</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAGo%E5%BA%94%E7%94%A8%E7%9A%84Docker%E9%95%9C%E5%83%8F/" title="如何构建Go应用的Docker镜像">如何构建Go应用的Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%9F%BA%E4%BA%8Ego%E7%9A%84selenium%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/" title="基于go的selenium使用详解">基于go的selenium使用详解</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/" title="常见算法总结">常见算法总结</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" title="自动化接口文档swag使用指南">自动化接口文档swag使用指南</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/Go%E7%88%AC%E8%99%AB/" title="Go爬虫">Go爬虫</a>
+    </li>
+    
+    <li>
         <a href="https://cold-bin.github.io/post/Leecode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/" title="Leecode每日一题">Leecode每日一题</a>
     </li>
     
@@ -434,30 +460,6 @@
         <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8BBX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/" title="汇编之BX和loop指令">汇编之BX和loop指令</a>
     </li>
     
-    <li>
-        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/" title="汇编之第一个程序">汇编之第一个程序</a>
-    </li>
-    
-    <li>
-        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/" title="汇编之寄存器">汇编之寄存器</a>
-    </li>
-    
-    <li>
-        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/" title="汇编之概述">汇编之概述</a>
-    </li>
-    
-    <li>
-        <a href="https://cold-bin.github.io/post/MongoDB%E5%9F%BA%E7%A1%80%E7%AF%87/" title="MongoDB基础篇">MongoDB基础篇</a>
-    </li>
-    
-    <li>
-        <a href="https://cold-bin.github.io/post/%E5%AD%98%E5%82%A8%E4%B9%8B%E8%A1%8C%E5%88%97%E5%AD%98%E5%82%A8/" title="存储之行列存储">存储之行列存储</a>
-    </li>
-    
-    <li>
-        <a href="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/" title="常见摘要算法">常见摘要算法</a>
-    </li>
-    
 </ul>
     </section>
 
@@ -467,9 +469,11 @@
         <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
 <ul class="widget-list">
     
+    <li><a href="https://cold-bin.github.io/categories/Docker/">Docker (1)</a></li>
+    
     <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
     
-    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (19)</a></li>
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (24)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">Go高性能并发编程 (3)</a></li>
     
@@ -491,17 +495,23 @@
     
     <li><a href="https://cold-bin.github.io/categories/%E5%AD%98%E5%82%A8/">存储 (1)</a></li>
     
+    <li><a href="https://cold-bin.github.io/categories/%E5%AE%B9%E5%99%A8/">容器 (1)</a></li>
+    
     <li><a href="https://cold-bin.github.io/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务 (1)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/%E6%8A%93%E5%8C%85/">抓包 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3/">接口文档 (1)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/">摘要算法 (1)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库 (3)</a></li>
     
-    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (2)</a></li>
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (3)</a></li>
     
     <li><a href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/">汇编 (5)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E7%88%AC%E8%99%AB/">爬虫 (2)</a></li>
     
 </ul>
     </section>
@@ -532,7 +542,11 @@
     
     <a href="https://cold-bin.github.io/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/">api向前兼容</a>
     
+    <a href="https://cold-bin.github.io/tags/colly%E6%A1%86%E6%9E%B6/">colly框架</a>
+    
     <a href="https://cold-bin.github.io/tags/git%E7%9A%84commit%E8%A7%84%E8%8C%83/">git的commit规范</a>
+    
+    <a href="https://cold-bin.github.io/tags/goquery/">goquery</a>
     
     <a href="https://cold-bin.github.io/tags/go%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/">go编程思想</a>
     
@@ -542,11 +556,17 @@
     
     <a href="https://cold-bin.github.io/tags/rune%E7%B1%BB%E5%9E%8B/">rune类型</a>
     
+    <a href="https://cold-bin.github.io/tags/selenium/">selenium</a>
+    
+    <a href="https://cold-bin.github.io/tags/swagger/">swagger</a>
+    
     <a href="https://cold-bin.github.io/tags/sync.pool/">sync.pool</a>
     
     <a href="https://cold-bin.github.io/tags/tls%E8%AF%81%E4%B9%A6/">tls证书</a>
     
     <a href="https://cold-bin.github.io/tags/unsafe/">unsafe</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/">依赖管理</a>
     
     <a href="https://cold-bin.github.io/tags/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">内存对齐</a>
     
@@ -561,6 +581,8 @@
     <a href="https://cold-bin.github.io/tags/%E5%8F%8D%E5%B0%84/">反射</a>
     
     <a href="https://cold-bin.github.io/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90/">命令行参数解析</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%AE%B9%E5%99%A8/">容器</a>
     
     <a href="https://cold-bin.github.io/tags/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8/">并发安全</a>
     

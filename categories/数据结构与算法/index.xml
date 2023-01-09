@@ -6,7 +6,16 @@
     <description>Recent content in 数据结构与算法 on cold bin&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 08 Jan 2023 17:34:02 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 09 Jan 2023 10:29:45 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>常见算法总结</title>
+      <link>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Mon, 09 Jan 2023 10:29:45 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/</guid>
+      <description>常见算法总结 Floyd 判圈算法 Floyd判圈算法(Floyd Cycle Detection Algorithm)，又称龟兔赛跑算法(Tortoise and Hare Algorithm)，是一个可以在有限状态机、迭代函数或者链表上判断是否存在环，求出该环的起点与长度的算法。该算法据高德纳称由美国科学家罗伯特·弗洛伊德发明，但这一</description>
+    </item>
+    
     <item>
       <title>Leecode每日一题</title>
       <link>https://cold-bin.github.io/post/Leecode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</link>

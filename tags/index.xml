@@ -6,7 +6,61 @@
     <description>Recent content in Tags on cold bin&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 08 Jan 2023 17:34:02 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 09 Jan 2023 10:33:48 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>依赖管理</title>
+      <link>https://cold-bin.github.io/tags/%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Mon, 09 Jan 2023 10:33:48 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/tags/%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>容器</title>
+      <link>https://cold-bin.github.io/tags/%E5%AE%B9%E5%99%A8/</link>
+      <pubDate>Mon, 09 Jan 2023 10:31:00 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/tags/%E5%AE%B9%E5%99%A8/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>selenium</title>
+      <link>https://cold-bin.github.io/tags/selenium/</link>
+      <pubDate>Mon, 09 Jan 2023 10:30:18 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/tags/selenium/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>swagger</title>
+      <link>https://cold-bin.github.io/tags/swagger/</link>
+      <pubDate>Mon, 09 Jan 2023 10:29:26 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/tags/swagger/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>colly框架</title>
+      <link>https://cold-bin.github.io/tags/colly%E6%A1%86%E6%9E%B6/</link>
+      <pubDate>Mon, 09 Jan 2023 10:28:50 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/tags/colly%E6%A1%86%E6%9E%B6/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>goquery</title>
+      <link>https://cold-bin.github.io/tags/goquery/</link>
+      <pubDate>Mon, 09 Jan 2023 10:28:50 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/tags/goquery/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>算法题</title>
       <link>https://cold-bin.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/</link>

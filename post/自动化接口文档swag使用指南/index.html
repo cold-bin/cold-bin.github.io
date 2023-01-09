@@ -1,0 +1,2151 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    
+
+    <title>自动化接口文档swag使用指南 | cold bin&#39;s blog</title>
+    <meta property="og:title" content="自动化接口文档swag使用指南 - cold bin&#39;s blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2023-01-09T10:29:26&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2023-01-09T10:29:26&#43;08:00'>
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="自动化接口文档swag使用指南">
+        
+    <meta name="author" content="cold bin">
+    <meta property="og:url" content="https://cold-bin.github.io/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">
+    <link rel="shortcut icon" href='/favicon.ico'  type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdn.bootcdn.net/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    
+    
+        <link href="https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    
+    
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="https://cold-bin.github.io">
+                        cold bin&#39;s blog
+                    </a>
+                
+                
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="https://cold-bin.github.io">首页</a>
+                    
+                    <a  href="https://cold-bin.github.io/archives/" title="归档">归档</a>
+                    
+                    <a  href="https://cold-bin.github.io/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+
+
+<aside id="toc-container" class="toc-container wide">
+    <div class="toc">
+        <details >
+            <summary accesskey="c" title="(Alt + C)">
+                <span class="details">Table of Contents</span>
+            </summary>
+
+            <div class="inner"><ul>
+                    <li>
+                        <a href="#swag" aria-label="swag">swag</a><ul>
+                            
+                    <li>
+                        <a href="#%e7%9b%ae%e5%bd%95" aria-label="目录">目录</a></li>
+                    <li>
+                        <a href="#%e5%bf%ab%e9%80%9f%e5%bc%80%e5%a7%8b" aria-label="快速开始">快速开始</a></li>
+                    <li>
+                        <a href="#swag-cli" aria-label="swag cli">swag cli</a></li>
+                    <li>
+                        <a href="#%e6%94%af%e6%8c%81%e7%9a%84web%e6%a1%86%e6%9e%b6" aria-label="支持的Web框架">支持的Web框架</a></li>
+                    <li>
+                        <a href="#%e5%a6%82%e4%bd%95%e4%b8%8egin%e9%9b%86%e6%88%90" aria-label="如何与Gin集成">如何与Gin集成</a></li>
+                    <li>
+                        <a href="#%e6%a0%bc%e5%bc%8f%e5%8c%96%e8%af%b4%e6%98%8e" aria-label="格式化说明">格式化说明</a></li>
+                    <li>
+                        <a href="#%e5%bc%80%e5%8f%91%e7%8e%b0%e7%8a%b6" aria-label="开发现状">开发现状</a></li>
+                    <li>
+                        <a href="#%e5%a3%b0%e6%98%8e%e5%bc%8f%e6%b3%a8%e9%87%8a%e6%a0%bc%e5%bc%8f" aria-label="声明式注释格式">声明式注释格式</a></li>
+                    <li>
+                        <a href="#%e9%80%9a%e7%94%a8api%e4%bf%a1%e6%81%af" aria-label="通用API信息">通用API信息</a><ul>
+                            
+                    <li>
+                        <a href="#%e4%bd%bf%e7%94%a8markdown%e6%8f%8f%e8%bf%b0" aria-label="使用Markdown描述">使用Markdown描述</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#api%e6%93%8d%e4%bd%9c" aria-label="API操作">API操作</a></li>
+                    <li>
+                        <a href="#mime%e7%b1%bb%e5%9e%8b" aria-label="Mime类型">Mime类型</a></li>
+                    <li>
+                        <a href="#%e5%8f%82%e6%95%b0%e7%b1%bb%e5%9e%8b" aria-label="参数类型">参数类型</a></li>
+                    <li>
+                        <a href="#%e6%95%b0%e6%8d%ae%e7%b1%bb%e5%9e%8b" aria-label="数据类型">数据类型</a></li>
+                    <li>
+                        <a href="#%e5%ae%89%e5%85%a8%e6%80%a7" aria-label="安全性">安全性</a></li>
+                    <li>
+                        <a href="#%e5%b1%9e%e6%80%a7" aria-label="属性">属性</a><ul>
+                            
+                    <li>
+                        <a href="#%e5%bd%93%e5%89%8d%e5%8f%af%e7%94%a8%e7%9a%84" aria-label="当前可用的">当前可用的</a></li>
+                    <li>
+                        <a href="#%e8%bf%9b%e4%b8%80%e6%ad%a5%e7%9a%84" aria-label="进一步的">进一步的</a></li></ul>
+                    </li>
+                    <li>
+                        <a href="#%e6%a0%b7%e4%be%8b" aria-label="样例">样例</a><ul>
+                            
+                    <li>
+                        <a href="#%e5%a4%9a%e8%a1%8c%e7%9a%84%e6%8f%8f%e8%bf%b0" aria-label="多行的描述">多行的描述</a></li>
+                    <li>
+                        <a href="#%e7%94%a8%e6%88%b7%e8%87%aa%e5%ae%9a%e4%b9%89%e7%9a%84%e5%85%b7%e6%9c%89%e6%95%b0%e7%bb%84%e7%b1%bb%e5%9e%8b%e7%9a%84%e7%bb%93%e6%9e%84" aria-label="用户自定义的具有数组类型的结构">用户自定义的具有数组类型的结构</a></li>
+                    <li>
+                        <a href="#%e5%93%8d%e5%ba%94%e5%af%b9%e8%b1%a1%e4%b8%ad%e7%9a%84%e6%a8%a1%e5%9e%8b%e7%bb%84%e5%90%88" aria-label="响应对象中的模型组合">响应对象中的模型组合</a></li>
+                    <li>
+                        <a href="#%e5%9c%a8%e5%93%8d%e5%ba%94%e4%b8%ad%e5%a2%9e%e5%8a%a0%e5%a4%b4%e5%ad%97%e6%ae%b5" aria-label="在响应中增加头字段">在响应中增加头字段</a></li>
+                    <li>
+                        <a href="#%e4%bd%bf%e7%94%a8%e5%a4%9a%e8%b7%af%e5%be%84%e5%8f%82%e6%95%b0" aria-label="使用多路径参数">使用多路径参数</a></li>
+                    <li>
+                        <a href="#%e7%bb%93%e6%9e%84%e4%bd%93%e7%9a%84%e7%a4%ba%e4%be%8b%e5%80%bc" aria-label="结构体的示例值">结构体的示例值</a></li>
+                    <li>
+                        <a href="#%e7%bb%93%e6%9e%84%e4%bd%93%e6%8f%8f%e8%bf%b0" aria-label="结构体描述">结构体描述</a></li>
+                    <li>
+                        <a href="#%e4%bd%bf%e7%94%a8swaggertype%e6%a0%87%e7%ad%be%e6%9b%b4%e6%94%b9%e5%ad%97%e6%ae%b5%e7%b1%bb%e5%9e%8b" aria-label="使用swaggertype标签更改字段类型">使用<code>swaggertype</code>标签更改字段类型</a></li>
+                    <li>
+                        <a href="#%e4%bd%bf%e7%94%a8swaggerignore%e6%a0%87%e7%ad%be%e6%8e%92%e9%99%a4%e5%ad%97%e6%ae%b5" aria-label="使用swaggerignore标签排除字段">使用<code>swaggerignore</code>标签排除字段</a></li>
+                    <li>
+                        <a href="#%e5%b0%86%e6%89%a9%e5%b1%95%e4%bf%a1%e6%81%af%e6%b7%bb%e5%8a%a0%e5%88%b0%e7%bb%93%e6%9e%84%e5%ad%97%e6%ae%b5" aria-label="将扩展信息添加到结构字段">将扩展信息添加到结构字段</a></li>
+                    <li>
+                        <a href="#%e5%af%b9%e5%b1%95%e7%a4%ba%e7%9a%84%e6%a8%a1%e5%9e%8b%e9%87%8d%e5%91%bd%e5%90%8d" aria-label="对展示的模型重命名">对展示的模型重命名</a></li>
+                    <li>
+                        <a href="#%e5%a6%82%e4%bd%95%e4%bd%bf%e7%94%a8%e5%ae%89%e5%85%a8%e6%80%a7%e6%b3%a8%e9%87%8a" aria-label="如何使用安全性注释">如何使用安全性注释</a></li>
+                    <li>
+                        <a href="#token%e7%9a%84api%e6%b3%a8%e8%a7%a3" aria-label="token的api注解"><code>token</code>的api注解</a>
+                    </li>
+                </ul>
+                </li>
+                </ul>
+                </li>
+                </ul>
+            </div>
+        </details>
+    </div>
+</aside>
+<script>
+    let activeElement;
+    let elements;
+    window.addEventListener('DOMContentLoaded', function (event) {
+        checkTocPosition();
+
+        elements = document.querySelectorAll('h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]');
+         
+         activeElement = elements[0];
+         const id = encodeURI(activeElement.getAttribute('id')).toLowerCase();
+         document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+     }, false);
+
+    window.addEventListener('resize', function(event) {
+        checkTocPosition();
+    }, false);
+
+    window.addEventListener('scroll', () => {
+        
+        activeElement = Array.from(elements).find((element) => {
+            if ((getOffsetTop(element) - window.pageYOffset) > 0 && 
+                (getOffsetTop(element) - window.pageYOffset) < window.innerHeight/2) {
+                return element;
+            }
+        }) || activeElement
+
+        elements.forEach(element => {
+             const id = encodeURI(element.getAttribute('id')).toLowerCase();
+             if (element === activeElement){
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.add('active');
+             } else {
+                 document.querySelector(`.inner ul li a[href="#${id}"]`).classList.remove('active');
+             }
+         })
+     }, false);
+
+    const main = parseInt(getComputedStyle(document.body).getPropertyValue('--article-width'), 10);
+    const toc = parseInt(getComputedStyle(document.body).getPropertyValue('--toc-width'), 10);
+    const gap = parseInt(getComputedStyle(document.body).getPropertyValue('--gap'), 10);
+
+    function checkTocPosition() {
+        const width = document.body.scrollWidth;
+
+        if (width - main - (toc * 2) - (gap * 4) > 0) {
+            document.getElementById("toc-container").classList.add("wide");
+        } else {
+            document.getElementById("toc-container").classList.remove("wide");
+        }
+    }
+
+    function getOffsetTop(element) {
+        if (!element.getClientRects().length) {
+            return 0;
+        }
+        let rect = element.getBoundingClientRect();
+        let win = element.ownerDocument.defaultView;
+        return rect.top + win.pageYOffset;   
+    }
+</script>
+<div class="res-cons">
+
+    <article class="post">
+        <div class="res-cons">
+
+        <header>
+            <h1 class="post-title">自动化接口文档swag使用指南</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2023年1月9日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='/categories/Golang'>Golang</a></span>
+            
+            <span class="meta-category"><a href='/categories/%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3'>接口文档</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        
+        <div class="post-content">
+            <h1 id="swag">swag</h1>
+<h2 id="目录">目录</h2>
+<ul>
+<li><a href="#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B">快速开始</a></li>
+<li><a href="#%E6%94%AF%E6%8C%81%E7%9A%84web%E6%A1%86%E6%9E%B6">支持的Web框架</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E4%B8%8Egin%E9%9B%86%E6%88%90">如何与Gin集成</a></li>
+<li><a href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%AF%B4%E6%98%8E">格式化说明</a></li>
+<li><a href="#%E5%BC%80%E5%8F%91%E7%8E%B0%E7%8A%B6">开发现状</a></li>
+<li><a href="#%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%B3%A8%E9%87%8A%E6%A0%BC%E5%BC%8F">声明式注释格式</a>
+<ul>
+<li><a href="#%E9%80%9A%E7%94%A8api%E4%BF%A1%E6%81%AF">通用API信息</a></li>
+<li><a href="#api%E6%93%8D%E4%BD%9C">API操作</a></li>
+<li><a href="#%E5%AE%89%E5%85%A8%E6%80%A7">安全性</a></li>
+</ul>
+</li>
+<li><a href="#%E6%A0%B7%E4%BE%8B">样例</a>
+<ul>
+<li><a href="#%E5%A4%9A%E8%A1%8C%E7%9A%84%E6%8F%8F%E8%BF%B0">多行的描述</a></li>
+<li><a href="#%E7%94%A8%E6%88%B7%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84%E5%85%B7%E6%9C%89%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8B%E7%9A%84%E7%BB%93%E6%9E%84">用户自定义的具有数组类型的结构</a></li>
+<li><a href="#%E5%93%8D%E5%BA%94%E5%AF%B9%E8%B1%A1%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E7%BB%84%E5%90%88">响应对象中的模型组合</a></li>
+<li><a href="#%E5%9C%A8%E5%93%8D%E5%BA%94%E4%B8%AD%E5%A2%9E%E5%8A%A0%E5%A4%B4%E5%AD%97%E6%AE%B5">在响应中增加头字段</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E5%A4%9A%E8%B7%AF%E5%BE%84%E5%8F%82%E6%95%B0">使用多路径参数</a></li>
+<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93%E7%9A%84%E7%A4%BA%E4%BE%8B%E5%80%BC">结构体的示例值</a></li>
+<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93%E6%8F%8F%E8%BF%B0">结构体描述</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%60swaggertype%60%E6%A0%87%E7%AD%BE%E6%9B%B4%E6%94%B9%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B">使用<code>swaggertype</code>标签更改字段类型</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8swaggerignore%E6%A0%87%E7%AD%BE%E6%8E%92%E9%99%A4%E5%AD%97%E6%AE%B5">使用<code>swaggerignore</code>标签排除字段</a></li>
+<li><a href="#%E5%B0%86%E6%89%A9%E5%B1%95%E4%BF%A1%E6%81%AF%E6%B7%BB%E5%8A%A0%E5%88%B0%E7%BB%93%E6%9E%84%E5%AD%97%E6%AE%B5">将扩展信息添加到结构字段</a></li>
+<li><a href="#%E5%AF%B9%E5%B1%95%E7%A4%BA%E7%9A%84%E6%A8%A1%E5%9E%8B%E9%87%8D%E5%91%BD%E5%90%8D">对展示的模型重命名</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E5%AE%89%E5%85%A8%E6%80%A7%E6%B3%A8%E9%87%8A">如何使用安全性注释</a></li>
+</ul>
+</li>
+<li><a href="#%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3">项目相关</a></li>
+</ul>
+<h2 id="快速开始">快速开始</h2>
+<ol>
+<li>将注释添加到API源代码中，请参阅声明性注释格式。</li>
+<li>使用如下命令下载swag：</li>
+</ol>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ go get -u github.com/swaggo/swag/cmd/swag
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># 1.16 及以上版本</span>
+</span></span><span style="display:flex;"><span>$ go install github.com/swaggo/swag/cmd/swag@latest
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从源码开始构建的话，需要有Go环境（1.15及以上版本）。</p>
+<p>或者从github的release页面下载预编译好的二进制文件。</p>
+<ol start="3">
+<li>在包含<code>main.go</code>文件的项目根目录运行<code>swag init</code>。这将会解析注释并生成需要的文件（<code>docs</code>文件夹和<code>docs/docs.go</code>）。</li>
+</ol>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>swag init
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>确保导入了生成的<code>docs/docs.go</code>文件，这样特定的配置文件才会被初始化。如果通用API指数没有写在<code>main.go</code>中，可以使用<code>-g</code>标识符来告知swag。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>swag init -g http/api.go
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>(可选) 使用<code>fmt</code>格式化 SWAG 注释。(请先升级到最新版本)</li>
+</ol>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>swag fmt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="swag-cli">swag cli</h2>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>swag init -h
+</span></span><span style="display:flex;"><span>NAME:
+</span></span><span style="display:flex;"><span>   swag init - Create docs.go
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>USAGE:
+</span></span><span style="display:flex;"><span>   swag init <span style="color:#000;font-weight:bold">[</span><span style="color:#0086b3">command</span> options<span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">[</span>arguments...<span style="color:#000;font-weight:bold">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>OPTIONS:
+</span></span><span style="display:flex;"><span>   --generalInfo value, -g value          API通用信息所在的go源文件路径，如果是相对路径则基于API解析目录 <span style="color:#000;font-weight:bold">(</span>默认: <span style="color:#d14">&#34;main.go&#34;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>   --dir value, -d value                  API解析目录 <span style="color:#000;font-weight:bold">(</span>默认: <span style="color:#d14">&#34;./&#34;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>   --exclude value                        解析扫描时排除的目录，多个目录可用逗号分隔（默认：空）
+</span></span><span style="display:flex;"><span>   --propertyStrategy value, -p value     结构体字段命名规则，三种：snakecase,camelcase,pascalcase <span style="color:#000;font-weight:bold">(</span>默认: <span style="color:#d14">&#34;camelcase&#34;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>   --output value, -o value               文件<span style="color:#000;font-weight:bold">(</span>swagger.json, swagger.yaml and doc.go<span style="color:#000;font-weight:bold">)</span>输出目录 <span style="color:#000;font-weight:bold">(</span>默认: <span style="color:#d14">&#34;./docs&#34;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>   --parseVendor                          是否解析vendor目录里的go源文件，默认不
+</span></span><span style="display:flex;"><span>   --parseDependency                      是否解析依赖目录中的go源文件，默认不
+</span></span><span style="display:flex;"><span>   --markdownFiles value, --md value      指定API的描述信息所使用的markdown文件所在的目录
+</span></span><span style="display:flex;"><span>   --generatedTime                        是否输出时间到输出文件docs.go的顶部，默认是
+</span></span><span style="display:flex;"><span>   --codeExampleFiles value, --cef value  解析包含用于 x-codeSamples 扩展的代码示例文件的文件夹，默认禁用
+</span></span><span style="display:flex;"><span>   --parseInternal                        解析 internal 包中的go文件，默认禁用
+</span></span><span style="display:flex;"><span>   --parseDepth value                     依赖解析深度 <span style="color:#000;font-weight:bold">(</span>默认: 100<span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>   --instanceName value                   设置文档实例名 <span style="color:#000;font-weight:bold">(</span>默认: <span style="color:#d14">&#34;swagger&#34;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>swag fmt -h
+</span></span><span style="display:flex;"><span>NAME:
+</span></span><span style="display:flex;"><span>   swag fmt - format swag comments
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>USAGE:
+</span></span><span style="display:flex;"><span>   swag fmt <span style="color:#000;font-weight:bold">[</span><span style="color:#0086b3">command</span> options<span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">[</span>arguments...<span style="color:#000;font-weight:bold">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>OPTIONS:
+</span></span><span style="display:flex;"><span>   --dir value, -d value          API解析目录 <span style="color:#000;font-weight:bold">(</span>默认: <span style="color:#d14">&#34;./&#34;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>   --exclude value                解析扫描时排除的目录，多个目录可用逗号分隔（默认：空）
+</span></span><span style="display:flex;"><span>   --generalInfo value, -g value  API通用信息所在的go源文件路径，如果是相对路径则基于API解析目录 <span style="color:#000;font-weight:bold">(</span>默认: <span style="color:#d14">&#34;main.go&#34;</span><span style="color:#000;font-weight:bold">)</span>
+</span></span><span style="display:flex;"><span>   --help, -h                     show <span style="color:#0086b3">help</span> <span style="color:#000;font-weight:bold">(</span>default: <span style="color:#0086b3">false</span><span style="color:#000;font-weight:bold">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="支持的web框架">支持的Web框架</h2>
+<ul>
+<li><a href="http://github.com/swaggo/gin-swagger">gin</a></li>
+<li><a href="http://github.com/swaggo/echo-swagger">echo</a></li>
+<li><a href="https://github.com/swaggo/buffalo-swagger">buffalo</a></li>
+<li><a href="https://github.com/swaggo/http-swagger">net/http</a></li>
+</ul>
+<h2 id="如何与gin集成">如何与Gin集成</h2>
+<p><a href="https://github.com/swaggo/swag/tree/master/example/celler">点击此处</a>查看示例源代码。</p>
+<ol>
+<li>使用<code>swag init</code>生成Swagger2.0文档后，导入如下代码包：</li>
+</ol>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> <span style="color:#d14">&#34;github.com/swaggo/gin-swagger&#34;</span> <span style="color:#998;font-style:italic">// gin-swagger middleware
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">import</span> <span style="color:#d14">&#34;github.com/swaggo/files&#34;</span> <span style="color:#998;font-style:italic">// swagger embed files
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>在<code>main.go</code>源代码中添加通用的API注释：</li>
+</ol>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @title           Swagger Example API
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @version         1.0
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @description     This is a sample server celler server.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @termsOfService  http://swagger.io/terms/
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @contact.name   API Support
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @contact.url    http://www.swagger.io/support
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @contact.email  support@swagger.io
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @license.name  Apache 2.0
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @host      localhost:8080
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @BasePath  /api/v1
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @securityDefinitions.basic  BasicAuth
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">main</span>() {
+</span></span><span style="display:flex;"><span>    r <span style="color:#000;font-weight:bold">:=</span> gin.<span style="color:#900;font-weight:bold">Default</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    c <span style="color:#000;font-weight:bold">:=</span> controller.<span style="color:#900;font-weight:bold">NewController</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    v1 <span style="color:#000;font-weight:bold">:=</span> r.<span style="color:#900;font-weight:bold">Group</span>(<span style="color:#d14">&#34;/api/v1&#34;</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        accounts <span style="color:#000;font-weight:bold">:=</span> v1.<span style="color:#900;font-weight:bold">Group</span>(<span style="color:#d14">&#34;/accounts&#34;</span>)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            accounts.<span style="color:#900;font-weight:bold">GET</span>(<span style="color:#d14">&#34;:id&#34;</span>, c.ShowAccount)
+</span></span><span style="display:flex;"><span>            accounts.<span style="color:#900;font-weight:bold">GET</span>(<span style="color:#d14">&#34;&#34;</span>, c.ListAccounts)
+</span></span><span style="display:flex;"><span>            accounts.<span style="color:#900;font-weight:bold">POST</span>(<span style="color:#d14">&#34;&#34;</span>, c.AddAccount)
+</span></span><span style="display:flex;"><span>            accounts.<span style="color:#900;font-weight:bold">DELETE</span>(<span style="color:#d14">&#34;:id&#34;</span>, c.DeleteAccount)
+</span></span><span style="display:flex;"><span>            accounts.<span style="color:#900;font-weight:bold">PATCH</span>(<span style="color:#d14">&#34;:id&#34;</span>, c.UpdateAccount)
+</span></span><span style="display:flex;"><span>            accounts.<span style="color:#900;font-weight:bold">POST</span>(<span style="color:#d14">&#34;:id/images&#34;</span>, c.UploadAccountImage)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">//...
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    }
+</span></span><span style="display:flex;"><span>    r.<span style="color:#900;font-weight:bold">GET</span>(<span style="color:#d14">&#34;/swagger/*any&#34;</span>, ginSwagger.<span style="color:#900;font-weight:bold">WrapHandler</span>(swaggerFiles.Handler))
+</span></span><span style="display:flex;"><span>    r.<span style="color:#900;font-weight:bold">Run</span>(<span style="color:#d14">&#34;:8080&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">//...
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>此外，可以动态设置一些通用的API信息。生成的代码包<code>docs</code>导出<code>SwaggerInfo</code>变量，使用该变量可以通过编码的方式设置标题、描述、版本、主机和基础路径。使用Gin的示例：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">package</span> main
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;github.com/gin-gonic/gin&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;github.com/swaggo/files&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;github.com/swaggo/gin-swagger&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;./docs&#34;</span> <span style="color:#998;font-style:italic">// docs is generated by Swag CLI, you have to import it.
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @contact.name   API Support
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @contact.url    http://www.swagger.io/support
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @contact.email  support@swagger.io
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @license.name  Apache 2.0
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> <span style="color:#900;font-weight:bold">main</span>() {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// programatically set swagger info
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    docs.SwaggerInfo.Title = <span style="color:#d14">&#34;Swagger Example API&#34;</span>
+</span></span><span style="display:flex;"><span>    docs.SwaggerInfo.Description = <span style="color:#d14">&#34;This is a sample server Petstore server.&#34;</span>
+</span></span><span style="display:flex;"><span>    docs.SwaggerInfo.Version = <span style="color:#d14">&#34;1.0&#34;</span>
+</span></span><span style="display:flex;"><span>    docs.SwaggerInfo.Host = <span style="color:#d14">&#34;petstore.swagger.io&#34;</span>
+</span></span><span style="display:flex;"><span>    docs.SwaggerInfo.BasePath = <span style="color:#d14">&#34;/v2&#34;</span>
+</span></span><span style="display:flex;"><span>    docs.SwaggerInfo.Schemes = []<span style="color:#458;font-weight:bold">string</span>{<span style="color:#d14">&#34;http&#34;</span>, <span style="color:#d14">&#34;https&#34;</span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    r <span style="color:#000;font-weight:bold">:=</span> gin.<span style="color:#900;font-weight:bold">New</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// use ginSwagger middleware to serve the API docs
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    r.<span style="color:#900;font-weight:bold">GET</span>(<span style="color:#d14">&#34;/swagger/*any&#34;</span>, ginSwagger.<span style="color:#900;font-weight:bold">WrapHandler</span>(swaggerFiles.Handler))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    r.<span style="color:#900;font-weight:bold">Run</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>在<code>controller</code>代码中添加API操作注释：</li>
+</ol>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">55
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">56
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">57
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">58
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">59
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">60
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">61
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">package</span> controller
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;fmt&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;net/http&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;strconv&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;github.com/gin-gonic/gin&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;github.com/swaggo/swag/example/celler/httputil&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;github.com/swaggo/swag/example/celler/model&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// ShowAccount godoc
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Summary      Show an account
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Description  get string by ID
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Tags         accounts
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Accept       json
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Produce      json
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Param        id   path      int  true  &#34;Account ID&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Success      200  {object}  model.Account
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Failure      400  {object}  httputil.HTTPError
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Failure      404  {object}  httputil.HTTPError
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Failure      500  {object}  httputil.HTTPError
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Router       /accounts/{id} [get]
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> (c <span style="color:#000;font-weight:bold">*</span>Controller) <span style="color:#900;font-weight:bold">ShowAccount</span>(ctx <span style="color:#000;font-weight:bold">*</span>gin.Context) {
+</span></span><span style="display:flex;"><span>  id <span style="color:#000;font-weight:bold">:=</span> ctx.<span style="color:#900;font-weight:bold">Param</span>(<span style="color:#d14">&#34;id&#34;</span>)
+</span></span><span style="display:flex;"><span>  aid, err <span style="color:#000;font-weight:bold">:=</span> strconv.<span style="color:#900;font-weight:bold">Atoi</span>(id)
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">if</span> err <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+</span></span><span style="display:flex;"><span>    httputil.<span style="color:#900;font-weight:bold">NewError</span>(ctx, http.StatusBadRequest, err)
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  account, err <span style="color:#000;font-weight:bold">:=</span> model.<span style="color:#900;font-weight:bold">AccountOne</span>(aid)
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">if</span> err <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+</span></span><span style="display:flex;"><span>    httputil.<span style="color:#900;font-weight:bold">NewError</span>(ctx, http.StatusNotFound, err)
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  ctx.<span style="color:#900;font-weight:bold">JSON</span>(http.StatusOK, account)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// ListAccounts godoc
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Summary      List accounts
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Description  get accounts
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Tags         accounts
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Accept       json
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Produce      json
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Param        q    query     string  false  &#34;name search by q&#34;  Format(email)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Success      200  {array}   model.Account
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Failure      400  {object}  httputil.HTTPError
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Failure      404  {object}  httputil.HTTPError
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Failure      500  {object}  httputil.HTTPError
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Router       /accounts [get]
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> (c <span style="color:#000;font-weight:bold">*</span>Controller) <span style="color:#900;font-weight:bold">ListAccounts</span>(ctx <span style="color:#000;font-weight:bold">*</span>gin.Context) {
+</span></span><span style="display:flex;"><span>  q <span style="color:#000;font-weight:bold">:=</span> ctx.Request.URL.<span style="color:#900;font-weight:bold">Query</span>().<span style="color:#900;font-weight:bold">Get</span>(<span style="color:#d14">&#34;q&#34;</span>)
+</span></span><span style="display:flex;"><span>  accounts, err <span style="color:#000;font-weight:bold">:=</span> model.<span style="color:#900;font-weight:bold">AccountsAll</span>(q)
+</span></span><span style="display:flex;"><span>  <span style="color:#000;font-weight:bold">if</span> err <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+</span></span><span style="display:flex;"><span>    httputil.<span style="color:#900;font-weight:bold">NewError</span>(ctx, http.StatusNotFound, err)
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span>
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>  ctx.<span style="color:#900;font-weight:bold">JSON</span>(http.StatusOK, accounts)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">//...
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>swag init
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>运行程序，然后在浏览器中访问 http://localhost:8080/swagger/index.html 。将看到Swagger 2.0 Api文档，如下所示：</li>
+</ol>
+<p>
+        <a data-fancybox="gallery" href="https://raw.githubusercontent.com/swaggo/swag/master/assets/swagger-image.png">
+            <img class="mx-auto" alt="swagger_index.html" src="https://raw.githubusercontent.com/swaggo/swag/master/assets/swagger-image.png" />
+        </a>
+    </p>
+<h2 id="格式化说明">格式化说明</h2>
+<p>可以针对Swag的注释自动格式化，就像<code>go fmt</code>。<br>
+此处查看格式化结果 <a href="https://github.com/swaggo/swag/tree/master/example/celler">here</a>.</p>
+<p>示例：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>swag fmt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>排除目录（不扫描）示例：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>swag fmt -d ./ --exclude ./internal
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="开发现状">开发现状</h2>
+<p><a href="https://swagger.io/docs/specification/2-0/basic-structure/">Swagger 2.0 文档</a></p>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> Basic Structure</li>
+<li><input checked="" disabled="" type="checkbox"> API Host and Base Path</li>
+<li><input checked="" disabled="" type="checkbox"> Paths and Operations</li>
+<li><input checked="" disabled="" type="checkbox"> Describing Parameters</li>
+<li><input checked="" disabled="" type="checkbox"> Describing Request Body</li>
+<li><input checked="" disabled="" type="checkbox"> Describing Responses</li>
+<li><input checked="" disabled="" type="checkbox"> MIME Types</li>
+<li><input checked="" disabled="" type="checkbox"> Authentication
+<ul>
+<li><input checked="" disabled="" type="checkbox"> Basic Authentication</li>
+<li><input checked="" disabled="" type="checkbox"> API Keys</li>
+</ul>
+</li>
+<li><input checked="" disabled="" type="checkbox"> Adding Examples</li>
+<li><input checked="" disabled="" type="checkbox"> File Upload</li>
+<li><input checked="" disabled="" type="checkbox"> Enums</li>
+<li><input checked="" disabled="" type="checkbox"> Grouping Operations With Tags</li>
+<li><input disabled="" type="checkbox"> Swagger Extensions</li>
+</ul>
+<h2 id="声明式注释格式">声明式注释格式</h2>
+<h2 id="通用api信息">通用API信息</h2>
+<p><strong>示例</strong> <a href="https://github.com/swaggo/swag/blob/master/example/celler/main.go"><code>celler/main.go</code></a></p>
+<table>
+<thead>
+<tr>
+<th>注释</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>title</td>
+<td><strong>必填</strong> 应用程序的名称。</td>
+<td>// @title Swagger Example API</td>
+</tr>
+<tr>
+<td>version</td>
+<td><strong>必填</strong> 提供应用程序API的版本。</td>
+<td>// @version 1.0</td>
+</tr>
+<tr>
+<td>description</td>
+<td>应用程序的简短描述。</td>
+<td>// @description This is a sample server celler server.</td>
+</tr>
+<tr>
+<td>tag.name</td>
+<td>标签的名称。</td>
+<td>// @tag.name This is the name of the tag</td>
+</tr>
+<tr>
+<td>tag.description</td>
+<td>标签的描述。</td>
+<td>// @tag.description Cool Description</td>
+</tr>
+<tr>
+<td>tag.docs.url</td>
+<td>标签的外部文档的URL。</td>
+<td>// @tag.docs.url <a href="https://example.com">https://example.com</a></td>
+</tr>
+<tr>
+<td>tag.docs.description</td>
+<td>标签的外部文档说明。</td>
+<td>// @tag.docs.description Best example documentation</td>
+</tr>
+<tr>
+<td>termsOfService</td>
+<td>API的服务条款。</td>
+<td>// @termsOfService <a href="http://swagger.io/terms/">http://swagger.io/terms/</a></td>
+</tr>
+<tr>
+<td>contact.name</td>
+<td>公开的API的联系信息。</td>
+<td>// @contact.name API Support</td>
+</tr>
+<tr>
+<td>contact.url</td>
+<td>联系信息的URL。 必须采用网址格式。</td>
+<td>// @contact.url <a href="http://www.swagger.io/support">http://www.swagger.io/support</a></td>
+</tr>
+<tr>
+<td>contact.email</td>
+<td>联系人/组织的电子邮件地址。 必须采用电子邮件地址的格式。</td>
+<td>// @contact.email <a href="mailto:support@swagger.io">support@swagger.io</a></td>
+</tr>
+<tr>
+<td>license.name</td>
+<td><strong>必填</strong> 用于API的许可证名称。</td>
+<td>// @license.name Apache 2.0</td>
+</tr>
+<tr>
+<td>license.url</td>
+<td>用于API的许可证的URL。 必须采用网址格式。</td>
+<td>// @license.url <a href="http://www.apache.org/licenses/LICENSE-2.0.html">http://www.apache.org/licenses/LICENSE-2.0.html</a></td>
+</tr>
+<tr>
+<td>host</td>
+<td>运行API的主机（主机名或IP地址）。</td>
+<td>// @host localhost:8080</td>
+</tr>
+<tr>
+<td>BasePath</td>
+<td>运行API的基本路径。</td>
+<td>// @BasePath /api/v1</td>
+</tr>
+<tr>
+<td>accept</td>
+<td>API 可以使用的 MIME 类型列表。 请注意，Accept 仅影响具有请求正文的操作，例如 POST、PUT 和 PATCH。 值必须如“<a href="#mime%E7%B1%BB%E5%9E%8B">Mime类型</a>”中所述。</td>
+<td>// @accept json</td>
+</tr>
+<tr>
+<td>produce</td>
+<td>API可以生成的MIME类型的列表。值必须如“<a href="#mime%E7%B1%BB%E5%9E%8B">Mime类型</a>”中所述。</td>
+<td>// @produce json</td>
+</tr>
+<tr>
+<td>query.collection.format</td>
+<td>请求URI query里数组参数的默认格式：csv，multi，pipes，tsv，ssv。 如果未设置，则默认为csv。</td>
+<td>// @query.collection.format multi</td>
+</tr>
+<tr>
+<td>schemes</td>
+<td>用空格分隔的请求的传输协议。</td>
+<td>// @schemes http https</td>
+</tr>
+<tr>
+<td>x-name</td>
+<td>扩展的键必须以x-开头，并且只能使用json值</td>
+<td>// @x-example-key {&ldquo;key&rdquo;: &ldquo;value&rdquo;}</td>
+</tr>
+</tbody>
+</table>
+<h3 id="使用markdown描述">使用Markdown描述</h3>
+<p>如果文档中的短字符串不足以完整表达，或者需要展示图片，代码示例等类似的内容，则可能需要使用Markdown描述。要使用Markdown描述，请使用一下注释。</p>
+<table>
+<thead>
+<tr>
+<th>注释</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>title</td>
+<td><strong>必填</strong> 应用程序的名称。</td>
+<td>// @title Swagger Example API</td>
+</tr>
+<tr>
+<td>version</td>
+<td><strong>必填</strong> 提供应用程序API的版本。</td>
+<td>// @version 1.0</td>
+</tr>
+<tr>
+<td>description.markdown</td>
+<td>应用程序的简短描述。 从<code>api.md</code>文件中解析。 这是<code>@description</code>的替代用法。</td>
+<td>// @description.markdown No value needed, this parses the description from api.md</td>
+</tr>
+<tr>
+<td>tag.name</td>
+<td>标签的名称。</td>
+<td>// @tag.name This is the name of the tag</td>
+</tr>
+<tr>
+<td>tag.description.markdown</td>
+<td>标签说明，这是<code>tag.description</code>的替代用法。 该描述将从名为<code>tagname.md的</code>文件中读取。</td>
+<td>// @tag.description.markdown</td>
+</tr>
+</tbody>
+</table>
+<h2 id="api操作">API操作</h2>
+<p>Example <a href="https://github.com/swaggo/swag/tree/master/example/celler/controller">celler/controller</a></p>
+<table>
+<thead>
+<tr>
+<th>注释</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>description</td>
+<td>操作行为的详细说明。</td>
+</tr>
+<tr>
+<td>description.markdown</td>
+<td>应用程序的简短描述。该描述将从名为<code>endpointname.md</code>的文件中读取。</td>
+</tr>
+<tr>
+<td>id</td>
+<td>用于标识操作的唯一字符串。在所有API操作中必须唯一。</td>
+</tr>
+<tr>
+<td>tags</td>
+<td>每个API操作的标签列表，以逗号分隔。</td>
+</tr>
+<tr>
+<td>summary</td>
+<td>该操作的简短摘要。</td>
+</tr>
+<tr>
+<td>accept</td>
+<td>API 可以使用的 MIME 类型列表。 请注意，Accept 仅影响具有请求正文的操作，例如 POST、PUT 和 PATCH。 值必须如“<a href="#mime%E7%B1%BB%E5%9E%8B">Mime类型</a>”中所述。</td>
+</tr>
+<tr>
+<td>produce</td>
+<td>API可以生成的MIME类型的列表。值必须如“<a href="#mime%E7%B1%BB%E5%9E%8B">Mime类型</a>”中所述。</td>
+</tr>
+<tr>
+<td>param</td>
+<td>用空格分隔的参数。<code>param name</code>,<code>param type</code>,<code>data type</code>,<code>is mandatory?</code>,<code>comment</code> <code>attribute(optional)</code></td>
+</tr>
+<tr>
+<td>security</td>
+<td>每个API操作的<a href="#%E5%AE%89%E5%85%A8%E6%80%A7">安全性</a>。</td>
+</tr>
+<tr>
+<td>success</td>
+<td>以空格分隔的成功响应。<code>return code</code>,<code>{param type}</code>,<code>data type</code>,<code>comment</code></td>
+</tr>
+<tr>
+<td>failure</td>
+<td>以空格分隔的故障响应。<code>return code</code>,<code>{param type}</code>,<code>data type</code>,<code>comment</code></td>
+</tr>
+<tr>
+<td>response</td>
+<td>与success、failure作用相同</td>
+</tr>
+<tr>
+<td>header</td>
+<td>以空格分隔的头字段。 <code>return code</code>,<code>{param type}</code>,<code>data type</code>,<code>comment</code></td>
+</tr>
+<tr>
+<td>router</td>
+<td>以空格分隔的路径定义。 <code>path</code>,<code>[httpMethod]</code></td>
+</tr>
+<tr>
+<td>x-name</td>
+<td>扩展字段必须以<code>x-</code>开头，并且只能使用json值。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="mime类型">Mime类型</h2>
+<p><code>swag</code> 接受所有格式正确的MIME类型, 即使匹配 <code>*/*</code>。除此之外，<code>swag</code>还接受某些MIME类型的别名，如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>Alias</th>
+<th>MIME Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>json</td>
+<td>application/json</td>
+</tr>
+<tr>
+<td>xml</td>
+<td>text/xml</td>
+</tr>
+<tr>
+<td>plain</td>
+<td>text/plain</td>
+</tr>
+<tr>
+<td>html</td>
+<td>text/html</td>
+</tr>
+<tr>
+<td>mpfd</td>
+<td>multipart/form-data</td>
+</tr>
+<tr>
+<td>x-www-form-urlencoded</td>
+<td>application/x-www-form-urlencoded</td>
+</tr>
+<tr>
+<td>json-api</td>
+<td>application/vnd.api+json</td>
+</tr>
+<tr>
+<td>json-stream</td>
+<td>application/x-json-stream</td>
+</tr>
+<tr>
+<td>octet-stream</td>
+<td>application/octet-stream</td>
+</tr>
+<tr>
+<td>png</td>
+<td>image/png</td>
+</tr>
+<tr>
+<td>jpeg</td>
+<td>image/jpeg</td>
+</tr>
+<tr>
+<td>gif</td>
+<td>image/gif</td>
+</tr>
+</tbody>
+</table>
+<h2 id="参数类型">参数类型</h2>
+<ul>
+<li>
+<p>query： 表示带在 url 之后的参数</p>
+</li>
+<li>
+<p>path ：表示请求路径上得url变量</p>
+</li>
+<li>
+<p>header ： 表示带在 header 信息中得参数</p>
+</li>
+<li>
+<p>body ：表示是一个 raw 数据请求，当<code>Accept</code>是<code>JSON</code>格式时，我们使用该字段指定接收的JSON类型</p>
+</li>
+<li>
+<p>formData ：表示是form表单请求的数据，需要加对应的api注解：<code>// @accept mpfd</code>，表单数据提交一般不会用于<code>GET</code>方法，<code>GET</code>方法常见于<code>url</code>参数或变量的使用中。</p>
+</li>
+</ul>
+<h2 id="数据类型">数据类型</h2>
+<ul>
+<li>string (string)</li>
+<li>integer (int, uint, uint32, uint64)</li>
+<li>number (float32)</li>
+<li>boolean (bool)</li>
+<li>user defined struct</li>
+</ul>
+<h2 id="安全性">安全性</h2>
+<table>
+<thead>
+<tr>
+<th>注释</th>
+<th>描述</th>
+<th>参数</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>securitydefinitions.basic</td>
+<td><a href="https://swagger.io/docs/specification/2-0/authentication/basic-authentication/">Basic</a> auth.</td>
+<td></td>
+<td>// @securityDefinitions.basic BasicAuth</td>
+</tr>
+<tr>
+<td>securitydefinitions.apikey</td>
+<td><a href="https://swagger.io/docs/specification/2-0/authentication/api-keys/">API key</a> auth.</td>
+<td>in, name</td>
+<td>// @securityDefinitions.apikey ApiKeyAuth</td>
+</tr>
+<tr>
+<td>securitydefinitions.oauth2.application</td>
+<td><a href="https://swagger.io/docs/specification/authentication/oauth2/">OAuth2 application</a> auth.</td>
+<td>tokenUrl, scope</td>
+<td>// @securitydefinitions.oauth2.application OAuth2Application</td>
+</tr>
+<tr>
+<td>securitydefinitions.oauth2.implicit</td>
+<td><a href="https://swagger.io/docs/specification/authentication/oauth2/">OAuth2 implicit</a> auth.</td>
+<td>authorizationUrl, scope</td>
+<td>// @securitydefinitions.oauth2.implicit OAuth2Implicit</td>
+</tr>
+<tr>
+<td>securitydefinitions.oauth2.password</td>
+<td><a href="https://swagger.io/docs/specification/authentication/oauth2/">OAuth2 password</a> auth.</td>
+<td>tokenUrl, scope</td>
+<td>// @securitydefinitions.oauth2.password OAuth2Password</td>
+</tr>
+<tr>
+<td>securitydefinitions.oauth2.accessCode</td>
+<td><a href="https://swagger.io/docs/specification/authentication/oauth2/">OAuth2 access code</a> auth.</td>
+<td>tokenUrl, authorizationUrl, scope</td>
+<td>// @securitydefinitions.oauth2.accessCode OAuth2AccessCode</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>参数注释</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>in</td>
+<td>// @in header</td>
+</tr>
+<tr>
+<td>name</td>
+<td>// @name Authorization</td>
+</tr>
+<tr>
+<td>tokenUrl</td>
+<td>// @tokenUrl <a href="https://example.com/oauth/token">https://example.com/oauth/token</a></td>
+</tr>
+<tr>
+<td>authorizationurl</td>
+<td>// @authorizationurl <a href="https://example.com/oauth/authorize">https://example.com/oauth/authorize</a></td>
+</tr>
+<tr>
+<td>scope.hoge</td>
+<td>// @scope.write Grants write access</td>
+</tr>
+</tbody>
+</table>
+<h2 id="属性">属性</h2>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Param   enumstring  query     string     false  &#34;string enums&#34;       Enums(A, B, C)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Param   enumint     query     int        false  &#34;int enums&#34;          Enums(1, 2, 3)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Param   enumnumber  query     number     false  &#34;int enums&#34;          Enums(1.1, 1.2, 1.3)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Param   string      query     string     false  &#34;string valid&#34;       minlength(5)  maxlength(10)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Param   int         query     int        false  &#34;int valid&#34;          minimum(1)    maximum(10)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Param   default     query     string     false  &#34;string default&#34;     default(A)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Param   collection  query     []string   false  &#34;string collection&#34;  collectionFormat(multi)
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Param   extensions  query     []string   false  &#34;string collection&#34;  extensions(x-example=test,x-nullable)
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>也适用于结构体字段：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> Foo <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>    Bar <span style="color:#458;font-weight:bold">string</span> <span style="color:#d14">`minLength:&#34;4&#34; maxLength:&#34;16&#34;`</span>
+</span></span><span style="display:flex;"><span>    Baz <span style="color:#458;font-weight:bold">int</span> <span style="color:#d14">`minimum:&#34;10&#34; maximum:&#34;20&#34; default:&#34;15&#34;`</span>
+</span></span><span style="display:flex;"><span>    Qux []<span style="color:#458;font-weight:bold">string</span> <span style="color:#d14">`enums:&#34;foo,bar,baz&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="当前可用的">当前可用的</h3>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>default</td>
+<td>*</td>
+<td>声明如果未提供任何参数，则服务器将使用的默认参数值，例如，如果请求中的客户端未提供该参数，则用于控制每页结果数的“计数”可能默认为100。 （注意：“default”对于必需的参数没有意义）。参看 <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-6.2">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-6.2</a>。 与JSON模式不同，此值务必符合此参数的定义<a href="#parameterType">类型</a>。</td>
+</tr>
+<tr>
+<td>maximum</td>
+<td><code>number</code></td>
+<td>参看 <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.1.2">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.1.2</a>.</td>
+</tr>
+<tr>
+<td>minimum</td>
+<td><code>number</code></td>
+<td>参看 <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.1.3">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.1.3</a>.</td>
+</tr>
+<tr>
+<td>maxLength</td>
+<td><code>integer</code></td>
+<td>参看 <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.2.1">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.2.1</a>.</td>
+</tr>
+<tr>
+<td>minLength</td>
+<td><code>integer</code></td>
+<td>参看 <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.2.2">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.2.2</a>.</td>
+</tr>
+<tr>
+<td>enums</td>
+<td>[*]</td>
+<td>参看 <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.5.1">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.5.1</a>.</td>
+</tr>
+<tr>
+<td>format</td>
+<td><code>string</code></td>
+<td>上面提到的<a href="#parameterType">类型</a>的扩展格式。有关更多详细信息，请参见<a href="https://swagger.io/specification/v2/#dataTypeFormat">数据类型格式</a>。</td>
+</tr>
+<tr>
+<td>collectionFormat</td>
+<td><code>string</code></td>
+<td>指定query数组参数的格式。 可能的值为： <!-- raw HTML omitted --><!-- raw HTML omitted --><code>csv</code> - 逗号分隔值 <code>foo,bar</code>. <!-- raw HTML omitted --><code>ssv</code> - 空格分隔值 <code>foo bar</code>. <!-- raw HTML omitted --><code>tsv</code> - 制表符分隔值 <code>foo\tbar</code>. <!-- raw HTML omitted --><code>pipes</code> - 管道符分隔值 <!-- raw HTML omitted -->foo|bar<!-- raw HTML omitted -->. <!-- raw HTML omitted --><code>multi</code> - 对应于多个参数实例，而不是单个实例 <code>foo=bar＆foo=baz</code> 的多个值。这仅对“<code>query</code>”或“<code>formData</code>”中的参数有效。 <!-- raw HTML omitted --> 默认值是 <code>csv</code>。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="进一步的">进一步的</h3>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th style="text-align:center">类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>multipleOf</td>
+<td style="text-align:center"><code>number</code></td>
+<td>See <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.1.1">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.1.1</a>.</td>
+</tr>
+<tr>
+<td>pattern</td>
+<td style="text-align:center"><code>string</code></td>
+<td>See <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.2.3">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.2.3</a>.</td>
+</tr>
+<tr>
+<td>maxItems</td>
+<td style="text-align:center"><code>integer</code></td>
+<td>See <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.3.2">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.3.2</a>.</td>
+</tr>
+<tr>
+<td>minItems</td>
+<td style="text-align:center"><code>integer</code></td>
+<td>See <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.3.3">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.3.3</a>.</td>
+</tr>
+<tr>
+<td>uniqueItems</td>
+<td style="text-align:center"><code>boolean</code></td>
+<td>See <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.3.4">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.3.4</a>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="样例">样例</h2>
+<h3 id="多行的描述">多行的描述</h3>
+<p>可以在常规api描述或路由定义中添加跨越多行的描述，如下所示：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @description This is the first line
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @description This is the second line
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @description And so forth.
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="用户自定义的具有数组类型的结构">用户自定义的具有数组类型的结构</h3>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Success 200 {array} model.Account &lt;-- This is a user defined struct.
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">package</span> model
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> Account <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>    ID   <span style="color:#458;font-weight:bold">int</span>    <span style="color:#d14">`json:&#34;id&#34; example:&#34;1&#34;`</span>
+</span></span><span style="display:flex;"><span>    Name <span style="color:#458;font-weight:bold">string</span> <span style="color:#d14">`json:&#34;name&#34; example:&#34;account name&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="响应对象中的模型组合">响应对象中的模型组合</h3>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// JSONResult的data字段类型将被proto.Order类型替换
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#a61717;background-color:#e3d2d2">@</span>success <span style="color:#099">200</span> {object} jsonresult.JSONResult{data=proto.Order} <span style="color:#d14">&#34;desc&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> JSONResult <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>    Code    <span style="color:#458;font-weight:bold">int</span>          <span style="color:#d14">`json:&#34;code&#34; `</span>
+</span></span><span style="display:flex;"><span>    Message <span style="color:#458;font-weight:bold">string</span>       <span style="color:#d14">`json:&#34;message&#34;`</span>
+</span></span><span style="display:flex;"><span>    Data    <span style="color:#000;font-weight:bold">interface</span>{}  <span style="color:#d14">`json:&#34;data&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> Order <span style="color:#000;font-weight:bold">struct</span> { <span style="color:#998;font-style:italic">//in `proto` package
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">...</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>还支持对象数组和原始类型作为嵌套响应</li>
+</ul>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">@</span>success <span style="color:#099">200</span> {object} jsonresult.JSONResult{data=[]proto.Order} <span style="color:#d14">&#34;desc&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">@</span>success <span style="color:#099">200</span> {object} jsonresult.JSONResult{data=<span style="color:#458;font-weight:bold">string</span>} <span style="color:#d14">&#34;desc&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">@</span>success <span style="color:#099">200</span> {object} jsonresult.JSONResult{data=[]<span style="color:#458;font-weight:bold">string</span>} <span style="color:#d14">&#34;desc&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>替换多个字段的类型。如果某字段不存在，将添加该字段。</li>
+</ul>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#a61717;background-color:#e3d2d2">@</span>success <span style="color:#099">200</span> {object} jsonresult.JSONResult{data1=<span style="color:#458;font-weight:bold">string</span>,data2=[]<span style="color:#458;font-weight:bold">string</span>,data3=proto.Order,data4=[]proto.Order} <span style="color:#d14">&#34;desc&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="在响应中增加头字段">在响应中增加头字段</h3>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Success      200              {string}  string    &#34;ok&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @failure      400              {string}  string    &#34;error&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @response     default          {string}  string    &#34;other error&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Header       200              {string}  Location  &#34;/entity/1&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Header       200,400,default  {string}  Token     &#34;token&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Header       all              {string}  Token2    &#34;token2&#34;
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="使用多路径参数">使用多路径参数</h3>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">/// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Param  group_id    path  int  true  &#34;Group ID&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Param  account_id  path  int  true  &#34;Account ID&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// ...
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Router /examples/groups/{group_id}/accounts/{account_id} [get]
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="结构体的示例值">结构体的示例值</h3>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> Account <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>    ID   <span style="color:#458;font-weight:bold">int</span>    <span style="color:#d14">`json:&#34;id&#34; example:&#34;1&#34;`</span>
+</span></span><span style="display:flex;"><span>    Name <span style="color:#458;font-weight:bold">string</span> <span style="color:#d14">`json:&#34;name&#34; example:&#34;account name&#34;`</span>
+</span></span><span style="display:flex;"><span>    PhotoUrls []<span style="color:#458;font-weight:bold">string</span> <span style="color:#d14">`json:&#34;photo_urls&#34; example:&#34;http://test/image/1.jpg,http://test/image/2.jpg&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="结构体描述">结构体描述</h3>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> Account <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// ID this is userid
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    ID   <span style="color:#458;font-weight:bold">int</span>    <span style="color:#d14">`json:&#34;id&#34;`</span>
+</span></span><span style="display:flex;"><span>    Name <span style="color:#458;font-weight:bold">string</span> <span style="color:#d14">`json:&#34;name&#34;`</span> <span style="color:#998;font-style:italic">// This is Name
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="使用swaggertype标签更改字段类型">使用<code>swaggertype</code>标签更改字段类型</h3>
+<p><a href="https://github.com/swaggo/swag/issues/201#issuecomment-475479409">#201</a></p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> TimestampTime <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>    time.Time
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">///实现encoding.JSON.Marshaler接口
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> (t <span style="color:#000;font-weight:bold">*</span>TimestampTime) <span style="color:#900;font-weight:bold">MarshalJSON</span>() ([]<span style="color:#458;font-weight:bold">byte</span>, <span style="color:#458;font-weight:bold">error</span>) {
+</span></span><span style="display:flex;"><span>    bin <span style="color:#000;font-weight:bold">:=</span> <span style="color:#0086b3">make</span>([]<span style="color:#458;font-weight:bold">byte</span>, <span style="color:#099">16</span>)
+</span></span><span style="display:flex;"><span>    bin = strconv.<span style="color:#900;font-weight:bold">AppendInt</span>(bin[:<span style="color:#099">0</span>], t.Time.<span style="color:#900;font-weight:bold">Unix</span>(), <span style="color:#099">10</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> bin, <span style="color:#000;font-weight:bold">nil</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">///实现encoding.JSON.Unmarshaler接口
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span><span style="color:#000;font-weight:bold">func</span> (t <span style="color:#000;font-weight:bold">*</span>TimestampTime) <span style="color:#900;font-weight:bold">UnmarshalJSON</span>(bin []<span style="color:#458;font-weight:bold">byte</span>) <span style="color:#458;font-weight:bold">error</span> {
+</span></span><span style="display:flex;"><span>    v, err <span style="color:#000;font-weight:bold">:=</span> strconv.<span style="color:#900;font-weight:bold">ParseInt</span>(<span style="color:#0086b3">string</span>(bin), <span style="color:#099">10</span>, <span style="color:#099">64</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">if</span> err <span style="color:#000;font-weight:bold">!=</span> <span style="color:#000;font-weight:bold">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#000;font-weight:bold">return</span> err
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    t.Time = time.<span style="color:#900;font-weight:bold">Unix</span>(v, <span style="color:#099">0</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#000;font-weight:bold">return</span> <span style="color:#000;font-weight:bold">nil</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">///
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> Account <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 使用`swaggertype`标签将别名类型更改为内置类型integer
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    ID     sql.NullInt64 <span style="color:#d14">`json:&#34;id&#34; swaggertype:&#34;integer&#34;`</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// 使用`swaggertype`标签更改struct类型为内置类型integer
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    RegisterTime TimestampTime <span style="color:#d14">`json:&#34;register_time&#34; swaggertype:&#34;primitive,integer&#34;`</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#998;font-style:italic">// Array types can be overridden using &#34;array,&lt;prim_type&gt;&#34; format
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>    Coeffs []big.Float <span style="color:#d14">`json:&#34;coeffs&#34; swaggertype:&#34;array,number&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><a href="https://github.com/swaggo/swag/issues/379">#379</a></p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> CerticateKeyPair <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>    Crt []<span style="color:#458;font-weight:bold">byte</span> <span style="color:#d14">`json:&#34;crt&#34; swaggertype:&#34;string&#34; format:&#34;base64&#34; example:&#34;U3dhZ2dlciByb2Nrcw==&#34;`</span>
+</span></span><span style="display:flex;"><span>    Key []<span style="color:#458;font-weight:bold">byte</span> <span style="color:#d14">`json:&#34;key&#34; swaggertype:&#34;string&#34; format:&#34;base64&#34; example:&#34;U3dhZ2dlciByb2Nrcw==&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>生成的swagger文档如下：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#d14">&#34;api.MyBinding&#34;</span>: {
+</span></span><span style="display:flex;"><span>  <span style="color:#d14">&#34;type&#34;</span>:<span style="color:#d14">&#34;object&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#d14">&#34;properties&#34;</span>:{
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;crt&#34;</span>:{
+</span></span><span style="display:flex;"><span>      <span style="color:#d14">&#34;type&#34;</span>:<span style="color:#d14">&#34;string&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#d14">&#34;format&#34;</span>:<span style="color:#d14">&#34;base64&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#d14">&#34;example&#34;</span>:<span style="color:#d14">&#34;U3dhZ2dlciByb2Nrcw==&#34;</span>
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;key&#34;</span>:{
+</span></span><span style="display:flex;"><span>      <span style="color:#d14">&#34;type&#34;</span>:<span style="color:#d14">&#34;string&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#d14">&#34;format&#34;</span>:<span style="color:#d14">&#34;base64&#34;</span>,
+</span></span><span style="display:flex;"><span>      <span style="color:#d14">&#34;example&#34;</span>:<span style="color:#d14">&#34;U3dhZ2dlciByb2Nrcw==&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>  }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="使用swaggerignore标签排除字段">使用<code>swaggerignore</code>标签排除字段</h3>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> Account <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>    ID   <span style="color:#458;font-weight:bold">string</span>    <span style="color:#d14">`json:&#34;id&#34;`</span>
+</span></span><span style="display:flex;"><span>    Name <span style="color:#458;font-weight:bold">string</span>     <span style="color:#d14">`json:&#34;name&#34;`</span>
+</span></span><span style="display:flex;"><span>    Ignored <span style="color:#458;font-weight:bold">int</span>     <span style="color:#d14">`swaggerignore:&#34;true&#34;`</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="将扩展信息添加到结构字段">将扩展信息添加到结构字段</h3>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> Account <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>    ID   <span style="color:#458;font-weight:bold">string</span>    <span style="color:#d14">`json:&#34;id&#34;   extensions:&#34;x-nullable,x-abc=def,!x-omitempty&#34;`</span> <span style="color:#998;font-style:italic">// 扩展字段必须以&#34;x-&#34;开头
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>生成swagger文档，如下所示：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#d14">&#34;Account&#34;</span>: {
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;type&#34;</span>: <span style="color:#d14">&#34;object&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#d14">&#34;properties&#34;</span>: {
+</span></span><span style="display:flex;"><span>        <span style="color:#d14">&#34;id&#34;</span>: {
+</span></span><span style="display:flex;"><span>            <span style="color:#d14">&#34;type&#34;</span>: <span style="color:#d14">&#34;string&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#d14">&#34;x-nullable&#34;</span>: <span style="color:#000;font-weight:bold">true</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#d14">&#34;x-abc&#34;</span>: <span style="color:#d14">&#34;def&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#d14">&#34;x-omitempty&#34;</span>: <span style="color:#000;font-weight:bold">false</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="对展示的模型重命名">对展示的模型重命名</h3>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#000;font-weight:bold">type</span> Resp <span style="color:#000;font-weight:bold">struct</span> {
+</span></span><span style="display:flex;"><span>    Code <span style="color:#458;font-weight:bold">int</span>
+</span></span><span style="display:flex;"><span>}<span style="color:#998;font-style:italic">//@name Response
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="如何使用安全性注释">如何使用安全性注释</h3>
+<p>通用API信息。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @securityDefinitions.basic BasicAuth
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @securitydefinitions.oauth2.application OAuth2Application
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @tokenUrl https://example.com/oauth/token
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @scope.write Grants write access
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @scope.admin Grants read and write access to administrative information
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>每个API操作。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Security ApiKeyAuth
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用AND条件。</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Security ApiKeyAuth
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Security OAuth2Application[write, admin]
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="token的api注解"><code>token</code>的api注解</h3>
+<p>swagger除了可以查看文档外，还可以直接<code>try it out</code> 调用接口，有些接口是需要登录后才能调用。有个token鉴权。</p>
+<p>校验token 的api接口 header中必须有正确的 <strong>Authorization</strong></p>
+<p>可以通过添加通用的API注释来设置全局接口的header值</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @securityDefinitions.apikey CoreAPI
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @name Authorization
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @in header
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">//设置header字段 Authorization
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后在需要token接口注释上增加</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
+<table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#998;font-style:italic">// @Security CoreAPI
+</span></span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">//并且需要携带对应的token，一般token放在Bear开头，所以需要如下图操作：（Bear{token}，注意两者之间有空格）
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>
+        <a data-fancybox="gallery" href="https://img2018.cnblogs.com/blog/866435/201912/866435-20191225094144056-809753624.png">
+            <img class="mx-auto" alt="img" src="https://img2018.cnblogs.com/blog/866435/201912/866435-20191225094144056-809753624.png" />
+        </a>
+    </p>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="https://cold-bin.github.io">cold bin</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="https://cold-bin.github.io/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">https://cold-bin.github.io/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/Go%E7%88%AC%E8%99%AB/">Go爬虫</a></li>
+        
+        <li><a href="/post/Leecode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/">Leecode每日一题</a></li>
+        
+        <li><a href="/post/Redis%E5%9F%BA%E7%A1%80/">Redis基础</a></li>
+        
+        <li><a href="/post/%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/">包含多个段的程序</a></li>
+        
+        <li><a href="/post/%E6%B1%87%E7%BC%96%E4%B9%8BBX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/">汇编之BX和loop指令</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='/tags/swagger'>swagger</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "my-blog-comment"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+    
+    
+
+</div>
+
+                    <footer id="footer">
+    <div>
+        &copy; 2023 <a href="https://cold-bin.github.io">cold bin&#39;s blog By cold bin</a>
+        
+    </div>
+    <br />
+    <div>
+        <div class="github-badge">
+            <a href="https://gohugo.io/" target="_black" rel="nofollow"><span class="badge-subject">Powered by</span><span class="badge-value bg-blue">Hugo</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://www.flysnow.org/" target="_black"><span class="badge-subject">Design by</span><span class="badge-value bg-brightgreen">飞雪无情</span></a>
+        </div>
+        <div class="github-badge">
+            <a href="https://github.com/flysnow-org/maupassant-hugo" target="_black"><span class="badge-subject">Theme</span><span class="badge-value bg-yellowgreen">Maupassant</span></a>
+        </div>
+    </div>
+</footer>
+
+
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.2.8/raphael.min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/flowchart/1.12.2/flowchart.min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+                if (!window.flowchart) return;
+                const blocks = document.querySelectorAll('pre code.language-flowchart, pre code.language-flow');
+                for (let i = 0; i < blocks.length; i++) {
+                    const block = blocks[i];
+                    const rootElement = block.parentNode;
+                    const container = document.createElement('div');
+                    const id = `js-flowchart-diagrams-${i}`;
+                    container.id = id;
+                    container.className = 'align-center';
+                    container.setAttribute("style", "overFlow-x:auto");
+                    rootElement.parentNode.replaceChild(container, rootElement);
+                    const diagram = flowchart.parse(block.childNodes[0].nodeValue);
+                    diagram.drawSVG(id, window.flowchartDiagramsOptions ? window.flowchartDiagramsOptions : {});
+                }
+            })();
+        </script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js" crossorigin="anonymous"></script>
+        <script>(function () {
+            if (!window.Diagram) return;
+            const blocks = document.querySelectorAll('pre code.language-sequence');
+            for (let i = 0; i < blocks.length; i++) {
+                const block = blocks[i];
+                
+                const rootElement = block.parentNode;
+                const container = document.createElement('div');
+                const id = `js-sequence-diag-${i}`;
+                container.id = id;
+                container.className = 'align-center';
+                container.setAttribute("style", "overFlow-x:auto");
+                rootElement.parentNode.replaceChild(container, rootElement);
+
+                const diagram = Diagram.parse(block.childNodes[0].nodeValue);
+                diagram.drawSVG(id, window.sequenceDiagramsOptions
+                    ? window.sequenceDiagramsOptions
+                    : { theme: 'simple' });
+            }
+        })();
+        </script><script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script><script src="//cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='https://cold-bin.github.io/search' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="https://cold-bin.github.io">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/mod%E5%92%8Cgopath%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/" title="Mod和gopath依赖管理">Mod和gopath依赖管理</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAGo%E5%BA%94%E7%94%A8%E7%9A%84Docker%E9%95%9C%E5%83%8F/" title="如何构建Go应用的Docker镜像">如何构建Go应用的Docker镜像</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%9F%BA%E4%BA%8Ego%E7%9A%84selenium%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/" title="基于go的selenium使用详解">基于go的selenium使用详解</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/" title="常见算法总结">常见算法总结</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" title="自动化接口文档swag使用指南">自动化接口文档swag使用指南</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/Go%E7%88%AC%E8%99%AB/" title="Go爬虫">Go爬虫</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/Leecode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/" title="Leecode每日一题">Leecode每日一题</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/Redis%E5%9F%BA%E7%A1%80/" title="Redis基础">Redis基础</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/" title="包含多个段的程序">包含多个段的程序</a>
+    </li>
+    
+    <li>
+        <a href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8BBX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/" title="汇编之BX和loop指令">汇编之BX和loop指令</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/categories/'>分类</a></h3>
+<ul class="widget-list">
+    
+    <li><a href="https://cold-bin.github.io/categories/Docker/">Docker (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/GRPC/">GRPC (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Golang/">Golang (24)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">Go高性能并发编程 (3)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/HTTP%E5%8D%8F%E8%AE%AE/">HTTP协议 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Leecode/">Leecode (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/MongoDB/">MongoDB (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/MySQL/">MySQL (6)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/Redis/">Redis (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/git/">git (2)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/gorm/">gorm (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/">加密算法 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%AD%98%E5%82%A8/">存储 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%AE%B9%E5%99%A8/">容器 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%8A%93%E5%8C%85/">抓包 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3/">接口文档 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/">摘要算法 (1)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库 (3)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/">数据结构与算法 (3)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/">汇编 (5)</a></li>
+    
+    <li><a href="https://cold-bin.github.io/categories/%E7%88%AC%E8%99%AB/">爬虫 (2)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title"><a href='/tags/'>标签</a></h3>
+<div class="tagcloud">
+    
+    <a href="https://cold-bin.github.io/tags/GRPC/">GRPC</a>
+    
+    <a href="https://cold-bin.github.io/tags/Go%E5%BA%95%E5%B1%82/">Go底层</a>
+    
+    <a href="https://cold-bin.github.io/tags/Makefile/">Makefile</a>
+    
+    <a href="https://cold-bin.github.io/tags/MongoDB/">MongoDB</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E4%BA%8B%E5%8A%A1%E7%AF%87/">MySQL事务篇</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E5%9F%BA%E7%A1%80/">MySQL基础</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E6%97%A5%E5%BF%97%E4%B8%8E%E5%A4%87%E4%BB%BD%E7%AF%87/">MySQL日志与备份篇</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E6%9E%B6%E6%9E%84/">MySQL架构</a>
+    
+    <a href="https://cold-bin.github.io/tags/MySQL%E7%B4%A2%E5%BC%95%E5%8F%8A%E8%B0%83%E4%BC%98/">MySQL索引及调优</a>
+    
+    <a href="https://cold-bin.github.io/tags/Redis%E5%9F%BA%E7%A1%80/">Redis基础</a>
+    
+    <a href="https://cold-bin.github.io/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/">api向前兼容</a>
+    
+    <a href="https://cold-bin.github.io/tags/colly%E6%A1%86%E6%9E%B6/">colly框架</a>
+    
+    <a href="https://cold-bin.github.io/tags/git%E7%9A%84commit%E8%A7%84%E8%8C%83/">git的commit规范</a>
+    
+    <a href="https://cold-bin.github.io/tags/goquery/">goquery</a>
+    
+    <a href="https://cold-bin.github.io/tags/go%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/">go编程思想</a>
+    
+    <a href="https://cold-bin.github.io/tags/https/">https</a>
+    
+    <a href="https://cold-bin.github.io/tags/reflect/">reflect</a>
+    
+    <a href="https://cold-bin.github.io/tags/rune%E7%B1%BB%E5%9E%8B/">rune类型</a>
+    
+    <a href="https://cold-bin.github.io/tags/selenium/">selenium</a>
+    
+    <a href="https://cold-bin.github.io/tags/swagger/">swagger</a>
+    
+    <a href="https://cold-bin.github.io/tags/sync.pool/">sync.pool</a>
+    
+    <a href="https://cold-bin.github.io/tags/tls%E8%AF%81%E4%B9%A6/">tls证书</a>
+    
+    <a href="https://cold-bin.github.io/tags/unsafe/">unsafe</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/">依赖管理</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">内存对齐</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%8E%E9%9B%86%E4%B8%AD%E5%BC%8F/">分布式与集中式</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%88%97%E5%AD%98%E5%82%A8/">列存储</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">单元测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/">原子操作</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%8F%8D%E5%B0%84/">反射</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%A7%A3%E6%9E%90/">命令行参数解析</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%AE%B9%E5%99%A8/">容器</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8/">并发安全</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93java/">数据结构与算法总结，java</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96BX%E5%92%8Cloop%E6%8C%87%E4%BB%A4/">汇编BX和loop指令</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%A8%8B%E5%BA%8F/">汇编多个段程序</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%AF%84%E5%AD%98%E5%99%A8/">汇编寄存器</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E6%A6%82%E8%BF%B0/">汇编概述</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/">汇编第一个程序</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/">版本控制</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/">算法题</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/">网络测试</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E8%A1%8C%E5%AD%98%E5%82%A8/">行存储</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E9%94%81/">锁</a>
+    
+    <a href="https://cold-bin.github.io/tags/%E9%9B%B6%E6%8B%B7%E8%B4%9D/">零拷贝</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a target="_blank" href="https://github.com/cold-bin" title="GitHub">GitHub</a>
+        </li>
+        
+        <li>
+            <a target="_blank" href="https://blog.csdn.net/qq_57467091" title="CSDN">CSDN</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="https://cold-bin.github.io/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

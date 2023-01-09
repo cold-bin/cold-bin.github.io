@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>依赖管理 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</link>
+    <description>Recent content in 依赖管理 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 09 Jan 2023 10:33:48 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Mod和gopath依赖管理</title>
+      <link>https://cold-bin.github.io/post/mod%E5%92%8Cgopath%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Mon, 09 Jan 2023 10:33:48 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/mod%E5%92%8Cgopath%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</guid>
+      <description>彻底搞懂GOROOT、GOPATH、PATH、mod管理和gopath管理项目的区别 1、GOPATH 和 GOROOT 不同于其他语言，go中没有项目的说法，只有包, 其中有两个重要的路径，GOROOT 和 GOPATH Go开发相关的环境变量如下： GOROOT：GOROOT就是Go的安装目录，（类似于java的</description>
+    </item>
+    
+  </channel>
+</rss>
