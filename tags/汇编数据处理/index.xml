@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>汇编数据处理 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/</link>
+    <description>Recent content in 汇编数据处理 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 10 Jan 2023 20:04:55 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>汇编之数据处理问题</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Tue, 10 Jan 2023 20:04:55 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E9%97%AE%E9%A2%98/</guid>
+      <description>div指令、dd、dup、mul指令 div是除法指令 除数：有8位和16位两种，在一个寄存器或内存单元中。 被除数：默认放在AX或DX和AX中， 如果除数为8位，被除数则为16位，默认在AX中存放； 如果除数为16位，被除数则为32位，在DX和AX中存放，DX存放高16位，AX存放低16</description>
+    </item>
+    
+  </channel>
+</rss>

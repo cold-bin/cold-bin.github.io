@@ -6,7 +6,16 @@
     <description>Recent content in 容器 on cold bin&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Mon, 09 Jan 2023 10:31:00 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/%E5%AE%B9%E5%99%A8/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 10 Jan 2023 19:45:16 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/%E5%AE%B9%E5%99%A8/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Docker基础</title>
+      <link>https://cold-bin.github.io/post/Docker%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Tue, 10 Jan 2023 19:45:16 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/Docker%E5%9F%BA%E7%A1%80/</guid>
+      <description>Docker基础篇之快速上手 第一章 Docker简介 是什么？ 问题：为什么会有 docker 的出现 一款产 品从开发到上线，从操作系统，到运行环境，再到应用配置。作为开发+运维之间的协作我们需要关心很多东西，这也是很多互联网公司都不得不面对的问题，特别是各种版本的迭代之后，不同版本环境的兼容，对运维</description>
+    </item>
+    
     <item>
       <title>如何构建Go应用的Docker镜像</title>
       <link>https://cold-bin.github.io/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAGo%E5%BA%94%E7%94%A8%E7%9A%84Docker%E9%95%9C%E5%83%8F/</link>
