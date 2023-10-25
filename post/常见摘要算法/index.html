@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>常见摘要算法 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="[toc] HASH算法 摘要算法又称哈希算法、散列算法，它的作用是：它通过一个函数，把任意长度的数据转换为一个长度固定的数据串（通常用16进制的字符串" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="常见摘要算法" />
+<meta property="og:description" content="[toc] HASH算法 摘要算法又称哈希算法、散列算法，它的作用是：它通过一个函数，把任意长度的数据转换为一个长度固定的数据串（通常用16进制的字符串" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-11-17T12:42:15+08:00" />
+<meta property="article:modified_time" content="2022-11-17T12:42:15+08:00" />
+<meta itemprop="name" content="常见摘要算法">
+<meta itemprop="description" content="[toc] HASH算法 摘要算法又称哈希算法、散列算法，它的作用是：它通过一个函数，把任意长度的数据转换为一个长度固定的数据串（通常用16进制的字符串"><meta itemprop="datePublished" content="2022-11-17T12:42:15+08:00" />
+<meta itemprop="dateModified" content="2022-11-17T12:42:15+08:00" />
+<meta itemprop="wordCount" content="1932">
+<meta itemprop="keywords" content="哈希," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="常见摘要算法"/>
+<meta name="twitter:description" content="[toc] HASH算法 摘要算法又称哈希算法、散列算法，它的作用是：它通过一个函数，把任意长度的数据转换为一个长度固定的数据串（通常用16进制的字符串"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">常见摘要算法</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2022-11-17 </span>
+        <div class="post-category">
+            <a href="/categories/%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/"> 摘要算法 </a>
+            </div>
+          <span class="more-meta"> 约 1932 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#hashhttpssocsdnnetsosearchqhashspm1001210130017020算法"><a href="https://so.csdn.net/so/search?q=HASH&amp;spm=1001.2101.3001.7020">HASH</a>算法</a></li>
+        <li><a href="#哈希函数的一些特性">哈希函数的一些特性</a></li>
+        <li><a href="#举个栗子">举个栗子</a></li>
+        <li><a href="#哈希算法的用途">哈希算法的用途</a>
+          <ul>
+            <li><a href="#文件防篡改">文件防篡改</a></li>
+            <li><a href="#存储用户口令">存储用户口令</a></li>
+            <li><a href="#如何抵御彩虹表攻击">如何抵御彩虹表攻击</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <p>[toc]</p>
+<h2 id="hashhttpssocsdnnetsosearchqhashspm1001210130017020算法"><a href="https://so.csdn.net/so/search?q=HASH&amp;spm=1001.2101.3001.7020">HASH</a>算法</h2>
+<p>摘要算法又称哈希算法、散列算法，它的作用是：它通过一个函数，把任意长度的数据转换为一个长度固定的数据串（通常用16进制的字符串表示）。</p>
+<blockquote>
+<p>要注意摘要算法<strong>不是加密算法</strong>，不能用于加密（<strong>因为无法通过摘要反推明文</strong>），<strong>只能用于防篡改</strong>，但是它的单向计算特性决定了可以在不存储明文口令的情况下验证用户口令。</p>
+</blockquote>
+<p>哈希函数的主要作用不是完成数据<a href="https://so.csdn.net/so/search?q=%E5%8A%A0%E5%AF%86&amp;spm=1001.2101.3001.7020">加密</a>与解密工作，它是用来检验数据完整性的重要技术，运算结果具有不可逆性。</p>
+<p>通过哈希函数，可以为数据创建&quot;数组指纹&quot;(<a href="https://so.csdn.net/so/search?q=%E6%95%A3%E5%88%97&amp;spm=1001.2101.3001.7020">散列</a>值/哈希值)，哈希值通常是一个短的随机字母和数字组成的字符串。消息认证流程如下：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20210919235904499.png" alt="img"></p>
+<p>在上述认证流程中，信息收发双方在通信前已经商定好了具体的哈希算法，并且该算法是公开的。</p>
+<p>如果消息在传递过程中被篡改，则该消息不能与已经获得的数字指纹(哈希值)相匹配。</p>
+<hr>
+<h2 id="哈希函数的一些特性">哈希函数的一些特性</h2>
+<blockquote>
+<ul>
+<li><strong>消息的长度不受限制；</strong></li>
+<li><strong>对于给定的消息，其哈希值的计算是很容易的；</strong></li>
+<li><strong>如果两个哈希值不想同，则这两个哈希值的原文数据也不想同，这个特性使得哈希函数具有确定性的结果；</strong></li>
+<li><strong>哈希函数的运算过程是不可逆的，即函数的单向性。这也是单向函数命名的由来。</strong></li>
+<li><strong>对于一个已知的消息和其哈希值，要找到另一个消息使其获得相同的哈希值是不可能的，即抗弱碰撞性，用来防止伪造。</strong></li>
+</ul>
+</blockquote>
+<p>哈希函数官方用于消息完整性验证，是数据签名的核心技术。</p>
+<p>哈希函数的常用算法有：MD(消息摘要算法)、SHA(安全散列算法)及Mac(消息认证码算法)</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">算法</th>
+<th style="text-align:left">输出长度（位）</th>
+<th style="text-align:left">输出长度（字节）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">SM3</td>
+<td style="text-align:left">256 bits</td>
+<td style="text-align:left">32 bytes</td>
+</tr>
+<tr>
+<td style="text-align:left">MD5</td>
+<td style="text-align:left">128 bits</td>
+<td style="text-align:left">16 bytes</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA-1</td>
+<td style="text-align:left">160 bits</td>
+<td style="text-align:left">20 bytes</td>
+</tr>
+<tr>
+<td style="text-align:left">RipeMD-160</td>
+<td style="text-align:left">160 bits</td>
+<td style="text-align:left">20 bytes</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA-256</td>
+<td style="text-align:left">256 bits</td>
+<td style="text-align:left">32 bytes</td>
+</tr>
+<tr>
+<td style="text-align:left">SHA-512</td>
+<td style="text-align:left">512 bits</td>
+<td style="text-align:left">64 bytes</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="举个栗子">举个栗子</h2>
+<p>Java标准库提供了常用的哈希算法，并且有一套统一的接口。我们以MD5算法为例，看看如何对输入计算哈希：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Test</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run2</span><span class="o">(){</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">MessageDigest</span> <span class="n">messageDigest</span> <span class="o">=</span> <span class="n">MessageDigest</span><span class="o">.</span><span class="na">getInstance</span><span class="o">(</span><span class="s">&#34;MD5&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 反复调用update输入数据:
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">messageDigest</span><span class="o">.</span><span class="na">update</span><span class="o">(</span><span class="s">&#34;Hello&#34;</span><span class="o">.</span><span class="na">getBytes</span><span class="o">(</span><span class="n">StandardCharsets</span><span class="o">.</span><span class="na">UTF_8</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">            <span class="n">messageDigest</span><span class="o">.</span><span class="na">update</span><span class="o">(</span><span class="s">&#34;World&#34;</span><span class="o">.</span><span class="na">getBytes</span><span class="o">(</span><span class="n">StandardCharsets</span><span class="o">.</span><span class="na">UTF_8</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">            <span class="kt">byte</span><span class="o">[]</span> <span class="n">result</span> <span class="o">=</span> <span class="n">messageDigest</span><span class="o">.</span><span class="na">digest</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="k">new</span> <span class="n">BigInteger</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="n">result</span><span class="o">).</span><span class="na">toString</span><span class="o">(</span><span class="mi">16</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">NoSuchAlgorithmException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>运算结果：</p>
+<p>68e109f0f40ca72a15e05cc22786f8e6</p>
+<hr>
+<h2 id="哈希算法的用途">哈希算法的用途</h2>
+<p>因为相同的输入永远会得到相同的输出，因此，如果输入被修改了，得到的输出就会不同。</p>
+<h3 id="文件防篡改">文件防篡改</h3>
+<p>我们在网站上下载软件的时候，经常看到下载页显示的哈希：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/d83dfee69d959c62555b7dacc82e918f.png" alt="file-md5"></p>
+<p>如何判断下载到本地的软件是原始的、未经篡改的文件？我们只需要自己计算一下本地文件的哈希值，再与官网公开的哈希值对比，如果相同，说明文件下载正确，否则，说明文件已被篡改。</p>
+<h3 id="存储用户口令">存储用户口令</h3>
+<p>哈希算法的另一个重要用途是存储用户口令。如果直接将用户的原始口令存放到数据库中，会产生极大的安全风险：</p>
+<blockquote>
+<ul>
+<li><strong>数据库管理员能够看到用户明文口令；</strong></li>
+<li><strong>数据库数据一旦泄漏，黑客即可获取用户明文口令。</strong></li>
+</ul>
+</blockquote>
+<p>不存储用户的原始口令，那么如何对用户进行认证？</p>
+<p>方法是存储用户口令的哈希，例如：MD5</p>
+<p>在用户输入原始口令后，系统计算用户输入的原始口令的MD5并与数据库存储的MD5对比，如果一致，说明口令正确，否则，口令错误。</p>
+<p>因此，数据库存储用户名和口令的表内容应该像下面这样：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">username</th>
+<th style="text-align:left">password</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">bob</td>
+<td style="text-align:left">f30aa7a662c728b7407c54ae6bfd27d1</td>
+</tr>
+<tr>
+<td style="text-align:left">alice</td>
+<td style="text-align:left">25d55ad283aa400af464c76d713c07ad</td>
+</tr>
+<tr>
+<td style="text-align:left">tim</td>
+<td style="text-align:left">bed128365216c019988915ed3add75fb</td>
+</tr>
+</tbody>
+</table>
+<p>这样一来，数据库管理员看不到用户的原始口令。即使数据库泄漏，黑客也无法拿到用户的原始口令。想要拿到用户的原始口令，必须用暴力穷举的方法，一个口令一个口令地试，直到某个口令计算的MD5恰好等于指定值。</p>
+<p>使用哈希口令时，还要注意<strong>防止彩虹表攻击</strong>。</p>
+<p>什么是彩虹表呢？上面讲到了，如果只拿到MD5，从MD5反推明文口令，只能使用暴力穷举的方法。</p>
+<p>然而黑客并不笨，暴力穷举会消耗大量的算力和时间。但是，如果有一个预先计算好的常用口令和它们的MD5的对照表：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">常用口令</th>
+<th style="text-align:left">MD5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">hello123</td>
+<td style="text-align:left">f30aa7a662c728b7407c54ae6bfd27d1</td>
+</tr>
+<tr>
+<td style="text-align:left">12345678</td>
+<td style="text-align:left">25d55ad283aa400af464c76d713c07ad</td>
+</tr>
+<tr>
+<td style="text-align:left">passw0rd</td>
+<td style="text-align:left">bed128365216c019988915ed3add75fb</td>
+</tr>
+<tr>
+<td style="text-align:left">19700101</td>
+<td style="text-align:left">570da6d5277a646f6552b8832012f5dc</td>
+</tr>
+<tr>
+<td style="text-align:left">…</td>
+<td style="text-align:left">…</td>
+</tr>
+<tr>
+<td style="text-align:left">20201231</td>
+<td style="text-align:left">6879c0ae9117b50074ce0a0d4c843060</td>
+</tr>
+</tbody>
+</table>
+<p>这个表就是<strong>彩虹表</strong>。</p>
+<p>如果用户使用了常用口令，黑客从MD5一下就能反查到原始口令：</p>
+<p>bob的MD5：<code>f30aa7a662c728b7407c54ae6bfd27d1</code>，原始口令：<code>hello123</code>；</p>
+<p>alice的MD5：<code>25d55ad283aa400af464c76d713c07ad</code>，原始口令：<code>12345678</code>；</p>
+<p>tim的MD5：<code>bed128365216c019988915ed3add75fb</code>，原始口令：<code>passw0rd</code>。</p>
+<p>这就是为什么不要使用常用密码，以及不要使用生日作为密码的原因。</p>
+<h3 id="如何抵御彩虹表攻击">如何抵御彩虹表攻击</h3>
+<p><strong>即使用户使用了常用口令，我们也可以采取措施来抵御彩虹表攻击：方法是对每个口令额外添加随机数，这个方法称之为加盐（salt）</strong>（如果盐值是随机还需要在数据库里存盐值）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">digest = 摘要算法(salt+inputPassword)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>经过加盐处理的数据库表，内容如下：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">username</th>
+<th style="text-align:left">salt</th>
+<th style="text-align:left">password</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">bob</td>
+<td style="text-align:left">H1r0a</td>
+<td style="text-align:left">a5022319ff4c56955e22a74abcc2c210</td>
+</tr>
+<tr>
+<td style="text-align:left">alice</td>
+<td style="text-align:left">7$p2w</td>
+<td style="text-align:left">e5de688c99e961ed6e560b972dab8b6a</td>
+</tr>
+<tr>
+<td style="text-align:left">tim</td>
+<td style="text-align:left">z5Sk9</td>
+<td style="text-align:left">1eee304b92dc0d105904e7ab58fd2f64</td>
+</tr>
+</tbody>
+</table>
+<p><strong>加盐的目的在于使黑客的彩虹表失效，即使用户使用常用口令，也无法从MD5反推原始口令。</strong></p>
+<p><strong>SHA-1</strong></p>
+<p>SHA-1也是一种哈希算法，它的输出是160 bits，即20字节。SHA-1是由美国国家安全局开发的，SHA算法实际上是一个系列，包括SHA-0（已废弃）、SHA-1、SHA-256、SHA-512等。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2022-11-17
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E5%93%88%E5%B8%8C/">哈希</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E5%AD%98%E5%82%A8%E4%B9%8B%E8%A1%8C%E5%88%97%E5%AD%98%E5%82%A8/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">存储之行列存储</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%A6%82%E5%BF%B5/">
+            <span class="next-text nav-default">常见加密算法原理及概念</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2022-11-17 12:42:15 \u002b0800 CST',
+        title: '常见摘要算法',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

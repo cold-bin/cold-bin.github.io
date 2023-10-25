@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>BurpsuitePro抓包之旅 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="burpsuitepro的模块 Proxy 提供一个直观、友好的用户界面，它的代理服务器包含非常详细的拦截规则，并能准确分析 HTTP 消息的结构与内容。 Spide 爬行蜘" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/burpsuitepro%E6%8A%93%E5%8C%85%E4%B9%8B%E6%97%85/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="BurpsuitePro抓包之旅" />
+<meta property="og:description" content="burpsuitepro的模块 Proxy 提供一个直观、友好的用户界面，它的代理服务器包含非常详细的拦截规则，并能准确分析 HTTP 消息的结构与内容。 Spide 爬行蜘" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/burpsuitepro%E6%8A%93%E5%8C%85%E4%B9%8B%E6%97%85/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-10-05T17:34:18+08:00" />
+<meta property="article:modified_time" content="2022-10-05T17:34:18+08:00" />
+<meta itemprop="name" content="BurpsuitePro抓包之旅">
+<meta itemprop="description" content="burpsuitepro的模块 Proxy 提供一个直观、友好的用户界面，它的代理服务器包含非常详细的拦截规则，并能准确分析 HTTP 消息的结构与内容。 Spide 爬行蜘"><meta itemprop="datePublished" content="2022-10-05T17:34:18+08:00" />
+<meta itemprop="dateModified" content="2022-10-05T17:34:18+08:00" />
+<meta itemprop="wordCount" content="1425">
+<meta itemprop="keywords" content="抓包," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="BurpsuitePro抓包之旅"/>
+<meta name="twitter:description" content="burpsuitepro的模块 Proxy 提供一个直观、友好的用户界面，它的代理服务器包含非常详细的拦截规则，并能准确分析 HTTP 消息的结构与内容。 Spide 爬行蜘"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">BurpsuitePro抓包之旅</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2022-10-05 </span>
+        <div class="post-category">
+            <a href="/categories/%E6%9D%82/"> 杂 </a>
+            </div>
+          <span class="more-meta"> 约 1425 字 </span>
+          <span class="more-meta"> 预计阅读 3 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#burpsuitepro的模块">burpsuitepro的模块</a></li>
+        <li><a href="#google浏览器网页抓包">google浏览器网页抓包</a>
+          <ul>
+            <li><a href="#下载证书">下载证书</a></li>
+            <li><a href="#安装证书">安装证书</a></li>
+            <li><a href="#抓包">抓包</a></li>
+          </ul>
+        </li>
+        <li><a href="#微信小程序抓包">微信小程序抓包</a></li>
+        <li><a href="#app抓包">APP抓包</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h2 id="burpsuitepro的模块">burpsuitepro的模块</h2>
+<p><strong>Proxy</strong></p>
+<p>提供一个直观、友好的用户界面，它的代理服务器<strong>包含非常详细的拦截规则</strong>，并能<strong>准确分析 HTTP 消息的结构与内容</strong>。</p>
+<p><strong>Spide</strong></p>
+<p>爬行蜘蛛工具，可以用来<strong>抓取目标网站</strong>，以显示网站的内容，基本结构，和其他功能。</p>
+<p><strong>Scanner</strong></p>
+<p>Web 应用程序的<strong>安全漏洞进行自动发现工具</strong>。它被设计<strong>用于渗透测试</strong>，并密切与您现有的技术和方法，以适应执行手动和半自动化的 Web 应用程序渗透测试。这个对于抓包分析来说用处不大。</p>
+<p><strong>Repeater</strong></p>
+<p>可让您<strong>手动重新发送单个HTTP请求</strong>以查看服务器回应。这个对于重新构造请求头和请求体比较方便。</p>
+<p><strong>Intruder</strong></p>
+<p>是burp套件的优势,它提供一组特别有用的功能。它可以<strong>自动实施各种定制攻击</strong>，包括资源枚举、数据提取、模糊测试等常见漏洞等。在各种有效的扫描工具中，它能够以最细化、最简单的方式访问它生产的请求与响应，允许组合利用个人智能与该工具的控制优点。</p>
+<p><strong>Sequencer</strong></p>
+<p>对会话令牌，会话标识符或其他出于安全原因需要随机产生的键值的可预测性进行分析。</p>
+<p><strong>Comparer</strong></p>
+<p>是一个简单的工具，执行比较数据之间的任何两个项目（一个可视化的“差异”）。在攻击一个Web 应用程序的情况下，这一要求通常会出现当你想快速识别两个应用程序的响应之间的差异（例如，入侵者攻击的过程中收到的两种反应之间之间，或登录失败的反应使用有效的和无效的用户名）之间，或两个应用程序请求（例如，确定不同的行为引起不同的请求参数）。</p>
+<p><strong>Decoder</strong></p>
+<p>使用各种编码绕过服务器端输入过滤，smart decode 自动识别编码格式。</p>
+<h2 id="google浏览器网页抓包">google浏览器网页抓包</h2>
+<h3 id="下载证书">下载证书</h3>
+<p>burpsuitepro默认的证书地址在<code>120.0.0.1:8080</code>端口，当然也可以更改。这样在本地就可以访问<code>127.0.0.1:8080</code>地址获取CA证书了。如果发生端口冲突，可以手动修改burpsuitepro的代理地址端口，这样只需要在对应代理端口访问即可。然后点击 <strong>CA Certificate</strong>即可下载证书<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202210061136901.png" alt="image-20221006113634706"></p>
+<h3 id="安装证书">安装证书</h3>
+<p>设置&mdash;&gt;隐私设置和安全性&mdash;&gt;更多&mdash;&gt;管理证书</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202210061125310.png" alt="b737fc74c5a1698bd8745ef1a2320a14.png"></p>
+<p><strong>导入证书</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202210061126216.png" alt="7c4d257c0186e489d33d37a15c01ced0.png"></p>
+<p>下一步到浏览本地证书位置。选所有文件，不然可能你找不到你的证书!! 选择证书后打开进入下一步。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202210061126793.png" alt="0e1b1951d7488b6a596593b4f9452e3f.png"></p>
+<p>按下图位置设置进入下一步，完成。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202210061126621.png" alt="a548a0ffefcd751bd8cc76f61d7cd946.png"></p>
+<p><strong>最后设置证书信任</strong></p>
+<p>按图示操作找到刚才安装的证书。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202210061126828.png" alt="ba7853dac1e9af6f9546f951f38607ce.png"></p>
+<p>选中证书点高级</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202210061126607.png" alt="8ac0a0cdb877d6d64c65037a1acf48d0.png"></p>
+<p>按下图勾选，确认。最后重启浏览器即可。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202210061126046.png" alt="0673ec779b4a47d586f06047e79e8f7b.png"></p>
+<h3 id="抓包">抓包</h3>
+<h4 id="挂代理">挂代理</h4>
+<p>需要使用google浏览器抓包时，需要将burpsuitepro的proxy端口地址开个代理。可以全局代理，也建议局部代理，这里推荐一款好用的插件 SwitchyOmega ,它可以定制代理规则，将浏览器的请求转发到对应地址上。这里我们需要将burpsuitepro监听的端口地址，使用代理进行转发，这样浏览器发出的请求就会被转到代理地址，就可以收到请求报文信息。</p>
+<h4 id="打开拦截">打开拦截</h4>
+<p>proxy-&gt;intercept&ndash;&gt;intercept is off=&gt;intercept is on</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202210061146506.png" alt="image-20221006114647653"></p>
+<p>打开代理和拦截后，那么对满足代理规则的网址的请求都会拦截并解析。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202210061158626.png" alt="image-20221006115823412"></p>
+<h4 id="选项解释">选项解释</h4>
+<p>这里说说，Forward Drop Action intercept is off/on 这几个选项</p>
+<p><strong>Forward</strong></p>
+<p>拦截并编辑请求之后，发送请求到服务器或浏览器</p>
+<p><strong>Drop</strong></p>
+<p>不想要发送本次请求，可以点击<strong>Drop</strong>放弃这个拦截请求</p>
+<p><strong>intercept is off/on</strong></p>
+<p>关闭/开启所有拦截.如果时 on ，表示请求和响应将被拦截或自动转发根据配置的拦截规则配置的代理选项。如果显示 off 则显示拦截之后的所有信息将自动转发。相当于没有对这个请求做任何事情。</p>
+<p><strong>Action</strong></p>
+<p>对当前拦截的请求做一些操作，如<strong>Repeater</strong>可以篡改请求之后再发送请求。</p>
+<h2 id="微信小程序抓包">微信小程序抓包</h2>
+<p>由于目前微信升级了。最新版本的微信小程序应用使用代理，请求却无法走代理。目前好像不能抓包。微信小程序的请求不走代理端口地址。</p>
+<h2 id="app抓包">APP抓包</h2>
+<p>todo</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2022-10-05
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E6%8A%93%E5%8C%85/">抓包</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/mysql%E4%BA%8B%E5%8A%A1%E7%AF%87/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">MySQL事务篇</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8F%8A%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
+            <span class="next-text nav-default">Sync.Pool的使用及源码分析</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2022-10-05 17:34:18 \u002b0800 CST',
+        title: 'BurpsuitePro抓包之旅',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

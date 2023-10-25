@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>操作系统之输入输出管理 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="[toc] IO管理概述 IO设备基本概念 IO设备管理是操作系统设计中最凌乱也最具挑战性的部分。由于它包含了很多领域的不同设备以及与设备相关的应用程序，" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E7%AE%A1%E7%90%86/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="操作系统之输入输出管理" />
+<meta property="og:description" content="[toc] IO管理概述 IO设备基本概念 IO设备管理是操作系统设计中最凌乱也最具挑战性的部分。由于它包含了很多领域的不同设备以及与设备相关的应用程序，" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E7%AE%A1%E7%90%86/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-05-30T12:10:06+08:00" />
+<meta property="article:modified_time" content="2023-05-30T12:10:06+08:00" />
+<meta itemprop="name" content="操作系统之输入输出管理">
+<meta itemprop="description" content="[toc] IO管理概述 IO设备基本概念 IO设备管理是操作系统设计中最凌乱也最具挑战性的部分。由于它包含了很多领域的不同设备以及与设备相关的应用程序，"><meta itemprop="datePublished" content="2023-05-30T12:10:06+08:00" />
+<meta itemprop="dateModified" content="2023-05-30T12:10:06+08:00" />
+<meta itemprop="wordCount" content="10145">
+<meta itemprop="keywords" content="dma,spooling技术,io控制方式," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="操作系统之输入输出管理"/>
+<meta name="twitter:description" content="[toc] IO管理概述 IO设备基本概念 IO设备管理是操作系统设计中最凌乱也最具挑战性的部分。由于它包含了很多领域的不同设备以及与设备相关的应用程序，"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">操作系统之输入输出管理</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-05-30 </span>
+        <div class="post-category">
+            <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"> 操作系统 </a>
+            </div>
+          <span class="more-meta"> 约 10145 字 </span>
+          <span class="more-meta"> 预计阅读 21 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#io管理概述">IO管理概述</a>
+          <ul>
+            <li><a href="#io设备基本概念">IO设备基本概念</a></li>
+            <li><a href="#io控制器">IO控制器</a></li>
+            <li><a href="#io软件层次结构">IO软件层次结构</a></li>
+          </ul>
+        </li>
+        <li><a href="#io核心子系统">IO核心子系统</a>
+          <ul>
+            <li><a href="#io核心子系统概述">IO核心子系统概述</a></li>
+            <li><a href="#spooling技术"><code>SPOOLing</code>技术</a></li>
+            <li><a href="#设备分配与回收">设备分配与回收</a></li>
+            <li><a href="#缓冲区的管理">缓冲区的管理</a></li>
+            <li><a href="#出错处理">出错处理</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <p>[toc]</p>
+<h2 id="io管理概述">IO管理概述</h2>
+<h3 id="io设备基本概念">IO设备基本概念</h3>
+<p>IO设备管理是操作系统设计中最凌乱也最具挑战性的部分。由于它包含了很多领域的不同设备以及与设备相关的应用程序，因此很难有一个通用且一直的设计方案。所以在理解设备管理之前，应该先了解具体的IO设备类型。</p>
+<p>IO设备可以根据不同的方式进行分类。</p>
+<h4 id="按使用特性分类io设备">按使用特性分类IO设备</h4>
+<ul>
+<li>人机交互类外部设备，又称慢速IO设备，用于桶计算机用户之间交互的设备，如打印机、显示器、鼠标、键盘等。这类设备数据交换速度相对较慢，通常是以字节为单位进行数据交换。</li>
+<li>存储设备，用于存储程序和数据的设备，如磁盘、磁带、光盘等。这类设备用于数据交换，速度较快，通常以多字节组成的块为单位进行数据交换。</li>
+<li>网络通信设备，用于与远程设备通信的设备，如各种网络接口、调制解调器等。其数据交换速度介于外部设备与存储设备之间。网络通信设备在使用和管理上与前两者设备有很大的不同。</li>
+</ul>
+<h4 id="按传输速率分类io设备">按传输速率分类IO设备</h4>
+<ul>
+<li>低速设备，传输速率仅为每秒钟几个字节至数百个字节的一类设备，如键盘、鼠标等。</li>
+<li>中速设备，传输速率在每秒数千个字节至数万个字节的一类设备，如行式打印机、激光打印机等。</li>
+<li>高速设备，传输速率在数百个千字节至千兆字节的一类设备，如磁带机、磁盘机、光盘机等。</li>
+</ul>
+<h4 id="按信息交换单位分类io设备">按信息交换单位分类IO设备</h4>
+<ul>
+<li>
+<p>块设备</p>
+<p>由于信息的存取总是以数据块为单位，所以存储信息的设备称为块设备。它属于有结构设备，如磁盘等。磁盘设备的基本特征是传输速率高，以及可寻址，即对他可随机地读写任意块。</p>
+</li>
+<li>
+<p>字符设备</p>
+<p>用于数据输入输出的设备为字符设备，因为其传输的基本单位是字符。它属于无结构类型，如交互式终端机、打印机等。他们的传输速率低、不可寻址、并且在输入输出时常采用中断驱动方式。</p>
+</li>
+</ul>
+<h4 id="io设备的使用方式">IO设备的使用方式</h4>
+<ul>
+<li>
+<p>对于IO设备，有以下三种不同类型的使用方式：独占式使用设备。独占式使用设备是指在申请设备是，如果设备空闲，就将其独占，不再允许其他进程申请使用，一直等到该设备被释放才允许其他进程申请使用。例如：打印机。</p>
+</li>
+<li>
+<p>分时式共享使用设备。独占式使用设备时，设备利用率低，当设备没有独占使用的要求时，可以通过分时共享使用，提高利用率。例如：对磁盘设备的IO操作，各进程每次IO操作请求可以通过分时来交替进行。</p>
+</li>
+<li>
+<p>以SPOOLing方式使用外部设备。SPOOLing技术是在批处理操作系统时代引入的，即假脱机IO技术。这种技术用于对设备的操作，实质上就是对IO操作进行批处理。具体的内容后面有单独讲解。</p>
+</li>
+</ul>
+<p>采用上面三种使用方式的设备分别称为独占设备、共享设备和虚拟设备。</p>
+<h4 id="io设备的构成">IO设备的构成</h4>
+<p>IO设备通常包括一个机械部件和一个电子部件。为了达到设计的模块性和通用性，一般将其分开。</p>
+<ul>
+<li>
+<p>电子部件成为IO控制器，在个人计算机中，通常是一块插入主板扩充槽的印制电路板。</p>
+</li>
+<li>
+<p>机械部件即设备本身。例如鼠标、键盘等。</p>
+</li>
+</ul>
+<h3 id="io控制器">IO控制器</h3>
+<p>由于具体的设备操作涉及硬件接口，且不同的设备有不同的硬件特性和参数，所以这些复杂的操作交由操作系统用户编写程序来操作是不实际的。引入控制器后，系统可以通过几个简单的参数完成对控制器的操作，而具体的硬件操作则由控制器调用相应的设备接口完成。</p>
+<p>设备控制器的引入大大简化了操作系统的设计，特别是有利于计算机系统和操作系统对各类控制器和设备的兼容；同时也实现了主存和设备之间的数据传输操作，使CPU从繁重的设备控制操作中解放出来。</p>
+<p><strong>IO控制器优点：</strong></p>
+<ul>
+<li>简化了操作系统的设计</li>
+<li>将CPU从复杂的设备控制操作中解放出来</li>
+</ul>
+<p><strong>设备（IO）控制器的主要功能</strong></p>
+<ul>
+<li>接收和识别CPU或通道发来的命令，如磁盘控制器能接收读、写、查找、搜索等命令。</li>
+<li>数据交换。CPU和IO设备之间的数据交换，IO控制器为了和高速CPU进行数据交换，往往需要数据寄存器来做缓存层。</li>
+<li>向CPU报告设备状态。</li>
+<li>设备地址识别。</li>
+</ul>
+<h4 id="io控制器的组成">IO控制器的组成</h4>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20190928005014852.png" style="zoom: 45%;" />
+<h4 id="io控制方式">IO控制方式</h4>
+<p>设备管理的主要任务之一是控制设备和内存或处理器之间的数据传送，外围设备和内存之间的输入输出控制方式有四种</p>
+<h5 id="程序直接控制方式">程序直接控制方式</h5>
+<p>计算机从外部设备读取数据到存储器，每次读一个字的数据。对读入的每个字，CPU需要对状态循环检查，知道确定该字已经在IO控制器的数据寄存器中。在程序IO方式中，由于CPU的高速型和IO设备的低速性，致使CPU的绝大部分时间都处于等待IO设备完成数据IO的循环测试中，造成CPU的极大浪费。CPU之所以要不断地测试IO设备的状态，就是因为在CPU中无中断机构，使IO设备无法向CPU报告它已完成了一个字符的输入操作。</p>
+<p><strong>缺点</strong></p>
+<p>采用这种IO控制方式会导致CPU和IO设备只能串行工作，导致CPU的利用率降低。</p>
+<h5 id="中断驱动方式">中断驱动方式</h5>
+<p>中断驱动方式的思想是：允许IO设备主动打断CPU的运行并请求服务，从而“解放”CPU，使得其向IO控制器发送命令后可以继续做其他有用的工作。</p>
+<p>我们从IO控制器和CPU两个角度分别来看中断驱动方式的工作过程：</p>
+<ul>
+<li>从IO控制器的角度来看，IO控制器从CPU接受一个读命令，然后从外围设备读数据。一旦数据读入到该IO控制器的数据寄存器，便通过控制线给CPU发出一个中断信号，表示数据已准备好，然后等待CPU请求该数据。IO控制器收到CPU发出的取数据请求后，将数据放到数据总线上，传到CPU的寄存器中。至此，本次IO操作完成，IO控制器又可以开始下一次IO操作。</li>
+<li>从CPU的角度来看，CPU发送读命令，然后保存当前运行程序的上下文（现场，包括程序计数器及处理器寄存器），转去执行其他程序。在每个指令周期的末尾，CPU检查中断。当有来自IO控制器的中断时，CPU保存当前正在运行程序的上下文，转去执行中断处理程序处理该中断。这时，CPU从IO控制器读一个字的数据传送到寄存器，并存入主存。接着，CPU恢复发出IO命令的程序（或其他程序）的上下文，然后继续运行。</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>中断驱动方式依然需要花费较多的CPU时间。因为数据中的每个字在存储器与IO控制器之间的传输都必须通过CPU处理。</li>
+</ul>
+<p><strong>优点：</strong></p>
+<ul>
+<li>相比程序直接控制方式，中断驱动方式可以很好的会减少CPU等待IO设备完成IO的时间。</li>
+</ul>
+<h5 id="dma方式">DMA方式</h5>
+<p>中断驱动方式中，CPU仍然需要主动处理在存储器和IO设备之间的数据传送，所以速度还是受限，而直接内存存取（DMA）方式的基本思想是在外围设备和内存之间开辟直接的数据交换通路，彻底解放CPU。</p>
+<p>该方式的特点是：</p>
+<ul>
+<li>基本单位是数据块</li>
+<li>所传诵的数据，是从设备直接送入内存的或者相反，中间不需要经过CPU的内存拷贝</li>
+<li>仅在传送一个或多个数据块的开始和结束时，才需CPU干预，整块数据的传送是在DMA控制器的控制下完成的。</li>
+</ul>
+<p>DMA的工作过程是：</p>
+<ol>
+<li>CPU读写数据时，他给IO控制器发出一条命令，启动DMA控制器，然后继续其他工作。</li>
+<li>之后CPU就把这个操作委托给DMA控制器，由该控制器负责处理。DMA控制器直接与存储器交互，传送整个数据块，这个过程不需要CPU参与。</li>
+<li>当传送完成后，DMA控制器发送一个中断信号给处理器。因此，只有在传送开始和结束时才需要CPU的参与。</li>
+</ol>
+<h5 id="通道控制方式">通道控制方式</h5>
+<p>DMA方式在工作流程上大幅度释放CPU，但是这种方式还需要CPU来控制传输的数据块大小、传输的内存位置，为了将CPU从这些繁琐的工作中释放处理，有了通道方式。</p>
+<p><strong>IO通道是专门负责输入输出的处理机</strong>，当CPU要完成一组读写操作时，只需要给I/O通道发出一条I/O指令，给出要执行的通道程序的首地址和要访问的I/O设备，通道接收到该指令后，执行完I/O任务，也就是完成数据传输，才给CPU发送中断请求。</p>
+<h3 id="io软件层次结构">IO软件层次结构</h3>
+<p>IO软件层次中，其中设备独立性软件、设备驱动程序、中断处理程序这三部分属于操作系统内核部分，即“IO系统”或称“IO核心子系统”</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/5853159-2d9dbdd14a6a7070.png" alt="img"></p>
+<h4 id="用户层软件">用户层软件</h4>
+<p>用户层软件实现了与用户交互的接口，用户可直接使用该层提供的、与I/O操作相关的库函数对设备进行操作。</p>
+<p>Eg：<code>printf(“hello, world!&quot;);</code></p>
+<p>==用户层软件将用户请求翻译成格式化的I/O请求，并通过“系统调用”请求操作系统内核的服务。==</p>
+<p>Eg：<code>printf(“hello, world!”);</code> 会被翻译成等价的 write 系统调用，当然，用户层软件也会在系统调用时填入相应参数。</p>
+<p>Windows 操作系统向外提供的一系列系统调用，但是由于系统调用的格式严格，使用麻烦，因此在用户层上封装了一系列更方便的库函数接口供用户使用（Windows API）。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/dd1eb78562fd4d2db3ff1b77221cd28d.png" style="zoom: 50%;" />
+<h4 id="设备独立性软件">设备独立性软件</h4>
+<p>设备独立性软件，又称设备无关性软件。==与设备的硬件特性无关的功能几乎都在这一层实现。==</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/5afaa2a396e546ada0f86b8c401808c5.png" style="zoom:50%;" />
+<p>主要实现的功能：</p>
+<ul>
+<li>
+<p>向上层提供统一的调用接口（如 read/write 系统调用）</p>
+</li>
+<li>
+<p>设备的保护</p>
+<p>原理类似与文件保护。==设备被看做是一种特殊的文件==，不同用户对各个文件的访问权限是不一样的，同理，对设备的访问权限也不一样。</p>
+</li>
+<li>
+<p>差错处理</p>
+<p>设备独立性软件需要对一些设备的错误进行处理</p>
+</li>
+<li>
+<p>设备的分配与回收</p>
+</li>
+<li>
+<p>数据缓冲区管理</p>
+<p>可以通过缓冲技术屏蔽设备之间数据交换单位大小和传输速度的差异</p>
+</li>
+<li>
+<p>建立逻辑设备名到物理设备名的映射关系；根据设备类型选择调用相应的驱动程序</p>
+<p>用户或用户层软件发出I/O操作相关系统调用的系统调用时，需要指明此次要操作的I/O设备的逻辑设备名（eg：去学校打印店打印时，需要选择 打印机1/打印机2/打印机3 ，其实这些都是逻辑设备名）
+<strong>设备独立性软件需要通过“逻辑设备表（LUT，Logical UnitTable）”来确定逻辑设备对应的物理设备，并找到该设备对应的设备驱动程序</strong></p>
+</li>
+</ul>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/9616a08d142b48b0bafbfa60dd11bd25.png" alt="在这里插入图片描述" style="zoom:67%;" />
+<p>操作系统系统可以采用两种方式管理逻辑设备表（LUT）：</p>
+<ul>
+<li>第一种方式，整个系统只设置一张LUT，这就意味着所有用户不能使用相同的逻辑设备名，因此这种方式只适用于单用户操作系统。</li>
+<li>第二种方式，为每个用户设置一张LUT，各个用户使用的逻辑设备名可以重复，适用于多用户操作系统。系统会在用户登录时为其建立一个用户管理进程，而LUT就存放在用户管理进程的PCB中</li>
+</ul>
+<h4 id="设备驱动程序">设备驱动程序</h4>
+<p>各式各样的设备，外形不同，其内部的电子部件（I/O控制器）也有可能不同。驱动程序是一个进程。</p>
+<p>==为何不同的设备需要不同的设备驱动程序？==
+佳能打印机的厂家规定状态寄存器为 0 代表空闲，1代表忙碌。有两个数据寄存器</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/02a93a26fb4840f2bac0d736ab09eddb.png" alt="在这里插入图片描述" style="zoom:50%;" />
+<p>惠普打印机的厂家规定状态寄存器为 1代表空闲，0代表忙碌。有一个数据寄存器</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/780fa8ab5783421abe93b1f5a9550308.png" alt="在这里插入图片描述" style="zoom:50%;" />
+<p>不同设备的内部硬件特性也不同，这些特性只有厂家才知道，因此厂家须提供与设备相对应的驱动程序，CPU执行驱动程序的指令序列，来完成设置设备寄存器，检查设备状态等工作</p>
+<p>==主要负责对硬件设备的具体控制，将上层发出的一系列命令（如read/write）转化成特定设备“能听得懂”的一系列操作。包括设置设备寄存器；检查设备状态等。==</p>
+<p>不同的I/O设备有不同的硬件特性，具体细节只有设备的厂家才知道。因此厂家需要根据设备的硬件特性设计并提供相应的驱动程序。</p>
+<h4 id="中断处理程序">中断处理程序</h4>
+<p>当I/O任务完成时，I/O控制器会发送一个中断信号，系统会根据中断信号类型找到相应的中断处理程序并执行。中断处理程序的处理流程如下：</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/3ac51be688994a449605f0cbe3df2b32.png" alt="在这里插入图片描述" style="zoom:50%;" />
+<h4 id="总结">总结</h4>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/729e21a9c9ef4ab3815abdef72a2169e.png" alt="在这里插入图片描述" style="zoom:100%;" /><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/59a11eaa495a4eef92b5c9ee2b29569b.png" alt="在这里插入图片描述" style="zoom:100%;" /></p>
+<h2 id="io核心子系统">IO核心子系统</h2>
+<h3 id="io核心子系统概述">IO核心子系统概述</h3>
+<h4 id="概念">概念</h4>
+<h5 id="设备独立性软件-1">设备独立性软件</h5>
+<p>已在前文说明</p>
+<h5 id="设备驱动软件">设备驱动软件</h5>
+<p>已在前文说明</p>
+<h5 id="中断处理程序-1">中断处理程序</h5>
+<p>已在前文说明</p>
+<h4 id="io调度与设备保护">IO调度与设备保护</h4>
+<h5 id="io调度">IO调度</h5>
+<p>调度一组IO请求就是确定确定一个好的顺序来执行这些请求。应用程序所发布的系统调用的顺序不一定总是最佳选择，所以需要调度来改善系统整体性能，是进程之间公平的共享设备访问，减少IO完成所需要的平均等待时间。</p>
+<p>操作系统开发人员通过为每个设备维护一个请求队列来实现调度。当一个应用程序执行阻塞IO系统调用时，该请求就加到相应设备的队列上。IO调度会重新安排队列顺序以改善系统总体效率和应用程序的平均响应时间。</p>
+<p>IO子系统还可以使用主存或磁盘上的存储空间的技术，如缓冲、高速缓冲、假脱机等。</p>
+<h5 id="设备保护">设备保护</h5>
+<p>操作系统中，设备被视为文件。文件保护机制也就是设备保护机制，例如口令或密码保护、访问控制等机制。</p>
+<p>详见文件管理章节。</p>
+<h3 id="spooling技术"><code>SPOOLing</code>技术</h3>
+<p>为了缓和CPU的高速型与IO设备低速性之间的矛盾而引入了脱机输入、脱机输出技术。该技术是利用专门的外围控制机，将低速IO设备上的数据传送到高速磁盘上；或者相反。</p>
+<p><code>SPOOLing</code>的意思是外部设备同时联机操作，又称为假脱机输入输出操作，是操作系统中采用的一项将独占设备改造成共享设备的技术。</p>
+<p>在<strong>磁盘上</strong>开辟出的两个存储区域：</p>
+<ul>
+<li><strong>输入井</strong>模拟脱机输入时的磁盘，用于收容IO设备输入的数据。</li>
+<li><strong>输出井</strong>模拟脱机输出的磁盘，用于收容用户程序的输出数据。</li>
+</ul>
+<p>在<strong>内存中</strong>开辟的两个缓冲区:</p>
+<ul>
+<li>输入缓冲区用于暂存由输入设备送来的数据，以后再传送到输入井。</li>
+<li>输出缓冲区用于暂存从输出井送来的数据，以后再传送到输出设备。</li>
+</ul>
+<p>过程：</p>
+<ul>
+<li>
+<p>输入：输入进程模拟脱机输入时的外围控制机，将用户要求的数据从输入设备通过输入缓冲区再送到输入井。当CPU需要输入数据时，直接将数据从输入井读入内存。</p>
+</li>
+<li>
+<p>输出：输出进程模拟脱机输出时的外围控制机，把用户要求输出的数据先从内存送到输出井，待输出设备空闲时，再将输出井中的数据经过输出缓冲区送到输出设备。</p>
+<blockquote>
+<p>综上，实质上就是利用输入井作为输入时的<strong>缓存区</strong>；输出井作为输出时的<strong>缓存区</strong>。</p>
+<p>为什么说是缓存区呢？其实，输入输出井就是在磁盘的缓存中开辟的区域，属于高速辅存。</p>
+</blockquote>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20230601203049.png" alt=""></p>
+<h4 id="spooling技术举例"><code>SPOOLing</code>技术举例</h4>
+<p>共享打印机是使用<code>SPOOLing</code>技术的一个实例，这项技术已被广泛的用于多用户系统和局域网络中。当用户进程请求打印输出时，<code>SPOOLing</code>系统同意为它打印输出，但并不真正立即把打印机分配给该用户进程，而只为她做两件事：</p>
+<p>1）由输出进程在输出井中为之申请一个空闲磁盘块区，并将要打印的数据送入其中。</p>
+<p>2）输出进程再为用户进程申请一张空白的用户请求打印表，并将用户的打印要求填入其中，再将该表挂到请求打印队列中。</p>
+<p><code>SPOOLing</code>系统的特点是：提高了IO速度；将独占设备改造为共享设备；实现了虚拟设备功能。</p>
+<h3 id="设备分配与回收">设备分配与回收</h3>
+<p>设备分配的基本任务是根据用户的IO请求，为他们分配所需的设备。设备分配的总原则是充分发挥设备的使用效率，尽可能地让设备忙碌，又要避免由于不合理的分配方法造成进程死锁。</p>
+<p>从设备的特性来看，可以把设备分成独占设备、共享设备和虚拟设备三类。</p>
+<ul>
+<li>
+<p>对于独立设备，将一个设备分配给某进程后，便有该进程独占，直至该进程完成或释放该设备。</p>
+</li>
+<li>
+<p>对于共享设备，可以同时分配给多个进程使用，但需要对这些进程访问该设备的先后次序进行合理的调度。</p>
+</li>
+<li>
+<p>虚拟设备属于可共享设备，可以将它同时分配给多个进程使用。</p>
+</li>
+</ul>
+<h4 id="设备管理的数据结构">设备管理的数据结构</h4>
+<p>设备分配依据的主要数据结构有设备控制表（DCT）、控制器控制表（COCT）、通道控制表（CHCT）和系统设备表（SDT），各数据结构功能如下：</p>
+<ul>
+<li>设备控制表：系统为每一个设备配置一张DCT，它用于记录设备的特性以及与IO控制器连接的情况。DCT包括设备标示符、设备类型、设备状态、指向COUCT的指针等。其中，设备队列指针指向等待使用该设备的进程组成的等待队列，控制器表指针指向于该设备相连接的设备控制器。</li>
+<li>控制器控制表：每个控制器都配有一张COCT，它反应设备控制器的使用状态以及和通道的连接情况等。</li>
+<li>通道控制表：每个通道配有一张CHCT。</li>
+<li>系统设备表：整个系统只有一张SDT，它记录已连接到系统中的所有物理设备的情况，每个物理设备占一个表目。</li>
+</ul>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20230601210945177.png" alt="image-20230601210945177" style="zoom: 50%;" />
+<p>由于在多道程序系统中，进程数多于资源数，会引起资源的竞争。因此，要有一套合理的分配原则，主要考虑的因素有：IO设备的固有属性，IO设备的分配算法，设备分配的安全性，以及设备独立性。</p>
+<h4 id="设备分配原则与算法">设备分配原则与算法</h4>
+<ol>
+<li>
+<p>设备分配原则。设备的分配原则应根据设备特性、用户要求和系统配置的情况来决定。设备分配的总原则既要充分发挥设备的使用效率，又要避免造成进程死锁，还要将用户程序和具体设备隔离开。</p>
+</li>
+<li>
+<p>设备分配方式。设备分配方式有静态分配和动态分配两种。</p>
+<ul>
+<li>
+<p>静态分配</p>
+<p>主要用于对独占设备的分配，它在用户作业开始执行前，有系统一次性分配该作业所要求的全部设备、控制器（和通道）。一旦分配后，这些设备、控制器（和通道）就一直为高作业所占用，直到该作业被撤销。静态分配方式不会出现死锁，但设备的使用效率较低。因此，静态分配方式并不符合分配的总原则。</p>
+</li>
+<li>
+<p>动态分配</p>
+<p>是在进程执行过程中，根据执行需要进行分配。当进程需要设备时，通过系统调用命令向系统提出设备请求，由系统按照事先规定的策略给进程分配所需要的设备、IO控制器，一旦用完之后，便立即释放。动态分配方式有利于提高设备的利用率，但如果分配算法使用不当，则有可能造成进程死锁。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>设备分配算法。常用的动态设备分配算法有<strong>先请求先分配</strong>、<strong>优先级高者优先</strong>等。</p>
+</li>
+</ol>
+<ul>
+<li>
+<p>对于独占设备，即可以采用动态分配方式也可以静态分配方式，往往采用静态分配方式，即在作业执行前，将作业所要用到的这一类设备分配给它。</p>
+</li>
+<li>
+<p>共享设备可被多个进程所共享，一般采用动态分配方式，但在每个IO传输的单位时间内只被一个进程所占有，通常采用先请求先分配和优先级高者先分的分配算法。</p>
+</li>
+</ul>
+<h4 id="设备分配安全性和独立性">设备分配安全性和独立性</h4>
+<p>设备分配的安全性是指设备分配中应防止发生进程死锁。</p>
+<ul>
+<li>
+<p>安全分配方式。每当进程发出IO请求后便进入阻塞状态，直到其IO操作完成时才被唤醒。这样，一旦进程已经获得某种设备后便阻塞，不能再请求任何资源，而且在它阻塞时也不保持任何资源。</p>
+<p>优点是设备分配安全；缺点是CPU和IO设备是串行工作的。</p>
+</li>
+<li>
+<p>不安全分配方式。进程在发出IO请求后继续运行，需要时发出第二个、第三个IO请求等。仅当进程所请求的设备已被另一进程占用时，才进入阻塞状态。</p>
+<p>优点是一个进程可以同时操作几个设备，从而使进程推进迅速；缺点是这种设备分配有可能产生死锁。</p>
+</li>
+</ul>
+<p>为了提高设备分配的灵活性和设备的利用率、方便实现IO重定向，因此引入了设备独立性。设备独立性是指应用程序独立于具体使用的物理设备。</p>
+<p>为了实现设备独立性，在应用程序中使用逻辑设备名来请求使用某类设备，在系统中设置一张逻辑设备表（LUT），用于将逻辑设备名映射为物理设备名。LUT表项包括逻辑设备名、物理设备名和设备驱动程序入口地址；当进程用逻辑设备名来请求分配设备时，系统为他分配相应的物理设备，并在LUT中建立一个表项，以后进程再利用逻辑设备名请求IO操作时，系统通过查找LUT来寻找相应的物理设备和驱动程序。</p>
+<p>在系统中可采取两种方式建立逻辑设备表：</p>
+<ul>
+<li>
+<p>在整个系统中只设置一张LUT表。这样，所有进程的设备分配情况都记录在这张表中，故不允许有相同的逻辑设备名，主要适用于单用户系统中。</p>
+</li>
+<li>
+<p>为每个用户设置一张LUT。当用户登录时，系统便为用户建立一个进程，同时也位置建立一张LUT，并肩改变放入进程的PCB中。</p>
+</li>
+</ul>
+<h4 id="设备分配步骤">设备分配步骤</h4>
+<ol>
+<li>根据进程请求的逻辑设备名查找SDT；（用户编程时提供的逻辑设备名就是“设备名”）</li>
+<li>查找SDT，找到用户进程指定类型的、并且空闲的设备，将其分配给该进程。操作系统在逻辑设备表LUT中新增一个表项。</li>
+<li>根据DCT找到COCT，若控制器忙碌则将进程PCB挂到控制器等待队列，不忙碌则将控制器分配给进程；</li>
+<li>根据COCT找到CHCT，若通道忙碌则将进程挂到通道等待队列中，不忙碌则将通道分配给进程。</li>
+</ol>
+<h4 id="设备回收步骤">设备回收步骤</h4>
+<p>设备回收就是设备分配的逆操作。</p>
+<h3 id="缓冲区的管理">缓冲区的管理</h3>
+<p>操作系统总是用磁盘高速缓存技术来提高磁盘的IO速度，对高速缓存复制的访问要比原始数据访问更为高效。例如，正在运行的进程的指令即存储在磁盘上，也存储在物理内存上，也被复制到CPU的二级和一级高速缓存中。</p>
+<p>不过，磁盘高速缓存技术不同于通常意义下的介于CPU与内存之间的小容量高速存储器，而是利用内存中的存储空间来暂存从磁盘中读出的一系列盘块中的信息，因此，<strong>磁盘高速缓存在逻辑上属于磁盘，物理上则是驻留在内存中的盘块</strong>。</p>
+<p>高速缓存在内存中分为两种形式：一种是在内存中开辟一个单独的存储空间作为磁盘高速缓存，大小固定；另一种是把未利用的内存空间作为一个缓冲池，共请求分页系统和磁盘IO时共享。</p>
+<p>在设备管理子系统中，引入缓冲区的目的有：</p>
+<p>1）缓和CPU与IO设备间速度不匹配的矛盾。</p>
+<p>2）减少对CPU的中断频率，放宽对CPU 中断响应时间的限制。</p>
+<p>3）解决基本数据单元大小不匹配的问题。</p>
+<p>4）提高CPU和IO设备之间的并行性。</p>
+<p>其实现方法有：</p>
+<p>1）采用硬件缓冲器，但由于成本太高，出一些关键部位外，一般情况下不采用硬件缓冲器。</p>
+<p>2）采用缓冲区（位于内存区域）</p>
+<p>根据系统设置缓冲器的个数，缓冲技术可以分为以下几种</p>
+<h4 id="单缓冲">单缓冲</h4>
+<p>在设备和处理器之间设置一个缓冲区。设备和处理器交换数据时，先把被交换数据<strong>写入</strong>缓冲区，然后把需要数据的设备或处理器从缓冲区<strong>取走</strong>数据。</p>
+<p>写入数据和取走数据不能同时进行，只能串行执行，所以原则是</p>
+<ul>
+<li>非空不写</li>
+<li>未满不读</li>
+</ul>
+<p>在块设备输入时，假定从磁盘把一块数据输入到缓冲区的时间为T，操作系统将该缓冲区中的数据局传送到用户区的时间为M，而CPU对这一块数据处理的时间为C。由于T和C是可以并行的，所以可把系统对每一块数据的处理时间表示为Max（C,T）+M。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/modb_20211227_4971eab8-66c0-11ec-b728-fa163eb4f6be.png" alt="img" style="zoom:50%;" />
+<h4 id="双缓冲">双缓冲</h4>
+<p>双缓冲区机制又称缓冲对换。IO设备输入数据时先输入到缓冲区1，直到缓冲区1满后才输入到缓冲区2，此时操作系统可以从缓冲区1中取出数据放入用户进程，并由CPU计算。</p>
+<p>双缓冲的使用提高了处理器和输入设备的并行操作的程度。</p>
+<p>系统处理一块数据的时间可以粗略地认为是Max（C,T）。如果CT，则可使CPU不必等待设备输入。对于字符设备，若采用行输入方式，则采用双缓冲可使用户再输入完第一行之后，在CPU执行第一行中的命令的同事，用户可继续向第二缓冲区输入下一行数据。而单缓冲情况下则必须等待一行数据被提取完毕才可输入下一行的数据。</p>
+<p>如果两台机器之间通信仅配置了单缓冲，那么，他们在任意时刻都只能实现单方向的数据传输。为了实现双向数据传输，必须在两台机器中都设置两个缓冲区，一个用作发送缓冲区，另一个用作接收缓冲区。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/modb_20211227_49a01c76-66c0-11ec-b728-fa163eb4f6be.png" alt="img" style="zoom:50%;" />
+<h4 id="循环缓冲">循环缓冲</h4>
+<p>包含多个大小相等的缓冲区，每个缓冲区中有一个缓冲区，最后一个缓冲区指针指向第一个缓冲区，多个缓冲区构成一个环形。用于输入输出时，还需要有两个指针in和out。对输入而言，首先要从设备接收数据到缓冲区中，in指针指向可以输入数据的第一个空缓冲区；当运行进程需要数据时，从循环缓冲去中去一个装满数据的缓冲区，并从此缓冲区中提取数据，out指针指向可以提取数据的第一个满缓冲区。输出正好相反。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20230601224742516.png" alt="image-20230601224742516" style="zoom:50%;" />
+<h4 id="缓冲池">缓冲池</h4>
+<p>由多个系统共用的缓冲区组成，缓冲区按其使用状况可以形成三个队列：空缓冲队列、装满输入数据的缓冲队列（输入队列）和装满输出数据的缓冲队列（输出队列）。还应具有四种缓冲区：用于收容输入数据的工作缓冲区、用于提取输入数据的工作缓冲区、用于收容输出数据的工作缓冲区、用于提取输出数据的工作缓冲区。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20230601225256243.png" alt="image-20230601225256243" style="zoom:50%;" />
+<ul>
+<li>收容输入。在输入进程需要输入数据时，便调用<code>Getbuf(emq)</code>过程，从空缓冲队列<code>emq</code>的队首摘下一空缓冲区，把它作为收容输入工作缓冲区<code>hin</code>。然后，把数据输入其中，装满后再调用<code>Putbuf(inq，hin)</code>过程，将该缓冲区挂在输入队列 <code>inq</code> 上。</li>
+<li>提取输入。当计算进程需要输入数据时，调用 <code>Getbuf(inq)</code>过程，从输入队列 <code>inq</code> 的队首取得一个缓冲区，作为提取输入工作缓冲区(<code>sin</code>)，计算进程从中提取数据。计算进程用完该数据后，再调用 <code>Putbuf(emq，sin)</code>过程，将该缓冲区挂到空缓冲队列 <code>emq</code> 上。</li>
+<li>收容输出。当计算进程需要输出时，调用 <code>Getbuf(emq)</code>过程从空缓冲队列 <code>emq</code> 的队首取得一个空缓冲区，作为收容输出工作缓冲区 <code>hout</code>。当其中装满输出数据后，又调用<code>Putbuf(outq，hout)</code>过程，将该缓冲区挂在 <code>outq</code> 末尾。</li>
+<li>提取输出。由输出进程调用 <code>Getbuf(outq)</code>过程，从输出队列的队首取得一装满输出数据的缓冲区，作为提取输出工作缓冲区 <code>sout</code>。在数据提取完后，再调用 <code>Putbuf(emq，sout)</code>过程，将该缓冲区挂在空缓冲队列末尾。</li>
+</ul>
+<h4 id="缓存cache与缓冲buffer的对比">缓存（cache）与缓冲（buffer）的对比</h4>
+<ul>
+<li>
+<p>缓存是指在计算机系统中，为了提高数据读写效率而设置的高速缓存存储器。缓存通常被用来存储经常被访问的数据，以减少对主存储器的访问次数，从而提高读写速度。缓存的数据可以是来自外部存储器的数据，也可以是来自CPU内部的数据。</p>
+</li>
+<li>
+<p>缓冲是指在计算机系统中，为了解决数据传输速度不匹配而设置的临时存储区。缓冲通常被用来存储数据，以平衡数据的输入和输出速度。缓冲的数据通常是来自输入输出设备的数据，例如磁盘、网络等，缓冲可以将这些数据暂时存储起来，等待处理器或者其他设备的处理。</p>
+</li>
+</ul>
+<p>简单来说，缓存是为了提高数据读写效率而设置的高速存储器，缓冲是为了解决数据传输速度不匹配而设置的临时存储区。</p>
+<h3 id="出错处理">出错处理</h3>
+<p>操作系统可以采用内存保护，这样一来就可以预防许多硬件和应用程序的错误，即便有一些设备硬件上的适龄也不回导致系统的完全崩溃。</p>
+<p>IO设备传输中出现的错误很多，如网络上的堵塞和传输过载等。操作系统可以对一些短暂的出错进行处理，比如读取磁盘出错，那么可以选择重新对磁盘进行read操作；再比如在网络上发送数据出错，那么只要网络通信协议允许，就可以做resend操作。但是，如果计算机系统中的重要组件出现了永久性错误，那么操作系统将无法恢复。</p>
+<p>作为一个规则，IO系统调用通常返回一位调用状态信息，以表示成功或失败。在UNIX系统中，用一个名为<code>errno</code>的全局变量来表示出错代码，以表示出错原因。</p>
+<p>注意：read、send和resend都是操作系统的基本输入输出命令，分别用来读、发送和重发数据。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-05-30
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/dma/">dma</a>
+          <a href="/tags/spooling%E6%8A%80%E6%9C%AF/">spooling技术</a>
+          <a href="/tags/io%E6%8E%A7%E5%88%B6%E6%96%B9%E5%BC%8F/">io控制方式</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">缓存淘汰策略</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/">
+            <span class="next-text nav-default">操作系统之文件管理</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-05-30 12:10:06 \u002b0800 CST',
+        title: '操作系统之输入输出管理',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

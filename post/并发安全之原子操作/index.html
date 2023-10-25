@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>并发安全之原子操作 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="本文介绍了go语言的原子操作，并对字节跳动开源的协程池进行代码分析" /><meta name="keywords" content="动态伸缩协程池" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E4%B9%8B%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="并发安全之原子操作" />
+<meta property="og:description" content="本文介绍了go语言的原子操作，并对字节跳动开源的协程池进行代码分析" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E4%B9%8B%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-11-09T16:24:28+08:00" />
+<meta property="article:modified_time" content="2022-11-09T16:24:28+08:00" />
+<meta itemprop="name" content="并发安全之原子操作">
+<meta itemprop="description" content="本文介绍了go语言的原子操作，并对字节跳动开源的协程池进行代码分析"><meta itemprop="datePublished" content="2022-11-09T16:24:28+08:00" />
+<meta itemprop="dateModified" content="2022-11-09T16:24:28+08:00" />
+<meta itemprop="wordCount" content="5983">
+<meta itemprop="keywords" content="协程池,原子操作," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="并发安全之原子操作"/>
+<meta name="twitter:description" content="本文介绍了go语言的原子操作，并对字节跳动开源的协程池进行代码分析"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">并发安全之原子操作</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2022-11-09 </span>
+        <div class="post-category">
+            <a href="/categories/golang/"> golang </a>
+            </div>
+          <span class="more-meta"> 约 5983 字 </span>
+          <span class="more-meta"> 预计阅读 12 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#原子操作">原子操作</a>
+          <ul>
+            <li><a href="#定义">定义</a></li>
+            <li><a href="#golang的原子操作">Golang的原子操作</a></li>
+            <li><a href="#互斥锁跟原子操作的区别">互斥锁跟原子操作的区别</a></li>
+            <li><a href="#比较并交换">比较并交换</a></li>
+            <li><a href="#atomicvalue保证任意值的读写安全"><code>atomic.Value</code>保证任意值的读写安全</a></li>
+            <li><a href="#总结">总结</a></li>
+          </ul>
+        </li>
+        <li><a href="#项目案例分析">项目案例分析</a>
+          <ul>
+            <li><a href="#pool"><code>Pool</code></a></li>
+            <li><a href="#pool-1"><code>pool</code></a></li>
+            <li><a href="#pool的方法"><code>pool</code>的方法</a></li>
+            <li><a href="#worker"><code>worker</code></a></li>
+            <li><a href="#worker的方法"><code>worker</code>的方法</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <p>[toc]</p>
+<h2 id="原子操作">原子操作</h2>
+<p>并发是业务开发中经常要面对的问题，很多时候我们会直接用一把 <code>sync.Mutex</code> 互斥锁来线性化处理，保证每一时刻进入临界区的 goroutine 只有一个。这样避免了并发，但性能也随着降低。</p>
+<p>所以，我们进而又有了 <code>RWMutex</code> 读写锁，保障了多个读请求的并发处理，对共享资源的写操作和读操作则区别看待，并消除了读操作之间的互斥。</p>
+<p><code>Mutex</code> 和 <code>RWMutex</code> 锁的实现本身还是基于 <code>atomic</code> 包提供的原子操作，辅之以自旋等处理。很多时候其实我们不太需要<strong>锁住资源</strong>这个语意，而是一个<strong>原子操作</strong>就ok。这篇文章我们来看一下 <code>atomic</code> 包提供的能力。</p>
+<h3 id="定义">定义</h3>
+<p>不会被线程调度机制打断的操作。</p>
+<p>&ldquo;原子操作(atomic operation)是不需要synchronized&rdquo;，这是多线程编程的老生常谈了。所谓<strong>原子操作是指不会被线程调度机制打断的操作</strong>；这种操作一旦开始，就一直运行到结束，中间不会有任何 context switch（切换到另一个线程）。使用原子操作，就可以保证你的操作一定是原子的，也就是不会被同一时刻其他并发线程打断，一定会执行。</p>
+<h3 id="golang的原子操作">Golang的原子操作</h3>
+<p>Go语言通过内置包<code>sync/atomic</code>提供了对原子操作的支持，其提供的原子操作有以下几大类：</p>
+<ul>
+<li>增减，操作的方法名方式为<code>AddXXXType</code>，保证对操作数进行原子的增减，支持的类型为<code>int32</code>、<code>int64</code>、<code>uint32</code>、<code>uint64</code>、<code>uintptr</code>，使用时以实际类型替换前面我说的<code>XXXType</code>就是对应的操作方法。</li>
+<li>载入，保证了读取到操作数前没有其他任务对它进行变更，操作方法的命名方式为<code>LoadXXXType</code>，支持的类型除了基础类型外还支持<code>Pointer</code>，也就是支持载入任何类型的指针。</li>
+<li>存储，有载入了就必然有存储操作，这类操作的方法名以<code>Store</code>开头，支持的类型跟载入操作支持的那些一样。</li>
+<li>比较并交换，也就是<code>CAS</code>（Compare And Swap），像Go的很多并发原语实现就是依赖的<code>CAS</code>操作，同样是支持上面列的那些类型。</li>
+<li>交换，这个简单粗暴一些，不比较直接交换，这个操作很少会用。</li>
+</ul>
+<h3 id="互斥锁跟原子操作的区别">互斥锁跟原子操作的区别</h3>
+<p>平日里，在并发编程里，Go语言<code>sync</code>包里的同步原语<code>Mutex</code>是我们经常用来保证并发安全的，那么他跟<code>atomic</code>包里的这些操作有啥区别呢？在我看来他们在使用目的和底层实现上都不一样：</p>
+<ul>
+<li>使用目的：<strong>互斥锁是用来保护一段逻辑，原子操作用于对一个变量的更新保护</strong>。</li>
+<li>底层实现：<code>Mutex</code>由<strong>操作系统</strong>的调度器实现（上下文切换开销较大），而<code>atomic</code>包中的原子操作则由<strong>底层硬件指令</strong>直接提供支持，这些指令在执行的过程中是不允许中断的，因此原子操作可以在<code>lock-free</code>的情况下保证并发安全，并且它的性能也能做到随<code>CPU</code>个数的增多而线性扩展。</li>
+</ul>
+<p><strong>对于一个变量更新的保护，原子操作通常会更有效率，并且更能利用计算机多核的优势。</strong></p>
+<p>所以，如果在业务里只是针对单个变量并发运算的安全时，不应该考虑加锁而是考虑使用原子操作保证其原子性。貌似原子操作是乐观锁的实现，如果同一时刻有太多变量对同一个变量进行写操作，使用CAS机制时，最多同一时刻只能有一个操作成功，其余操作全部失败终止或者进入原地地“自旋”。</p>
+<p>使用互斥锁的并发计数器程序的例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">mutexAdd</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="kd">var</span> <span class="nx">a</span> <span class="kt">int32</span> <span class="p">=</span>  <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"> <span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+</span></span><span class="line"><span class="cl"> <span class="kd">var</span> <span class="nx">mu</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span> <span class="c1">// 互斥锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span> <span class="nx">start</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"> <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">100000000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">   <span class="nx">mu</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">   <span class="nx">a</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">   <span class="nx">mu</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}()</span>
+</span></span><span class="line"><span class="cl"> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"> <span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"> <span class="nx">timeSpends</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Sub</span><span class="p">(</span><span class="nx">start</span><span class="p">).</span><span class="nf">Nanoseconds</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;use mutex a is %d, spend time: %v\n&#34;</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">timeSpends</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>把<code>Mutex</code>改成用方法<code>atomic.AddInt32(&amp;a, 1)</code>调用，在不加锁的情况下仍然能确保对变量递增的并发安全。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">AtomicAdd</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="kd">var</span> <span class="nx">a</span> <span class="kt">int32</span> <span class="p">=</span>  <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"> <span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+</span></span><span class="line"><span class="cl"> <span class="nx">start</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"> <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">1000000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">   <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">a</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}()</span>
+</span></span><span class="line"><span class="cl"> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"> <span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"> <span class="nx">timeSpends</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">().</span><span class="nf">Sub</span><span class="p">(</span><span class="nx">start</span><span class="p">).</span><span class="nf">Nanoseconds</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;use atomic a is %d, spend time: %v\n&#34;</span><span class="p">,</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">a</span><span class="p">),</span> <span class="nx">timeSpends</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以在本地运行以上这两段代码，可以观察到计数器的结果都最后都是<code>1000000</code>，都是线程安全的。</p>
+<p>上面两种方式：第一种互斥锁实现的并发计数例子里，每一次开了大量携程来对<code>a</code>加<code>1</code>，为了保证并发安全加了互斥锁，虽然有效但是性能开销太大了，期间发生了很多次上下文切换；第二种使用原子操作来对<code>a</code>变量实现加<code>1</code>操作，这个过程是原子的，其他协程无法打断，只能等待指令执行成功之后，其他协程才能拿到这个<code>a</code>的地址又进行原子操作，这样循环直到所有协程执行完毕后程序结束。相比第一种加互斥锁保证并发安全的方式，第二种原子操作的方式是通过CPU指令集实现的，没有上下文切换的开销，只是执行一个CPU指令而已。</p>
+<h3 id="比较并交换">比较并交换</h3>
+<p>该操作简称<code>CAS</code> (Compare And Swap)。这类操作的前缀为 <code>CompareAndSwap</code> :</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">CompareAndSwapInt32</span><span class="p">(</span><span class="nx">addr</span> <span class="o">*</span><span class="kt">int32</span><span class="p">,</span> <span class="nx">old</span><span class="p">,</span> <span class="nx">new</span> <span class="kt">int32</span><span class="p">)</span> <span class="p">(</span><span class="nx">swapped</span> <span class="kt">bool</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">CompareAndSwapPointer</span><span class="p">(</span><span class="nx">addr</span> <span class="o">*</span><span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">,</span> <span class="nx">old</span><span class="p">,</span> <span class="nx">new</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">)</span> <span class="p">(</span><span class="nx">swapped</span> <span class="kt">bool</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>该操作在<strong>进行交换前首先确保被操作数的值未被更改，即仍然保存着参数 <code>old</code> 所记录的值，满足此前提条件下才进行交换操作</strong>。<code>CAS</code>的做法类似操作数据库时常见的乐观锁机制。</p>
+<p>需要注意的是：当有大量的goroutine 对变量进行<strong>读写操作</strong>时，可能导致<code>CAS</code>操作无法成功，这时可以利用<code>for</code>循环多次尝试。(乐观锁不适合写多读少的场景)</p>
+<p>上面我只列出了比较典型的<code>int32</code>和<code>unsafe.Pointer</code>类型的<code>CAS</code>方法，主要是想说除了读数值类型进行比较交换，还支持对指针进行比较交换。</p>
+<blockquote>
+<p><code>unsafe.Pointer</code>提供了绕过Go语言指针类型限制的方法，unsafe指的并不是说不安全，而是说官方并不保证向后兼容。</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 定义一个struct类型P
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">P</span> <span class="kd">struct</span><span class="p">{</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span><span class="p">,</span> <span class="nx">z</span> <span class="kt">int</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl"><span class="c1">// 执行类型P的指针
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="nx">pP</span> <span class="o">*</span><span class="nx">P</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">    <span class="c1">// 定义一个执行unsafe.Pointer值的指针变量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">var</span> <span class="nx">unsafe1</span> <span class="p">=</span> <span class="p">(</span><span class="o">*</span><span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">pP</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">    <span class="c1">// Old pointer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">var</span> <span class="nx">sy</span> <span class="nx">P</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">    <span class="c1">// 为了演示效果先将unsafe1设置成Old Pointer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">px</span> <span class="o">:=</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">SwapPointer</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">unsafe1</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">sy</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">    <span class="c1">// 执行CAS操作，交换成功，结果返回true
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">y</span> <span class="o">:=</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">CompareAndSwapPointer</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">unsafe1</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">sy</span><span class="p">),</span> <span class="nx">px</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面的示例并不是在并发环境下进行的<code>CAS</code>，只是为了演示效果，先把被操作数设置成了<code>Old Pointer</code>。</p>
+<p>其实<code>Mutex</code>的底层实现也是依赖原子操作中的<code>CAS</code>实现的，原子操作的<code>atomic</code>包相当于是<code>sync</code>包里的那些同步原语的实现依赖。</p>
+<p>比如互斥锁<code>Mutex</code>的结构里有一个<code>state</code>字段，其是表示锁状态的状态位。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Mutex</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="nx">state</span> <span class="kt">int32</span>
+</span></span><span class="line"><span class="cl"> <span class="nx">sema</span>  <span class="kt">uint32</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>为了方便理解，我们在这里将它的状态定义为0和1，0代表目前该锁空闲，1代表已被加锁，以下是<code>sync.Mutex</code>中<code>Lock</code>方法的部分实现代码。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Mutex</span><span class="p">)</span> <span class="nf">Lock</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="c1">// Fast path: grab unlocked mutex.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>   <span class="k">if</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">CompareAndSwapInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">m</span><span class="p">.</span><span class="nx">state</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">mutexLocked</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">       <span class="k">if</span> <span class="nx">race</span><span class="p">.</span><span class="nx">Enabled</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">           <span class="nx">race</span><span class="p">.</span><span class="nf">Acquire</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">m</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">       <span class="p">}</span>
+</span></span><span class="line"><span class="cl">       <span class="k">return</span>
+</span></span><span class="line"><span class="cl">   <span class="p">}</span>
+</span></span><span class="line"><span class="cl">   <span class="c1">// Slow path (outlined so that the fast path can be inlined)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">m</span><span class="p">.</span><span class="nf">lockSlow</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在<code>atomic.CompareAndSwapInt32(&amp;m.state, 0, mutexLocked)</code>中，<code>m.state</code>代表锁的状态，通过<code>CAS</code>方法，判断锁此时的状态是否空闲（<code>m.state==0</code>），是，则对其加锁（<code>mutexLocked</code>常量的值为1）。</p>
+<h3 id="atomicvalue保证任意值的读写安全"><code>atomic.Value</code>保证任意值的读写安全</h3>
+<p><code>atomic</code>包里提供了一套<code>Store</code>开头的方法，用来保证各种类型变量的并发写安全，避免其他操作读到了修改变量过程中的脏数据。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">StoreInt32</span><span class="p">(</span><span class="nx">addr</span> <span class="o">*</span><span class="kt">int32</span><span class="p">,</span> <span class="nx">val</span> <span class="kt">int32</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">StoreInt64</span><span class="p">(</span><span class="nx">addr</span> <span class="o">*</span><span class="kt">int64</span><span class="p">,</span> <span class="nx">val</span> <span class="kt">int64</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">StorePointer</span><span class="p">(</span><span class="nx">addr</span> <span class="o">*</span><span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">,</span> <span class="nx">val</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">...</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这些操作方法的定义与上面介绍的那些操作的方法类似，我就不再演示怎么使用这些方法了。</p>
+<p>值得一提的是如果你想要并发安全的设置一个结构体的多个字段，除了把结构体转换为指针，通过<code>StorePointer</code>设置外，还可以使用<code>atomic</code>包后来引入的<code>atomic.Value</code>，它在底层为我们完成了从具体指针类型到<code>unsafe.Pointer</code>之间的转换。</p>
+<p>有了<code>atomic.Value</code>后，它使得我们可以不依赖于不保证兼容性的<code>unsafe.Pointer</code>类型，同时又能将任意数据类型的读写操作封装成原子性操作（中间状态对外不可见）。</p>
+<p><code>atomic.Value</code>类型对外暴露了两个方法：</p>
+<ul>
+<li><code>v.Store(c)</code> - 写操作，将原始的变量<code>c</code>存放到一个<code>atomic.Value</code>类型的<code>v</code>里。</li>
+<li><code>c := v.Load()</code> - 读操作，从线程安全的<code>v</code>中读取上一步存放的内容。</li>
+</ul>
+<p>1.17 版本我看还增加了<code>Swap</code>和<code>CompareAndSwap</code>方法。</p>
+<p>简洁的接口使得它的使用也很简单，只需将需要做并发保护的变量读取和赋值操作用<code>Load()</code>和<code>Store()</code>代替就行了。</p>
+<p>由于<code>Load()</code>返回的是一个<code>interface{}</code>类型，所以在使用前我们记得要先转换成具体类型的值，再使用。下面是一个简单的例子演示<code>atomic.Value</code>的用法。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Demo</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">A</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">B</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">rect</span> <span class="nx">atomic</span><span class="p">.</span><span class="nx">Value</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">container</span> <span class="o">*</span><span class="nx">Demo</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">Demo</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 10 个协程并发更新
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">container</span><span class="p">.</span><span class="nx">A</span> <span class="p">=</span> <span class="nx">i</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">container</span><span class="p">.</span><span class="nx">B</span> <span class="p">=</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">rect</span><span class="p">.</span><span class="nf">Store</span><span class="p">(</span><span class="nx">container</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">_r</span> <span class="o">:=</span> <span class="nx">rect</span><span class="p">.</span><span class="nf">Load</span><span class="p">().(</span><span class="o">*</span><span class="nx">Demo</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;rect.width=%d\nrect.length=%d\n&#34;</span><span class="p">,</span> <span class="nx">_r</span><span class="p">.</span><span class="nx">A</span><span class="p">,</span> <span class="nx">_r</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>你也可以试试，不用<code>atomic.Value</code>，看看在并发条件下，两个字段的值是不是能跟预期的一样变成10和15。</p>
+<h3 id="总结">总结</h3>
+<p>原子操作由<strong>底层硬件</strong>支持，而锁则由操作系统的<strong>调度器</strong>实现。</p>
+<ul>
+<li>
+<p>锁应当用来保护一段逻辑</p>
+</li>
+<li>
+<p>对于一个变量更新的保护，原子操作通常会更有效率，并且更能利用计算机多核的优势</p>
+</li>
+<li>
+<p>如果要更新的是一个复合对象，则应当使用<code>atomic.Value</code>封装好的实现</p>
+</li>
+</ul>
+<h2 id="项目案例分析">项目案例分析</h2>
+<p>在<code>net\http</code>官方包里，<code>http.ListenAndServe()</code>里面的逻辑就是：来一个请求就开一个协程去处理它。在高并发的场景下，虽然go可以轻松开启数百万协程，每个协程初始被分配2kb的内存大小。来一个请求就开一个协程，这样的方式太过粗暴，耗费资源。我们可以对goroutine做池化处理：维护cap容量的goroutine工作，当执行的任务小于cap时，这时资源是充足的，可以让每个goroutine对应一个执行任务；当执行任务大于cap时，这时认为资源是不足的，我们需要复用goroutine，也就是会存在一个goroutine执行完当前任务时，就再执行下一个任务，达到复用的目的。</p>
+<h3 id="pool"><code>Pool</code></h3>
+<p><code>Pool</code>是对外暴露的方法集合的接口。内部是<code>pool</code>结构体来实现的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Pool</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Name returns the corresponding pool name.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">Name</span><span class="p">()</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// SetCap sets the goroutine capacity of the pool.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">SetCap</span><span class="p">(</span><span class="nx">cap</span> <span class="kt">int32</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Go executes f.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">Go</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// CtxGo executes f and accepts the context.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">CtxGo</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">f</span> <span class="kd">func</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// SetPanicHandler sets the panic handler.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">SetPanicHandler</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="kd">interface</span><span class="p">{}))</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// WorkerCount returns the number of running workers
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">WorkerCount</span><span class="p">()</span> <span class="kt">int32</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>简单看看这几个方法</p>
+<ul>
+<li><code>Name() string</code> 方法是指定当前池的名字</li>
+<li><code>SetCap(cap int32)</code>用来动态扩容，可以看到源码里是并发安全的（原子的将新值加载到<code>pool.cap</code>的）</li>
+<li><code>Go(f func())</code>将函数放到任务链表里，并判断是否需要新开<code>worker</code>（即协程）来分担<code>f</code>所在的任务链表执行</li>
+<li><code>CtxGo(ctx context.Context, f func())</code>同<code>Go(f func()</code></li>
+<li><code>SetPanicHandler(f func(context.Context, interface{}))</code>是自定义panic处理逻辑，如果不定义将会默认调用<code>github.com/bytedance/gopkg/util/logger</code>来处理</li>
+<li><code>WorkerCount() int32</code>动态获取当前运行的<code>worker</code>，也就是正在跑的goroutine数量</li>
+</ul>
+<h3 id="pool-1"><code>pool</code></h3>
+<p><code>pool</code>是内部包自己实现<code>Pool</code>接口的结构体。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">pool</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// The name of the pool
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">name</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// capacity of the pool, the maximum number of goroutines that are actually working
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">cap</span> <span class="kt">int32</span> <span class="c1">// 也就是限制 worker 的数量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Configuration information
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">config</span> <span class="o">*</span><span class="nx">Config</span> <span class="c1">// gopool提供默认配置，当任务数大于1时，就新开一个goroutine
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 真正放函数的地方，所有的函数都放在这里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// linked list of tasks
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">taskHead</span>  <span class="o">*</span><span class="nx">task</span>      <span class="c1">// 头节点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">taskTail</span>  <span class="o">*</span><span class="nx">task</span>      <span class="c1">// 指向最后一个节点，实现一个O(1)的复杂度添加
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">taskLock</span>  <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span> <span class="c1">// 保证并发安全
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">taskCount</span> <span class="kt">int32</span>      <span class="c1">// 任务数量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Record the number of running workers
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">workerCount</span> <span class="kt">int32</span> <span class="c1">// 正在跑的worker
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// This method will be called when the worker panic
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">panicHandler</span> <span class="kd">func</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="kd">interface</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>name</code>是当前池的名字。</li>
+<li><code>cap</code>是当前池的容量，即允许在跑的最大协程数</li>
+<li><code>config</code>标识当前每个<code>worker</code>应当被分配的任务函数个数，包里默认是<code>1</code></li>
+<li><code>taskXXXX</code>是任务链表，<code>taskLock</code>是为了保证代码片段的并发安全，<code>taskCount</code>动态标识当前还未执行的任务函数</li>
+<li><code>workerCount</code>标识当前正在跑的协程数</li>
+<li><code>panicHandler</code>自定义panic处理</li>
+</ul>
+<h3 id="pool的方法"><code>pool</code>的方法</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">pool</span><span class="p">)</span> <span class="nf">Name</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">p</span><span class="p">.</span><span class="nx">name</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// SetCap 通过CPU指令集保证是原子的方式存到指定地址，保证并发安全
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">pool</span><span class="p">)</span> <span class="nf">SetCap</span><span class="p">(</span><span class="nx">cap</span> <span class="kt">int32</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将值原子地设置到p里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">atomic</span><span class="p">.</span><span class="nf">StoreInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">cap</span><span class="p">,</span> <span class="nx">cap</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">pool</span><span class="p">)</span> <span class="nf">Go</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nf">CtxGo</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="nx">f</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">pool</span><span class="p">)</span> <span class="nf">CtxGo</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">f</span> <span class="kd">func</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 池里取空的对象
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">t</span> <span class="o">:=</span> <span class="nx">taskPool</span><span class="p">.</span><span class="nf">Get</span><span class="p">().(</span><span class="o">*</span><span class="nx">task</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 置新
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">t</span><span class="p">.</span><span class="nx">ctx</span> <span class="p">=</span> <span class="nx">ctx</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">t</span><span class="p">.</span><span class="nx">f</span> <span class="p">=</span> <span class="nx">f</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 下面代码逻辑上锁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">p</span><span class="p">.</span><span class="nx">taskLock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将 task 放到任务链表里，这个过程由于是多个Goroutine操作并发操作，都在往任务链表里塞 task ，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 因此，需要将task入链表的代码锁住，防止并发问题
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="nx">p</span><span class="p">.</span><span class="nx">taskHead</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span> <span class="c1">// 链表为空
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">p</span><span class="p">.</span><span class="nx">taskHead</span> <span class="p">=</span> <span class="nx">t</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">p</span><span class="p">.</span><span class="nx">taskTail</span> <span class="p">=</span> <span class="nx">t</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">p</span><span class="p">.</span><span class="nx">taskTail</span><span class="p">.</span><span class="nx">next</span> <span class="p">=</span> <span class="nx">t</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">p</span><span class="p">.</span><span class="nx">taskTail</span> <span class="p">=</span> <span class="nx">t</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">taskLock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 然后原子更改任务状态，不需要加锁（避免上下文切换），这样可以获得更好的性能
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">taskCount</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// The following two conditions are met:
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 1. the number of tasks is greater than the threshold.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 2. The current number of workers is less than the upper limit p.cap.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// or there are currently no workers.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 根据默认的配置：worker数大于等于 p.cap时就会，就不会新建 worker了，此时就会复用已有的worker来执行；
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 在小于p.cap时就会每个task新建一个goroutine
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">taskCount</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">ScaleThreshold</span> <span class="o">&amp;&amp;</span> <span class="nx">p</span><span class="p">.</span><span class="nf">WorkerCount</span><span class="p">()</span> <span class="p">&lt;</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">cap</span><span class="p">))</span> <span class="o">||</span> <span class="nx">p</span><span class="p">.</span><span class="nf">WorkerCount</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 新开一个 worker
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">p</span><span class="p">.</span><span class="nf">incWorkerCount</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 池里拿
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">w</span> <span class="o">:=</span> <span class="nx">workerPool</span><span class="p">.</span><span class="nf">Get</span><span class="p">().(</span><span class="o">*</span><span class="nx">worker</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// p放到worker的pool里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span> <span class="p">=</span> <span class="nx">p</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 再开一个协程跑，取这个worker的任务并执行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="nx">w</span><span class="p">.</span><span class="nf">run</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// SetPanicHandler the func here will be called after the panic has been recovered.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">pool</span><span class="p">)</span> <span class="nf">SetPanicHandler</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="kd">interface</span><span class="p">{}))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">p</span><span class="p">.</span><span class="nx">panicHandler</span> <span class="p">=</span> <span class="nx">f</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">pool</span><span class="p">)</span> <span class="nf">WorkerCount</span><span class="p">()</span> <span class="kt">int32</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">LoadInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">workerCount</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">pool</span><span class="p">)</span> <span class="nf">incWorkerCount</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">workerCount</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">pool</span><span class="p">)</span> <span class="nf">decWorkerCount</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">p</span><span class="p">.</span><span class="nx">workerCount</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="worker"><code>worker</code></h3>
+<p><code>worker</code>结构体里有一个<code>pool</code>指针，在<code>gopool</code>的逻辑实现里，多个<code>worker</code>的<code>pool</code>指向同一个<code>pool</code>。意思是多个<code>worker</code>针对同一个<code>pool</code>里的任务链表处理</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">worker</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">pool</span> <span class="o">*</span><span class="nx">pool</span> <span class="c1">// 多个worker都指向这个pool
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="worker的方法"><code>worker</code>的方法</h3>
+<h4 id="run"><code>run</code></h4>
+<p>新开一个携程去轮询任务链表，并作panic的处理。值得注意的是：取任务链表里的任务时，必须上锁。因为此时有多个协程并发地取任务链表执行。panic处理也挺有意思，这里是将panic和任务函数调用放到一个匿名函数调用里，这样就可以使得panic地捕获一定是任务函数地panic，而不是捕获<code>run</code>方法里的panic</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">worker</span><span class="p">)</span> <span class="nf">run</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="kd">var</span> <span class="nx">t</span> <span class="o">*</span><span class="nx">task</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 必须上锁，因为可能有多个 worker（也就是多个协程） 同时再对这个pool里的task链表做取出操作，并执行这个task
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">taskLock</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 不断拿出 task
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">if</span> <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">taskHead</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">t</span> <span class="p">=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">taskHead</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">taskHead</span> <span class="p">=</span> <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">taskHead</span><span class="p">.</span><span class="nx">next</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 原子的减少任务数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">taskCount</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 任务取完了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">if</span> <span class="nx">t</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// if there&#39;s no task to do, exit
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="nx">w</span><span class="p">.</span><span class="nb">close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">taskLock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 回收
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="nx">w</span><span class="p">.</span><span class="nf">Recycle</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 释放时机到了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">taskLock</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 匿名函数调用，退一个栈从而形成独立环境，不让当前的defer去捕获外面函数里的异常，只是捕获这个执行函数的panic
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="c1">// 确保这个defer一定是捕获的task的panic
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 处理panic
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">if</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="nx">r</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                        <span class="k">if</span> <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">panicHandler</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                            <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nf">panicHandler</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                            <span class="nx">msg</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;GOPOOL: panic in pool: %s: %v: %s&#34;</span><span class="p">,</span> <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">debug</span><span class="p">.</span><span class="nf">Stack</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">                            <span class="nx">logger</span><span class="p">.</span><span class="nf">CtxErrorf</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}()</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 真正地执行函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="nx">t</span><span class="p">.</span><span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}()</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 回收task
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nx">t</span><span class="p">.</span><span class="nf">Recycle</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="其他方法">其他方法</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 协程数减一
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">worker</span><span class="p">)</span> <span class="nb">close</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span><span class="p">.</span><span class="nf">decWorkerCount</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">worker</span><span class="p">)</span> <span class="nf">zero</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">w</span><span class="p">.</span><span class="nx">pool</span> <span class="p">=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Recycle 回收worker
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">worker</span><span class="p">)</span> <span class="nf">Recycle</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">w</span><span class="p">.</span><span class="nf">zero</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 放回池里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">workerPool</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="nx">w</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>task</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">task</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">f</span>   <span class="kd">func</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">next</span> <span class="o">*</span><span class="nx">task</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">task</span><span class="p">)</span> <span class="nf">zero</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">t</span><span class="p">.</span><span class="nx">ctx</span> <span class="p">=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">t</span><span class="p">.</span><span class="nx">f</span> <span class="p">=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">t</span><span class="p">.</span><span class="nx">next</span> <span class="p">=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Recycle 回收到 sync.Pool里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">task</span><span class="p">)</span> <span class="nf">Recycle</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// task 置空
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">t</span><span class="p">.</span><span class="nf">zero</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 放到池里
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">taskPool</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2022-11-09
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E5%8D%8F%E7%A8%8B%E6%B1%A0/">协程池</a>
+          <a href="/tags/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/">原子操作</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E9%94%81/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">锁</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/http%E5%8D%8F%E8%AE%AE%E7%9F%A5%E8%AF%86%E7%82%B9/">
+            <span class="next-text nav-default">HTTP协议知识点</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2022-11-09 16:24:28 \u002b0800 CST',
+        title: '并发安全之原子操作',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

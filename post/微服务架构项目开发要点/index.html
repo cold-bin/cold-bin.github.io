@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>微服务架构项目开发要点 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="微服务架构项目开发要点 随着系统用户逐日增长，原来的单机架构集群部署的方式，虽然能够顶得住流量顶峰地倾泄，但是，系统越来越复杂。集群方式部署的" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E8%A6%81%E7%82%B9/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="微服务架构项目开发要点" />
+<meta property="og:description" content="微服务架构项目开发要点 随着系统用户逐日增长，原来的单机架构集群部署的方式，虽然能够顶得住流量顶峰地倾泄，但是，系统越来越复杂。集群方式部署的" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E8%A6%81%E7%82%B9/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-08-27T15:15:46+08:00" />
+<meta property="article:modified_time" content="2022-08-27T15:15:46+08:00" />
+<meta itemprop="name" content="微服务架构项目开发要点">
+<meta itemprop="description" content="微服务架构项目开发要点 随着系统用户逐日增长，原来的单机架构集群部署的方式，虽然能够顶得住流量顶峰地倾泄，但是，系统越来越复杂。集群方式部署的"><meta itemprop="datePublished" content="2022-08-27T15:15:46+08:00" />
+<meta itemprop="dateModified" content="2022-08-27T15:15:46+08:00" />
+<meta itemprop="wordCount" content="3558">
+<meta itemprop="keywords" content="微服务," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="微服务架构项目开发要点"/>
+<meta name="twitter:description" content="微服务架构项目开发要点 随着系统用户逐日增长，原来的单机架构集群部署的方式，虽然能够顶得住流量顶峰地倾泄，但是，系统越来越复杂。集群方式部署的"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">微服务架构项目开发要点</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2022-08-27 </span>
+        <div class="post-category">
+            <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/"> 分布式系统 </a>
+            </div>
+          <span class="more-meta"> 约 3558 字 </span>
+          <span class="more-meta"> 预计阅读 8 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#微服务架构项目开发要点">微服务架构项目开发要点</a>
+          <ul>
+            <li><a href="#要点一api-网关">要点一：API 网关</a></li>
+            <li><a href="#要点二无状态化">要点二：无状态化</a></li>
+            <li><a href="#要点三数据库的横向扩展">要点三：数据库的横向扩展</a></li>
+            <li><a href="#要点四缓存">要点四：缓存</a></li>
+            <li><a href="#要点五服务拆分和服务发现">要点五：服务拆分和服务发现</a></li>
+            <li><a href="#要点六服务编排与弹性伸缩">要点六：服务编排与弹性伸缩</a></li>
+            <li><a href="#要点七统一配置中心">要点七：统一配置中心</a></li>
+            <li><a href="#要点八统一的日志中心">要点八：统一的日志中心</a></li>
+            <li><a href="#要点九熔断限流降级">要点九：熔断，限流，降级</a></li>
+            <li><a href="#要点十全方位的监控">要点十：全方位的监控</a></li>
+            <li><a href="#示例架构">示例架构</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h2 id="微服务架构项目开发要点">微服务架构项目开发要点</h2>
+<p>随着系统用户逐日增长，原来的单机架构集群部署的方式，虽然能够顶得住流量顶峰地倾泄，但是，系统越来越复杂。集群方式部署的单机架构，终究是单机架构，当系统设计得很复杂时，我们需要把整个单机系统都停掉，然后修bug、添加新功能、回归测试、上线发布。试想一下：在这个过程里，如果出现了一个小小的bug，你就不得不为了修复bug而把所有服务都停掉，这样的作法显然对用户得体验不好。归根结底，是因为项目是单机架构的。如果采用分布式、微服务架构来进行开发并部署项目，那么，原来单机架构项目的诸多功能被拆分成多个服务分别开发、分别部署，每个独立的服务都分布在不同的进程空间、甚至不同的主机上。这样，一个服务挂掉或者修复bug测试等，显然不会再影响其他服务的运行。将原来粒度高的单价架构项目演变成粒度更小的微服务架构，这样就方便开发、部署和维护了。</p>
+<h3 id="要点一api-网关">要点一：API 网关</h3>
+<blockquote>
+<p>在实施微服务的过程中，不免要面临服务的聚合与拆分，当后端服务的拆分相对比较频繁的时候，往往需要一个统一的入口，将不同的请求路由到不同的服务，这就不得不提到API网关，</p>
+<p>API网关优势：</p>
+<p>简单的数据聚合可以在网关层完成，避免后台复杂调用
+进行统一的认证和鉴权，尽管服务之间的相互调用比较复杂，接口也会比较多，API 网关往往只暴露必须的对外接口，并且对接口进行统一的认证和鉴权，使得内部的服务相互访问的时候，不用再进行认证和鉴权，效率会比较高。
+设定一定的策略，进行 A/B 测试，蓝绿发布，预发环境导流等等。API 网关往往是无状态的，可以横向扩展，从而不会成为性能瓶颈。</p>
+</blockquote>
+<h3 id="要点二无状态化">要点二：无状态化</h3>
+<blockquote>
+<p>影响应用迁移和横向扩展的重要因素就是应用的状态，无状态服务，是要把这个状态往外移，将 Session 数据，文件数据，结构化数据保存在后端统一的存储中，从而应用仅仅包含商务逻辑。
+状态是不可避免的，例如 ZooKeeper, DB，Cache 等，把这些所有有状态的东西收敛在一个非常集中的集群里面，因此整个业务就分两部分，一个是无状态的部分，一个是有状态的部分。
+无状态的部分能实现两点，一是跨机房随意地部署，也即迁移性，一是弹性伸缩，很容易地进行扩容。
+有状态的部分，如 DB，Cache，ZooKeeper 有自己的高可用机制，要利用到他们自己高可用的机制来实现这个状态的集群。
+虽说无状态化，但是当前处理的数据，还是会在内存里面的，当前的进程挂掉数据，肯定也是有一部分丢失的，为了实现这一点，服务要有重试的机制，接口要有幂等的机制，通过服务发现机制，重新调用一次后端服务的另一个实例就可以了。</p>
+</blockquote>
+<h3 id="要点三数据库的横向扩展">要点三：数据库的横向扩展</h3>
+<blockquote>
+<p>数据库保存状态，是最重要的也是最容易出现瓶颈的。有了分布式数据库可以使数据库的性能可以随着节点增加线性地增加。
+分布式数据库最最下面是 RDS，是主备的，通过 MySql 的内核开发能力，我们能够实现主备切换数据零丢失，所以数据落在这个 RDS 里面，是非常放心的，哪怕是挂了一个节点，切换完了以后，你的数据也是不会丢的。
+双机房的部署，DDB 开发了一个数据运河 NDC 的组件，可以使得不同的 DDB 之间在不同的机房里面进行同步，这时候不但在一个数据中心里面是分布式的，在多个数据中心里面也会有一个类似双活的一个备份，高可用性有非常好的保证。</p>
+</blockquote>
+<h3 id="要点四缓存">要点四：缓存</h3>
+<blockquote>
+<p>在高并发场景下缓存是非常重要的。要有层次的缓存，使得数据尽量靠近用户。数据越靠近用户能承载的并发量也越大，响应时间越短。尤其对于静态数据，可以过一段时间去取一次，而且也没必要到数据中心去取，可以通过 CDN，将数据缓存在距离客户端最近的节点上，进行就近下载。有时候 CDN 里面没有，还是要回到数据中心去下载，称为回源，在数据中心的最外层，我们称为接入层，可以设置一层缓存，将大部分的请求拦截，从而不会对后台的数据库造成压力。
+如果是动态数据，还是需要访问应用，通过应用中的商务逻辑生成，或者去数据库读取，为了减轻数据库的压力，应用可以使用本地的缓存，也可以使用分布式缓存，如 Memcached 或者 Redis，使得大部分请求读取缓存即可，不必访问数据库。
+当然动态数据还可以做一定的静态化，也即降级成静态数据，从而减少后端的压力。</p>
+</blockquote>
+<h3 id="要点五服务拆分和服务发现">要点五：服务拆分和服务发现</h3>
+<blockquote>
+<p>当应用变化快的时候，往往要考虑将比较大的服务拆分为一系列小的服务。每个微服务之间是独立的，不耦合，例如一般不会出现多个服务对同一个MySQL数据库进行操作。
+这样第一个好处就是开发比较独立，当非常多的人在维护同一个代码仓库的时候，往往对代码的修改就会相互影响，常常会出现我没改什么测试就不通过了，而且代码提交的时候，经常会出现冲突，需要进行代码合并，大大降低了开发的效率。
+另一个好处就是上线独立，物流模块对接了一家新的快递公司，需要连同下单一起上线，这是非常不合理的行为，我没改还要我重启，我没改还让我发布，我没改还要我开会，都是应该拆分的时机。
+另外再就是高并发时段的扩容，往往只有最关键的下单和支付流程是核心，只要将关键的交易链路进行扩容即可，如果这时候附带很多其他的服务，扩容即是不经济的，也是很有风险的。
+再就是容灾和降级，在大促的时候，可能需要牺牲一部分的边角功能，但是如果所有的代码耦合在一起，很难将边角的部分功能进行降级。
+当然拆分完毕以后，应用之间的关系就更加复杂了，因而需要服务发现的机制，来管理应用相互的关系，实现自动的修复，自动的关联，自动的负载均衡，自动的容错切换。</p>
+</blockquote>
+<h3 id="要点六服务编排与弹性伸缩">要点六：服务编排与弹性伸缩</h3>
+<blockquote>
+<p>服务拆分了，进程就会非常的多，因而需要服务编排来管理服务之间的依赖关系，以及将服务的部署代码化，也就是我们常说的基础设施即代码。这样对于服务的发布，更新，回滚，扩容，缩容，都可以通过修改编排文件来实现，从而增加了可追溯性，易管理性，和自动化的能力。
+既然编排文件也可以用代码仓库进行管理，就可以实现一百个服务中，更新其中五个服务，只要修改编排文件中的五个服务的配置就可以，当编排文件提交的时候，代码仓库自动触发自动部署升级脚本，从而更新线上的环境，当发现新的环境有问题时，当然希望将这五个服务原子性地回滚，如果没有编排文件，需要人工记录这次升级了哪五个服务。有了编排文件，只要在代码仓库里面 revert，就回滚到上一个版本了。所有的操作在代码仓库里都是可以看到的。</p>
+</blockquote>
+<h3 id="要点七统一配置中心">要点七：统一配置中心</h3>
+<blockquote>
+<p>服务拆分以后，服务的数量非常多，如果所有的配置都以配置文件的方式放在应用本地的话，非常难以管理，可以想象当有几百上千个进程中有一个配置出现了问题，是很难将它找出来的，因而需要有统一的配置中心，来管理所有的配置，进行统一的配置下发。
+在微服务中，配置往往分为几类，一类是几乎不变的配置，这种配置可以直接打在容器镜像里面，第二类是启动时就会确定的配置，这种配置往往通过环境变量，在容器启动的时候传进去，第三类就是统一的配置，需要通过配置中心进行下发，例如在大促的情况下，有些功能需要降级，哪些功能可以降级，哪些功能不能降级，都可以在配置文件中统一配置。</p>
+</blockquote>
+<h3 id="要点八统一的日志中心">要点八：统一的日志中心</h3>
+<blockquote>
+<p>同样是进程数目非常多的时候，很难对成千上百个容器，一个一个登录进去查看日志，所以需要统一的日志中心来收集日志，为了使收集到的日志容易分析，对于日志的规范，需要有一定的要求，当所有的服务都遵守统一的日志规范的时候，在日志中心就可以对一个交易流程进行统一的追溯。例如在最后的日志搜索引擎中，搜索交易号，就能够看到在哪个过程出现了错误或者异常</p>
+</blockquote>
+<h3 id="要点九熔断限流降级">要点九：熔断，限流，降级</h3>
+<blockquote>
+<p>服务要有熔断，限流，降级的能力，当一个服务调用另一个服务，出现超时的时候，应及时返回，而非阻塞在那个地方，从而影响其他用户的交易，可以返回默认的托底数据。
+当一个服务发现被调用的服务，因为过于繁忙，线程池满，连接池满，或者总是出错，则应该及时熔断，防止因为下一个服务的错误或繁忙，导致本服务的不正常，从而逐渐往前传导，导致整个应用的雪崩。
+当发现整个系统的确负载过高的时候，可以选择降级某些功能或某些调用，保证最重要的交易流程的通过，以及最重要的资源全部用于保证最核心的流程。
+还有一种手段就是限流，当既设置了熔断策略，又设置了降级策略，通过全链路的压力测试，应该能够知道整个系统的支撑能力，因而就需要制定限流策略，保证系统在测试过的支撑能力范围内进行服务，超出支撑能力范围的，可拒绝服务。当你下单的时候，系统弹出对话框说 “系统忙，请重试”，并不代表系统挂了，而是说明系统是正常工作的，只不过限流策略起到了作用。</p>
+</blockquote>
+<h3 id="要点十全方位的监控">要点十：全方位的监控</h3>
+<blockquote>
+<p>当系统非常复杂的时候，要有统一的监控，主要有两个方面，一个是是否健康，一个是性能瓶颈在哪里。当系统出现异常的时候，监控系统可以配合告警系统，及时地发现，通知，干预，从而保障系统的顺利运行。
+当压力测试的时候，往往会遭遇瓶颈，也需要有全方位的监控来找出瓶颈点，同时能够保留现场，从而可以追溯和分析，进行全方位的优化。</p>
+</blockquote>
+<h3 id="示例架构">示例架构</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202208271617810.png" alt="image-20220827161741928"></p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2022-08-27
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Gorm使用补充点</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/git%E4%B9%8Bcommit%E8%A7%84%E8%8C%83%E6%8C%87%E5%8D%97/">
+            <span class="next-text nav-default">Git之commit规范指南</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2022-08-27 15:15:46 \u002b0800 CST',
+        title: '微服务架构项目开发要点',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Redis高级篇之分布式缓存 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="[toc] 基于Redis集群解决单机Redis存在的问题 单机的Redis存在四大问题： 分布式缓存 1.Redis持久化 Redis有两种持久化方案： RD" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="Redis高级篇之分布式缓存" />
+<meta property="og:description" content="[toc] 基于Redis集群解决单机Redis存在的问题 单机的Redis存在四大问题： 分布式缓存 1.Redis持久化 Redis有两种持久化方案： RD" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-01-15T17:26:41+08:00" />
+<meta property="article:modified_time" content="2023-01-15T17:26:41+08:00" />
+<meta itemprop="name" content="Redis高级篇之分布式缓存">
+<meta itemprop="description" content="[toc] 基于Redis集群解决单机Redis存在的问题 单机的Redis存在四大问题： 分布式缓存 1.Redis持久化 Redis有两种持久化方案： RD"><meta itemprop="datePublished" content="2023-01-15T17:26:41+08:00" />
+<meta itemprop="dateModified" content="2023-01-15T17:26:41+08:00" />
+<meta itemprop="wordCount" content="10201">
+<meta itemprop="keywords" content="rdb与aof持久化,redis主从架构,redis哨兵模式,redis分片集群," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis高级篇之分布式缓存"/>
+<meta name="twitter:description" content="[toc] 基于Redis集群解决单机Redis存在的问题 单机的Redis存在四大问题： 分布式缓存 1.Redis持久化 Redis有两种持久化方案： RD"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Redis高级篇之分布式缓存</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-01-15 </span>
+        <div class="post-category">
+            <a href="/categories/redis/"> redis </a>
+            <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/"> 分布式系统 </a>
+            <a href="/categories/%E7%BC%93%E5%AD%98/"> 缓存 </a>
+            </div>
+          <span class="more-meta"> 约 10201 字 </span>
+          <span class="more-meta"> 预计阅读 21 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#基于redis集群解决单机redis存在的问题">基于Redis集群解决单机Redis存在的问题</a></li>
+    <li><a href="#分布式缓存">分布式缓存</a></li>
+    <li><a href="#1redis持久化">1.Redis持久化</a>
+      <ul>
+        <li><a href="#11rdb持久化">1.1.RDB持久化</a>
+          <ul>
+            <li><a href="#111执行时机">1.1.1.执行时机</a></li>
+            <li><a href="#112rdb原理">1.1.2.RDB原理</a></li>
+            <li><a href="#113小结">1.1.3.小结</a></li>
+          </ul>
+        </li>
+        <li><a href="#12aof持久化">1.2.AOF持久化</a>
+          <ul>
+            <li><a href="#121aof原理">1.2.1.AOF原理</a></li>
+            <li><a href="#122aof配置">1.2.2.AOF配置</a></li>
+            <li><a href="#123aof文件重写">1.2.3.AOF文件重写</a></li>
+          </ul>
+        </li>
+        <li><a href="#13rdb与aof对比">1.3.RDB与AOF对比</a></li>
+      </ul>
+    </li>
+    <li><a href="#2redis主从">2.Redis主从</a>
+      <ul>
+        <li><a href="#21搭建主从架构">2.1.搭建主从架构</a></li>
+        <li><a href="#22主从数据同步原理">2.2.主从数据同步原理</a>
+          <ul>
+            <li><a href="#221全量同步">2.2.1.全量同步</a></li>
+            <li><a href="#222增量同步">2.2.2.增量同步</a></li>
+            <li><a href="#223repl_backlog原理">2.2.3.repl_backlog原理</a></li>
+          </ul>
+        </li>
+        <li><a href="#23主从同步优化">2.3.主从同步优化</a></li>
+        <li><a href="#24小结">2.4.小结</a></li>
+      </ul>
+    </li>
+    <li><a href="#3redis哨兵">3.Redis哨兵</a>
+      <ul>
+        <li><a href="#31哨兵原理">3.1.哨兵原理</a>
+          <ul>
+            <li><a href="#311集群结构和作用">3.1.1.集群结构和作用</a></li>
+            <li><a href="#312集群监控原理">3.1.2.集群监控原理</a></li>
+            <li><a href="#313集群故障恢复原理">3.1.3.集群故障恢复原理</a></li>
+            <li><a href="#314小结">3.1.4.小结</a></li>
+          </ul>
+        </li>
+        <li><a href="#32搭建哨兵集群">3.2.搭建哨兵集群</a></li>
+        <li><a href="#33redistemplate">3.3.RedisTemplate</a>
+          <ul>
+            <li><a href="#331导入demo工程">3.3.1.导入Demo工程</a></li>
+            <li><a href="#332引入依赖">3.3.2.引入依赖</a></li>
+            <li><a href="#333配置redis地址">3.3.3.配置Redis地址</a></li>
+            <li><a href="#334配置读写分离">3.3.4.配置读写分离</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#4redis分片集群">4.Redis分片集群</a>
+      <ul>
+        <li><a href="#41搭建分片集群">4.1.搭建分片集群</a></li>
+        <li><a href="#42散列插槽">4.2.散列插槽</a>
+          <ul>
+            <li><a href="#421插槽原理">4.2.1.插槽原理</a></li>
+            <li><a href="#421小结">4.2.1.小结</a></li>
+          </ul>
+        </li>
+        <li><a href="#43集群伸缩">4.3.集群伸缩</a>
+          <ul>
+            <li><a href="#431需求分析">4.3.1.需求分析</a></li>
+            <li><a href="#432创建新的redis实例">4.3.2.创建新的redis实例</a></li>
+            <li><a href="#433添加新节点到redis">4.3.3.添加新节点到redis</a></li>
+            <li><a href="#434转移插槽">4.3.4.转移插槽</a></li>
+          </ul>
+        </li>
+        <li><a href="#44故障转移">4.4.故障转移</a>
+          <ul>
+            <li><a href="#441自动故障转移">4.4.1.自动故障转移</a></li>
+            <li><a href="#442手动故障转移">4.4.2.手动故障转移</a></li>
+          </ul>
+        </li>
+        <li><a href="#45redistemplate访问分片集群">4.5.RedisTemplate访问分片集群</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <p>[toc]</p>
+<h1 id="基于redis集群解决单机redis存在的问题">基于Redis集群解决单机Redis存在的问题</h1>
+<p>单机的Redis存在四大问题：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725144240631.png" alt="image-20210725144240631"></p>
+<h1 id="分布式缓存">分布式缓存</h1>
+<h1 id="1redis持久化">1.Redis持久化</h1>
+<p>Redis有两种持久化方案：</p>
+<ul>
+<li>RDB持久化</li>
+<li>AOF持久化</li>
+</ul>
+<h2 id="11rdb持久化">1.1.RDB持久化</h2>
+<p>RDB全称Redis Database Backup file（Redis数据备份文件），也被叫做Redis数据快照。简单来说就是把内存中的所有数据都记录到磁盘中。当Redis实例故障重启后，从磁盘读取快照文件，恢复数据。快照文件称为RDB文件，默认是保存在当前运行目录。</p>
+<h3 id="111执行时机">1.1.1.执行时机</h3>
+<p>RDB持久化在四种情况下会执行：</p>
+<ul>
+<li>执行<code>save</code>命令</li>
+<li>执行<code>bgsave</code>命令</li>
+<li>Redis停机时</li>
+<li>触发RDB条件时</li>
+</ul>
+<p><strong>1）<code>save</code>命令</strong></p>
+<p>执行下面的命令，可以立即执行一次RDB：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725144536958.png" alt="image-20210725144536958"></p>
+<p><code>save</code>命令会导致主进程执行RDB，这个过程中其它所有命令都会被阻塞。只有在数据迁移时可能用到。</p>
+<p><strong>2）<code>bgsave</code>命令</strong></p>
+<p>下面的命令可以异步执行RDB：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725144725943.png" alt="image-20210725144725943"></p>
+<p>这个命令执行后会开启独立进程完成RDB，主进程可以持续处理用户请求，不受影响。</p>
+<p><strong>3）停机时</strong></p>
+<p>Redis停机时会执行一次<code>save</code>命令，实现RDB持久化。</p>
+<p><strong>4）触发RDB条件</strong></p>
+<p>Redis内部有触发RDB的机制，可以在<code>redis.conf</code>文件中找到，格式如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-properties" data-lang="properties"><span class="line"><span class="cl"><span class="c1"># 900秒内，如果至少有1个key被修改，则执行bgsave ， 如果是save &#34;&#34; 则表示禁用RDB</span>
+</span></span><span class="line"><span class="cl"><span class="na">save</span> <span class="s">900 1 </span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 依次类推</span>
+</span></span><span class="line"><span class="cl"><span class="na">save</span> <span class="s">300 10  </span>
+</span></span><span class="line"><span class="cl"><span class="na">save</span> <span class="s">60 10000 </span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>RDB的其它配置也可以在<code>redis.conf</code>文件中设置：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-properties" data-lang="properties"><span class="line"><span class="cl"><span class="c1"># 是否压缩 ,建议不开启，压缩也会消耗cpu，磁盘的话不值钱</span>
+</span></span><span class="line"><span class="cl"><span class="na">rdbcompression</span> <span class="s">yes</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># RDB文件名称</span>
+</span></span><span class="line"><span class="cl"><span class="na">dbfilename</span> <span class="s">dump.rdb  </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 文件保存的路径目录</span>
+</span></span><span class="line"><span class="cl"><span class="na">dir</span> <span class="s">./ </span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>SAVE  保存是阻塞主进程，客户端无法连接redis，等SAVE完成后，主进程才开始工作，客户端可以连接</p>
+<p>BGSAVE  是fork一个save的子进程，在执行save过程中，不影响主进程，客户端可以正常链接redis，等子进程fork执行save完成后，通知主进程，子进程关闭。</p>
+</blockquote>
+<h3 id="112rdb原理">1.1.2.RDB原理</h3>
+<p>RDB持久化是指在指定的时间间隔内将redis内存中的数据集快照写入磁盘，实现原理是redis服务在指定的时间间隔内先<code>fork</code>一个子进程，由子进程将数据集写入临时文件，写入成功后，再替换之前的文件，用二进制压缩存储，生成<code>dump.rdb</code>文件存放在磁盘中。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/6w4x54kwa7p4m_e0896752f4e84346a9e44d56612a4896.png" alt="image.png"></p>
+<p><code>fork</code>采用的是copy-on-write技术：</p>
+<ul>
+<li>当主进程执行读操作时，访问共享内存；</li>
+<li>当主进程执行写操作时，则会拷贝一份数据，执行写操作。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725151319695.png" alt="image-20210725151319695"></p>
+<h3 id="113小结">1.1.3.小结</h3>
+<p><strong>RDB方式<code>bgsave</code>的基本流程？</strong></p>
+<ul>
+<li><code>fork</code>主进程得到一个子进程，共享内存空间</li>
+<li>子进程读取内存数据并写入新的RDB文件</li>
+<li>用新RDB文件替换旧的RDB文件</li>
+</ul>
+<p><strong>RDB会在什么时候执行？<code>save 60 1000</code>代表什么含义？</strong></p>
+<ul>
+<li>默认是服务停止时</li>
+<li>代表60秒内至少执行1000次修改则触发RDB</li>
+</ul>
+<p><strong>RDB优点？</strong></p>
+<ul>
+<li>一旦采用该方式，那么你的整个Redis数据库将只包含一个文件，这对于文件备份而言是非常完美的。比如，你可能打算每个小时归档一次最近24小时的数据，同时还要每天归档一次最近30天的数据。通过这样的备份策略，一旦系统出现灾难性故障，我们可以非常容易的进行恢复。</li>
+<li>对于灾难恢复而言，RDB是非常不错的选择。因为我们可以非常轻松的将一个单独的文件压缩后再转移到其它存储介质上。</li>
+<li>性能最大化。对于Redis的服务进程而言，在开始持久化(<code>bgsave</code>)时，它唯一需要做的只是<code>fork</code>出子进程，之后再由子进程完成这些持久化的工作，这样就可以极大的避免服务进程执行IO操作了。(<code>save</code>会阻塞主进程)</li>
+<li>相比于AOF机制，如果数据集很大，RDB的启动效率会更高。</li>
+</ul>
+<p><strong>RDB的缺点？</strong></p>
+<ul>
+<li>RDB执行间隔时间长，两次RDB之间写入数据有丢失的风险</li>
+<li>当内存里数据集较大时，<code>fork</code>子进程、压缩、写出RDB文件都比较耗时，那么<code>fork</code>子进程就比较消耗性能，容易拖垮服务</li>
+</ul>
+<h2 id="12aof持久化">1.2.AOF持久化</h2>
+<h3 id="121aof原理">1.2.1.AOF原理</h3>
+<p>AOF全称为Append Only File（追加文件）。Redis处理的每一个写命令都会记录在AOF文件，可以看做是命令日志文件。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725151543640.png" alt="image-20210725151543640"></p>
+<h3 id="122aof配置">1.2.2.AOF配置</h3>
+<p>AOF默认是关闭的，需要修改<code>redis.conf</code>配置文件来开启AOF：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-properties" data-lang="properties"><span class="line"><span class="cl"><span class="c1"># 是否开启AOF功能，默认是no</span>
+</span></span><span class="line"><span class="cl"><span class="na">appendonly</span> <span class="s">yes</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># AOF文件的名称</span>
+</span></span><span class="line"><span class="cl"><span class="na">appendfilename</span> <span class="s">&#34;appendonly.aof&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>AOF的命令记录的频率也可以通过<code>redis.conf</code>文件来配：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-properties" data-lang="properties"><span class="line"><span class="cl"><span class="c1"># 表示每执行一次写命令，立即记录到AOF文件</span>
+</span></span><span class="line"><span class="cl"><span class="na">appendfsync</span> <span class="s">always </span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 写命令执行完先放入AOF缓冲区，然后表示每隔1秒将缓冲区数据写到AOF文件，是默认方案</span>
+</span></span><span class="line"><span class="cl"><span class="na">appendfsync</span> <span class="s">everysec</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 写命令执行完先放入AOF缓冲区，由操作系统决定何时将缓冲区内容写回磁盘</span>
+</span></span><span class="line"><span class="cl"><span class="na">appendfsync</span> <span class="s">no</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>三种策略对比：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725151654046.png" alt="image-20210725151654046"></p>
+<h3 id="123aof文件重写">1.2.3.AOF文件重写</h3>
+<p>因为是记录命令，AOF文件会比RDB文件大的多。而且AOF会记录对同一个key的多次写操作，但只有最后一次写操作才有意义。通过执行<code>bgrewriteaof</code>命令，可以让AOF文件执行重写功能，用最少的命令达到相同效果。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725151729118.png" alt="image-20210725151729118"></p>
+<p>如图，AOF原本有三个命令，但是<code>set num 123</code> 和 <code>set num 666</code>都是对<code>num</code>的操作，第二次会覆盖第一次的值，因此第一个命令记录下来没有意义。</p>
+<p>所以重写命令后，AOF文件内容就是：<code>mset name jack num 666</code></p>
+<p>Redis也会在触发阈值时自动去重写AOF文件。阈值也可以在redis.conf中配置：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-properties" data-lang="properties"><span class="line"><span class="cl"><span class="c1"># AOF文件比上次文件增长超过多少百分比，则触发重写</span>
+</span></span><span class="line"><span class="cl"><span class="na">auto-aof-rewrite-percentage</span> <span class="s">100</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># AOF文件体积最小多大以上才触发重写</span>
+</span></span><span class="line"><span class="cl"><span class="na">auto-aof-rewrite-min-size</span> <span class="s">64mb</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="13rdb与aof对比">1.3.RDB与AOF对比</h2>
+<p>RDB和AOF各有自己的优缺点，如果对数据安全性要求较高，在实际开发中往往会<strong>结合</strong>两者来使用。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725151940515.png" alt="image-20210725151940515"></p>
+<h1 id="2redis主从">2.Redis主从</h1>
+<h2 id="21搭建主从架构">2.1.搭建主从架构</h2>
+<p>单节点Redis的并发能力是有上限的，要进一步提高Redis的并发能力，就需要搭建主从集群，实现读写分离。</p>
+<p>像MySQL一样，redis是支持主从同步的，而且也支持一主多从以及多级从结构。 主从结构，一是为了纯粹的冗余备份，二是为了提升读性能，比如很消耗性能的SORT就可以由从服务器来承担。 redis的主从同步是异步进行的，这意味着主从同步不会影响主逻辑，也不会降低redis的处理性能。 主从架构中，可以考虑关闭主服务器的数据持久化功能，只让从服务器进行持久化，这样可以提高主服务器的处理性能。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725152037611.png" alt="image-20210725152037611"></p>
+<h2 id="22主从数据同步原理">2.2.主从数据同步原理</h2>
+<h3 id="221全量同步">2.2.1.全量同步</h3>
+<p>主从第一次建立连接时，会执行<strong>全量同步</strong>，将master节点的所有数据都拷贝给slave节点，流程：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725152222497.png" alt="image-20210725152222497"></p>
+<p>这里有一个问题，master如何得知salve是第一次来连接呢？？</p>
+<p>有几个概念，可以作为判断依据：</p>
+<ul>
+<li><strong>Replication Id</strong>：简称replid，是数据集的标记，id一致则说明是同一数据集。每一个master都有唯一的replid，slave则会继承master节点的replid</li>
+<li><strong>offset</strong>：偏移量，随着记录在repl_baklog中的数据增多而逐渐增大。slave完成同步时也会记录当前同步的offset。如果slave的offset小于master的offset，说明slave数据落后于master，需要更新。</li>
+</ul>
+<p>因此slave做数据同步，必须向master声明自己的replication id 和offset，master才可以判断到底需要同步哪些数据。</p>
+<p>因为slave原本也是一个master，有自己的replid和offset，当第一次变成slave，与master建立连接时，发送的replid和offset是自己的replid和offset。</p>
+<p>master判断发现slave发送来的replid与自己的不一致，说明这是一个全新的slave，就知道要做全量同步了。</p>
+<p>master会将自己的replid和offset都发送给这个slave，slave保存这些信息。以后slave的replid就与master一致了。</p>
+<p>因此，<strong>master判断一个节点是否是第一次同步的依据，就是看replid是否一致</strong>。</p>
+<p>如图：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725152700914.png" alt="image-20210725152700914"></p>
+<p>完整流程描述：</p>
+<ul>
+<li>slave节点请求增量同步</li>
+<li>master节点判断replid，发现不一致，拒绝增量同步，开启全量同步</li>
+<li>master将完整内存数据生成RDB，发送RDB到slave</li>
+<li>slave清空本地数据，加载master的RDB</li>
+<li>master将RDB期间的命令记录在repl_baklog，并持续将log中的命令发送给slave</li>
+<li>slave执行接收到的命令，保持与master之间的同步</li>
+</ul>
+<h3 id="222增量同步">2.2.2.增量同步</h3>
+<p>全量同步需要先做RDB，然后将RDB文件通过网络传输个slave，成本太高了。因此除了第一次做全量同步，其它大多数时候slave与master都是做<strong>增量同步</strong>。</p>
+<p>什么是增量同步？就是只更新slave与master存在差异的部分数据。如图：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725153201086.png" alt="image-20210725153201086"></p>
+<p>那么master怎么知道slave与自己的数据差异在哪里呢?</p>
+<h3 id="223repl_backlog原理">2.2.3.repl_backlog原理</h3>
+<p>master怎么知道slave与自己的数据差异在哪里呢?</p>
+<p>这就要说到全量同步时的repl_baklog文件了。</p>
+<p>这个文件是一个固定大小的数组，只不过数组是环形，也就是说<strong>角标到达数组末尾后，会再次从0开始读写</strong>，这样数组头部的数据就会被覆盖。</p>
+<p>repl_baklog中会记录Redis处理过的命令日志及offset，包括master当前的offset，和slave已经拷贝到的offset：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725153359022.png" alt="image-20210725153359022"></p>
+<p>slave与master的offset之间的差异，就是salve需要增量拷贝的数据了。</p>
+<p>随着不断有数据写入，master的offset逐渐变大，slave也不断的拷贝，追赶master的offset：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725153524190.png" alt="image-20210725153524190"></p>
+<p>直到数组被填满：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725153715910.png" alt="image-20210725153715910"></p>
+<p>此时，如果有新的数据写入，就会覆盖数组中的旧数据。不过，旧的数据只要是绿色的，说明是已经被同步到slave的数据，即便被覆盖了也没什么影响。因为未同步的仅仅是红色部分。</p>
+<p>但是，如果slave出现网络阻塞，导致master的offset远远超过了slave的offset：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725153937031.png" alt="image-20210725153937031"></p>
+<p>如果master继续写入新数据，其offset就会覆盖旧的数据，直到将slave现在的offset也覆盖：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725154155984.png" alt="image-20210725154155984"></p>
+<p>棕色框中的红色部分，就是尚未同步，但是却已经被覆盖的数据。此时如果slave恢复，需要同步，却发现自己的offset都没有了，无法完成增量同步了。只能做全量同步。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725154216392.png" alt="image-20210725154216392"></p>
+<h2 id="23主从同步优化">2.3.主从同步优化</h2>
+<p>主从同步可以保证主从数据的一致性，非常重要</p>
+<p>可以从以下几个方面来优化Redis主从就集群：</p>
+<ul>
+<li>在master中配置<code>repl-diskless-sync yes</code>启用无磁盘复制，避免全量同步时的磁盘IO。</li>
+<li>Redis单节点上的内存占用不要太大，减少RDB导致的过多磁盘IO</li>
+<li>适当提高repl_baklog的大小，发现slave宕机时尽快实现故障恢复，尽可能避免全量同步</li>
+<li>限制一个master上的slave节点数量，如果实在是太多slave，则可以采用主-从-从链式结构，减少master压力</li>
+</ul>
+<p>主从从架构图：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725154405899.png" alt="image-20210725154405899"></p>
+<h2 id="24小结">2.4.小结</h2>
+<p>简述全量同步和增量同步区别？</p>
+<ul>
+<li>全量同步：master将完整内存数据生成RDB，发送RDB到slave。后续命令则记录在repl_baklog，逐个发送给slave</li>
+<li>增量同步：slave提交自己的offset到master，master获取repl_baklog中从offset之后的命令给slave</li>
+</ul>
+<p>什么时候执行全量同步？</p>
+<ul>
+<li>slave节点第一次连接master节点时</li>
+<li>slave节点断开时间太久，repl_baklog中的offset已经被覆盖时</li>
+</ul>
+<p>什么时候执行增量同步？</p>
+<ul>
+<li>slave节点断开又恢复，并且在repl_baklog中能找到offset时</li>
+</ul>
+<h1 id="3redis哨兵">3.Redis哨兵</h1>
+<p>Redis提供了哨兵（Sentinel）机制来<strong>实现主从集群的自动故障恢复</strong>。</p>
+<h2 id="31哨兵原理">3.1.哨兵原理</h2>
+<h3 id="311集群结构和作用">3.1.1.集群结构和作用</h3>
+<p>哨兵的结构如图：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725154528072.png" alt="image-20210725154528072"></p>
+<p>哨兵的作用如下：</p>
+<ul>
+<li><strong>监控</strong>：Sentinel 会不断检查您的master和slave是否按预期工作</li>
+<li><strong>自动故障恢复</strong>：如果master故障，Sentinel会将一个slave提升为master。当故障实例恢复后也以新的master为主</li>
+<li><strong>通知</strong>：Sentinel充当Redis客户端的服务发现来源，当集群发生故障转移时，会将最新信息推送给Redis的客户端</li>
+</ul>
+<h3 id="312集群监控原理">3.1.2.集群监控原理</h3>
+<p>Sentinel基于心跳机制监测服务状态，每隔1秒向集群的每个实例发送ping命令：</p>
+<ul>
+<li>主观下线：如果某sentinel节点发现某实例未在规定时间响应，则认为该实例<strong>主观下线</strong>。</li>
+<li>客观下线：若超过指定数量（quorum）的sentinel都认为该实例主观下线，则该实例<strong>客观下线</strong>。quorum值最好超过Sentinel实例数量的一半。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725154632354.png" alt="image-20210725154632354"></p>
+<h3 id="313集群故障恢复原理">3.1.3.集群故障恢复原理</h3>
+<p>一旦发现master故障，sentinel需要在salve中选择一个作为新的master，选择依据是这样的：</p>
+<ul>
+<li>首先会判断slave节点与master节点断开时间长短，如果超过指定值（down-after-milliseconds * 10）则会排除该slave节点</li>
+<li>然后判断slave节点的slave-priority值，越小优先级越高，如果是0则永不参与选举</li>
+<li>如果slave-prority一样，则判断slave节点的offset值，越大说明数据越新，优先级越高</li>
+<li>最后是判断slave节点的运行id大小，越小优先级越高。</li>
+</ul>
+<p>当选出一个新的master后，该如何实现切换呢？</p>
+<p>流程如下：</p>
+<ul>
+<li>sentinel给备选的slave1节点发送<code>slaveof no one</code>命令，让该节点成为master</li>
+<li>sentinel给所有其它slave发送<code>slaveof 192.168.150.101 7002</code>命令，让这些slave成为新master的从节点，开始从新的master上同步数据。</li>
+<li>最后，sentinel将故障节点标记为slave，当故障节点恢复后会自动成为新的master的slave节点</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725154816841.png" alt="image-20210725154816841"></p>
+<h3 id="314小结">3.1.4.小结</h3>
+<p>Sentinel的三个作用是什么？</p>
+<ul>
+<li>监控</li>
+<li>故障转移</li>
+<li>通知</li>
+</ul>
+<p>Sentinel如何判断一个redis实例是否健康？</p>
+<ul>
+<li>每隔1秒发送一次ping命令，如果超过一定时间没有相向则认为是主观下线</li>
+<li>如果大多数sentinel都认为实例主观下线，则判定服务下线</li>
+</ul>
+<p>故障转移步骤有哪些？</p>
+<ul>
+<li>首先选定一个slave作为新的master，执行<code>slaveof no on</code>命令</li>
+<li>然后让所有节点都执行<code>slaveof 新master主机 端口号</code></li>
+<li>修改故障节点配置，添加<code>slaveof 新master 端口号</code></li>
+</ul>
+<h2 id="32搭建哨兵集群">3.2.搭建哨兵集群</h2>
+<h2 id="33redistemplate">3.3.RedisTemplate</h2>
+<p>在Sentinel集群监管下的Redis主从集群，其节点会因为自动故障转移而发生变化，Redis的客户端必须感知这种变化，及时更新连接信息。Spring的RedisTemplate底层利用lettuce实现了节点的感知和自动切换。</p>
+<p>下面，我们通过一个测试来实现RedisTemplate集成哨兵机制。</p>
+<h3 id="331导入demo工程">3.3.1.导入Demo工程</h3>
+<p>首先，我们引入课前资料提供的Demo工程：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725155124958.png" alt="image-20210725155124958"></p>
+<h3 id="332引入依赖">3.3.2.引入依赖</h3>
+<p>在项目的pom文件中引入依赖：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-data-redis<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="333配置redis地址">3.3.3.配置Redis地址</h3>
+<p>然后在配置文件application.yml中指定redis的sentinel相关信息：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">spring:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">redis</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sentinel</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">      <span class="n">master</span><span class="o">:</span> <span class="n">mymaster</span>
+</span></span><span class="line"><span class="cl">      <span class="n">nodes</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">        <span class="o">-</span> <span class="mi">192</span><span class="o">.</span><span class="na">168</span><span class="o">.</span><span class="na">150</span><span class="o">.</span><span class="na">101</span><span class="o">:</span><span class="mi">27001</span>
+</span></span><span class="line"><span class="cl">        <span class="o">-</span> <span class="mi">192</span><span class="o">.</span><span class="na">168</span><span class="o">.</span><span class="na">150</span><span class="o">.</span><span class="na">101</span><span class="o">:</span><span class="mi">27002</span>
+</span></span><span class="line"><span class="cl">        <span class="o">-</span> <span class="mi">192</span><span class="o">.</span><span class="na">168</span><span class="o">.</span><span class="na">150</span><span class="o">.</span><span class="na">101</span><span class="o">:</span><span class="mi">27003</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="334配置读写分离">3.3.4.配置读写分离</h3>
+<p>在项目的启动类中，添加一个新的bean：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Bean</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="n">LettuceClientConfigurationBuilderCustomizer</span> <span class="nf">clientConfigurationBuilderCustomizer</span><span class="o">(){</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">clientConfigurationBuilder</span> <span class="o">-&gt;</span> <span class="n">clientConfigurationBuilder</span><span class="o">.</span><span class="na">readFrom</span><span class="o">(</span><span class="n">ReadFrom</span><span class="o">.</span><span class="na">REPLICA_PREFERRED</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个bean中配置的就是读写策略，包括四种：</p>
+<ul>
+<li>MASTER：从主节点读取</li>
+<li>MASTER_PREFERRED：优先从master节点读取，master不可用才读取replica</li>
+<li>REPLICA：从slave（replica）节点读取</li>
+<li>REPLICA _PREFERRED：优先从slave（replica）节点读取，所有的slave都不可用才读取master</li>
+</ul>
+<h1 id="4redis分片集群">4.Redis分片集群</h1>
+<h2 id="41搭建分片集群">4.1.搭建分片集群</h2>
+<p>主从和哨兵可以解决高可用、高并发读的问题。但是依然有两个问题没有解决：</p>
+<ul>
+<li>海量数据存储问题：我们知道，主从集群模式下，redis的单个master就将所有数据饱揽下来。那么这样始终有一天，面临内存不足的问题，某些关键数据可能会被LRU所淘汰。</li>
+<li>高并发写的问题：虽然主从架构可以提高并发读的性能，但是对于高并发写性能提升意义不大。因为在主从集群下，master只要一个，也就是redis的写只能写在一个master节点上（虽然我们利用主从集群抽离master上的读命令执行，但依然提升有限）。问题主要出现在master只有一个，而且redis执行命令都是单线程的，只能一条一条的执行。那么解决方案显而易见：我们可以多选几个master出来执行写命令。而且这几个master的数据是不一致的，这样可以减轻主从集群模式下，单节点master数据存储的压力。</li>
+</ul>
+<p>使用分片集群可以解决上述问题（分片感觉就是多个集群有机结合），如图:</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725155747294.png" alt="image-20210725155747294"></p>
+<p>分片集群特征：</p>
+<ul>
+<li>
+<p>集群中有多个master，每个master<strong>保存不同数据</strong></p>
+</li>
+<li>
+<p>每个master都可以有多个slave节点</p>
+</li>
+<li>
+<p>master之间通过ping监测彼此健康状态</p>
+</li>
+<li>
+<p>客户端请求可以访问集群任意节点，最终都会被转发到正确节点</p>
+<p>这里面最大的问题是：请求如何知道自己的数据在哪个master？那么就涉及到查找和寻址的问题，典型的解决方案就是哈希的思想，我们将</p>
+</li>
+</ul>
+<h2 id="42散列插槽">4.2.散列插槽</h2>
+<h3 id="421插槽原理">4.2.1.插槽原理</h3>
+<p>Redis会把每一个master节点映射到<code>0~16383</code>共<code>16384</code>个插槽（hash slot）上，查看集群信息时就能看到：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725155820320.png" alt="image-20210725155820320"></p>
+<p>数据key不是与节点绑定，而是与插槽绑定。redis会根据key的有效部分计算插槽值，分两种情况：</p>
+<ul>
+<li>key中包含&quot;{}&quot;，且“{}”中至少包含1个字符，“{}”中的部分是有效部分</li>
+<li>key中不包含“{}”，整个key都是有效部分</li>
+</ul>
+<p>例如：key是num，那么就根据num计算，如果是<code>{itcast}num</code>，则根据itcast计算。计算方式是利用CRC16算法得到一个hash值，然后对<code>16384</code>取余，得到的结果就是slot值。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725155850200.png" alt="image-20210725155850200"></p>
+<p>如图，在7001这个节点执行<code>set a 1</code>时，对a做hash运算，对16384取余，得到的结果是15495，因此要存储到7003节点。</p>
+<p>到了7003后，执行<code>get num</code>时，对num做hash运算，对16384取余，得到的结果是2765，因此需要切换到7001节点</p>
+<p><strong>散列过程里存在一个巨严重的问题：</strong></p>
+<blockquote>
+<p>当我们需要增删redis分片集群的master节点时，那么hash的散列表映射长度发生变化，那么就会导致后续请求的master节点命中失败。</p>
+<p>那么怎么解决呢？这时候就需要引入高级一点的哈希————一致性哈希</p>
+<p>redis的一致性哈希有三大特性：</p>
+<ul>
+<li>key哈希结果尽可能分配到不同Redis实例</li>
+<li>当实例增加或移除，需要保护已映射的内容不会重新被分配到新实例上</li>
+<li>对key的哈希应尽量避免重复</li>
+</ul>
+<p><strong>分片实现：</strong>
+前面谈到主从切换的哨兵模式已经提到，哨兵模式可以实现高可用以及读写分离，但是缺点在于所有Redis实例存储的数据全部一致，所以Redis支持cluster模式，可以简单将cluster理解为Redis集群管理的一个插件，通过它可以实现Redis的分布式存储。</p>
+<p>数据分片方式一般有三种：客户端分片、代理分片和服务器分片。</p>
+<p><strong>1）客户端分片</strong></p>
+<ul>
+<li>定义：客户端自己计算key需要映射到哪一个Redis实例。</li>
+<li>优点：客户端分片最明显的好处在于降低了集群的复杂度，而服务器之间没有任何关联性，数据分片由客户端来负责实现。</li>
+<li>缺点：客户端实现分片则客户端需要知道当前集群下不同Redis实例的信息，<strong>当新增Redis实例时需要支持动态分片，多数Redis需要重启才能实现该功能</strong>。</li>
+</ul>
+<p><strong>2）代理分片</strong></p>
+<ul>
+<li>定义：客户端将请求发送到代理，代理通过计算得到需要映射的集群实例信息，然后将客户端的请求转发到对应的集群实例上，然后返回响应给客户端。</li>
+<li>优点：降低了客户端的复杂度，客户端不用关心后端Redis实例的状态信息。</li>
+<li>缺点：多了一个中间分发环节，所以对性能有些取的损失。</li>
+</ul>
+<p><strong>3）服务器分片</strong></p>
+<ul>
+<li>定义：客户端可以和集群中任意Redis实例通信，当客户端访问某个实例时，服务器进行计算key应该映射到哪个具体的Redis实例中存储，如果映射的实例不是当前实例，则该实例主动引导客户端去对应实例对key进行操作。这其实是一个重定向的过程**。**这个过程不是从当前Redis实例转发到对应的Redis实例，而是客户端收到服务器通知具体映射的Redis实例重定向到映射的实例中。<strong>当前还不能完全适用于生产环境。</strong></li>
+<li>优点：支持高可用，任意实例都有主从，主挂了从会自动接管。</li>
+<li>缺点：需要客户端语言实现服务器集群协议，但是目前大多数语言都有其客户端实现版本。</li>
+</ul>
+<p><strong>4）预分片</strong>
+从上面可以清楚地看出，<strong>分片机制增加或移除实例是非常麻烦的一件事</strong>，所以我们可以考虑一开始就开启32个节点实例，当我们可以新增Redis服务器时，我们可以将一半的节点移动到新的Redis服务器。这样我们只需要在新服务器启动一个空节点，然后移动数据，配置新节点为源节点的从节点，然后更新被移动节点的ip信息，然后向新服务器发送<code>slaveof</code>命令关闭主从配置，最后关闭旧服务器不需要使用的实例并且重新启动客户端。这样我们就可以在几乎不需要停机时间时完成数据的移动。</p>
+<p><strong>分片机制的缺点</strong></p>
+<ul>
+<li>分片是由多台Redis实例共同运转，所以如果其中一个Redis实例宕机，则整个分片都将无法使用，所以分片机制无法实现高可用。</li>
+<li>如果有不同的key映射到不同的Redis实例，<strong>这时候不能对这两个key做交集或者使用事务</strong>。=&gt; 单机上的redis事务不支持，只有使用分布式事务</li>
+<li>使用分片机制因为涉及多实例，数据处理比较复杂。</li>
+<li>分片中对于实例的添加或删除会很复杂，不过可以使用预分片技术进行改善。</li>
+</ul>
+</blockquote>
+<h3 id="421小结">4.2.1.小结</h3>
+<p>Redis如何判断某个key应该在哪个实例？</p>
+<ul>
+<li>将16384个插槽分配到不同的实例</li>
+<li>根据key的有效部分计算哈希值，对16384取余</li>
+<li>余数作为插槽，寻找插槽所在实例即可</li>
+</ul>
+<p>如何将同一类数据固定的保存在同一个Redis实例？</p>
+<ul>
+<li>这一类数据使用相同的有效部分，例如key都以{typeId}为前缀</li>
+</ul>
+<p><a href="https://zhuanlan.zhihu.com/p/367227866">redis分片机制详解</a></p>
+<h2 id="43集群伸缩">4.3.集群伸缩</h2>
+<p>redis-cli &ndash;cluster提供了很多操作集群的命令，可以通过下面方式查看：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725160138290.png" alt="image-20210725160138290"></p>
+<p>比如，添加节点的命令：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725160448139.png" alt="image-20210725160448139"></p>
+<h3 id="431需求分析">4.3.1.需求分析</h3>
+<p>需求：向集群中添加一个新的master节点，并向其中存储 num = 10</p>
+<ul>
+<li>启动一个新的redis实例，端口为7004</li>
+<li>添加7004到之前的集群，并作为一个master节点</li>
+<li>给7004节点分配插槽，使得num这个key可以存储到7004实例</li>
+</ul>
+<p>这里需要两个新的功能：</p>
+<ul>
+<li>添加一个节点到集群中</li>
+<li>将部分插槽分配到新插槽</li>
+</ul>
+<h3 id="432创建新的redis实例">4.3.2.创建新的redis实例</h3>
+<p>创建一个文件夹：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">mkdir <span class="m">7004</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>拷贝配置文件：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">cp redis.conf /7004
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>修改配置文件：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">sed /s/6379/7004/g 7004/redis.conf
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>启动</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">redis-server 7004/redis.conf
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="433添加新节点到redis">4.3.3.添加新节点到redis</h3>
+<p>添加节点的语法如下：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20230115171427313.png" alt="image-20230115171427313"></p>
+<p>执行命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">redis-cli --cluster add-node  192.168.150.101:7004 192.168.150.101:7001
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过命令查看集群状态：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">redis-cli -p <span class="m">7001</span> cluster nodes
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如图，7004加入了集群，并且默认是一个master节点：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725161007099.png" alt="image-20210725161007099"></p>
+<p>但是，可以看到7004节点的插槽数量为0，因此没有任何数据可以存储到7004上</p>
+<h3 id="434转移插槽">4.3.4.转移插槽</h3>
+<p>我们要将num存储到7004节点，因此需要先看看num的插槽是多少：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725161241793.png" alt="image-20210725161241793"></p>
+<p>如上图所示，num的插槽为2765.</p>
+<p>我们可以将0~3000的插槽从7001转移到7004，命令格式如下：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725161401925.png" alt="image-20210725161401925"></p>
+<p>具体命令如下：</p>
+<p>建立连接：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725161506241.png" alt="image-20210725161506241"></p>
+<p>得到下面的反馈：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725161540841.png" alt="image-20210725161540841"></p>
+<p>询问要移动多少个插槽，我们计划是3000个：</p>
+<p>新的问题来了：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725161637152.png" alt="image-20210725161637152"></p>
+<p>那个node来接收这些插槽？？</p>
+<p>显然是7004，那么7004节点的id是多少呢？</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725161731738.png" alt="image-20210725161731738"></p>
+<p>复制这个id，然后拷贝到刚才的控制台后：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725161817642.png" alt="image-20210725161817642"></p>
+<p>这里询问，你的插槽是从哪里移动过来的？</p>
+<ul>
+<li>all：代表全部，也就是三个节点各转移一部分</li>
+<li>具体的id：目标节点的id</li>
+<li>done：没有了</li>
+</ul>
+<p>这里我们要从7001获取，因此填写7001的id：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725162030478.png" alt="image-20210725162030478"></p>
+<p>填完后，点击done，这样插槽转移就准备好了：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725162101228.png" alt="image-20210725162101228"></p>
+<p>确认要转移吗？输入yes：</p>
+<p>然后，通过命令查看结果：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725162145497.png" alt="image-20210725162145497"></p>
+<p>可以看到：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725162224058.png" alt="image-20210725162224058"></p>
+<p>目的达成。</p>
+<h2 id="44故障转移">4.4.故障转移</h2>
+<p>集群初识状态是这样的：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210727161152065.png" alt="image-20210727161152065"></p>
+<p>其中7001、7002、7003都是master，我们计划让7002宕机。</p>
+<h3 id="441自动故障转移">4.4.1.自动故障转移</h3>
+<p>当集群中有一个master宕机会发生什么呢？</p>
+<p>直接停止一个redis实例，例如7002：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">redis-cli -p <span class="m">7002</span> shutdown
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>1）首先是该实例与其它实例失去连接</p>
+<p>2）然后是疑似宕机：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725162319490.png" alt="image-20210725162319490"></p>
+<p>3）最后是确定下线，自动提升一个slave为新的master：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725162408979.png" alt="image-20210725162408979"></p>
+<p>4）当7002再次启动，就会变为一个slave节点了：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210727160803386.png" alt="image-20210727160803386"></p>
+<h3 id="442手动故障转移">4.4.2.手动故障转移</h3>
+<p>利用cluster failover命令可以手动让集群中的某个master宕机，切换到执行cluster failover命令的这个slave节点，实现无感知的数据迁移。其流程如下：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210725162441407.png" alt="image-20210725162441407"></p>
+<p>这种failover命令可以指定三种模式：</p>
+<ul>
+<li>缺省：默认的流程，如图1~6歩</li>
+<li>force：省略了对offset的一致性校验</li>
+<li>takeover：直接执行第5歩，忽略数据一致性、忽略master状态和其它master的意见</li>
+</ul>
+<p><strong>案例需求</strong>：在7002这个slave节点执行手动故障转移，重新夺回master地位</p>
+<p>步骤如下：</p>
+<p>1）利用redis-cli连接7002这个节点</p>
+<p>2）执行cluster failover命令</p>
+<p>如图：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210727160037766.png" alt="image-20210727160037766"></p>
+<p>效果：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20230115171831415.png" alt="image-20230115171831415"></p>
+<h2 id="45redistemplate访问分片集群">4.5.RedisTemplate访问分片集群</h2>
+<p>RedisTemplate底层同样基于lettuce实现了分片集群的支持，而使用的步骤与哨兵模式基本一致：</p>
+<p>1）引入redis的starter依赖</p>
+<p>2）配置分片集群地址</p>
+<p>3）配置读写分离</p>
+<p>与哨兵模式相比，其中只有分片集群的配置方式略有差异，如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">spring</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">redis</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">cluster</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">nodes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="m">192.168.150.101</span><span class="p">:</span><span class="m">7001</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="m">192.168.150.101</span><span class="p">:</span><span class="m">7002</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="m">192.168.150.101</span><span class="p">:</span><span class="m">7003</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="m">192.168.150.101</span><span class="p">:</span><span class="m">8001</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="m">192.168.150.101</span><span class="p">:</span><span class="m">8002</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="m">192.168.150.101</span><span class="p">:</span><span class="m">8003</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-01-15
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/rdb%E4%B8%8Eaof%E6%8C%81%E4%B9%85%E5%8C%96/">rdb与aof持久化</a>
+          <a href="/tags/redis%E4%B8%BB%E4%BB%8E%E6%9E%B6%E6%9E%84/">redis主从架构</a>
+          <a href="/tags/redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F/">redis哨兵模式</a>
+          <a href="/tags/redis%E5%88%86%E7%89%87%E9%9B%86%E7%BE%A4/">redis分片集群</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A0%87%E5%BF%97%E5%AF%84%E5%AD%98%E5%99%A8/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">汇编之标志寄存器</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E6%B1%87%E7%BC%96%E4%B9%8Bcall%E5%92%8Cret%E6%8C%87%E4%BB%A4/">
+            <span class="next-text nav-default">汇编之call和ret指令</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-01-15 17:26:41 \u002b0800 CST',
+        title: 'Redis高级篇之分布式缓存',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

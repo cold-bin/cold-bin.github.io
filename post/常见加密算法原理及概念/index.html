@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>常见加密算法原理及概念 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="[toc] 一、概述 在安全领域，利用密钥加密算法来对通信的过程进行加密是一种常见的安全手段。利用该手段能够保障数据安全通信的三个目标： 1、数据的保密性" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%A6%82%E5%BF%B5/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="常见加密算法原理及概念" />
+<meta property="og:description" content="[toc] 一、概述 在安全领域，利用密钥加密算法来对通信的过程进行加密是一种常见的安全手段。利用该手段能够保障数据安全通信的三个目标： 1、数据的保密性" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%A6%82%E5%BF%B5/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-11-15T18:01:50+08:00" />
+<meta property="article:modified_time" content="2022-11-15T18:01:50+08:00" />
+<meta itemprop="name" content="常见加密算法原理及概念">
+<meta itemprop="description" content="[toc] 一、概述 在安全领域，利用密钥加密算法来对通信的过程进行加密是一种常见的安全手段。利用该手段能够保障数据安全通信的三个目标： 1、数据的保密性"><meta itemprop="datePublished" content="2022-11-15T18:01:50+08:00" />
+<meta itemprop="dateModified" content="2022-11-15T18:01:50+08:00" />
+<meta itemprop="wordCount" content="4246">
+<meta itemprop="keywords" content="aes,rsa," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="常见加密算法原理及概念"/>
+<meta name="twitter:description" content="[toc] 一、概述 在安全领域，利用密钥加密算法来对通信的过程进行加密是一种常见的安全手段。利用该手段能够保障数据安全通信的三个目标： 1、数据的保密性"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">常见加密算法原理及概念</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2022-11-15 </span>
+        <div class="post-category">
+            <a href="/categories/%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95/"> 加密算法 </a>
+            </div>
+          <span class="more-meta"> 约 4246 字 </span>
+          <span class="more-meta"> 预计阅读 9 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#一概述"><strong>一、概述</strong></a></li>
+            <li><a href="#二对称加密"><strong>二、对称加密</strong></a></li>
+            <li><a href="#三非对称加密"><strong>三、非对称加密</strong></a></li>
+            <li><a href="#四单向加密"><strong>四、单向加密</strong></a></li>
+            <li><a href="#五密钥交换"><strong>五、密钥交换</strong></a></li>
+            <li><a href="#六aes和rsa的区别">六、AES和RSA的区别</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <p>[toc]</p>
+<h3 id="一概述"><strong>一、概述</strong></h3>
+<p>在安全领域，利用密钥加密算法来对通信的过程进行加密是一种常见的安全手段。利用该手段能够保障数据安全通信的三个目标：</p>
+<blockquote>
+<p>1、数据的保密性，防止用户的数据被窃取或泄露
+2、保证数据的完整性，防止用户传输的数据被篡改
+3、通信双方的身份确认，确保数据来源与合法的用户</p>
+</blockquote>
+<p>而常见的密钥加密算法类型大体可以分为三类：对称加密、非对称加密、单向加密。下面我们来了解下相关的算法原理及其常见的算法。</p>
+<h3 id="二对称加密"><strong>二、对称加密</strong></h3>
+<p><strong>在加密传输中最初是采用对称密钥方式，也就是加密和解密都用相同的密钥。</strong></p>
+<h4 id="对称加密过程如下"><strong>对称加密过程如下：</strong></h4>
+<p>1.对称加密算法采用单密钥加密，在通信过程中，数据发送方将原始数据分割成固定大小的块，经过密钥和加密算法逐个加密后，发送给接收方</p>
+<p>2.接收方收到加密后的报文后，结合解密算法使用相同密钥解密组合后得出原始数据。</p>
+<p><strong>图示：</strong></p>
+<p><img src="https://pic2.zhimg.com/80/v2-f96aad9922e82674aaf2eb22448da975_1440w.webp" alt="img"></p>
+<h4 id="优点"><strong>优点</strong></h4>
+<blockquote>
+<p>是效率高，算法简单，系统开销小，适合加密大量数据。</p>
+</blockquote>
+<h4 id="缺点"><strong>缺点</strong></h4>
+<blockquote>
+<p><strong>安全性差</strong>
+加解密算法是公开的，因此在这过程中，密钥的安全传递就成为了至关重要的事了。而密钥通常来说是通过双方协商，以物理的方式传递给对方，或者利用第三方平台传递给对方，一旦这过程出现了密钥泄露，不怀好意的人就能结合相应的算法拦截解密出其加密传输的内容。
+<strong>扩展性差</strong>
+每对通信用户之间都需要协商密钥，n个用户的团体就需要协商n*(n-1)/2个不同的密钥，不便于管理；而如果都使用相同密钥的话，密钥被泄漏的机率大大增加，加密也就失去了意义。</p>
+</blockquote>
+<h4 id="常见的对称加密算法"><strong>常见的对称加密算法</strong></h4>
+<p>DES：分组式加密算法，以64位为分组对数据加密，加解密使用同一个算法。
+3DES：三重数据加密算法，对每个数据块应用三次DES加密算法。
+AES：高级加密标准算法，是美国联邦政府采用的一种区块加密标准，用于替代原先的DES，目前已被广泛应用。
+Blowfish：Blowfish算法是一个64位分组及可变密钥长度的对称密钥分组密码算法，可用来加密64比特长度的字符串。</p>
+<h3 id="三非对称加密"><strong>三、非对称加密</strong></h3>
+<p><strong>非对称加密算法采用公钥和私钥两种不同的密码来进行加解密。公钥和私钥是成对存在，公钥是从私钥中提取产生公开给所有人的，如果使用公钥对数据进行加密，那么只有对应的私钥（不能公开）才能解密，反之亦然。N 个用户通信，需要2N个密钥。</strong></p>
+<h4 id="用途"><strong>用途</strong></h4>
+<p>非对称密钥加密适合对密钥或身份信息等敏感信息加密，从而在安全性上满足用户的需求。</p>
+<h4 id="非对称加密过程"><strong>非对称加密过程</strong></h4>
+<p>1.甲使用乙的公钥并结合相应的非对称算法将明文加密后发送给乙，并将密文发送给乙。
+2.乙收到密文后，结合自己的私钥和非对称算法解密得到明文，得到最初的明文。</p>
+<p><strong>图示：</strong></p>
+<p><img src="https://pic1.zhimg.com/80/v2-b9c980548abd462f6c527e378b6e1408_1440w.webp" alt="img"></p>
+<h4 id="优点-1"><strong>优点</strong></h4>
+<blockquote>
+<p>具有比对称密钥加/解密方式更高的安全性，因为加密和解密用的是不同密钥，而且无法从一个密钥推导出另一个密钥，且公钥加密的信息只能用同一方的私钥进行解密。</p>
+</blockquote>
+<h4 id="缺点-1"><strong>缺点</strong></h4>
+<blockquote>
+<p>1.非对称密钥加密的缺点是算法非常复杂，导致加密大量数据所用的时间较长，只适合对少量数据进行加密。而且由于在加密过程中会添加较多附加信息，使得加密后的报文比较长，容易造成数据分片，不利于网络传输。
+2.无法确认公钥的来源合法性以及数据的完整性。<strong>如何确认我们接下来会说</strong></p>
+</blockquote>
+<h4 id="常见算法包括"><strong>常见算法包括：</strong></h4>
+<p><strong>RSA</strong>：RSA算法基于一个十分简单的数论事实：将两个大素数相乘十分容易，但那时想要对其乘积进行因式分解却极其困难，因此可以将乘积公开作为加密密钥，可用于加密，也能用于签名。
+<strong>DSA</strong>：数字签名算法，仅能用于签名，不能用于加解密。
+<strong>DSS</strong>：数字签名标准，技能用于签名，也可以用于加解密。
+<strong>ELGamal</strong>：利用离散对数的原理对数据进行加解密或数据签名，其速度是最慢的。</p>
+<h3 id="四单向加密"><strong>四、单向加密</strong></h3>
+<p><strong>单向加密算法只能用于对数据的加密，无法被解密，其特点为定长输出、雪崩效应（少量消息位的变化会引起信息摘要的许多位变化）。</strong></p>
+<h4 id="用途-1"><strong>用途</strong></h4>
+<p>单向加密算法常用于提取数据指纹，验证数据的完整性、数字摘要、数字签名等等。</p>
+<h4 id="单向加密过程"><strong>单向加密过程</strong></h4>
+<p>1.发送者将明文通过单向加密算法加密生成定长的密文串，然后传递给接收方。</p>
+<p>2.接收方将用于比对验证的明文使用相同的单向加密算法进行加密，得出加密后的密文串。</p>
+<p>3.将之与发送者发送过来的密文串进行对比，若发送前和发送后的密文串相一致，则说明传输过程中数据没有损坏；若不一致，说明传输过程中数据丢失了。</p>
+<p><strong>图示：</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/v2-d228548a4b603b42cbe798f061433afd_1440w.webp" alt="img"></p>
+<p>常见算法</p>
+<p>MD5、sha1、sha224等等</p>
+<h3 id="五密钥交换"><strong>五、密钥交换</strong></h3>
+<p><strong>密钥交换IKE（Internet Key Exchange）通常是指双方通过交换密钥来实现数据加密和解密</strong></p>
+<p>常见的密钥交换方式有下面两种：</p>
+<h4 id="1公钥加密"><strong>1、公钥加密</strong></h4>
+<p>将公钥加密后通过网络传输到对方进行解密，这种方式缺点在于具有很大的可能性被拦截破解，因此不常用</p>
+<h4 id="2diffie-hellman"><strong>2、Diffie-Hellman</strong></h4>
+<p>DH算法是一种密钥交换算法，其既不用于加密，也不产生数字签名。</p>
+<p>DH算法通过双方共有的参数、私有参数和算法信息来进行加密，然后双方将计算后的结果进行交换，交换完成后再和属于自己私有的参数进行特殊算法，经过双方计算后的结果是相同的，此结果即为密钥。</p>
+<p>如：</p>
+<blockquote>
+<p>A 有p和g两个参数，A还有一个属于自己的私有参数x；
+B 有p和g两个参数，A还有一个属于自己的私有参数y；
+A和B均使用相同的加密算法计算其对应的值：value_A=p^(x%g)，value_B=p^(y%g)
+随后双方交换计算后的值，然后再分别使用自己的私有参数对去求次方，如：
+A拿到value_B值后，对其求x平方得value_B^x=p^(xy%g)；
+B拿到value_A值后，对其求y平方得value_A^y=p^(xy%g)；
+最终得到的结果是一致的。</p>
+</blockquote>
+<p><strong>安全性</strong></p>
+<p>在整个过程中，第三方人员只能获取p、g两个值，AB双方交换的是计算后的结果，因此这种方式是很安全的。</p>
+<h4 id="如何确认公钥的来源合法性"><strong>如何确认公钥的来源合法性？</strong></h4>
+<p>答案：使用公钥证书</p>
+<h4 id="公钥基础设施pki"><strong>公钥基础设施（PKI）</strong></h4>
+<p>公钥基础设施是一个包括硬件、软件、人员、策略和规程的集合</p>
+<h4 id="用途-2"><strong>用途</strong></h4>
+<p>用于实现基于公钥密码机制的密钥和证书的生成、管理、存储、分发和撤销的功能</p>
+<h4 id="组成"><strong>组成</strong></h4>
+<p>签证机构CA、注册机构RA、证书吊销列表CRL和证书存取库CB。</p>
+<h4 id="公钥证书"><strong>公钥证书</strong></h4>
+<p>公钥证书是以数字签名的方式声明，它将公钥的值绑定到持有对应私钥的个人、设备或服务身份。公钥证书的生成遵循X.509协议的规定，其内容包括：证书名称、证书版本、序列号、算法标识、颁发者、有效期、有效起始日期、有效终止日期、公钥 、证书签名等等的内容。</p>
+<h4 id="cacertificate-authority证书认证的流程"><strong>CA(Certificate Authority)证书认证的流程</strong></h4>
+<p>1.客户A准备好要传送的数字信息（明文）。**（准备明文） **</p>
+<p>2.客户A对数字信息进行哈希（hash）运算，得到一个信息摘要。**（准备摘要） **</p>
+<p>3.客户A用CA的私钥（SK）对信息摘要进行加密得到客户A的数字签名，并将其附在数字信息上。**（用私钥对数字信息进行数字签名）　 **</p>
+<p>4.客户A随机产生一个加密密钥（DES密钥），并用此密钥对要发送的信息进行加密，形成密文。**（生成密文） **</p>
+<p>5.客户A用双方共有的公钥（PK）对刚才随机产生的加密密钥进行加密，将加密后的DES密钥连同密文一起传送给乙。**（非对称加密，用公钥对DES密钥进行加密）　　 **</p>
+<p>6.银行B收到客户A传送过来的密文和加过密的DES密钥，先用自己的私钥（SK）对加密的DES密钥进行解密，得到DES密钥。<strong>（用私钥对DES密钥解密）</strong></p>
+<p>7.银行B然后用DES密钥对收到的密文进行解密，得到明文的数字信息，然后将DES密钥抛弃（即DES密钥作废）。**（解密文）　　 **</p>
+<p>8.银行B用双方共有的公钥（PK）对客户A的数字签名进行解密，得到信息摘要。银行B用相同的hash算法对收到的明文再进行一次hash运算，得到一个新的信息摘要。**（用公钥解密数字签名） **</p>
+<p>9.银行B将收到的信息摘要和新产生的信息摘要进行比较，如果一致，说明收到的信息没有被修改过。**（对比信息摘要和信息） **</p>
+<h4 id="如何保证ca的公钥没有被篡改呢"><strong>如何保证CA的公钥没有被篡改呢？</strong></h4>
+<p>答案是没法保证CA的公钥没有被篡改。通常操作系统和浏览器会预制一些CA证书在本地。所以发送方应该去那些通过认证的CA处申请数字证书。这样是有保障的。</p>
+<p>但是如果系统中被插入了恶意的CA证书，依然可以通过假冒的数字证书发送假冒的发送方公钥来验证假冒的正文信息。所以安全的前提是系统中不能被人插入非法的CA证书。</p>
+<h3 id="六aes和rsa的区别">六、AES和RSA的区别</h3>
+<h4 id="aes-加密">AES 加密</h4>
+<p>AES 算法依次对每个 128 位数据块应用一系列数学变换。由于这种方法的计算要求较低，AES 可用于笔记本电脑和智能手机等消费类设备上进行数据加密，以及快速加密大量数据。</p>
+<p>AES 是一种对称算法，它使用相同的 128、192 或 256 位密钥进行加密和解密。128、192 或 256 位的密钥可以理解为分别对应16、24和32个字节的16进制字符串密钥，AES 系统的安全性会随密钥长度呈指数增长。</p>
+<p>即使使用 128 位密钥，通过对 2128 个可能的密钥值进行暴力枚举，来尝试破解AES加密后的数据的任务也是个非常计算密集型的任务。事实上，AES 从未被破解，并且根据当前的技术趋势，预计在未来几年内仍将保持安全。</p>
+<h4 id="rsa-加密">RSA 加密</h4>
+<p>RSA 以麻省理工学院的科学家（Rivest、Shamir 和 Adleman）的名字命名， 于1977 年首次公布。它是一种非对称算法，它使用公开的已知密钥进行加密，但需要另外一个不同的密钥进行解密，这个不同的密钥只有预期的接收者知道。</p>
+<p><strong>网上不少例子说的是公钥用于加密，私钥用于解密，其实这个说法不对</strong></p>
+<p><strong>私钥和公钥是一对，都可以加解密，配对使用，只不过公钥可以公布出去，而私钥是持有者自己保留的</strong>。</p>
+<p><strong>一般的用法是私钥加密用于签名防数据被篡改，公钥加密用于加密防敏感信息，防止泄露</strong>。</p>
+<ul>
+<li>私钥加密公钥解密，能证明“私钥拥有者”的唯一身份，用于签名。（例如，token的签名算法，使用RSA的私钥加密，防止篡改）</li>
+<li>公钥加密私钥解密，确保发送的信息，只有&quot;私钥拥有者&quot;能够解密。</li>
+</ul>
+<p>这块先卖个关子，理解不了的话后面给大家介绍开放平台API验签和加密流程的时候再给大家细讲。</p>
+<p>RSA 算法需要的计算量比 AES 高，但速度要慢得多。它比较适合用于加密少量数据。</p>
+<h4 id="rsa和aes结合使用">RSA和AES结合使用</h4>
+<p>AES 算法的一个主要问题是，作为一种对称算法，它要求加密方和解密方使用相同的密钥。这就产生了一个关键的密钥管理问题——如何将非常重要的密钥分发给分布在世界各地的授权接收者，而不会冒在传输途中某个地方考虑不周导致密钥泄露的巨大风险？答案是结合 AES 和 RSA 加密的优势。</p>
+<p>在包括互联网在内的许多现代通信环境中，大量交换的数据都通过快速 AES 算法进行加密。为了获得解密数据所需的密钥，<strong>授权接收者发布一个公钥，同时保留一个只有他们知道的相关私钥。然后，发送方使用该公钥对他们自己的 AES 密钥进行RSA加密传输给接收方，接收方使用私钥解密得到AES密钥，再用该密钥对数据进行解密。</strong></p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2022-11-15
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/aes/">aes</a>
+          <a href="/tags/rsa/">rsa</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E5%B8%B8%E8%A7%81%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">常见摘要算法</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E9%94%81/">
+            <span class="next-text nav-default">锁</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2022-11-15 18:01:50 \u002b0800 CST',
+        title: '常见加密算法原理及概念',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

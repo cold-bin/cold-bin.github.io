@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>并查集 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/%E5%B9%B6%E6%9F%A5%E9%9B%86/</link>
+    <description>Recent content in 并查集 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Sun, 20 Aug 2023 18:02:42 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/%E5%B9%B6%E6%9F%A5%E9%9B%86/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>常见算法之并查集</title>
+      <link>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B9%B6%E6%9F%A5%E9%9B%86/</link>
+      <pubDate>Sun, 20 Aug 2023 18:02:42 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B9%B6%E6%9F%A5%E9%9B%86/</guid>
+      <description>以下文章摘自labuladong的算法小抄 并查集（Union-Find）算法 读完本文，你不仅学会了算法套路，还可以顺便解决如下题目： LeetCode 力扣 难</description>
+    </item>
+    
+  </channel>
+</rss>

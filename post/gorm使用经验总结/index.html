@@ -1,0 +1,2320 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Gorm使用补充点 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="本文主要补充一些gorm的使用技巧，完整的gorm使用移步官方文档gorm官方文档 总结 配置单数表名, 再也不用写TableName 1 2 3 db, err :=" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="Gorm使用补充点" />
+<meta property="og:description" content="本文主要补充一些gorm的使用技巧，完整的gorm使用移步官方文档gorm官方文档 总结 配置单数表名, 再也不用写TableName 1 2 3 db, err :=" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-08-28T12:01:57+08:00" />
+<meta property="article:modified_time" content="2022-08-28T12:01:57+08:00" />
+<meta itemprop="name" content="Gorm使用补充点">
+<meta itemprop="description" content="本文主要补充一些gorm的使用技巧，完整的gorm使用移步官方文档gorm官方文档 总结 配置单数表名, 再也不用写TableName 1 2 3 db, err :="><meta itemprop="datePublished" content="2022-08-28T12:01:57+08:00" />
+<meta itemprop="dateModified" content="2022-08-28T12:01:57+08:00" />
+<meta itemprop="wordCount" content="10229">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Gorm使用补充点"/>
+<meta name="twitter:description" content="本文主要补充一些gorm的使用技巧，完整的gorm使用移步官方文档gorm官方文档 总结 配置单数表名, 再也不用写TableName 1 2 3 db, err :="/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Gorm使用补充点</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2022-08-28 </span>
+        <div class="post-category">
+            <a href="/categories/mysql/"> mysql </a>
+            <a href="/categories/gorm/"> gorm </a>
+            <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"> 数据库 </a>
+            </div>
+          <span class="more-meta"> 约 10229 字 </span>
+          <span class="more-meta"> 预计阅读 21 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#总结">总结</a></li>
+        <li><a href="#从表名开始">从表名开始</a></li>
+        <li><a href="#列名">列名</a></li>
+        <li><a href="#create">Create</a></li>
+        <li><a href="#hooks">Hooks</a></li>
+        <li><a href="#where">Where</a></li>
+        <li><a href="#find-take-first-last">Find, Take, First, Last</a></li>
+        <li><a href="#update">Update</a></li>
+        <li><a href="#事务">事务</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <p>本文主要补充一些gorm的使用技巧，完整的gorm使用移步官方文档<a href="https://gorm.io/zh_CN/docs/index.html">gorm官方文档</a></p>
+<h2 id="总结">总结</h2>
+<ol>
+<li>
+<p>配置单数表名, 再也不用写TableName</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">gorm</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">mysql</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="nx">dsn</span><span class="p">,</span> <span class="nx">un</span><span class="p">,</span> <span class="nx">pwd</span><span class="p">,</span> <span class="nx">host</span><span class="p">,</span> <span class="nx">port</span><span class="p">,</span> <span class="nx">database</span><span class="p">)),</span> <span class="o">&amp;</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">NamingStrategy</span><span class="p">:</span> <span class="nx">schema</span><span class="p">.</span><span class="nx">NamingStrategy</span><span class="p">{</span><span class="nx">SingularTable</span><span class="p">:</span> <span class="kc">true</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当然也可以传入其他参数定制命名策略</p>
+</li>
+<li>
+<p>创建模型迁移表时，针对<code>string</code>类型一定要给出gorm的<code>type</code>约束，否则默认是创建mysql的字符串最大数据类型<code>longtext</code>较为浪费资源</p>
+</li>
+<li>
+<p>使用DB前先<code>db.model</code>, 万无一失</p>
+</li>
+<li>
+<p>创建模型时使用基本类型的指针类型，可以使得零值保存到数据库</p>
+</li>
+<li>
+<p><code>CreatedAt</code>, <code>UpdatedAt</code>, mysql类型用<code>datetime(3)</code>(毫秒)</p>
+</li>
+<li>
+<p>支持<code>db.Create</code>创建和批量创建，创建成功时回填结构体里主键字段或结构体切片每个单元的主键字段</p>
+</li>
+<li>
+<p><code>Save</code>方法没有查找到，就会创建记录；查找到就会以<code>Save</code>里的参数替换整行数据，即使是零值也会替换</p>
+</li>
+<li>
+<p><code>BeforeCreate</code>创建前自动填写id</p>
+</li>
+<li>
+<p><code>AfterUpdate</code>更新后自动创建record</p>
+</li>
+<li>
+<p><code>Where</code>用结构体查询, 自动忽略零值, 不用手打列名</p>
+</li>
+<li>
+<p><code>ErrRecordNotFound</code>只会出现在<code>Take</code>, <code>First</code>,<code>Last</code>方法中，如果发生了多个错误，你可以通过 <code>errors.Is</code> 判断错误是否为 <code>ErrRecordNotFound</code></p>
+</li>
+<li>
+<p><code>Find</code>结构体时: 等同于<code>Take</code>, 但没有<code>ErrRecordNotFound</code>, <code>RowsAffected</code>为<code>0</code>或<code>1</code></p>
+</li>
+<li>
+<p>行锁的写法<code>DB.Clauses(clause.Locking{Strength: &quot;UPDATE&quot;)</code></p>
+</li>
+<li>
+<p><code>Updates</code>支持结构体更新, 自动忽略零值, 不用手打列名. 强行更新零值用<code>Select</code></p>
+</li>
+<li>
+<p><code>Update</code>支持<code>gorm.Expr</code>SQL表达式更新</p>
+</li>
+<li>
+<p>事务直接用<code>db.Transaction</code>方法即可</p>
+</li>
+<li>
+<p><code>Update</code>更新时，如果更新失败，但是返回不一定报错。需要综合检测 <code>RowsAffected</code></p>
+</li>
+<li>
+<p>零值创建、更新、作为条件等时，使用<code>struct</code>会失效，应该使用<code>map[string]interface{}</code>来指定。</p>
+</li>
+<li>
+<p>使用<code>map[string]interface{}</code>还可以使用SQL表达式</p>
+</li>
+<li>
+<p>gorm外键多表联查时可以考虑使用<code>Preload</code>预加载或嵌套预加载</p>
+</li>
+<li>
+<p><code>Pluck</code> 用于从数据库查询单个列，并将结果扫描到切片。如果您想要查询多列，您应该使用 <code>Select</code> 和 <a href="https://gorm.io/zh_CN/docs/query.html#scan"><code>Scan</code></a>。某些业务场景下，这个<code>Pluck</code>方法很有用</p>
+</li>
+<li>
+<p>gorm支持查询创建更新删除等前后的钩子函数</p>
+</li>
+<li>
+<p>gorm不仅支持创建多条记录，还支持分批创建多条记录（<code>CreateInBatches</code>）或分批查询多条记录（<code>FindInBatches</code>）</p>
+</li>
+<li>
+<p><code>Scopes</code> 允许你指定常用的查询，可以在调用方法时引用这些查询。可以根据业务需要集成某些常用的业务查询条件。</p>
+<p>作用域允许你复用通用的逻辑，这种共享逻辑需要定义为类型<code>func(*gorm.DB) *gorm.DB</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">AmountGreaterThan1000</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;amount &gt; ?&#34;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">PaidWithCreditCard</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;pay_mode_sign = ?&#34;</span><span class="p">,</span> <span class="s">&#34;C&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">PaidWithCod</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;pay_mode_sign = ?&#34;</span><span class="p">,</span> <span class="s">&#34;C&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">OrderStatus</span><span class="p">(</span><span class="nx">status</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="kd">func</span> <span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kd">func</span> <span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;status IN (?)&#34;</span><span class="p">,</span> <span class="nx">status</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Scopes</span><span class="p">(</span><span class="nx">AmountGreaterThan1000</span><span class="p">,</span> <span class="nx">PaidWithCreditCard</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">orders</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 查找所有金额大于 1000 的信用卡订单
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Scopes</span><span class="p">(</span><span class="nx">AmountGreaterThan1000</span><span class="p">,</span> <span class="nx">PaidWithCod</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">orders</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 查找所有金额大于 1000 的 COD 订单
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Scopes</span><span class="p">(</span><span class="nx">AmountGreaterThan1000</span><span class="p">,</span> <span class="nf">OrderStatus</span><span class="p">([]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;paid&#34;</span><span class="p">,</span> <span class="s">&#34;shipped&#34;</span><span class="p">})).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">orders</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 查找所有金额大于1000 的已付款或已发货订单
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><code>Save</code> 用来更新，<strong>会保存所有的字段，即使字段是零值</strong>。单列更新推荐使用<code>Update</code>或<code>Updates</code>,多列更新但又不是所有列推荐使用<code>Updates</code>，所有列更新可以使用<code>Save</code></p>
+</li>
+<li>
+<p><code>Select</code>选择字段或表、<code>Omit</code>跳过字段或表。使用 Struct 进行 <code>Select</code>（会 <code>select</code> 零值的字段）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">).</span><span class="nf">Select</span><span class="p">(</span><span class="s">&#34;Name&#34;</span><span class="p">,</span> <span class="s">&#34;Age&#34;</span><span class="p">).</span><span class="nf">Updates</span><span class="p">(</span><span class="nx">User</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;new_name&#34;</span><span class="p">,</span> <span class="nx">Age</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// UPDATE users SET name=&#39;new_name&#39;, age=0 WHERE id=111;
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>如果在<strong>没有任何条件</strong>的情况下执行批量更新，默认情况下，GORM 不会执行该操作，并返回 <code>ErrMissingWhereClause</code> 错误.对此，你必须加一些条件，或者使用原生 SQL，或者启用 <code>AllowGlobalUpdate</code> 模式，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{}).</span><span class="nf">Update</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="s">&#34;jinzhu&#34;</span><span class="p">).</span><span class="nx">Error</span> <span class="c1">// gorm.ErrMissingWhereClause
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{}).</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;1 = 1&#34;</span><span class="p">).</span><span class="nf">Update</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="s">&#34;jinzhu&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// UPDATE users SET `name` = &#34;jinzhu&#34; WHERE 1=1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Exec</span><span class="p">(</span><span class="s">&#34;UPDATE users SET name = ?&#34;</span><span class="p">,</span> <span class="s">&#34;jinzhu&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// UPDATE users SET name = &#34;jinzhu&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Session</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">Session</span><span class="p">{</span><span class="nx">AllowGlobalUpdate</span><span class="p">:</span> <span class="kc">true</span><span class="p">}).</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{}).</span><span class="nf">Update</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="s">&#34;jinzhu&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// UPDATE users SET `name` = &#34;jinzhu&#34;
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>如果您想在更新时跳过 <code>Hook</code> 方法且不追踪更新时间，可以使用 <code>UpdateColumn</code>、<code>UpdateColumns</code>，其用法类似于 <code>Update</code>、<code>Updates</code></p>
+</li>
+<li>
+<p>删除一条记录时，删除对象需要指定主键，否则会触发 <a href="https://gorm.io/zh_CN/docs/delete.html#batch_delete">批量 Delete</a></p>
+</li>
+<li>
+<p>如果在没有任何条件的情况下执行批量删除，GORM 不会执行该操作，并返回 <code>ErrMissingWhereClause </code>错误.对此，你必须加一些条件，或者使用原生 SQL，或者启用 <code>AllowGlobalUpdate</code> 模式</p>
+</li>
+<li>
+<p>返回被删除的数据，仅适用于支持 Returning 的数据库</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 返回所有列
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="nx">users</span> <span class="p">[]</span><span class="nx">User</span>
+</span></span><span class="line"><span class="cl"><span class="nx">DB</span><span class="p">.</span><span class="nf">Clauses</span><span class="p">(</span><span class="nx">clause</span><span class="p">.</span><span class="nx">Returning</span><span class="p">{}).</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;role = ?&#34;</span><span class="p">,</span> <span class="s">&#34;admin&#34;</span><span class="p">).</span><span class="nf">Delete</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// DELETE FROM `users` WHERE role = &#34;admin&#34; RETURNING *
+</span></span></span><span class="line"><span class="cl"><span class="c1">// users =&gt; []User{{ID: 1, Name: &#34;jinzhu&#34;, Role: &#34;admin&#34;, Salary: 100}, {ID: 2, Name: &#34;jinzhu.2&#34;, Role: &#34;admin&#34;, Salary: 1000}}
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>如果您的模型包含了一个 <code>gorm.deletedat</code> 字段（<code>gorm.Model</code> 已经包含了该字段)，它将自动获得软删除的能力！拥有软删除能力的模型调用 <code>Delete</code> 时，记录不会从数据库中被真正删除。但 GORM 会将 <code>DeletedAt</code> 置为当前时间， 并且你不能再通过普通的查询方法找到该记录。值得注意的是：软删除不是真真的删除，如果数据表再设计的时候加入太多约束，可能会引发软删除与约束相互矛盾，例如给数据表某个字段加上<code>unique</code>的约束，显然软删除后再添加相同的数据会出问题。</p>
+<p>有一种折中的方案：放弃这个唯一，删除的时候还是采用软删除，但是查询的时候需要使用<code>First</code>来查询最新的一条记录，这样来看就是可以的。缺点是，无法保证数据表这个字段的唯一性。</p>
+</li>
+<li>
+<p>您可以使用 <code>Unscoped</code> 找到被软删除的记录，您也可以使用 <code>Unscoped</code> 永久删除匹配的记录</p>
+</li>
+<li>
+<p>原生DQL使用<code>Raw</code>，扫描结果使用<code>Scan</code>；原生DML使用<code>Exec</code></p>
+</li>
+<li>
+<p>关联关系很好用&ndash;&gt; 例子详解：https://juejin.cn/post/7067138794788487181</p>
+<ol>
+<li>
+<p><code>belongs to</code></p>
+<p><code>belongs to</code> 会与另一个模型建立了一对一的连接。这种模型的每一个实例都“属于”另一个模型的一个实例。</p>
+<p>例如，您的应用包含 user 和 company，并且每个 user 能且只能被分配给一个 company。下面的类型就表示这种关系。 注意，在 <code>User</code> 对象中，有一个和 <code>Company</code> 一样的 <code>CompanyID</code>。 默认情况下， <code>CompanyID</code> 被隐含地用来在 <code>User</code> 和 <code>Company</code> 之间创建一个外键关系， 因此必须包含在 <code>User</code> 结构体中才能填充 <code>Company</code> 内部结构体。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">gorm</span><span class="p">.</span><span class="nx">Model</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Name</span>      <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">CompanyID</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Company</span>   <span class="nx">Company</span> <span class="s">`gorm:&#34;foreignKey:CompanyID&#34;`</span> 
+</span></span><span class="line"><span class="cl">  <span class="c1">// 不指定引用的名字时，默认为主键。也就是引用的Company的ID字段；
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 不指定外键的名字时，也默认为主键。也就是User的ID字段
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Company</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ID</span>   <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Code</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Name</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>GORM 可以通过 <code>Preload</code>、<code>Joins</code> 预加载 belongs to 关联的记录，查看 <a href="https://gorm.io/zh_CN/docs/preload.html">预加载</a> 获取详情</p>
+</li>
+<li>
+<p><code>has one</code></p>
+<p><code>has one</code> 与另一个模型建立一对一的关联，但它和一对一关系有些许不同。 这种关联表明一个模型的每个实例都包含或拥有另一个模型的一个实例。</p>
+<p>例如，您的应用包含 user 和 credit card 模型，且每个 user 只能有一张 credit card。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// User 有一张 CreditCard，默认 CreditCard 的 UserID 是外键，没有USerID字段时，需要使用foreignKey来指定
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">gorm</span><span class="p">.</span><span class="nx">Model</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Name</span>       <span class="kt">string</span>     
+</span></span><span class="line"><span class="cl">  <span class="nx">CreditCard</span> <span class="nx">CreditCard</span> <span class="s">`gorm:&#34;foreignKey:UserName;references:name&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">CreditCard</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">gorm</span><span class="p">.</span><span class="nx">Model</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Number</span>   <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">UserName</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><code>Has Many</code></p>
+<p><code>has many</code> 与另一个模型建立了一对多的连接。 不同于 <code>has one</code>，拥有者可以有零或多个关联模型。</p>
+<p>例如，您的应用包含 user 和 credit card 模型，且每个 user 可以有多张 credit card。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">gorm</span><span class="p">.</span><span class="nx">Model</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">MemberNumber</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 重写默认外键和引用
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">CreditCards</span>  <span class="p">[]</span><span class="nx">CreditCard</span> <span class="s">`gorm:&#34;foreignKey:UserNumber;references:MemberNumber&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">CreditCard</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">gorm</span><span class="p">.</span><span class="nx">Model</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Number</span>     <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">UserNumber</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><code>Many To Many</code></p>
+<p>Many to Many 会在两个 model 中添加一张连接表。一般来说原生SQL建表，针对多对多关系都是需要建立中间表。</p>
+<p>例如，您的应用包含了 user 和 language，且一个 user 可以说多种 language，多个 user 也可以说一种 language。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// User 拥有并属于多种 language，`user_languages` 是连接表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">gorm</span><span class="p">.</span><span class="nx">Model</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Languages</span> <span class="p">[]</span><span class="nx">Language</span> <span class="s">`gorm:&#34;many2many:user_languages;&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Language</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">gorm</span><span class="p">.</span><span class="nx">Model</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Name</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当使用 GORM 的 <code>AutoMigrate</code> 为 <code>User</code> 创建表时，GORM 会自动创建连接表</p>
+</li>
+</ol>
+</li>
+<li>
+<p>强大的实体关联</p>
+<p>在创建、更新记录时，GORM 会通过 <a href="https://gorm.io/zh_CN/docs/create.html#upsert">Upsert</a> 自动保存关联及其引用记录。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">user</span> <span class="o">:=</span> <span class="nx">User</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Name</span><span class="p">:</span>            <span class="s">&#34;jinzhu&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">BillingAddress</span><span class="p">:</span>  <span class="nx">Address</span><span class="p">{</span><span class="nx">Address1</span><span class="p">:</span> <span class="s">&#34;Billing Address - Address 1&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ShippingAddress</span><span class="p">:</span> <span class="nx">Address</span><span class="p">{</span><span class="nx">Address1</span><span class="p">:</span> <span class="s">&#34;Shipping Address - Address 1&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Emails</span><span class="p">:</span>          <span class="p">[]</span><span class="nx">Email</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="nx">Email</span><span class="p">:</span> <span class="s">&#34;jinzhu@example.com&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="nx">Email</span><span class="p">:</span> <span class="s">&#34;jinzhu-2@example.com&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Languages</span><span class="p">:</span>       <span class="p">[]</span><span class="nx">Language</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;ZH&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;EN&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// create时会自动创建所有关联的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// BEGIN TRANSACTION;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// INSERT INTO &#34;addresses&#34; (address1) VALUES (&#34;Billing Address - Address 1&#34;), (&#34;Shipping Address - Address 1&#34;) ON DUPLICATE KEY DO NOTHING;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// INSERT INTO &#34;users&#34; (name,billing_address_id,shipping_address_id) VALUES (&#34;jinzhu&#34;, 1, 2);
+</span></span></span><span class="line"><span class="cl"><span class="c1">// INSERT INTO &#34;emails&#34; (user_id,email) VALUES (111, &#34;jinzhu@example.com&#34;), (111, &#34;jinzhu-2@example.com&#34;) ON DUPLICATE KEY DO NOTHING;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// INSERT INTO &#34;languages&#34; (&#34;name&#34;) VALUES (&#39;ZH&#39;), (&#39;EN&#39;) ON DUPLICATE KEY DO NOTHING;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// INSERT INTO &#34;user_languages&#34; (&#34;user_id&#34;,&#34;language_id&#34;) VALUES (111, 1), (111, 2) ON DUPLICATE KEY DO NOTHING;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// COMMIT;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 下面的save会自动更新或创建所有关联的数据（有就替换，没有就
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Save</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>若要在创建、更新时跳过自动保存，您可以使用 <code>Select</code> 或 <code>Omit</code>，例如</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">user</span> <span class="o">:=</span> <span class="nx">User</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Name</span><span class="p">:</span>            <span class="s">&#34;jinzhu&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">BillingAddress</span><span class="p">:</span>  <span class="nx">Address</span><span class="p">{</span><span class="nx">Address1</span><span class="p">:</span> <span class="s">&#34;Billing Address - Address 1&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ShippingAddress</span><span class="p">:</span> <span class="nx">Address</span><span class="p">{</span><span class="nx">Address1</span><span class="p">:</span> <span class="s">&#34;Shipping Address - Address 1&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Emails</span><span class="p">:</span>          <span class="p">[]</span><span class="nx">Email</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="nx">Email</span><span class="p">:</span> <span class="s">&#34;jinzhu@example.com&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="nx">Email</span><span class="p">:</span> <span class="s">&#34;jinzhu-2@example.com&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Languages</span><span class="p">:</span>       <span class="p">[]</span><span class="nx">Language</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;ZH&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;EN&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Select</span><span class="p">(</span><span class="s">&#34;Name&#34;</span><span class="p">).</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// INSERT INTO &#34;users&#34; (name) VALUES (&#34;jinzhu&#34;, 1, 2);
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Omit</span><span class="p">(</span><span class="s">&#34;BillingAddress&#34;</span><span class="p">).</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Skip create BillingAddress when creating a user
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Omit</span><span class="p">(</span><span class="nx">clause</span><span class="p">.</span><span class="nx">Associations</span><span class="p">).</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Skip all associations when creating a user
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>Select/Omit 关联字段</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">user</span> <span class="o">:=</span> <span class="nx">User</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Name</span><span class="p">:</span>            <span class="s">&#34;jinzhu&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">BillingAddress</span><span class="p">:</span>  <span class="nx">Address</span><span class="p">{</span><span class="nx">Address1</span><span class="p">:</span> <span class="s">&#34;Billing Address - Address 1&#34;</span><span class="p">,</span> <span class="nx">Address2</span><span class="p">:</span> <span class="s">&#34;addr2&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ShippingAddress</span><span class="p">:</span> <span class="nx">Address</span><span class="p">{</span><span class="nx">Address1</span><span class="p">:</span> <span class="s">&#34;Shipping Address - Address 1&#34;</span><span class="p">,</span> <span class="nx">Address2</span><span class="p">:</span> <span class="s">&#34;addr2&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 创建 user 及其 BillingAddress、ShippingAddress
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 在创建 BillingAddress 时，仅使用其 address1、address2 字段，忽略其它字段
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Select</span><span class="p">(</span><span class="s">&#34;BillingAddress.Address1&#34;</span><span class="p">,</span> <span class="s">&#34;BillingAddress.Address2&#34;</span><span class="p">).</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Omit</span><span class="p">(</span><span class="s">&#34;BillingAddress.Address2&#34;</span><span class="p">,</span> <span class="s">&#34;BillingAddress.CreatedAt&#34;</span><span class="p">).</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>关联模式包含一些在处理关系时有用的方法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 开始关联模式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="nx">user</span> <span class="nx">User</span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">).</span><span class="nf">Association</span><span class="p">(</span><span class="s">&#34;Languages&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// `user` 是源模型，它的主键不能为空
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 关系的字段名是 `Languages`，关系需要是 belongs to、has one、has many、many to many
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 如果匹配了上面两个要求，会开始关联模式，否则会返回错误
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">).</span><span class="nf">Association</span><span class="p">(</span><span class="s">&#34;Languages&#34;</span><span class="p">).</span><span class="nx">Error</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>查找所有匹配的关联记录</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">).</span><span class="nf">Association</span><span class="p">(</span><span class="s">&#34;Languages&#34;</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">languages</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>查找带条件的关联</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">codes</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;zh-CN&#34;</span><span class="p">,</span> <span class="s">&#34;en-US&#34;</span><span class="p">,</span> <span class="s">&#34;ja-JP&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">).</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;code IN ?&#34;</span><span class="p">,</span> <span class="nx">codes</span><span class="p">).</span><span class="nf">Association</span><span class="p">(</span><span class="s">&#34;Languages&#34;</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">languages</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">).</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;code IN ?&#34;</span><span class="p">,</span> <span class="nx">codes</span><span class="p">).</span><span class="nf">Order</span><span class="p">(</span><span class="s">&#34;code desc&#34;</span><span class="p">).</span><span class="nf">Association</span><span class="p">(</span><span class="s">&#34;Languages&#34;</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">languages</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>返回当前关联的计数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">).</span><span class="nf">Association</span><span class="p">(</span><span class="s">&#34;Languages&#34;</span><span class="p">).</span><span class="nf">Count</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 条件计数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">codes</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;zh-CN&#34;</span><span class="p">,</span> <span class="s">&#34;en-US&#34;</span><span class="p">,</span> <span class="s">&#34;ja-JP&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">).</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;code IN ?&#34;</span><span class="p">,</span> <span class="nx">codes</span><span class="p">).</span><span class="nf">Association</span><span class="p">(</span><span class="s">&#34;Languages&#34;</span><span class="p">).</span><span class="nf">Count</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>关联模式也支持批量处理，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 查询所有用户的所有角色
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">).</span><span class="nf">Association</span><span class="p">(</span><span class="s">&#34;Role&#34;</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">roles</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 从所有 team 中删除 user A
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">).</span><span class="nf">Association</span><span class="p">(</span><span class="s">&#34;Team&#34;</span><span class="p">).</span><span class="nf">Delete</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">userA</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 获取去重的用户所属 team 数量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">).</span><span class="nf">Association</span><span class="p">(</span><span class="s">&#34;Team&#34;</span><span class="p">).</span><span class="nf">Count</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 对于批量数据的 `Append`、`Replace`，参数的长度必须与数据的长度相同，否则会返回 error
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="nx">users</span> <span class="p">=</span> <span class="p">[]</span><span class="nx">User</span><span class="p">{</span><span class="nx">user1</span><span class="p">,</span> <span class="nx">user2</span><span class="p">,</span> <span class="nx">user3</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 例如：现在有三个 user，Append userA 到 user1 的 team，Append userB 到 user2 的 team，Append userA、userB 和 userC 到 user3 的 team
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">).</span><span class="nf">Association</span><span class="p">(</span><span class="s">&#34;Team&#34;</span><span class="p">).</span><span class="nf">Append</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">userA</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">userB</span><span class="p">,</span> <span class="o">&amp;</span><span class="p">[]</span><span class="nx">User</span><span class="p">{</span><span class="nx">userA</span><span class="p">,</span> <span class="nx">userB</span><span class="p">,</span> <span class="nx">userC</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 重置 user1 team 为 userA，重置 user2 的 team 为 userB，重置 user3 的 team 为 userA、 userB 和 userC
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">).</span><span class="nf">Association</span><span class="p">(</span><span class="s">&#34;Team&#34;</span><span class="p">).</span><span class="nf">Replace</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">userA</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">userB</span><span class="p">,</span> <span class="o">&amp;</span><span class="p">[]</span><span class="nx">User</span><span class="p">{</span><span class="nx">userA</span><span class="p">,</span> <span class="nx">userB</span><span class="p">,</span> <span class="nx">userC</span><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>你可以在删除记录时通过 <code>Select</code> 来删除具有 has one、has many、many2many 关系的记录，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 删除 user 时，也删除 user 的 account
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Select</span><span class="p">(</span><span class="s">&#34;Account&#34;</span><span class="p">).</span><span class="nf">Delete</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 删除 user 时，也删除 user 的 Orders、CreditCards 记录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Select</span><span class="p">(</span><span class="s">&#34;Orders&#34;</span><span class="p">,</span> <span class="s">&#34;CreditCards&#34;</span><span class="p">).</span><span class="nf">Delete</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 删除 user 时，也删除用户所有 has one/many、many2many 记录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Select</span><span class="p">(</span><span class="nx">clause</span><span class="p">.</span><span class="nx">Associations</span><span class="p">).</span><span class="nf">Delete</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 删除 users 时，也删除每一个 user 的 account
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Select</span><span class="p">(</span><span class="s">&#34;Account&#34;</span><span class="p">).</span><span class="nf">Delete</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p><strong>注意：</strong> 只有当记录的主键不为空时，关联才会被删除，GORM 会使用这些主键作为条件来删除关联记录. 而且也这个<code>Select</code>关联删除只能删除当前表的关联不能删除嵌套的关联。例如user表里的Orders还可能与其他有关联，但是不能把他们也删掉</p>
+</blockquote>
+</li>
+<li>
+<p>GORM 允许在 <code>Preload</code> 的其它 SQL 中直接加载关系（belong to\has one\has many\many to many），例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">gorm</span><span class="p">.</span><span class="nx">Model</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Username</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Orders</span>   <span class="p">[]</span><span class="nx">Order</span> <span class="s">`gorm:foreignKey:UserID`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Order</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">gorm</span><span class="p">.</span><span class="nx">Model</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">UserID</span> <span class="kt">uint</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Price</span>  <span class="kt">float64</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 查找 user 时预加载相关 Order
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Preload</span><span class="p">(</span><span class="s">&#34;Orders&#34;</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM users;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM orders WHERE user_id IN (1,2,3,4); # 前面查找好的所有user_id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Preload</span><span class="p">(</span><span class="s">&#34;Orders&#34;</span><span class="p">).</span><span class="nf">Preload</span><span class="p">(</span><span class="s">&#34;Profile&#34;</span><span class="p">).</span><span class="nf">Preload</span><span class="p">(</span><span class="s">&#34;Role&#34;</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM users;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM orders WHERE user_id IN (1,2,3,4); // has many
+</span></span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM profiles WHERE user_id IN (1,2,3,4); // has one
+</span></span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM roles WHERE id IN (4,5,6); // belongs to
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>与创建、更新时使用 <code>Select</code> 类似，<code>clause.Associations</code> 也可以和 <code>Preload</code> 一起使用，它可以用来 <code>预加载</code> 全部关联，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">gorm</span><span class="p">.</span><span class="nx">Model</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Name</span>       <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">CompanyID</span>  <span class="kt">uint</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Company</span>    <span class="nx">Company</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Role</span>       <span class="nx">Role</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Orders</span>     <span class="p">[]</span><span class="nx">Order</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Preload</span><span class="p">(</span><span class="nx">clause</span><span class="p">.</span><span class="nx">Associations</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>clause.Associations</code> 不会预加载嵌套的关联，但你可以使用<a href="https://gorm.io/zh_CN/docs/preload.html#nested_preloading">嵌套预加载</a> 例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Preload</span><span class="p">(</span><span class="s">&#34;Orders.OrderItems.Product&#34;</span><span class="p">).</span><span class="nf">Preload</span><span class="p">(</span><span class="nx">clause</span><span class="p">.</span><span class="nx">Associations</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl"><span class="c1">// 假设有A B C 三个表，这三个表依次依赖，这样就形成了嵌套的关系。可以使用Preload的嵌套预加载来实现简洁的关联查询
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 或者使用连接查询也可以
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 或者使用 Assosiation来关联表也可以做查询
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>GORM 允许带条件的 <code>Preload</code> 关联，类似于<a href="https://gorm.io/zh_CN/docs/query.html#inline_conditions">内联条件</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 带条件的预加载 Order
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Preload</span><span class="p">(</span><span class="s">&#34;Orders&#34;</span><span class="p">,</span> <span class="s">&#34;state NOT IN (?)&#34;</span><span class="p">,</span> <span class="s">&#34;cancelled&#34;</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM users;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM orders WHERE user_id IN (1,2,3,4) AND state NOT IN (&#39;cancelled&#39;);
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;state = ?&#34;</span><span class="p">,</span> <span class="s">&#34;active&#34;</span><span class="p">).</span><span class="nf">Preload</span><span class="p">(</span><span class="s">&#34;Orders&#34;</span><span class="p">,</span> <span class="s">&#34;state NOT IN (?)&#34;</span><span class="p">,</span> <span class="s">&#34;cancelled&#34;</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM users WHERE state = &#39;active&#39;;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM orders WHERE user_id IN (1,2) AND state NOT IN (&#39;cancelled&#39;);
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>Preload</code>预加载时需要条件的话，只能使用内联条件或者直接改成连接查询</p>
+</li>
+<li>
+<p>链式方法是将 <code>Clauses</code> 修改或添加到当前 <code>Statement</code> 的方法，例如：</p>
+<p><code>Where</code>, <code>Select</code>, <code>Omit</code>, <code>Joins</code>, <code>Scopes</code>, <code>Preload</code>, <code>Raw</code> (<code>Raw</code> can’t be used with other chainable methods to build SQL)…</p>
+</li>
+<li>
+<p>终结（方法） 是会立即执行注册回调的方法，然后生成并执行 SQL，比如这些方法：</p>
+<p><code>Create</code>, <code>First</code>, <code>Find</code>, <code>Take</code>, <code>Save</code>, <code>Update</code>, <code>Delete</code>, <code>Scan</code>, <code>Row</code>, <code>Rows</code>…</p>
+</li>
+<li>
+<p>GORM 定义了 <code>Session</code>、<code>WithContext</code>、<code>Debug</code> 方法做为 <code>新建会话方法</code>，查看<a href="https://gorm.io/zh_CN/docs/session.html">会话</a> 获取详情.</p>
+<p>在 <code>链式方法</code>, <code>Finisher 方法</code>之后, GORM 返回一个初始化的 <code>*gorm.DB</code> 实例，不能安全地再使用。您应该使用 <code>新建会话方法</code> 来标记 <code>*gorm.DB</code> 为可共享。调用已经调用终结方法的实例会被上个实例污染，可以使用会话方式新建会话避免前面实例调用终结方法导致的条件污染</p>
+<p>让我们用实例来解释它：</p>
+<p>示例 1：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">gorm</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">sqlite</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;test.db&#34;</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">Config</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// db is a new initialized `*gorm.DB`, which is safe to reuse
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name = ?&#34;</span><span class="p">,</span> <span class="s">&#34;jinzhu&#34;</span><span class="p">).</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;age = ?&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// `Where(&#34;name = ?&#34;, &#34;jinzhu&#34;)` is the first chain method call, it will create an initialized `*gorm.DB` instance, aka `*gorm.Statement`
+</span></span></span><span class="line"><span class="cl"><span class="c1">// `Where(&#34;age = ?&#34;, 18)` is the second chain method call, it reuses the above `*gorm.Statement`, adds new condition `age = 18` to it
+</span></span></span><span class="line"><span class="cl"><span class="c1">// `Find(&amp;users)` is a finisher method, it executes registered Query Callbacks, which generates and runs the following SQL:
+</span></span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM users WHERE name = &#39;jinzhu&#39; AND age = 18;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name = ?&#34;</span><span class="p">,</span> <span class="s">&#34;jinzhu2&#34;</span><span class="p">).</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;age = ?&#34;</span><span class="p">,</span> <span class="mi">20</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// `Where(&#34;name = ?&#34;, &#34;jinzhu2&#34;)` is also the first chain method call, it creates a new `*gorm.Statement`
+</span></span></span><span class="line"><span class="cl"><span class="c1">// `Where(&#34;age = ?&#34;, 20)` reuses the above `Statement`, and add conditions to it
+</span></span></span><span class="line"><span class="cl"><span class="c1">// `Find(&amp;users)` is a finisher method, it executes registered Query Callbacks, generates and runs the following SQL:
+</span></span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM users WHERE name = &#39;jinzhu2&#39; AND age = 20;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// `Find(&amp;users)` is a finisher method call, it also creates a new `Statement` and executes registered Query Callbacks, generates and runs the following SQL:
+</span></span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM users;
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>(错误的) 示例2：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">gorm</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">sqlite</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;test.db&#34;</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">Config</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// db is a new initialized *gorm.DB, which is safe to reuse
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nx">tx</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name = ?&#34;</span><span class="p">,</span> <span class="s">&#34;jinzhu&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// `Where(&#34;name = ?&#34;, &#34;jinzhu&#34;)` returns an initialized `*gorm.Statement` instance after chain method `Where`, which is NOT safe to reuse
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// good case
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">tx</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;age = ?&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// `tx.Where(&#34;age = ?&#34;, 18)` use the above `*gorm.Statement`, adds new condition to it
+</span></span></span><span class="line"><span class="cl"><span class="c1">// `Find(&amp;users)` is a finisher method call, it executes registered Query Callbacks, generates and runs the following SQL:
+</span></span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM users WHERE name = &#39;jinzhu&#39; AND age = 18
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 会被上个实例污染，可以使用会话方式新建会话避免前面实例调用终结方法导致的条件污染
+</span></span></span><span class="line"><span class="cl"><span class="c1">// bad case
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">tx</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;age = ?&#34;</span><span class="p">,</span> <span class="mi">28</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// `tx.Where(&#34;age = ?&#34;, 18)` also use the above `*gorm.Statement`, and keep adding conditions to it
+</span></span></span><span class="line"><span class="cl"><span class="c1">// So the following generated SQL is polluted by the previous conditions:
+</span></span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM users WHERE name = &#39;jinzhu&#39; AND age = 18 AND age = 28;
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>示例 3：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">gorm</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">sqlite</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;test.db&#34;</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">Config</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// db is a new initialized *gorm.DB, which is safe to reuse
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nx">tx</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name = ?&#34;</span><span class="p">,</span> <span class="s">&#34;jinzhu&#34;</span><span class="p">).</span><span class="nf">Session</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">Session</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl"><span class="nx">tx</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name = ?&#34;</span><span class="p">,</span> <span class="s">&#34;jinzhu&#34;</span><span class="p">).</span><span class="nf">WithContext</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="nx">tx</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name = ?&#34;</span><span class="p">,</span> <span class="s">&#34;jinzhu&#34;</span><span class="p">).</span><span class="nf">Debug</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// `Session`, `WithContext`, `Debug` returns `*gorm.DB` marked as safe to reuse, newly initialized `*gorm.Statement` based on it keeps current conditions
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// good case
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">tx</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;age = ?&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM users WHERE name = &#39;jinzhu&#39; AND age = 18
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// good case
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">tx</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;age = ?&#34;</span><span class="p">,</span> <span class="mi">28</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM users WHERE name = &#39;jinzhu&#39; AND age = 28;
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><code>PreparedStmt</code> 在执行任何 SQL 时都会创建一个 prepared statement 并将其缓存，以提高后续的效率。这在业务里还是很有用的，一次SQL加载就可以提升后续执行效率</p>
+</li>
+<li>
+<p>通过 <code>NewDB</code> 选项创建一个不带之前条件的新 DB，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">tx</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name = ?&#34;</span><span class="p">,</span> <span class="s">&#34;jinzhu&#34;</span><span class="p">).</span><span class="nf">Session</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">Session</span><span class="p">{</span><span class="nx">NewDB</span><span class="p">:</span> <span class="kc">true</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">tx</span><span class="p">.</span><span class="nf">First</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM users ORDER BY id LIMIT 1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nx">tx</span><span class="p">.</span><span class="nf">First</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">,</span> <span class="s">&#34;id = ?&#34;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM users WHERE id = 10 ORDER BY id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 不带 `NewDB` 选项
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">tx2</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name = ?&#34;</span><span class="p">,</span> <span class="s">&#34;jinzhu&#34;</span><span class="p">).</span><span class="nf">Session</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">Session</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl"><span class="nx">tx2</span><span class="p">.</span><span class="nf">First</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM users WHERE name = &#34;jinzhu&#34; ORDER BY id
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>在一个 DB 事务中使用 <code>Transaction</code> 方法，GORM 会使用 <code>SavePoint(savedPointName)</code>，<code>RollbackTo(savedPointName)</code> 为你提供嵌套事务支持。 你可以通过 <code>DisableNestedTransaction</code> 选项关闭它，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Session</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">Session</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">DisableNestedTransaction</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}).</span><span class="nf">CreateInBatches</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>GORM 默认不允许进行全局 update/delete，该操作会返回 <code>ErrMissingWhereClause</code> 错误。 您可以通过将一个选项设置为 true 来启用它，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Session</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">Session</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">AllowGlobalUpdate</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}).</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{}).</span><span class="nf">Update</span><span class="p">(</span><span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="s">&#34;jinzhu&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// UPDATE users SET `name` = &#34;jinzhu&#34;
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>在创建、更新记录时，GORM 会通过 <a href="https://gorm.io/zh_CN/docs/create.html#upsert">Upsert</a> 自动保存关联及其引用记录。 如果您想要更新关联的数据，您应该使用 <code>FullSaveAssociations</code> 模式，例如：(重要)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Session</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">Session</span><span class="p">{</span><span class="nx">FullSaveAssociations</span><span class="p">:</span> <span class="kc">true</span><span class="p">}).</span><span class="nf">Updates</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1">// INSERT INTO &#34;addresses&#34; (address1) VALUES (&#34;Billing Address - Address 1&#34;), (&#34;Shipping Address - Address 1&#34;) ON DUPLICATE KEY SET address1=VALUES(address1);
+</span></span></span><span class="line"><span class="cl"><span class="c1">// INSERT INTO &#34;users&#34; (name,billing_address_id,shipping_address_id) VALUES (&#34;jinzhu&#34;, 1, 2);
+</span></span></span><span class="line"><span class="cl"><span class="c1">// INSERT INTO &#34;emails&#34; (user_id,email) VALUES (111, &#34;jinzhu@example.com&#34;), (111, &#34;jinzhu-2@example.com&#34;) ON DUPLICATE KEY SET email=VALUES(email);
+</span></span></span><span class="line"><span class="cl"><span class="c1">// ...
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>声明查询字段，一种优化手段，避免<code>*</code>再次解析成表的行字段的时间消耗</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Session</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">Session</span><span class="p">{</span><span class="nx">QueryFields</span><span class="p">:</span> <span class="kc">true</span><span class="p">}).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// SELECT `users`.`name`, `users`.`age`, ... FROM `users` // 有该选项
+</span></span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM `users` // 没有该选项
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>事务<code>Begin</code>、<code>Commit</code>和<code>Rollback</code>不是很方便(手动事务)，推荐使用下面的方式。GORM 提供了 <code>SavePoint</code>、<code>Rollbackto</code> 方法，来提供保存点以及回滚至保存点功能</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Transaction</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 在事务中执行一些 db 操作（从这里开始，您应该使用 &#39;tx&#39; 而不是 &#39;db&#39;）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Animal</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;Giraffe&#34;</span><span class="p">}).</span><span class="nx">Error</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 返回任何错误都会回滚事务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Animal</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;Lion&#34;</span><span class="p">}).</span><span class="nx">Error</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 返回 nil 提交事务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>GORM 支持嵌套事务，您可以回滚较大事务内执行的一部分操作，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Transaction</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">tx</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">tx</span><span class="p">.</span><span class="nf">Transaction</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx2</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx2</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;rollback user2&#34;</span><span class="p">)</span> <span class="c1">// Rollback user2
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">tx</span><span class="p">.</span><span class="nf">Transaction</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx2</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">tx2</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user3</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Commit user1, user3
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>Migrator 接口</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 为 `User` 创建表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Migrator</span><span class="p">().</span><span class="nf">CreateTable</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 将 &#34;ENGINE=InnoDB&#34; 添加到创建 `User` 的 SQL 里去
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Set</span><span class="p">(</span><span class="s">&#34;gorm:table_options&#34;</span><span class="p">,</span> <span class="s">&#34;ENGINE=InnoDB&#34;</span><span class="p">).</span><span class="nf">Migrator</span><span class="p">().</span><span class="nf">CreateTable</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 检查 `User` 对应的表是否存在
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Migrator</span><span class="p">().</span><span class="nf">HasTable</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Migrator</span><span class="p">().</span><span class="nf">HasTable</span><span class="p">(</span><span class="s">&#34;users&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 如果存在表则删除（删除时会忽略、删除外键约束)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Migrator</span><span class="p">().</span><span class="nf">DropTable</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Migrator</span><span class="p">().</span><span class="nf">DropTable</span><span class="p">(</span><span class="s">&#34;users&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 重命名表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Migrator</span><span class="p">().</span><span class="nf">RenameTable</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{},</span> <span class="o">&amp;</span><span class="nx">UserInfo</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Migrator</span><span class="p">().</span><span class="nf">RenameTable</span><span class="p">(</span><span class="s">&#34;users&#34;</span><span class="p">,</span> <span class="s">&#34;user_infos&#34;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>连接池</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 获取通用数据库对象 sql.DB ，然后使用其提供的功能
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">sqlDB</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">DB</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// SetMaxIdleConns 用于设置连接池中空闲连接的最大数量。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">sqlDB</span><span class="p">.</span><span class="nf">SetMaxIdleConns</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// SetMaxOpenConns 设置打开数据库连接的最大数量。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">sqlDB</span><span class="p">.</span><span class="nf">SetMaxOpenConns</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// SetConnMaxLifetime 设置了连接可复用的最大时间。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">sqlDB</span><span class="p">.</span><span class="nf">SetConnMaxLifetime</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Hour</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>执行任何 SQL 时都创建并缓存预编译语句，可以提高后续的调用速度</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 全局模式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">gorm</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">sqlite</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="s">&#34;gorm.db&#34;</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">PrepareStmt</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 会话模式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">tx</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Session</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Session</span><span class="p">{</span><span class="nx">PrepareStmt</span><span class="p">:</span> <span class="kc">true</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="nx">tx</span><span class="p">.</span><span class="nf">First</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">tx</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">tx</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">).</span><span class="nf">Update</span><span class="p">(</span><span class="s">&#34;Age&#34;</span><span class="p">,</span> <span class="mi">18</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>您可以使用 <code>Table</code> 方法临时指定表名(和<code>Model()</code>方法类似)，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// 根据 User 的字段创建 `deleted_users` 表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Table</span><span class="p">(</span><span class="s">&#34;deleted_users&#34;</span><span class="p">).</span><span class="nf">AutoMigrate</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 从另一张表查询数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="nx">deletedUsers</span> <span class="p">[]</span><span class="nx">User</span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Table</span><span class="p">(</span><span class="s">&#34;deleted_users&#34;</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">deletedUsers</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// SELECT * FROM deleted_users;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Table</span><span class="p">(</span><span class="s">&#34;deleted_users&#34;</span><span class="p">).</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;name = ?&#34;</span><span class="p">,</span> <span class="s">&#34;jinzhu&#34;</span><span class="p">).</span><span class="nf">Delete</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// DELETE FROM deleted_users WHERE name = &#39;jinzhu&#39;;
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>字段的序列化</p>
+<p>Serializer 是一个可扩展的接口，允许自定义如何使用数据库对数据进行序列化和反序列化</p>
+<p>GORM 提供了一些默认的序列化器：json、gob、unixtime，这里有一个如何使用它的快速示例</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Name</span>        <span class="p">[]</span><span class="kt">byte</span>                 <span class="s">`gorm:&#34;serializer:json&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Roles</span>       <span class="nx">Roles</span>                  <span class="s">`gorm:&#34;serializer:json&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Contracts</span>   <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}</span> <span class="s">`gorm:&#34;serializer:json&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">JobInfo</span>     <span class="nx">Job</span>                    <span class="s">`gorm:&#34;type:bytes;serializer:gob&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">CreatedTime</span> <span class="kt">int64</span>                  <span class="s">`gorm:&#34;serializer:unixtime;type:time&#34;`</span> <span class="c1">// 将 int 作为日期时间存储到数据库中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Roles</span> <span class="p">[]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Job</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Title</span>    <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Location</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">IsIntern</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>复合索引列的顺序会影响其性能，因此必须仔细考虑&ndash;&gt;后续的条件尽量符合覆盖索引原则</p>
+<p>您可以使用 <code>priority</code> 指定顺序，默认优先级值是 <code>10</code>，如果优先级值相同，则顺序取决于模型结构体字段的顺序()</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Name</span>   <span class="kt">string</span> <span class="s">`gorm:&#34;index:idx_member&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Number</span> <span class="kt">string</span> <span class="s">`gorm:&#34;index:idx_member&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// column order: name, number
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Name</span>   <span class="kt">string</span> <span class="s">`gorm:&#34;index:idx_member,priority:2&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Number</span> <span class="kt">string</span> <span class="s">`gorm:&#34;index:idx_member,priority:1&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// column order: number, name
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Name</span>   <span class="kt">string</span> <span class="s">`gorm:&#34;index:idx_member,priority:12&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Number</span> <span class="kt">string</span> <span class="s">`gorm:&#34;index:idx_member&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// column order: number, name
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>复合主键</p>
+<p>通过将多个字段设为主键，以创建复合主键，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Product</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ID</span>           <span class="kt">string</span> <span class="s">`gorm:&#34;primaryKey&#34;`</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">LanguageCode</span> <span class="kt">string</span> <span class="s">`gorm:&#34;primaryKey&#34;`</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Code</span>         <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">Name</span>         <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>**注意：**默认情况下，整型 <code>PrioritizedPrimaryField</code> 启用了 <code>AutoIncrement</code>，要禁用它，您需要为整型字段关闭 <code>autoIncrement</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Product</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">CategoryID</span> <span class="kt">uint64</span> <span class="s">`gorm:&#34;primaryKey;autoIncrement:false&#34;`</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">TypeID</span>     <span class="kt">uint64</span> <span class="s">`gorm:&#34;primaryKey;autoIncrement:false&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>gorm与go的类型映射</p>
+<p>下面是gorm结构体模型与mysql数据库类型的具体映射关系</p>
+<table>
+<thead>
+<tr>
+<th>gorm model field</th>
+<th>mysql table field type</th>
+<th>note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>int8</td>
+<td>tinyint</td>
+<td></td>
+</tr>
+<tr>
+<td>int16</td>
+<td>smallint</td>
+<td></td>
+</tr>
+<tr>
+<td>int32</td>
+<td>int</td>
+<td></td>
+</tr>
+<tr>
+<td>int64</td>
+<td>bigint</td>
+<td></td>
+</tr>
+<tr>
+<td>uint8</td>
+<td>tinyint unsigned</td>
+<td></td>
+</tr>
+<tr>
+<td>uint16</td>
+<td>smallint unsigned</td>
+<td></td>
+</tr>
+<tr>
+<td>uint32</td>
+<td>int unsigned</td>
+<td></td>
+</tr>
+<tr>
+<td>uint64</td>
+<td>bigint unsigned</td>
+<td></td>
+</tr>
+<tr>
+<td>float32</td>
+<td>float</td>
+<td></td>
+</tr>
+<tr>
+<td>float64</td>
+<td>double</td>
+<td></td>
+</tr>
+<tr>
+<td><del>complex64</del></td>
+<td>没有对应类型</td>
+<td><strong>不支持</strong></td>
+</tr>
+<tr>
+<td><del>complex128</del></td>
+<td>没有对应类型</td>
+<td><strong>不支持</strong></td>
+</tr>
+<tr>
+<td>byte</td>
+<td>tinyint unsigned</td>
+<td>等效于go的uint8</td>
+</tr>
+<tr>
+<td>rune</td>
+<td>int</td>
+<td>rune等效于go里的int32</td>
+</tr>
+<tr>
+<td>bool</td>
+<td>tinyint(1)</td>
+<td>都占一个bit位</td>
+</tr>
+<tr>
+<td>time.Time</td>
+<td>datetime(3)</td>
+<td></td>
+</tr>
+<tr>
+<td>string</td>
+<td>longtext</td>
+<td><strong>不添加gorm的约束，默认为longtext（mysql的字符串最大数据类型）</strong></td>
+</tr>
+<tr>
+<td>field string  `gorm:&ldquo;type:char(1)&rdquo;`</td>
+<td>char</td>
+<td><strong>定长字符串设置为1字节不生效</strong></td>
+</tr>
+<tr>
+<td>field string  `gorm:&ldquo;type:char(5)&rdquo;`</td>
+<td>char(5)</td>
+<td>定长</td>
+</tr>
+<tr>
+<td>field string  `gorm:&ldquo;type:varchar(1)&rdquo;`</td>
+<td>varchar(1)</td>
+<td>可变长度，最多1个字节</td>
+</tr>
+<tr>
+<td>field string  `gorm:&ldquo;type:varchar(1000)&rdquo;`</td>
+<td>varcahr(1000)</td>
+<td>可变长度，最多1000个字节</td>
+</tr>
+<tr>
+<td>field string  `gorm:&ldquo;type:tinyblob&rdquo;`</td>
+<td>tinyblob</td>
+<td>不可以添加长度，会报错</td>
+</tr>
+<tr>
+<td>field string  `gorm:&ldquo;type:tinytext&rdquo;`</td>
+<td>tinytext</td>
+<td>不可以添加长度，会报错</td>
+</tr>
+<tr>
+<td>field string  `gorm:&ldquo;type:blob&rdquo;`</td>
+<td>blob</td>
+<td>不可以添加长度，会报错</td>
+</tr>
+<tr>
+<td>field string  `gorm:&ldquo;type:text&rdquo;`</td>
+<td>text</td>
+<td>不可以添加长度，会报错</td>
+</tr>
+</tbody>
+</table>
+<p><strong>可以看出：go的数据类型通过gorm与mysql的数据类型是完全对应起来的。go的<code>int8</code>的1字节对mysql的<code>tinyint</code>的1字节，有无符号也是对应起来的，但是针对go的<code>string</code>可以添加gorm的类型约束来限制对应mysql的类型，不屑约束的话默认是<code>longtext</code>（太浪费空间了!!!）</strong></p>
+<p><strong>其次，非<code>string</code>类型添加长度约束会失效。而且文本或二进制类型不管大中小都无法添加长度，添加会报错</strong></p>
+</li>
+</ol>
+<h2 id="从表名开始">从表名开始</h2>
+<p>如何定义表名? gorm的默认表名策略是模型名字的复数, 比如:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">User</span> <span class="nx">Struct</span><span class="p">{}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>默认表名为<code>users</code>, 但是生产习惯常用单数表名, 而且加es的复数或者sheep单复同形容易让人迷惑.</p>
+<p>当然, gorm实现了复杂的单数变复数逻辑, 我们可以从 <a href="https://link.zhihu.com/?target=http%3A//github.com/jinzhu/inflection/inflections.go">http://github.com/jinzhu/inflection/inflections.go</a> 一探究竟, 下面复习下单复同型/不可数单词, 以及特殊变复数的单词:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">uncountableInflections</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;equipment&#34;</span><span class="p">,</span> <span class="s">&#34;information&#34;</span><span class="p">,</span> <span class="s">&#34;rice&#34;</span><span class="p">,</span> <span class="s">&#34;money&#34;</span><span class="p">,</span> <span class="s">&#34;species&#34;</span><span class="p">,</span> <span class="s">&#34;series&#34;</span><span class="p">,</span> <span class="s">&#34;fish&#34;</span><span class="p">,</span> <span class="s">&#34;sheep&#34;</span><span class="p">,</span> <span class="s">&#34;jeans&#34;</span><span class="p">,</span> <span class="s">&#34;police&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">irregularInflections</span> <span class="p">=</span> <span class="nx">IrregularSlice</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="p">{</span><span class="s">&#34;person&#34;</span><span class="p">,</span> <span class="s">&#34;people&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">   <span class="p">{</span><span class="s">&#34;man&#34;</span><span class="p">,</span> <span class="s">&#34;men&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">   <span class="p">{</span><span class="s">&#34;child&#34;</span><span class="p">,</span> <span class="s">&#34;children&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">   <span class="p">{</span><span class="s">&#34;sex&#34;</span><span class="p">,</span> <span class="s">&#34;sexes&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">   <span class="p">{</span><span class="s">&#34;move&#34;</span><span class="p">,</span> <span class="s">&#34;moves&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl">   <span class="p">{</span><span class="s">&#34;mombie&#34;</span><span class="p">,</span> <span class="s">&#34;mombies&#34;</span><span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>好吧, 写个增删改查还得过专八.</p>
+<p>我们可以实现<code>gorm.schema.scheme.go.Tabler.TableName()</code>方法, 重写表名.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="o">*</span><span class="nx">User</span><span class="p">)</span> <span class="nf">TableName</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span><span class="k">return</span> <span class="s">&#34;user&#34;</span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>OK!</p>
+<p>除了这种奇奇怪怪的写法, 在gormV2中, 我们可以使用一个配置改为单数表名, 谢天谢地.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">NamingStrategy</span><span class="p">:</span> <span class="o">&amp;</span><span class="nx">schema</span><span class="p">.</span><span class="nx">NamingStrategy</span><span class="p">{</span><span class="nx">SingularTable</span><span class="p">:</span> <span class="kc">true</span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>schema.NamingStrategy</code>实现了<code>gorm.schema.naming.go.Namer</code>接口, 我们也可以自己实现这个接口,替换gorm的命名策略, 接口简单易懂.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Namer</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">TableName</span><span class="p">(</span><span class="nx">table</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">ColumnName</span><span class="p">(</span><span class="nx">table</span><span class="p">,</span> <span class="nx">column</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">JoinTableName</span><span class="p">(</span><span class="nx">joinTable</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">RelationshipFKName</span><span class="p">(</span><span class="nx">Relationship</span><span class="p">)</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">CheckerName</span><span class="p">(</span><span class="nx">table</span><span class="p">,</span> <span class="nx">column</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">IndexName</span><span class="p">(</span><span class="nx">table</span><span class="p">,</span> <span class="nx">column</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="列名">列名</h2>
+<p>列名无可非议, 简简单单的下划线模式. 而且gorm会自动将<code>ID</code>转换成<code>id</code>而不是<code>i_d</code>, 那么, 就遵循golang的语言规范, 放心的在代码中使用ID吧~</p>
+<p>让我们来看下这个特殊变小写数组.</p>
+<p><strong>列名变小写?</strong></p>
+<p><code>gorm.schema.naming.go</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// https://github.com/golang/lint/blob/master/lint.go#L770
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">commonInitialisms</span>         <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;API&#34;</span><span class="p">,</span> <span class="s">&#34;ASCII&#34;</span><span class="p">,</span> <span class="s">&#34;CPU&#34;</span><span class="p">,</span> <span class="s">&#34;CSS&#34;</span><span class="p">,</span> <span class="s">&#34;DNS&#34;</span><span class="p">,</span> <span class="s">&#34;EOF&#34;</span><span class="p">,</span> <span class="s">&#34;GUID&#34;</span><span class="p">,</span> <span class="s">&#34;HTML&#34;</span><span class="p">,</span> <span class="s">&#34;HTTP&#34;</span><span class="p">,</span> <span class="s">&#34;HTTPS&#34;</span><span class="p">,</span> <span class="s">&#34;ID&#34;</span><span class="p">,</span> <span class="s">&#34;IP&#34;</span><span class="p">,</span> <span class="s">&#34;JSON&#34;</span><span class="p">,</span> <span class="s">&#34;LHS&#34;</span><span class="p">,</span> <span class="s">&#34;QPS&#34;</span><span class="p">,</span> <span class="s">&#34;RAM&#34;</span><span class="p">,</span> <span class="s">&#34;RHS&#34;</span><span class="p">,</span> <span class="s">&#34;RPC&#34;</span><span class="p">,</span> <span class="s">&#34;SLA&#34;</span><span class="p">,</span> <span class="s">&#34;SMTP&#34;</span><span class="p">,</span> <span class="s">&#34;SSH&#34;</span><span class="p">,</span> <span class="s">&#34;TLS&#34;</span><span class="p">,</span> <span class="s">&#34;TTL&#34;</span><span class="p">,</span> <span class="s">&#34;UID&#34;</span><span class="p">,</span> <span class="s">&#34;UI&#34;</span><span class="p">,</span> <span class="s">&#34;UUID&#34;</span><span class="p">,</span> <span class="s">&#34;URI&#34;</span><span class="p">,</span> <span class="s">&#34;URL&#34;</span><span class="p">,</span> <span class="s">&#34;UTF8&#34;</span><span class="p">,</span> <span class="s">&#34;VM&#34;</span><span class="p">,</span> <span class="s">&#34;XML&#34;</span><span class="p">,</span> <span class="s">&#34;XSRF&#34;</span><span class="p">,</span> <span class="s">&#34;XSS&#34;</span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>CreatedAt</code>, <code>UpdatedAt</code></p>
+<p>更加有争议和难以理解的列名,应该是这两个.</p>
+<p><strong>最原始的方法 ,mysql自动添加</strong></p>
+<p>如果想让mysql来做这件事, 可以这样写:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">create</span> <span class="nx">table</span> <span class="nf">user2</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="o">...</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">create_time</span> <span class="nf">datetime</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="nx">not</span> <span class="nx">null</span> <span class="nx">DEFAULT</span> <span class="nf">CURRENT_TIMESTAMP</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="nx">comment</span> <span class="err">&#39;</span><span class="nx">创建时间</span><span class="err">&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">update_time</span> <span class="nf">datetime</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="nx">not</span> <span class="nx">null</span> <span class="nx">DEFAULT</span> <span class="nf">CURRENT_TIMESTAMP</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="nx">ON</span> <span class="nx">UPDATE</span> <span class="nf">CURRENT_TIMESTAMP</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="nx">comment</span> <span class="err">&#39;</span><span class="nx">修改时间</span><span class="err">&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">   <span class="o">...</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="nx">ID</span>        <span class="kt">int64</span> <span class="s">`gorm:&#34;autoIncrement&#34;`</span>
+</span></span><span class="line"><span class="cl">   <span class="nx">CreatedAt</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="s">`gorm:default`</span>
+</span></span><span class="line"><span class="cl">   <span class="nx">UpdatedAt</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span> <span class="s">`gorm:default`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>加上gorm的<code>default</code>标签, 这个标签的意思是: <code>gorm.Create</code>时, 如果该列值为零, 使用建表时的<code>default</code>值, sql语句中也就没有这一列.</p>
+<p><code>gorm.Updates</code>如果<code>Update</code>一个<code>map</code>,就是强制更新. 如果<code>Update</code>一个结构体, 不赋值也就是用mysql的默认值, 如果赋值就直接<code>Update</code>, 这一点很巧妙.</p>
+<p>gorm对默认值的处理:</p>
+<p><code>gorm.callbacks.create.go:285</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">defaultValueFieldsHavingValue</span> <span class="o">:=</span> <span class="kd">map</span><span class="p">[</span><span class="o">*</span><span class="nx">schema</span><span class="p">.</span><span class="nx">Field</span><span class="p">][]</span><span class="kd">interface</span><span class="p">{}{}</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">field</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">stmt</span><span class="p">.</span><span class="nx">Schema</span><span class="p">.</span><span class="nx">FieldsWithDefaultDBValue</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="k">if</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">selectColumns</span><span class="p">[</span><span class="nx">field</span><span class="p">.</span><span class="nx">DBName</span><span class="p">];</span> <span class="p">(</span><span class="nx">ok</span> <span class="o">&amp;&amp;</span> <span class="nx">v</span><span class="p">)</span> <span class="o">||</span> <span class="p">(!</span><span class="nx">ok</span> <span class="o">&amp;&amp;</span> <span class="p">!</span><span class="nx">restricted</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">isZero</span> <span class="o">:=</span> <span class="nx">field</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="nx">rv</span><span class="p">);</span> <span class="p">!</span><span class="nx">isZero</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">defaultValueFieldsHavingValue</span><span class="p">[</span><span class="nx">field</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">defaultValueFieldsHavingValue</span><span class="p">[</span><span class="nx">field</span><span class="p">]</span> <span class="p">=</span> <span class="nb">make</span><span class="p">([]</span><span class="kd">interface</span><span class="p">{},</span> <span class="nx">stmt</span><span class="p">.</span><span class="nx">ReflectValue</span><span class="p">.</span><span class="nf">Len</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">         <span class="p">}</span>
+</span></span><span class="line"><span class="cl">         <span class="nx">defaultValueFieldsHavingValue</span><span class="p">[</span><span class="nx">field</span><span class="p">][</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">v</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">   <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>你要说我能看懂, 那我肯定看不懂, 但你要说看不懂, 我还知道它能干啥, 不错不错&hellip;</p>
+<p><strong>更好的方法，gorm自动添加</strong></p>
+<p>如果想让gorm来添加, sql就可以不用写<code>default</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">type User struct {
+</span></span><span class="line"><span class="cl">   ID        int64 `gorm:&#34;autoIncrement&#34;`
+</span></span><span class="line"><span class="cl">   CreatedAt time.Time
+</span></span><span class="line"><span class="cl">   UpdatedAt time.Time
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>只要列名叫<code>CreatedAt</code>和<code>UpdatedAt</code>即可.</p>
+<p><code>gorm.Create</code>即可自动更新<code>CreatedAt</code>和<code>UpdatedAt</code>.</p>
+<p>但是<code>gorm.Updates</code>时可要注意了, 如果没有使用<code>db.Model</code>指定<code>model</code>结构体, 就不能更新<code>UpdatedAt</code>.</p>
+<p>所以如果这样:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Table</span><span class="p">(</span><span class="nx">tableName</span><span class="p">).</span><span class="nf">Updates</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>是无法更新更新时间的.</p>
+<p>正确做法是:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{}).</span><span class="nf">Updates</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果傲娇的你, 偏偏不喜欢这样的列名, 非要用<code>CreateTime</code>, 那好吧, 你可以这样: 不告诉你, 自己去查文档&hellip; <a href="https://link.zhihu.com/?target=https%3A//gorm.io/zh_CN/docs/models.html">https://gorm.io/zh_CN/docs/models.html</a></p>
+<p><strong>小建议: 建议建表时使用datetime(3)秒类型</strong></p>
+<h2 id="create">Create</h2>
+<p><a href="https://link.zhihu.com/?target=https%3A//gorm.io/zh_CN/docs/create.html">https://gorm.io/zh_CN/docs/create.html</a></p>
+<p>gormV2支持创建和批量创建, 你可以这样写:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//创建
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//批量创建
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">users</span> <span class="o">:=</span> <span class="p">[]</span><span class="o">*</span><span class="nx">User</span><span class="p">{{},{},{}}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>创建成功会往结构体或结构体切片回填主键的值。</p>
+<h2 id="hooks">Hooks</h2>
+<p>我们可以灵活的使用hooks, 以减少重复代码在logic层对业务逻辑的侵入, 使代码更简洁. 钩子命名好像Vue啊! 哈哈哈</p>
+<h2 id="where">Where</h2>
+<p>gorm中最常用的语句, gormv1中最常用的方法是:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;uid = ?&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>gormV2支持两种新的<code>where</code>, Struct和map条件, 本文介绍struct条件:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span><span class="nx">phone</span><span class="p">:</span><span class="s">&#34;123&#34;</span><span class="p">,</span> <span class="nx">Age</span><span class="p">:</span><span class="mi">0</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//Select * from User where phone = 123
+</span></span></span><span class="line"><span class="cl"><span class="c1">//Age没有被查询
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>结构体查询非常好用, 你不用手动写列名, 避免了因为列名写错而导致的错误.</p>
+<p><strong>注意: 当使用结构作为条件查询时，GORM 只会查询非零值字段。这意味着如果您的字段值为<code>0</code> 、<code>''</code> 、<code>false</code> 或其他<a href="https://link.zhihu.com/?target=https%3A//tour.golang.org/basics/12">零值</a>，该字段不会被用于构建查询条件</strong></p>
+<h2 id="find-take-first-last">Find, Take, First, Last</h2>
+<p><strong>ErrRecordNotFound</strong></p>
+<p>这个东西可是实在太恶心了&hellip; 但是golang的反射又没法对ptr赋值为nil, 所以只能通过error返回. 这种处理方式也是可以理解的.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="o">...</span><span class="p">).</span><span class="nf">First</span><span class="p">(</span><span class="o">...</span><span class="p">).</span><span class="nx">Error</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 检查 ErrRecordNotFound 错误
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">errors</span><span class="p">.</span><span class="nf">Is</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">gorm</span><span class="p">.</span><span class="nx">ErrRecordNotFound</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注意: 只有<code>First</code>,<code>Last</code>,<code>Take</code>方法会产生<code>gorm.ErrRecordNotFound</code>错误哦</strong></p>
+<p><strong>Find</strong></p>
+<p>为了躲避<code>ErrRecordNotFound</code>, 我们来看下这个可爱的<code>Find</code>方法.</p>
+<p><code>Find</code>方法可以接受两种参数, 一种是结构体指针, 一种是数组指针.</p>
+<p>接受数组指针很好理解, 我们可以通过数组长度来判断是否查到数据:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">res</span> <span class="o">:=</span> <span class="p">[]</span><span class="o">*</span><span class="nx">model</span><span class="p">.</span><span class="nx">User</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">ret</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">model</span><span class="p">.</span><span class="nx">User</span><span class="p">{}).</span><span class="nf">Where</span><span class="p">(</span><span class="s">`user_id &gt; ?`</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>接受结构体指针时呢? 我们只能通过ret.RowsAffected == 0来判断是否查到数据, 所以ErrRecordNotFound还有点可爱?</p>
+<p><strong>注意:<code>db.Find(&amp;User{}).RowsAffected</code>只会是<code>0</code>或<code>1</code></strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">res</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">model</span><span class="p">.</span><span class="nx">User</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">ret</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">model</span><span class="p">.</span><span class="nx">User</span><span class="p">{}).</span><span class="nf">Where</span><span class="p">(</span><span class="s">`user_id &gt; ?`</span><span class="p">,</span> <span class="mi">0</span><span class="p">).</span><span class="nf">Find</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">ret</span><span class="p">.</span><span class="nx">RowsAffected</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从源码来看, <code>Find</code>结构体和<code>Find</code>数组的差别如下:</p>
+<p><code>gorm.scan.go:214</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="k">switch</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl"><span class="k">case</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">Slice</span><span class="p">,</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">Array</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">initialized</span> <span class="o">||</span> <span class="nx">rows</span><span class="p">.</span><span class="nf">Next</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">case</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">Struct</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">initialized</span> <span class="o">||</span> <span class="nx">rows</span><span class="p">.</span><span class="nf">Next</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>OMG! 仅仅是for和if的差别&hellip;</p>
+<p>那么<code>Find</code>和<code>Take</code>有什么差别呢? 你猜的没错, 只是<code>Take</code>会返回<code>ErrRecordNotFound</code></p>
+<p><code>gorm.scan.go:239</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="k">if</span> <span class="nx">db</span><span class="p">.</span><span class="nx">RowsAffected</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Statement</span><span class="p">.</span><span class="nx">RaiseErrorOnNotFound</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">   <span class="nx">db</span><span class="p">.</span><span class="nf">AddError</span><span class="p">(</span><span class="nx">ErrRecordNotFound</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//Find RaiseErrorOnNotFound=false
+</span></span></span><span class="line"><span class="cl"><span class="c1">//Take RaiseErrorOnNotFound=true
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>好家伙! 我直接好家伙! 果然是大佬的代码&hellip;</p>
+<p><strong>行锁</strong></p>
+<p>哪里的代码有version乐观锁和share锁, 我去参观只见过<code>UPDATE</code>锁.</p>
+<p>gormV2和V1这里确实不一样, 写法如下:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">DB</span><span class="p">.</span><span class="nf">Clauses</span><span class="p">(</span><span class="nx">clause</span><span class="p">.</span><span class="nx">Locking</span><span class="p">{</span><span class="nx">Strength</span><span class="p">:</span> <span class="s">&#34;UPDATE&#34;</span><span class="p">}).</span><span class="nf">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">users</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>mysql行锁只在事务中有用.</p>
+<h2 id="update">Update</h2>
+<p>gormV2的更新是我最喜欢的一部分, 非常的有趣&hellip;</p>
+<p><strong>零值</strong></p>
+<p>我们不再需要这样, 我讨厌的方式:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">updateMap</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nx">phone</span> <span class="o">!=</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">updateMap</span><span class="p">[</span><span class="s">&#34;phone&#34;</span><span class="p">]</span> <span class="p">=</span> <span class="nx">phone</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Updates</span><span class="p">(</span><span class="nx">updateMap</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们只需要这样:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Updates</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span><span class="nx">Phone</span><span class="p">:</span><span class="nx">phone</span><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>Updates</code>方法接受一个<code>Model</code>结构体, 如果更新的列为 <code>&quot;&quot;</code>,<code>0</code>,<code>false</code>,<code>time.Time{}</code> 就会不更新该列. (如果使用gorm-curd, 连数组长度都帮你判断了,真的是太好用了!)</p>
+<p>那你要问, 如果我非要设置这个用户的<code>phone</code>为<code>&quot;&quot;</code>呢?</p>
+<p>你可以这样写:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Select</span><span class="p">(</span><span class="s">&#34;phone&#34;</span><span class="p">).</span><span class="nf">Updates</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span><span class="nx">Phone</span><span class="p">:</span><span class="s">&#34;&#34;</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//或者
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">db</span><span class="p">.</span><span class="nf">Updates</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}{</span><span class="s">&#34;phone&#34;</span><span class="p">:</span><span class="s">&#34;&#34;</span><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>又回去map了&hellip; 梅开二度&hellip;</p>
+<p><strong>SQL 表达式</strong></p>
+<p>如果需要<code>商品库存 - 1</code>, gormV2不再需要用事务取出, 再<code>-1</code> , 再存入&hellip;</p>
+<p>可以这样:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">DB</span><span class="p">.</span><span class="nf">Model</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">product</span><span class="p">).</span><span class="nf">Where</span><span class="p">(</span><span class="s">&#34;goods_id = ?&#34;</span><span class="p">,</span> <span class="mi">10086</span><span class="p">).</span><span class="nf">Update</span><span class="p">(</span><span class="s">&#34;quantity&#34;</span><span class="p">,</span> <span class="nx">gorm</span><span class="p">.</span><span class="nf">Expr</span><span class="p">(</span><span class="s">&#34;quantity - ?&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="事务">事务</h2>
+<p>要在事务中执行一系列操作，一般流程如下, 这个事务写法真的是太棒了!</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">db</span><span class="p">.</span><span class="nf">Transaction</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">tx</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="c1">// 在事务中执行一些 db 操作（从这里开始，您应该使用 &#39;tx&#39; 而不是 &#39;db&#39;）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span> <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Animal</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;Giraffe&#34;</span><span class="p">}).</span><span class="nx">Error</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="c1">// 返回任何错误都会回滚事务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span> <span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl"> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">Animal</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;Lion&#34;</span><span class="p">}).</span><span class="nx">Error</span><span class="p">;</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl"> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="c1">// 返回 nil 提交事务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span> <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>嵌套事务</strong></p>
+<p>GORM 支持嵌套事务，可以回滚事务中的事务而不用担心外层事务回滚.</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2022-08-28
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Go语言unsafe包的使用</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E8%A6%81%E7%82%B9/">
+            <span class="next-text nav-default">微服务架构项目开发要点</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2022-08-28 12:01:57 \u002b0800 CST',
+        title: 'Gorm使用补充点',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>汇编里的端口 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E9%87%8C%E7%9A%84%E7%AB%AF%E5%8F%A3/</link>
+    <description>Recent content in 汇编里的端口 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Sat, 28 Jan 2023 20:59:37 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E9%87%8C%E7%9A%84%E7%AB%AF%E5%8F%A3/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>汇编之端口</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AB%AF%E5%8F%A3/</link>
+      <pubDate>Sat, 28 Jan 2023 20:59:37 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AB%AF%E5%8F%A3/</guid>
+      <description>[toc] 端口 在PC机系统中，和CPU通过总线相连的芯片除各种存储器外，还有以下3种芯片。 各种接口卡（比如，网卡、显卡）上的接口芯片，它们控制接口卡</description>
+    </item>
+    
+  </channel>
+</rss>

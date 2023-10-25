@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Go爬虫 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="Go爬虫 爬虫就是模拟客户端程序访问服务端某个url下的资源，再将资源进行部分提取（使用正则筛选html等），然后在存储至某端，或者放在某网页" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/go%E7%88%AC%E8%99%AB/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="Go爬虫" />
+<meta property="og:description" content="Go爬虫 爬虫就是模拟客户端程序访问服务端某个url下的资源，再将资源进行部分提取（使用正则筛选html等），然后在存储至某端，或者放在某网页" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/go%E7%88%AC%E8%99%AB/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-01-09T10:28:50+08:00" />
+<meta property="article:modified_time" content="2023-01-09T10:28:50+08:00" />
+<meta itemprop="name" content="Go爬虫">
+<meta itemprop="description" content="Go爬虫 爬虫就是模拟客户端程序访问服务端某个url下的资源，再将资源进行部分提取（使用正则筛选html等），然后在存储至某端，或者放在某网页"><meta itemprop="datePublished" content="2023-01-09T10:28:50+08:00" />
+<meta itemprop="dateModified" content="2023-01-09T10:28:50+08:00" />
+<meta itemprop="wordCount" content="7735">
+<meta itemprop="keywords" content="colly框架,goquery框架," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go爬虫"/>
+<meta name="twitter:description" content="Go爬虫 爬虫就是模拟客户端程序访问服务端某个url下的资源，再将资源进行部分提取（使用正则筛选html等），然后在存储至某端，或者放在某网页"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go爬虫</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-01-09 </span>
+        <div class="post-category">
+            <a href="/categories/golang/"> golang </a>
+            <a href="/categories/%E7%88%AC%E8%99%AB/"> 爬虫 </a>
+            </div>
+          <span class="more-meta"> 约 7735 字 </span>
+          <span class="more-meta"> 预计阅读 16 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#go爬虫">Go爬虫</a>
+      <ul>
+        <li><a href="#一入门案例">一、入门案例</a></li>
+        <li><a href="#二正则表达式">二、正则表达式</a></li>
+        <li><a href="#三常用爬虫正则表达式">三、常用爬虫正则表达式</a>
+          <ul>
+            <li><a href="#1-爬取html标签里的内容">1. 爬取<code>html</code>标签里的内容</a></li>
+            <li><a href="#2-双向爬取">2. 双向爬取</a></li>
+          </ul>
+        </li>
+        <li><a href="#四使用colly框架">四、使用<code>colly</code>框架</a></li>
+        <li><a href="#基于html-element元素的选择器">基于<code>HTML Element</code>元素的选择器</a>
+          <ul>
+            <li><a href="#id-选择器"><code>ID</code> 选择器</a></li>
+            <li><a href="#element-id-选择器"><code>Element ID</code> 选择器</a></li>
+            <li><a href="#class选择器"><code>Class</code>选择器</a></li>
+            <li><a href="#element-class-选择器"><code>Element Class</code> 选择器</a></li>
+            <li><a href="#属性选择器">属性选择器</a></li>
+            <li><a href="#parentchild选择器"><code>parent&gt;child</code>选择器</a></li>
+            <li><a href="#prevnext相邻选择器"><code>prev+next</code>相邻选择器</a></li>
+            <li><a href="#prevnext兄弟选择器"><code>prev~next</code>兄弟选择器</a></li>
+            <li><a href="#内容过滤器">内容过滤器</a></li>
+            <li><a href="#first-child过滤器"><code>:first-child</code>过滤器</a></li>
+            <li><a href="#first-of-type过滤器"><code>:first-of-type</code>过滤器</a></li>
+            <li><a href="#last-child-和-last-of-type过滤器"><code>:last-child 和 :last-of-type</code>过滤器</a></li>
+            <li><a href="#nth-childn-过滤器"><code>:nth-child(n) </code>过滤器</a></li>
+            <li><a href="#nth-of-typen-过滤器"><code>:nth-of-type(n)</code> 过滤器</a></li>
+            <li><a href="#nth-last-childn-和nth-last-of-typen-过滤器"><code>nth-last-child(n) </code>和<code>:nth-last-of-type(n) </code>过滤器</a></li>
+            <li><a href="#only-child-过滤器"><code>:only-child</code> 过滤器</a></li>
+            <li><a href="#only-of-type-过滤器"><code>:only-of-type</code> 过滤器</a></li>
+            <li><a href="#选择器或运算">选择器或(|)运算</a></li>
+          </ul>
+        </li>
+        <li><a href="#colly常见配置及存储"><code>colly</code>常见配置及存储</a></li>
+        <li><a href="#1-爬取简书首页文章列表">1. 爬取简书首页文章列表</a></li>
+        <li><a href="#2-爬取文章列表和详情">2. 爬取文章列表和详情</a></li>
+        <li><a href="#3-爬取需要登录的网页">3. 爬取需要登录的网页</a></li>
+        <li><a href="#4-内存任务队列">4. 内存任务队列</a></li>
+        <li><a href="#5-redis任务队列">5. redis任务队列</a></li>
+        <li><a href="#6配置代理">6.配置代理</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h1 id="go爬虫">Go爬虫</h1>
+<ul>
+<li>爬虫就是模拟客户端程序访问服务端某个<code>url</code>下的资源，再将资源进行部分提取（使用正则筛选<code>html</code>等），然后在存储至某端，或者放在某网页。</li>
+<li>流程：
+<ul>
+<li>明确目标<code>url</code></li>
+<li>发送请求，获取应答数据包</li>
+<li>保存、过滤数据。提取有用信息（考虑使用正则表达式对<code>html</code>元素进行筛选）</li>
+<li>使用、分析得到的数据信息</li>
+</ul>
+</li>
+</ul>
+<h2 id="一入门案例">一、入门案例</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//该例子用于简单的模拟了浏览器的请求，即爬虫原理
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//创建一个http请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">req</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">http</span><span class="p">.</span><span class="nf">NewRequest</span><span class="p">(</span><span class="s">&#34;GET&#34;</span><span class="p">,</span> <span class="s">&#34;https://www.baidu.com/&#34;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//编写请求头
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">req</span><span class="p">.</span><span class="nx">Header</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="s">&#34;UserAgent&#34;</span><span class="p">,</span> <span class="s">&#34;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//初始化一个客户端
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">client</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Client</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//客户端发起请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">resp</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">Do</span><span class="p">(</span><span class="nx">req</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//获得回应
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">resp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="二正则表达式">二、正则表达式</h2>
+<p><a href="https://www.runoob.com/regexp/regexp-tutorial.html">正则表达式教程</a></p>
+<h2 id="三常用爬虫正则表达式">三、常用爬虫正则表达式</h2>
+<h3 id="1-爬取html标签里的内容">1. 爬取<code>html</code>标签里的内容</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;navbar-header&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;/&#34;</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;navbar-brand&#34;</span> <span class="na">title</span><span class="o">=</span><span class="s">&#34;Go语言中文网&#34;</span><span class="p">&gt;&lt;</span><span class="nt">img</span> <span class="na">alt</span><span class="o">=</span><span class="s">&#34;Go语言中文网&#34;</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://static.studygolang.com/static/img/logo.png&#34;</span> <span class="na">style</span><span class="o">=</span><span class="s">&#34;margin-top: -7px; height: 45px;&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">&lt;</span><span class="nt">button</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;navbar-toggle&#34;</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;button&#34;</span> <span class="na">data-toggle</span><span class="o">=</span><span class="s">&#34;collapse&#34;</span> <span class="na">data-target</span><span class="o">=</span><span class="s">&#34;#navbar-main&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">					<span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;icon-bar&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">					<span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;icon-bar&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">					<span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;icon-bar&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//此正则表示匹配div标签里的所有数据，及时里面是空
+</span></span></span><span class="line"><span class="cl"><span class="c1">//?s-&gt;是正则表达式的模式修饰符，即单行模式。表示更改【.】的含义，使其与每一个字符匹配，包括换行符。
+</span></span></span><span class="line"><span class="cl"><span class="c1">//*？表示非贪婪，即重复&gt;=0次匹配x，越少越好（优先跳出重复）
+</span></span></span><span class="line"><span class="cl"><span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">html</span> <span class="o">:=</span> <span class="s">&#34;&lt;a&gt;hhh&lt;/a&gt;&lt;div&gt;你好，我来自哪里？\n\r我来自火星。&lt;/div&gt;&lt;/br&gt;&lt;div&gt;你好，我来自哪里？\n\n我来自域外。&lt;/div&gt;&lt;/br&gt;&lt;div&gt;你好，我来自哪里？\n\n我来自你不知道的地方。&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">regex</span> <span class="o">:=</span> <span class="s">`&lt;div&gt;(?s:(.+?))&lt;/div&gt;`</span>
+</span></span><span class="line"><span class="cl"><span class="nx">c</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">regexp</span><span class="p">.</span><span class="nf">Compile</span><span class="p">(</span><span class="nx">regex</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprint</span><span class="p">(</span><span class="nx">err</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nf">FindAllStringSubmatch</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//&lt;div&gt;?s:(.+?)&lt;/div&gt;只表示一次正则提取。
+</span></span></span><span class="line"><span class="cl"><span class="c1">//&lt;div&gt;(?s:(.+?))&lt;/div&gt;表示先提取整个表达式匹配的，然后再提取括号内满足的表达式
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2-双向爬取">2. 双向爬取</h3>
+<h4 id="横向爬取">①横向爬取</h4>
+<p>所谓横向爬取，是指在爬取的网站页面中，以“页”为单位，找寻该网站的分页规律。一页一页的爬取网站数据信息。大多数网站，采用分页管理模式。针对这类网站，首先需要确立横向爬取方法</p>
+<h4 id="纵向爬取">②纵向爬取</h4>
+<p>纵向爬取，是指在一个网页中，按不同的“条目”为单位，找寻个条目之间的规律。一条一条的爬取一个网页的数据信息。也就是爬取一个页面内不同类别数据</p>
+<h2 id="四使用colly框架">四、使用<code>colly</code>框架</h2>
+<p>上文举一个例子，通过<code>go</code>的<code>http</code>库实现了获取指定网站的<code>html</code>数据，但是不是每个网站都能这样爬取，有些网站会有一些防爬措施来辨别访问对象是否是爬虫还是正常客户端。按照正常地流程:伪造客户端，设置合理的请求头属性，提交某种特定格式的参数才能对网站资源进行访问，而且在访问后还需要使用正则表达式对获取的html内容进行筛选。❌</p>
+<p>我们简化一下流程，让我们可以更加轻松且快速的使用爬虫：</p>
+<p><strong>使用<code>colly</code>框架：分析爬取网页<code>html</code>结构；选择合适的<code>selector</code>来筛选网页数据</strong></p>
+<p><code>colly</code>框架内部的<code>OnHtml</code>方法实现了对html的监听，需要使用<code>goquery</code>库实现的<code>jquery</code> <code>go</code>语法。这样使用特定的选择器可以实现对特定<code>html</code>标签元素的监听，达到过滤数据的目的。当然还有提取<code>xml</code>标签内容的库</p>
+<p>详见<a href="https://github.com/antchfx/xmlquery">xml的go实现</a></p>
+<p><code>goquery</code>对爬取到的HTML进行选择和查找匹配的内容时，<code>goquery</code>的<a href="https://so.csdn.net/so/search?q=%E9%80%89%E6%8B%A9%E5%99%A8&amp;spm=1001.2101.3001.7020">选择器</a>让解析<code>html操作更简洁</code>，而且还有很多不常用但又很有用的选择器，这里总结下，以供参考。</p>
+<p><a href="https://cloud.tencent.com/developer/article/1196783"><strong>以下内容转载自飞雪无情的 <code>golang</code> <code>goquery selector</code>(选择器) 示例大全</strong></a></p>
+<p>如果大家以前做过前端开发，对<code>jquery</code>不会陌生，<code>goquery</code>类似<code>jquery</code>，它是<code>jquery</code>的go版本实现。使用它，可以很方便的对HTML进行处理。</p>
+<h2 id="基于html-element元素的选择器">基于<code>HTML Element</code>元素的选择器</h2>
+<p>这个比较简单，就是基于<code>a,p</code>等这些<code>HTML</code>的基本元素进行选择，这种直接使用Element名称作为选择器即可。比如<code>dom.Find(&quot;div&quot;)。</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">html</span> <span class="o">:=</span> <span class="s">`&lt;body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div&gt;DIV1&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div&gt;DIV2&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;span&gt;SPAN&lt;/span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">			&lt;/body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">			`</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">goquery</span><span class="p">.</span><span class="nf">NewDocumentFromReader</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">html</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalln</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;div&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>以上示例，可以把<code>div</code>元素筛选出来，而<code>body</code>,<code>span</code>并不会被筛选。</p>
+<h3 id="id-选择器"><code>ID</code> 选择器</h3>
+<p>这个是使用频次最多的，类似于上面的例子，有两个<code>div</code>元素，其实我们只需要其中的一个，那么我们只需要给这个标记一个唯一的id即可，这样我们就可以使用id选择器，精确定位了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">html</span> <span class="o">:=</span> <span class="s">`&lt;body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div id=&#34;div1&#34;&gt;DIV1&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div&gt;DIV2&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;span&gt;SPAN&lt;/span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">			&lt;/body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">			`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">goquery</span><span class="p">.</span><span class="nf">NewDocumentFromReader</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">html</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalln</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;#div1&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="element-id-选择器"><code>Element ID</code> 选择器</h3>
+<p><code>id选择器以#开头</code>，紧跟着元素id的值，使用语法为<code>dom.Find(#id),</code>后面的例子我会简写为<code>Find(#id)</code>,大家知道这是代表<code>goquery</code>选择器的即可。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">html</span> <span class="o">:=</span> <span class="s">`&lt;body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div id=&#34;div1&#34;&gt;DIV1&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div&gt;DIV2&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;span&gt;SPAN&lt;/span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">			&lt;/body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">			`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">goquery</span><span class="p">.</span><span class="nf">NewDocumentFromReader</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">html</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalln</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;#div1&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果有相同的<code>ID</code>，但是它们又分别属于不同的<code>HTML</code>元素怎么办？有好办法，和<code>Element</code>结合起来。比如我们筛选元素为<code>div</code>,并且<code>id</code>是<code>div1</code>的元素，就可以使用<code>Find(div#div1)</code>这样的筛选器进行筛选。</p>
+<p>所以这类筛选器的语法为<code>Find(element#id)</code>，这是常用的组合方法，比如后面讲的过滤器也可以采用这种方式组合使用。</p>
+<h3 id="class选择器"><code>Class</code>选择器</h3>
+<p>class<code>也是</code>HTML<code>中常用的属性，我们可以通过</code>class<code>选择器来快速的筛选需要的</code>HTML<code>元素，它的用法和ID选择器类似，为</code>Find(&quot;.class&quot;)。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">html</span> <span class="o">:=</span> <span class="s">`&lt;body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div id=&#34;div1&#34;&gt;DIV1&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div class=&#34;name&#34;&gt;DIV2&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;span&gt;SPAN&lt;/span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">			&lt;/body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">			`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">goquery</span><span class="p">.</span><span class="nf">NewDocumentFromReader</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">html</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalln</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;.name&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>以上示例中，就筛选出来<code>class</code>为<code>name</code>的这个<code>div</code>元素。</p>
+<h3 id="element-class-选择器"><code>Element Class</code> 选择器</h3>
+<p><code>class</code>选择器和id选择器一样，也可以结合着<code>HTML</code>元素使用，他们的语法也类似<code>Find(element.class)</code>，这样就可以<code>筛选特定element</code>、并且<code>指定class的元素</code>。</p>
+<h3 id="属性选择器">属性选择器</h3>
+<p>一个<code>HTML</code>元素都有自己的属性以及属性值，所以我们也可以通过属性和值筛选元素。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">html</span> <span class="o">:=</span> <span class="s">`&lt;body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div&gt;DIV1&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div class=&#34;name&#34;&gt;DIV2&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;span&gt;SPAN&lt;/span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">			&lt;/body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">			`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">goquery</span><span class="p">.</span><span class="nf">NewDocumentFromReader</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">html</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalln</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;div[class]&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>示例中我们通过<code>div[class]</code>这个选择器，筛选出<code>Element</code>为<code>div</code>并且有<code>class</code>这个属性的，所以第一个<code>div</code>没有被筛选到。</p>
+<p>刚刚上面这个示例是采用是否存在某个属性为筛选器，同理，我们可以筛选出属性为某个值的元素。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;div[class=name]&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样我们就可以筛选出class这个属性值为name的div元素。</p>
+<p>当然我们这里以<code>class</code>属性为例，还可以用其他属性，比如<code>href</code>等很多，自定义属性也是可以的。</p>
+<p>除了完全相等，还有其他匹配方式，使用方式类似，这里统一列举下，不再举例</p>
+<table>
+<thead>
+<tr>
+<th>选择器</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Find(“div[lang]“)</td>
+<td>筛选含有lang属性的div元素</td>
+</tr>
+<tr>
+<td>Find(“div[lang=zh]“)</td>
+<td>筛选lang属性为zh的div元素</td>
+</tr>
+<tr>
+<td>Find(“div[lang!=zh]“)</td>
+<td>筛选lang属性不等于zh的div元素</td>
+</tr>
+<tr>
+<td>Find(“div[lang¦=zh]“)</td>
+<td>筛选lang属性为zh或者zh-开头的div元素</td>
+</tr>
+<tr>
+<td>Find(“div[lang*=zh]“)</td>
+<td>筛选lang属性包含zh这个字符串的div元素</td>
+</tr>
+<tr>
+<td>Find(“div[lang~=zh]“)</td>
+<td>筛选lang属性包含zh这个单词的div元素，单词以空格分开的</td>
+</tr>
+<tr>
+<td>Find(“div[lang$=zh]“)</td>
+<td>筛选lang属性以zh结尾的div元素，区分大小写</td>
+</tr>
+<tr>
+<td>Find(“div[lang^=zh]“)</td>
+<td>筛选lang属性以zh开头的div元素，区分大小写</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>（如果=后面的值是拼接的用单引号包裹即可）</code></strong>
+<code>示例</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//spiderTop250()
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//spoderMoiveInfo(&#34;https://movie.douban.com/subject/3011235/&#34;)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">html</span> <span class="o">:=</span> <span class="s">`&lt;body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;script type=&#34;application/ld+json&#34;&gt;JSDKK&lt;/script&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">			&lt;/body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">			`</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">goquery</span><span class="p">.</span><span class="nf">NewDocumentFromReader</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">html</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalln</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;script[type=&#39;application/ld+json&#39;]&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>以上是属性筛选器的用法，都是以一个属性筛选器为例，当然你也可以使用多个属性筛选器组合使用，比如： <code>Find(&quot;div[id][lang=zh]&quot;)</code>,用多个中括号连起来即可。当有多个属性筛选器的时候，要同时满足这些筛选器的元素才能被筛选出来。</p>
+<h3 id="parentchild选择器"><code>parent&gt;child</code>选择器</h3>
+<p>如果我们想筛选出某个元素下符合条件的子元素，我们就可以使用子元素筛选器，它的语法为<code>Find(&quot;parent&gt;child&quot;)</code>,表示筛选<code>parent</code>这个父元素下，符合<code>child</code>这个条件的最直接（一级）的子元素。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">html</span> <span class="o">:=</span> <span class="s">`&lt;body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div lang=&#34;ZH&#34;&gt;DIV1&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div lang=&#34;zh-cn&#34;&gt;DIV2&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div lang=&#34;en&#34;&gt;DIV3&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">					&lt;div&gt;DIV4&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;/span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">			&lt;/body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">			`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">goquery</span><span class="p">.</span><span class="nf">NewDocumentFromReader</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">html</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalln</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;body&gt;div&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>以上示例，筛选出<code>body</code>这个父元素下，符合条件的最直接的子元素<code>div</code>，结果是<code>DIV1、DIV2、DIV3</code>，虽然<code>DIV4</code>也是<code>body</code>的子元素，但不是一级的，所以不会被筛选到。</p>
+<p>那么问题来了，我就是想把<code>DIV4</code>也筛选出来怎么办?就是要筛选<code>body</code>下所有的<code>div</code>元素，不管是一级、二级还是N级。有办法的，<code>goquery</code>考虑到了，只需要把<code>大于号(&gt;)</code>改为<code>空格</code>就好了。比如上面的例子，改为如下选择器即可。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;body div&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="prevnext相邻选择器"><code>prev+next</code>相邻选择器</h3>
+<p>假设我们要筛选的元素没有规律，但是该元素的上一个元素有规律，我们就可以使用这种下一个相邻选择器来进行选择。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">html</span> <span class="o">:=</span> <span class="s">`&lt;body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div lang=&#34;zh&#34;&gt;DIV1&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;p&gt;P1&lt;/p&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div lang=&#34;zh-cn&#34;&gt;DIV2&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div lang=&#34;en&#34;&gt;DIV3&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">					&lt;div&gt;DIV4&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;/span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;p&gt;P2&lt;/p&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">			&lt;/body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">			`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">goquery</span><span class="p">.</span><span class="nf">NewDocumentFromReader</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">html</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalln</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;div[lang=zh]+p&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个示例演示了这种用法，我们想选择<code>&lt;p&gt;P1&lt;/p&gt;</code>这个元素，但是没啥规律，我们发现它前面的<code>&lt;div lang=&quot;zh&quot;&gt;DIV1&lt;/div&gt;</code>很有规律，可以选择，所以我们就可以采用<code>Find(&quot;div[lang=zh]+p&quot;)</code>达到选择P元素的目的。</p>
+<p>这种选择器的语法是<code>(&quot;prev+next&quot;)</code>，中间是一个加号<code>(+)</code>，<code>+号</code>前后也是选择器。</p>
+<h3 id="prevnext兄弟选择器"><code>prev~next</code>兄弟选择器</h3>
+<p>有相邻就有兄弟，兄弟选择器就不一定要求相邻了，只要他们共有一个父元素就可以。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;div[lang=zh]~p&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>刚刚的例子，只需要把<code>+号</code>换成<code>~号</code>,就可以把<code>P2</code>也筛选出来，因为<code>P2、P1和DIV1</code>都是兄弟。</p>
+<p>兄弟选择器的语法是<code>(&quot;prev~next&quot;),</code>也就是<code>相邻选择器的+换成了~</code>。</p>
+<h3 id="内容过滤器">内容过滤器</h3>
+<p>有时候我们使用选择器选择出来后后，希望再过滤一下，这时候就用到过滤器了，过滤器有很多，我们先讲内容过滤器这一种。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;div:contains(DIV2)&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>Find(&quot;:contains(text)&quot;)</code>表示筛选出的元素要包含指定的<strong>文本</strong>，我们例子中要求选择出的<code>div</code>元素要包含<code>DIV2</code>文本，那么只有一个<code>DIV2</code>元素满足要求。</p>
+<p>此外还有<code>Find(&quot;:empty&quot;)</code>表示筛选出的元素都不能有子元素（包括文本元素），只筛选那些不包含任何子元素的元素。</p>
+<p><code>Find(&quot;:has(selector)&quot;)</code>和<code>contains</code>差不多，只不过这个是包含的是元素节点。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;span:has(div)&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>以上示例表示筛选出<code>包含div元素的span节点。</code></p>
+<h3 id="first-child过滤器"><code>:first-child</code>过滤器</h3>
+<p><code>:first-child过滤器</code>，语法为<code>Find(&quot;:first-child&quot;)</code>，表示筛选出的元素，要是他们的父元素的第一个子元素，如果不是，则不会被筛选出来。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">html</span> <span class="o">:=</span> <span class="s">`&lt;body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div lang=&#34;zh&#34;&gt;DIV1&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;p&gt;P1&lt;/p&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div lang=&#34;zh-cn&#34;&gt;DIV2&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div lang=&#34;en&#34;&gt;DIV3&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">					&lt;div style=&#34;display:none;&#34;&gt;DIV4&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">					&lt;div&gt;DIV5&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;/span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;p&gt;P2&lt;/p&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div&gt;&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">			&lt;/body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">			`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">goquery</span><span class="p">.</span><span class="nf">NewDocumentFromReader</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">html</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalln</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;div:first-child&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Html</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>以上例子中，我们使用<code>Find(&quot;div&quot;)</code>会筛选出所有的div元素，但是我们加了<code>:first-child</code>后，就只有<code>DIV1和DIV4</code>了，因为只有这两个是他们父元素的第一个子元素，其他的DIV都不满足。</p>
+<h3 id="first-of-type过滤器"><code>:first-of-type</code>过滤器</h3>
+<p><code>:first-child</code>选择器限制的比较死，必须得是第一个子元素，如果该元素前有其他在前面，就不能用<code>:first-child</code>了，这时候<code>:first-of-type</code>就派上用场了，它要求只要是这个类型的第一个就可以，我们把上面的例子微调下。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">html</span> <span class="o">:=</span> <span class="s">`&lt;body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div lang=&#34;zh&#34;&gt;DIV1&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;p&gt;P1&lt;/p&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div lang=&#34;zh-cn&#34;&gt;DIV2&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div lang=&#34;en&#34;&gt;DIV3&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">					&lt;p&gt;P2&lt;/p&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">					&lt;div&gt;DIV5&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;/span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div&gt;&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">			&lt;/body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">			`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">goquery</span><span class="p">.</span><span class="nf">NewDocumentFromReader</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">html</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalln</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;div:first-of-type&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Html</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>改动很简单，把原来的<code>DIV4</code>换成了<code>P2</code>，如果我们还使用<code>:first-child</code>,<code>DIV5</code>是不能被筛选出来的，因为它不是第一个子元素，它前面还有一个<code>P2</code>。这时候我们使用<code>:first-of-type</code>就可以达到目的，因为它要求是同类型第一个就可以。<code>DIV5</code>就是这个<code>div</code>类型的第一个元素，<code>P2</code>不是<code>div</code>类型，被忽略。</p>
+<h3 id="last-child-和-last-of-type过滤器"><code>:last-child 和 :last-of-type</code>过滤器</h3>
+<p>这两个正好和上面的<code>:first-child、:first-of-type</code>相反，表示最后一个，这里不再举例，大家可以自己试试。</p>
+<h3 id="nth-childn-过滤器"><code>:nth-child(n) </code>过滤器</h3>
+<p>这个表示筛选出的元素是其父元素的第n个元素，n以1开始。所以我们可以知道<code>:first-child和:nth-child(1)</code>是相等的。通过指定n，我们就很灵活的筛选出我们需要的元素。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">html</span> <span class="o">:=</span> <span class="s">`&lt;body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div lang=&#34;zh&#34;&gt;DIV1&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;p&gt;P1&lt;/p&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div lang=&#34;zh-cn&#34;&gt;DIV2&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div lang=&#34;en&#34;&gt;DIV3&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">					&lt;p&gt;P2&lt;/p&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">					&lt;div&gt;DIV5&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;/span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div&gt;&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">			&lt;/body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">			`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">goquery</span><span class="p">.</span><span class="nf">NewDocumentFromReader</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">html</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalln</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;div:nth-child(3)&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Html</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个示例会筛选出<code>DIV2</code>，因为<code>DIV2</code>是其父元素<code>body</code>的第三个子元素。</p>
+<h3 id="nth-of-typen-过滤器"><code>:nth-of-type(n)</code> 过滤器</h3>
+<p><code>:nth-of-type(n)和 :nth-child(n)</code>类似，只不过它表示的是同类型元素的第n个,所以<code>:nth-of-type(1)</code>和<code>:first-of-type</code>是相等的，大家可以自己试试，这里不再举例。</p>
+<h3 id="nth-last-childn-和nth-last-of-typen-过滤器"><code>nth-last-child(n) </code>和<code>:nth-last-of-type(n) </code>过滤器</h3>
+<p>这两个和上面的类似，只不过是倒序开始计算的，最后一个元素被当成了第一个。大家自己测试下看看效果，很明显。</p>
+<h3 id="only-child-过滤器"><code>:only-child</code> 过滤器</h3>
+<p><code>Find(&quot;:only-child&quot;)</code>过滤器，从字面上看，可以猜测出来，它表示筛选的元素，在其父元素中，只有它自己，它的父元素没有其他子元素，才会被匹配筛选出来。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">html</span> <span class="o">:=</span> <span class="s">`&lt;body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div lang=&#34;zh&#34;&gt;DIV1&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">					&lt;div&gt;DIV5&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;/span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">			&lt;/body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">			`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">goquery</span><span class="p">.</span><span class="nf">NewDocumentFromReader</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">html</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalln</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;div:only-child&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Html</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>示例中<code>DIV5</code>就可以被筛选出来，因为它是它的父元素<code>span</code>达到唯一子元素，但<code>DIV1</code>就不是，所以不能被筛选出来。</p>
+<h3 id="only-of-type-过滤器"><code>:only-of-type</code> 过滤器</h3>
+<p>上面的例子，如果想筛选出<code>DIV1</code>怎么办？可以使用<code>Find(&quot;:only-of-type&quot;)</code>,因为它是它的父元素中，唯一的<code>div</code>元素，这就是<code>:only-of-type</code>过滤器所要做的，同类型元素只要只有一个，就可以被筛选出来。大家把上面的例子改成<code>:only-of-type</code>试试，看看是否有<code>DIV1</code>。</p>
+<h3 id="选择器或运算">选择器或(|)运算</h3>
+<p>如果我们想同时筛选出<code>div,span</code>等元素怎么办？这时候可以采用多个选择器进行组合使用，并且以<code>逗号(,)分割</code>，<code>Find(&quot;selector1, selector2, selectorN&quot;)</code>表示，只要满足其中一个选择器就可以被筛选出来，也就是<code>选择器的或(|)运算操作</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">html</span> <span class="o">:=</span> <span class="s">`&lt;body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;div lang=&#34;zh&#34;&gt;DIV1&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">					&lt;div&gt;DIV5&lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">				&lt;/span&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">			&lt;/body&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">			`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">goquery</span><span class="p">.</span><span class="nf">NewDocumentFromReader</span><span class="p">(</span><span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">html</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalln</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">dom</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="s">&#34;div,span&#34;</span><span class="p">).</span><span class="nf">Each</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">selection</span> <span class="o">*</span><span class="nx">goquery</span><span class="p">.</span><span class="nx">Selection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">selection</span><span class="p">.</span><span class="nf">Html</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>小结
+<code>goquery</code> 是解析<code>HTML</code>网页必备的利器，在爬虫抓取网页的过程中，灵活的使用<code>goquery</code>不同的选择器，可以让我们的抓取工作事半功倍，大大提升爬虫的效率。</p>
+<p>选择器问题解决了。再看看关于爬虫的一些设置，以让爬虫可以更好的伪造客户端进行数据爬取。</p>
+<p>下面就是一些伪造方法。</p>
+<h2 id="colly常见配置及存储"><code>colly</code>常见配置及存储</h2>
+<h2 id="1-爬取简书首页文章列表">1. 爬取简书首页文章列表</h2>
+<p>通过浏览器开发者工具查看jianshu.com结构如下</p>
+<p><img src="https:////upload-images.jianshu.io/upload_images/15604519-559c5b754294bf04.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/593/format/webp" alt="img"></p>
+<p>colly-jianshu-dom.png</p>
+<p>文章列表为ul标签，中间每一项是li标签，li中包含content，content中包含title，abstract和meta标签</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/gocolly/colly&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/gocolly/colly/debug&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span> <span class="o">:=</span> <span class="nx">colly</span><span class="p">.</span><span class="nf">NewCollector</span><span class="p">(</span><span class="nx">colly</span><span class="p">.</span><span class="nf">UserAgent</span><span class="p">(</span><span class="s">&#34;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36&#34;</span><span class="p">),</span> <span class="nx">colly</span><span class="p">.</span><span class="nf">MaxDepth</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="nx">colly</span><span class="p">.</span><span class="nf">Debugger</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">debug</span><span class="p">.</span><span class="nx">LogDebugger</span><span class="p">{}))</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">//文章列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">c</span><span class="p">.</span><span class="nf">OnHTML</span><span class="p">(</span><span class="s">&#34;ul[class=&#39;note-list&#39;]&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">HTMLElement</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">//列表中每一项
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nx">e</span><span class="p">.</span><span class="nf">ForEach</span><span class="p">(</span><span class="s">&#34;li&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">item</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">HTMLElement</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">//文章链接
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nx">href</span> <span class="o">:=</span> <span class="nx">item</span><span class="p">.</span><span class="nf">ChildAttr</span><span class="p">(</span><span class="s">&#34;div[class=&#39;content&#39;] &gt; a[class=&#39;title&#39;]&#34;</span><span class="p">,</span> <span class="s">&#34;href&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">//文章标题
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nx">title</span> <span class="o">:=</span> <span class="nx">item</span><span class="p">.</span><span class="nf">ChildText</span><span class="p">(</span><span class="s">&#34;div[class=&#39;content&#39;] &gt; a[class=&#39;title&#39;]&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">//文章摘要
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nx">summary</span> <span class="o">:=</span> <span class="nx">item</span><span class="p">.</span><span class="nf">ChildText</span><span class="p">(</span><span class="s">&#34;div[class=&#39;content&#39;] &gt; p[class=&#39;abstract&#39;]&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">title</span><span class="p">,</span> <span class="nx">href</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">summary</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">err</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Visit</span><span class="p">(</span><span class="s">&#34;https://www.jianshu.com&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="2-爬取文章列表和详情">2. 爬取文章列表和详情</h2>
+<blockquote>
+<p>文章列表和1方式一样，文章详情通过创建新的采集器访问详情页面</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/gocolly/colly&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">c1</span> <span class="o">:=</span> <span class="nx">colly</span><span class="p">.</span><span class="nf">NewCollector</span><span class="p">(</span><span class="nx">colly</span><span class="p">.</span><span class="nf">UserAgent</span><span class="p">(</span><span class="s">&#34;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36&#34;</span><span class="p">),</span> <span class="nx">colly</span><span class="p">.</span><span class="nf">MaxDepth</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">c2</span> <span class="o">:=</span> <span class="nx">c1</span><span class="p">.</span><span class="nf">Clone</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">//异步
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">c2</span><span class="p">.</span><span class="nx">Async</span> <span class="p">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">//限速
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">c2</span><span class="p">.</span><span class="nf">Limit</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">colly</span><span class="p">.</span><span class="nx">LimitRule</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">DomainRegexp</span><span class="p">:</span> <span class="s">&#34;&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">DomainGlob</span><span class="p">:</span>   <span class="s">&#34;*.jianshu.com/p/*&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Delay</span><span class="p">:</span>        <span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">RandomDelay</span><span class="p">:</span>  <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Parallelism</span><span class="p">:</span>  <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">//采集器1，获取文章列表
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">c1</span><span class="p">.</span><span class="nf">OnHTML</span><span class="p">(</span><span class="s">&#34;ul[class=&#39;note-list&#39;]&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">HTMLElement</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">e</span><span class="p">.</span><span class="nf">ForEach</span><span class="p">(</span><span class="s">&#34;li&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">item</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">HTMLElement</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">href</span> <span class="o">:=</span> <span class="nx">item</span><span class="p">.</span><span class="nf">ChildAttr</span><span class="p">(</span><span class="s">&#34;div[class=&#39;content&#39;] &gt; a[class=&#39;title&#39;]&#34;</span><span class="p">,</span> <span class="s">&#34;href&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">title</span> <span class="o">:=</span> <span class="nx">item</span><span class="p">.</span><span class="nf">ChildText</span><span class="p">(</span><span class="s">&#34;div[class=&#39;content&#39;] &gt; a[class=&#39;title&#39;]&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">summary</span> <span class="o">:=</span> <span class="nx">item</span><span class="p">.</span><span class="nf">ChildText</span><span class="p">(</span><span class="s">&#34;div[class=&#39;content&#39;] &gt; p[class=&#39;abstract&#39;]&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">ctx</span> <span class="o">:=</span> <span class="nx">colly</span><span class="p">.</span><span class="nf">NewContext</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">ctx</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="s">&#34;href&#34;</span><span class="p">,</span> <span class="nx">href</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">ctx</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="s">&#34;title&#34;</span><span class="p">,</span> <span class="nx">title</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">ctx</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="s">&#34;summary&#34;</span><span class="p">,</span> <span class="nx">summary</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">//通过Context上下文对象将采集器1采集到的数据传递到采集器2
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="nx">c2</span><span class="p">.</span><span class="nf">Request</span><span class="p">(</span><span class="s">&#34;GET&#34;</span><span class="p">,</span> <span class="s">&#34;https://www.jianshu.com&#34;</span> <span class="o">+</span> <span class="nx">href</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">//采集器2，获取文章详情
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">c2</span><span class="p">.</span><span class="nf">OnHTML</span><span class="p">(</span><span class="s">&#34;article&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">HTMLElement</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">href</span> <span class="o">:=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Request</span><span class="p">.</span><span class="nx">Ctx</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;href&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">title</span> <span class="o">:=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Request</span><span class="p">.</span><span class="nx">Ctx</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;title&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">summary</span> <span class="o">:=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Request</span><span class="p">.</span><span class="nx">Ctx</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;summary&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">detail</span> <span class="o">:=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Text</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;----------&#34;</span> <span class="o">+</span> <span class="nx">title</span> <span class="o">+</span> <span class="s">&#34;----------&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">href</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">summary</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">detail</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">c2</span><span class="p">.</span><span class="nf">OnRequest</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;c2爬取页面：&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">URL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">c1</span><span class="p">.</span><span class="nf">OnRequest</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;c1爬取页面：&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">URL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">c1</span><span class="p">.</span><span class="nf">OnError</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">Response</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Request URL:&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Request</span><span class="p">.</span><span class="nx">URL</span><span class="p">,</span> <span class="s">&#34;failed with response:&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="s">&#34;\nError:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">err</span> <span class="o">:=</span> <span class="nx">c1</span><span class="p">.</span><span class="nf">Visit</span><span class="p">(</span><span class="s">&#34;https://www.jianshu.com&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">c2</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="3-爬取需要登录的网页">3. 爬取需要登录的网页</h2>
+<blockquote>
+<p>官网提供登录页处理的例子，但是大多数涉及验证码，不好处理，目前方式是手动登录，复制cookie写到爬虫请求头里</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/gocolly/colly&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/gocolly/colly/debug&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/gocolly/colly/extensions&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">_</span> <span class="s">&#34;github.com/gocolly/colly/extensions&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">url</span> <span class="o">:=</span> <span class="s">&#34;https://www.jianshu.com&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span> <span class="o">:=</span> <span class="nx">colly</span><span class="p">.</span><span class="nf">NewCollector</span><span class="p">(</span><span class="nx">colly</span><span class="p">.</span><span class="nf">UserAgent</span><span class="p">(</span><span class="s">&#34;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36&#34;</span><span class="p">),</span> <span class="nx">colly</span><span class="p">.</span><span class="nf">MaxDepth</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="nx">colly</span><span class="p">.</span><span class="nf">Debugger</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">debug</span><span class="p">.</span><span class="nx">LogDebugger</span><span class="p">{}))</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span><span class="p">.</span><span class="nf">OnHTML</span><span class="p">(</span><span class="s">&#34;ul[class=&#39;note-list&#39;]&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">HTMLElement</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">e</span><span class="p">.</span><span class="nf">ForEach</span><span class="p">(</span><span class="s">&#34;li&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">i</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">item</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">HTMLElement</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">href</span> <span class="o">:=</span> <span class="nx">item</span><span class="p">.</span><span class="nf">ChildAttr</span><span class="p">(</span><span class="s">&#34;div[class=&#39;content&#39;] &gt; a[class=&#39;title&#39;]&#34;</span><span class="p">,</span> <span class="s">&#34;href&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">title</span> <span class="o">:=</span> <span class="nx">item</span><span class="p">.</span><span class="nf">ChildText</span><span class="p">(</span><span class="s">&#34;div[class=&#39;content&#39;] &gt; a[class=&#39;title&#39;]&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">summary</span> <span class="o">:=</span> <span class="nx">item</span><span class="p">.</span><span class="nf">ChildText</span><span class="p">(</span><span class="s">&#34;div[class=&#39;content&#39;] &gt; p[class=&#39;abstract&#39;]&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">title</span><span class="p">,</span> <span class="nx">href</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">summary</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">//设置随机useragent
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">extensions</span><span class="p">.</span><span class="nf">RandomUserAgent</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">//设置登录cookie
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">c</span><span class="p">.</span><span class="nf">SetCookies</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="p">[]</span><span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Cookie</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="o">&amp;</span><span class="nx">http</span><span class="p">.</span><span class="nx">Cookie</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">Name</span><span class="p">:</span>     <span class="s">&#34;remember_user_token&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">Value</span><span class="p">:</span>    <span class="s">&#34;wNDUxOV0sIiQyYSQxMSRwdkhqWVhHYmxXaDJ6dEU3NzJwbmsuIiwiMTU&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">Path</span><span class="p">:</span>     <span class="s">&#34;/&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">Domain</span><span class="p">:</span>   <span class="s">&#34;.jianshu.com&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">Secure</span><span class="p">:</span>   <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">HttpOnly</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span><span class="p">.</span><span class="nf">OnRequest</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;爬取页面：&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">URL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span><span class="p">.</span><span class="nf">OnError</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">Response</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Request URL:&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Request</span><span class="p">.</span><span class="nx">URL</span><span class="p">,</span> <span class="s">&#34;failed with response:&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="s">&#34;\nError:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">err</span> <span class="o">:=</span> <span class="nx">c</span><span class="p">.</span><span class="nf">Visit</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">Error</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="4-内存任务队列">4. 内存任务队列</h2>
+<blockquote>
+<p>将需要爬取的连接放入队列中，设置队列并发数，可以并行爬取连接</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/gocolly/colly&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/gocolly/colly/debug&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/gocolly/colly/queue&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span> <span class="o">:=</span> <span class="nx">colly</span><span class="p">.</span><span class="nf">NewCollector</span><span class="p">(</span><span class="nx">colly</span><span class="p">.</span><span class="nf">UserAgent</span><span class="p">(</span><span class="s">&#34;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36&#34;</span><span class="p">),</span> <span class="nx">colly</span><span class="p">.</span><span class="nf">MaxDepth</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="nx">colly</span><span class="p">.</span><span class="nf">Debugger</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">debug</span><span class="p">.</span><span class="nx">LogDebugger</span><span class="p">{}))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//创建内存队列，大小10000，goroutine数量 5
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">q</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">queue</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">queue</span><span class="p">.</span><span class="nx">InMemoryQueueStorage</span><span class="p">{</span><span class="nx">MaxSize</span><span class="p">:</span> <span class="mi">10000</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span><span class="p">.</span><span class="nf">OnHTML</span><span class="p">(</span><span class="s">&#34;a&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">element</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">HTMLElement</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">element</span><span class="p">.</span><span class="nx">Request</span><span class="p">.</span><span class="nf">Visit</span><span class="p">(</span><span class="nx">element</span><span class="p">.</span><span class="nf">Attr</span><span class="p">(</span><span class="s">&#34;href&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span><span class="p">.</span><span class="nf">OnRequest</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;爬取页面：&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">URL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span><span class="p">.</span><span class="nf">OnError</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">Response</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Request URL:&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Request</span><span class="p">.</span><span class="nx">URL</span><span class="p">,</span> <span class="s">&#34;failed with response:&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="s">&#34;\nError:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">q</span><span class="p">.</span><span class="nf">AddURL</span><span class="p">(</span><span class="s">&#34;https://www.jianshu.com&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">q</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="5-redis任务队列">5. redis任务队列</h2>
+<blockquote>
+<p>设置redis存储后，队列中URL存储在redis中，访问页面的cookie及访问记录也会保存在redis中</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/gocolly/colly&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/gocolly/colly/debug&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/gocolly/colly/queue&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/gocolly/redisstorage&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span> <span class="o">:=</span> <span class="nx">colly</span><span class="p">.</span><span class="nf">NewCollector</span><span class="p">(</span><span class="nx">colly</span><span class="p">.</span><span class="nf">UserAgent</span><span class="p">(</span><span class="s">&#34;Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36&#34;</span><span class="p">),</span> <span class="nx">colly</span><span class="p">.</span><span class="nf">MaxDepth</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="nx">colly</span><span class="p">.</span><span class="nf">Debugger</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">debug</span><span class="p">.</span><span class="nx">LogDebugger</span><span class="p">{}))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">storage</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">redisstorage</span><span class="p">.</span><span class="nx">Storage</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Address</span><span class="p">:</span>  <span class="s">&#34;192.168.1.10:6379&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Password</span><span class="p">:</span> <span class="s">&#34;123456&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">DB</span><span class="p">:</span>       <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Prefix</span><span class="p">:</span>   <span class="s">&#34;colly&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Client</span><span class="p">:</span>   <span class="kc">nil</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">Expires</span><span class="p">:</span>  <span class="mi">0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span><span class="p">.</span><span class="nf">SetStorage</span><span class="p">(</span><span class="nx">storage</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">err</span> <span class="o">:=</span> <span class="nx">storage</span><span class="p">.</span><span class="nf">Clear</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">defer</span> <span class="nx">storage</span><span class="p">.</span><span class="nx">Client</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">q</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">queue</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="nx">storage</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span><span class="p">.</span><span class="nf">OnHTML</span><span class="p">(</span><span class="s">&#34;a&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">element</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">HTMLElement</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">element</span><span class="p">.</span><span class="nx">Request</span><span class="p">.</span><span class="nf">Visit</span><span class="p">(</span><span class="nx">element</span><span class="p">.</span><span class="nf">Attr</span><span class="p">(</span><span class="s">&#34;href&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span><span class="p">.</span><span class="nf">OnRequest</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;爬取页面：&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">URL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span><span class="p">.</span><span class="nf">OnError</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">Response</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;Request URL:&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">Request</span><span class="p">.</span><span class="nx">URL</span><span class="p">,</span> <span class="s">&#34;failed with response:&#34;</span><span class="p">,</span> <span class="nx">r</span><span class="p">,</span> <span class="s">&#34;\nError:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">q</span><span class="p">.</span><span class="nf">AddURL</span><span class="p">(</span><span class="s">&#34;https://www.jianshu.com&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">q</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https:////upload-images.jianshu.io/upload_images/15604519-7bd4f8220808532c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/442/format/webp" alt="img"></p>
+<p>redis中数据</p>
+<h2 id="6配置代理">6.配置代理</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;bytes&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/gocolly/colly&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/gocolly/colly/proxy&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span> <span class="o">:=</span> <span class="nx">colly</span><span class="p">.</span><span class="nf">NewCollector</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">//配置两个代理
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">rp</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">proxy</span><span class="p">.</span><span class="nf">RoundRobinProxySwitcher</span><span class="p">(</span><span class="s">&#34;http://127.0.0.1:1080&#34;</span><span class="p">,</span> <span class="s">&#34;socks5://127.0.0.1:1338&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span><span class="p">.</span><span class="nf">SetProxyFunc</span><span class="p">(</span><span class="nx">rp</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span><span class="p">.</span><span class="nf">OnResponse</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">colly</span><span class="p">.</span><span class="nx">Response</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s\n&#34;</span><span class="p">,</span> <span class="nx">bytes</span><span class="p">.</span><span class="nf">Replace</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">Body</span><span class="p">,</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&#34;\n&#34;</span><span class="p">),</span> <span class="kc">nil</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span><span class="p">.</span><span class="nf">Visit</span><span class="p">(</span><span class="s">&#34;https://httpbin.org/ip&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-01-09
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/colly%E6%A1%86%E6%9E%B6/">colly框架</a>
+          <a href="/tags/goquery%E6%A1%86%E6%9E%B6/">goquery框架</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">自动化接口文档swag使用指南</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/leecode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/">
+            <span class="next-text nav-default">Leetcode每日一题</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-01-09 10:28:50 \u002b0800 CST',
+        title: 'Go爬虫',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

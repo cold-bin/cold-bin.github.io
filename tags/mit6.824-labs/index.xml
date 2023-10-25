@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>mit6.824 labs on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/mit6.824-labs/</link>
+    <description>Recent content in mit6.824 labs on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Thu, 10 Aug 2023 16:32:37 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/mit6.824-labs/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Mit6.824之lab1</title>
+      <link>https://cold-bin.github.io/post/mit6.824%E4%B9%8Blab1/</link>
+      <pubDate>Thu, 10 Aug 2023 16:32:37 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/mit6.824%E4%B9%8Blab1/</guid>
+      <description>lab1——实现简易版的mapreduce框架 论文回顾 mapreduce架构 严格来讲，MapReduce是一种分布式计算模型，用于解决大于1</description>
+    </item>
+    
+  </channel>
+</rss>

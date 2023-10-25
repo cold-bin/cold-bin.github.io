@@ -1,0 +1,2582 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Redis高级篇之多级缓存 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="[toc] 多级缓存 1.什么是多级缓存 传统的缓存策略一般是请求到达Tomcat后，先查询Redis，如果未命中则查询数据库，如图： 存在下面的问题： 请求" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="Redis高级篇之多级缓存" />
+<meta property="og:description" content="[toc] 多级缓存 1.什么是多级缓存 传统的缓存策略一般是请求到达Tomcat后，先查询Redis，如果未命中则查询数据库，如图： 存在下面的问题： 请求" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-01-24T16:08:44+08:00" />
+<meta property="article:modified_time" content="2023-01-24T16:08:44+08:00" />
+<meta itemprop="name" content="Redis高级篇之多级缓存">
+<meta itemprop="description" content="[toc] 多级缓存 1.什么是多级缓存 传统的缓存策略一般是请求到达Tomcat后，先查询Redis，如果未命中则查询数据库，如图： 存在下面的问题： 请求"><meta itemprop="datePublished" content="2023-01-24T16:08:44+08:00" />
+<meta itemprop="dateModified" content="2023-01-24T16:08:44+08:00" />
+<meta itemprop="wordCount" content="14279">
+<meta itemprop="keywords" content="lua脚本,多级缓存," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis高级篇之多级缓存"/>
+<meta name="twitter:description" content="[toc] 多级缓存 1.什么是多级缓存 传统的缓存策略一般是请求到达Tomcat后，先查询Redis，如果未命中则查询数据库，如图： 存在下面的问题： 请求"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Redis高级篇之多级缓存</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-01-24 </span>
+        <div class="post-category">
+            <a href="/categories/redis/"> redis </a>
+            <a href="/categories/%E7%BC%93%E5%AD%98/"> 缓存 </a>
+            </div>
+          <span class="more-meta"> 约 14279 字 </span>
+          <span class="more-meta"> 预计阅读 29 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#多级缓存">多级缓存</a></li>
+    <li><a href="#1什么是多级缓存">1.什么是多级缓存</a></li>
+    <li><a href="#2jvm进程缓存">2.JVM进程缓存</a>
+      <ul>
+        <li><a href="#21导入案例">2.1.导入案例</a></li>
+        <li><a href="#22初识caffeine">2.2.初识Caffeine</a></li>
+        <li><a href="#23实现jvm进程缓存">2.3.实现JVM进程缓存</a>
+          <ul>
+            <li><a href="#231需求">2.3.1.需求</a></li>
+            <li><a href="#232实现">2.3.2.实现</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#3lua语法入门">3.Lua语法入门</a>
+      <ul>
+        <li><a href="#31初识lua">3.1.初识Lua</a></li>
+        <li><a href="#31helloworld">3.1.HelloWorld</a></li>
+        <li><a href="#32变量和循环">3.2.变量和循环</a>
+          <ul>
+            <li><a href="#321lua的数据类型">3.2.1.Lua的数据类型</a></li>
+            <li><a href="#322声明变量">3.2.2.声明变量</a></li>
+            <li><a href="#323循环">3.2.3.循环</a></li>
+          </ul>
+        </li>
+        <li><a href="#33条件控制函数">3.3.条件控制、函数</a>
+          <ul>
+            <li><a href="#331函数">3.3.1.函数</a></li>
+            <li><a href="#332条件控制">3.3.2.条件控制</a></li>
+            <li><a href="#333案例">3.3.3.案例</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#4实现多级缓存">4.实现多级缓存</a>
+      <ul>
+        <li><a href="#41安装openresty">4.1.安装OpenResty</a></li>
+        <li><a href="#42openresty快速入门">4.2.OpenResty快速入门</a>
+          <ul>
+            <li><a href="#421反向代理流程">4.2.1.反向代理流程</a></li>
+            <li><a href="#422openresty监听请求">4.2.2.OpenResty监听请求</a></li>
+            <li><a href="#423编写itemlua">4.2.3.编写item.lua</a></li>
+          </ul>
+        </li>
+        <li><a href="#43请求参数处理">4.3.请求参数处理</a>
+          <ul>
+            <li><a href="#431获取参数的api">4.3.1.获取参数的API</a></li>
+            <li><a href="#432获取参数并返回">4.3.2.获取参数并返回</a></li>
+          </ul>
+        </li>
+        <li><a href="#44查询tomcat">4.4.查询Tomcat</a>
+          <ul>
+            <li><a href="#441发送http请求的api">4.4.1.发送http请求的API</a></li>
+            <li><a href="#442封装http工具">4.4.2.封装http工具</a></li>
+            <li><a href="#443cjson工具类">4.4.3.CJSON工具类</a></li>
+            <li><a href="#444实现tomcat查询">4.4.4.实现Tomcat查询</a></li>
+            <li><a href="#445基于id负载均衡">4.4.5.基于ID负载均衡</a></li>
+          </ul>
+        </li>
+        <li><a href="#45redis缓存预热">4.5.Redis缓存预热</a></li>
+        <li><a href="#46查询redis缓存">4.6.查询Redis缓存</a>
+          <ul>
+            <li><a href="#461封装redis工具">4.6.1.封装Redis工具</a></li>
+            <li><a href="#462实现redis查询">4.6.2.实现Redis查询</a></li>
+          </ul>
+        </li>
+        <li><a href="#47nginx本地缓存">4.7.Nginx本地缓存</a>
+          <ul>
+            <li><a href="#471本地缓存api">4.7.1.本地缓存API</a></li>
+            <li><a href="#472实现本地缓存查询">4.7.2.实现本地缓存查询</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#5缓存同步">5.缓存同步</a>
+      <ul>
+        <li><a href="#51数据同步策略">5.1.数据同步策略</a></li>
+        <li><a href="#52安装canal">5.2.安装Canal</a>
+          <ul>
+            <li><a href="#521认识canal">5.2.1.认识Canal</a></li>
+            <li><a href="#522安装canal">5.2.2.安装Canal</a></li>
+          </ul>
+        </li>
+        <li><a href="#53监听canal">5.3.监听Canal</a>
+          <ul>
+            <li><a href="#531引入依赖">5.3.1.引入依赖：</a></li>
+            <li><a href="#532编写配置">5.3.2.编写配置：</a></li>
+            <li><a href="#533修改item实体类">5.3.3.修改Item实体类</a></li>
+            <li><a href="#534编写监听器">5.3.4.编写监听器</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <p>[toc]</p>
+<h1 id="多级缓存">多级缓存</h1>
+<h1 id="1什么是多级缓存">1.什么是多级缓存</h1>
+<p>传统的缓存策略一般是请求到达Tomcat后，先查询Redis，如果未命中则查询数据库，如图：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821075259137.png" alt="image-20210821075259137"></p>
+<p>存在下面的问题：</p>
+<ul>
+<li>请求要经过Tomcat处理，Tomcat的性能成为整个系统的瓶颈</li>
+<li>Redis缓存失效时，会对数据库产生冲击</li>
+</ul>
+<p>多级缓存就是充分利用请求处理的每个环节，分别添加缓存，减轻Tomcat压力，提升服务性能：</p>
+<ul>
+<li>浏览器访问静态资源时，优先读取浏览器本地缓存</li>
+<li>访问非静态资源（ajax查询数据）时，访问服务端</li>
+<li>请求到达Nginx后，优先读取Nginx本地缓存</li>
+<li>如果Nginx本地缓存未命中，则去直接查询Redis（不经过Tomcat）</li>
+<li>如果Redis查询未命中，则查询Tomcat</li>
+<li>请求进入Tomcat后，优先查询JVM进程缓存</li>
+<li>如果JVM进程缓存未命中，则查询数据库</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821075558137.png" alt="image-20210821075558137"></p>
+<p>在多级缓存架构中，Nginx内部需要编写本地缓存查询、Redis查询、Tomcat查询的业务逻辑，因此这样的nginx服务不再是一个<strong>反向代理服务器</strong>，而是一个编写<strong>业务的Web服务器了</strong>。</p>
+<p>因此这样的业务Nginx服务也需要搭建集群来提高并发，再有专门的nginx服务来做反向代理，如图：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821080511581.png" alt="image-20210821080511581"></p>
+<p>另外，我们的Tomcat服务将来也会部署为集群模式：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821080954947.png" alt="image-20210821080954947"></p>
+<p>可见，多级缓存的关键有两个：</p>
+<ul>
+<li>
+<p>一个是在nginx中编写业务，实现nginx本地缓存、Redis、Tomcat的查询</p>
+</li>
+<li>
+<p>另一个就是在Tomcat中实现JVM进程缓存</p>
+</li>
+</ul>
+<p>其中Nginx编程则会用到OpenResty框架结合Lua这样的语言。</p>
+<h1 id="2jvm进程缓存">2.JVM进程缓存</h1>
+<p>为了演示多级缓存的案例，我们先准备一个商品查询的业务。</p>
+<h2 id="21导入案例">2.1.导入案例</h2>
+<h2 id="22初识caffeine">2.2.初识Caffeine</h2>
+<p>缓存在日常开发中启动至关重要的作用，由于是存储在内存中，数据的读取速度是非常快的，能大量减少对数据库的访问，减少数据库的压力。我们把缓存分为两类：</p>
+<ul>
+<li>分布式缓存，例如Redis：
+<ul>
+<li>优点：存储容量更大、可靠性更好、RDB\AOF持久化、可以在集群间共享</li>
+<li>缺点：访问缓存有网络开销</li>
+<li>场景：缓存数据量较大、可靠性要求较高、需要在集群间共享</li>
+</ul>
+</li>
+<li>进程本地缓存，例如HashMap、GuavaCache：
+<ul>
+<li>优点：读取本地内存，没有网络开销，速度更快</li>
+<li>缺点：存储容量有限、可靠性较低、无法共享</li>
+<li>场景：性能要求较高，缓存数据量较小</li>
+</ul>
+</li>
+</ul>
+<p>我们今天会利用Caffeine框架来实现JVM进程缓存。</p>
+<p><strong>Caffeine</strong>是一个基于Java8开发的，提供了近乎最佳命中率的高性能的本地缓存库。目前Spring内部的缓存使用的就是Caffeine。GitHub地址：https://github.com/ben-manes/caffeine</p>
+<p>Caffeine的性能非常好，下图是官方给出的性能对比：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821081826399.png" alt="image-20210821081826399"></p>
+<p>可以看到Caffeine的性能遥遥领先！</p>
+<p>缓存使用的基本API：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Test</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">testBasicOps</span><span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 构建cache对象
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">Cache</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">cache</span> <span class="o">=</span> <span class="n">Caffeine</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">().</span><span class="na">build</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 存数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">cache</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;gf&#34;</span><span class="o">,</span> <span class="s">&#34;迪丽热巴&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 取数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">String</span> <span class="n">gf</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="na">getIfPresent</span><span class="o">(</span><span class="s">&#34;gf&#34;</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;gf = &#34;</span> <span class="o">+</span> <span class="n">gf</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 取数据，包含两个参数：
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 参数一：缓存的key
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 参数二：Lambda表达式，表达式参数就是缓存的key，方法体是查询数据库的逻辑
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 优先根据key查询JVM缓存，如果未命中，则执行参数二的Lambda表达式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">String</span> <span class="n">defaultGF</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">&#34;defaultGF&#34;</span><span class="o">,</span> <span class="n">key</span> <span class="o">-&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 根据key去数据库查询数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">return</span> <span class="s">&#34;柳岩&#34;</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">});</span>
+</span></span><span class="line"><span class="cl">    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;defaultGF = &#34;</span> <span class="o">+</span> <span class="n">defaultGF</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Caffeine既然是缓存的一种，肯定需要有缓存的清除策略，不然的话内存总会有耗尽的时候。</p>
+<p>Caffeine提供了三种缓存驱逐策略：</p>
+<ul>
+<li>
+<p><strong>基于容量</strong>：设置缓存的数量上限</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 创建缓存对象
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">Cache</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">cache</span> <span class="o">=</span> <span class="n">Caffeine</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="na">maximumSize</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span> <span class="c1">// 设置缓存大小上限为 1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>基于时间</strong>：设置缓存的有效时间</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="c1">// 创建缓存对象
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">Cache</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">cache</span> <span class="o">=</span> <span class="n">Caffeine</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 设置缓存有效期为 10 秒，从最后一次写入开始计时 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="o">.</span><span class="na">expireAfterWrite</span><span class="o">(</span><span class="n">Duration</span><span class="o">.</span><span class="na">ofSeconds</span><span class="o">(</span><span class="mi">10</span><span class="o">))</span> 
+</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p><strong>基于引用</strong>：设置缓存为软引用或弱引用，利用GC来回收缓存数据。性能较差，不建议使用。</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>注意</strong>：在默认情况下，当一个缓存元素过期的时候，Caffeine不会自动立即将其清理和驱逐。而是在一次读或写操作后，或者在空闲时间完成对失效数据的驱逐。</p>
+</blockquote>
+<h2 id="23实现jvm进程缓存">2.3.实现JVM进程缓存</h2>
+<h3 id="231需求">2.3.1.需求</h3>
+<p>利用Caffeine实现下列需求：</p>
+<ul>
+<li>给根据id查询商品的业务添加缓存，缓存未命中时查询数据库</li>
+<li>给根据id查询商品库存的业务添加缓存，缓存未命中时查询数据库</li>
+<li>缓存初始大小为100</li>
+<li>缓存上限为10000</li>
+</ul>
+<h3 id="232实现">2.3.2.实现</h3>
+<p>首先，我们需要定义两个Caffeine的缓存对象，分别保存商品、库存的缓存数据。</p>
+<p>在item-service的<code>com.heima.item.config</code>包下定义<code>CaffeineConfig</code>类：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nn">com.heima.item.config</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.github.benmanes.caffeine.cache.Cache</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.github.benmanes.caffeine.cache.Caffeine</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.heima.item.pojo.Item</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.heima.item.pojo.ItemStock</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Bean</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Configuration</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@Configuration</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CaffeineConfig</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Bean</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Cache</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">Item</span><span class="o">&gt;</span> <span class="nf">itemCache</span><span class="o">(){</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">Caffeine</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">                <span class="o">.</span><span class="na">initialCapacity</span><span class="o">(</span><span class="mi">100</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                <span class="o">.</span><span class="na">maximumSize</span><span class="o">(</span><span class="mi">10</span><span class="n">_000</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Bean</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Cache</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">ItemStock</span><span class="o">&gt;</span> <span class="nf">stockCache</span><span class="o">(){</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">Caffeine</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">                <span class="o">.</span><span class="na">initialCapacity</span><span class="o">(</span><span class="mi">100</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                <span class="o">.</span><span class="na">maximumSize</span><span class="o">(</span><span class="mi">10</span><span class="n">_000</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后，修改item-service中的<code>com.heima.item.web</code>包下的ItemController类，添加缓存逻辑：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@RestController</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@RequestMapping</span><span class="o">(</span><span class="s">&#34;item&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ItemController</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">IItemService</span> <span class="n">itemService</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">IItemStockService</span> <span class="n">stockService</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">Cache</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">Item</span><span class="o">&gt;</span> <span class="n">itemCache</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">Cache</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">ItemStock</span><span class="o">&gt;</span> <span class="n">stockCache</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// ...其它略
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    
+</span></span><span class="line"><span class="cl">    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">&#34;/{id}&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">Item</span> <span class="nf">findById</span><span class="o">(</span><span class="nd">@PathVariable</span><span class="o">(</span><span class="s">&#34;id&#34;</span><span class="o">)</span> <span class="n">Long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">itemCache</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">id</span><span class="o">,</span> <span class="n">key</span> <span class="o">-&gt;</span> <span class="n">itemService</span><span class="o">.</span><span class="na">query</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">                <span class="o">.</span><span class="na">ne</span><span class="o">(</span><span class="s">&#34;status&#34;</span><span class="o">,</span> <span class="mi">3</span><span class="o">).</span><span class="na">eq</span><span class="o">(</span><span class="s">&#34;id&#34;</span><span class="o">,</span> <span class="n">key</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">                <span class="o">.</span><span class="na">one</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">        <span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@GetMapping</span><span class="o">(</span><span class="s">&#34;/stock/{id}&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="n">ItemStock</span> <span class="nf">findStockById</span><span class="o">(</span><span class="nd">@PathVariable</span><span class="o">(</span><span class="s">&#34;id&#34;</span><span class="o">)</span> <span class="n">Long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">stockCache</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">id</span><span class="o">,</span> <span class="n">key</span> <span class="o">-&gt;</span> <span class="n">stockService</span><span class="o">.</span><span class="na">getById</span><span class="o">(</span><span class="n">key</span><span class="o">));</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="3lua语法入门">3.Lua语法入门</h1>
+<p>Nginx编程需要用到Lua语言，因此我们必须先入门Lua的基本语法。</p>
+<h2 id="31初识lua">3.1.初识Lua</h2>
+<p>Lua 是一种轻量小巧的脚本语言，用标准C语言编写并以源代码形式开放， 其设计目的是为了嵌入应用程序中，从而为应用程序提供灵活的扩展和定制功能。官网：https://www.lua.org/</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821091437975.png" alt="image-20210821091437975"></p>
+<p>Lua经常嵌入到C语言开发的程序中，例如游戏开发、游戏插件等。</p>
+<p>Nginx本身也是C语言开发，因此也允许基于Lua做拓展。</p>
+<h2 id="31helloworld">3.1.HelloWorld</h2>
+<p>CentOS7默认已经安装了Lua语言环境，所以可以直接运行Lua代码。</p>
+<p>1）在Linux虚拟机的任意目录下，新建一个hello.lua文件</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821091621308.png" alt="image-20210821091621308"></p>
+<p>2）添加下面的内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="n">print</span><span class="p">(</span><span class="s2">&#34;Hello World!&#34;</span><span class="p">)</span>  
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>3）运行</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821091638140.png" alt="image-20210821091638140"></p>
+<h2 id="32变量和循环">3.2.变量和循环</h2>
+<p>学习任何语言必然离不开变量，而变量的声明必须先知道数据的类型。</p>
+<h3 id="321lua的数据类型">3.2.1.Lua的数据类型</h3>
+<p>Lua中支持的常见数据类型包括：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821091835406.png" alt="image-20210821091835406"></p>
+<p>另外，Lua提供了type()函数来判断一个变量的数据类型：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821091904332.png" alt="image-20210821091904332"></p>
+<h3 id="322声明变量">3.2.2.声明变量</h3>
+<p>Lua声明变量的时候无需指定数据类型，而是用local来声明变量为局部变量：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 声明字符串，可以用单引号或双引号，</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">str</span> <span class="o">=</span> <span class="s1">&#39;hello&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 字符串拼接可以使用 ..</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">str2</span> <span class="o">=</span> <span class="s1">&#39;hello&#39;</span> <span class="o">..</span> <span class="s1">&#39;world&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 声明数字</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">21</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 声明布尔类型</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">flag</span> <span class="o">=</span> <span class="kc">true</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Lua中的table类型既可以作为数组，又可以作为Java中的map来使用。数组就是特殊的table，key是数组角标而已：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 声明数组 ，key为角标的 table</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;java&#39;</span><span class="p">,</span> <span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="s1">&#39;lua&#39;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 声明table，类似java的map</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">map</span> <span class="o">=</span>  <span class="p">{</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Jack&#39;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">21</span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Lua中的数组角标是从1开始，访问的时候与Java中类似：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 访问数组，lua数组的角标从1开始</span>
+</span></span><span class="line"><span class="cl"><span class="n">print</span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Lua中的table可以用key来访问：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 访问table</span>
+</span></span><span class="line"><span class="cl"><span class="n">print</span><span class="p">(</span><span class="n">map</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="n">print</span><span class="p">(</span><span class="n">map.name</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="323循环">3.2.3.循环</h3>
+<p>对于table，我们可以利用for循环来遍历。不过数组和普通table遍历略有差异。</p>
+<p>遍历数组：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 声明数组 key为索引的 table</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;java&#39;</span><span class="p">,</span> <span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="s1">&#39;lua&#39;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 遍历数组</span>
+</span></span><span class="line"><span class="cl"><span class="kr">for</span> <span class="n">index</span><span class="p">,</span><span class="n">value</span> <span class="kr">in</span> <span class="n">ipairs</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="kr">do</span>
+</span></span><span class="line"><span class="cl">    <span class="n">print</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="kr">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>遍历普通table</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 声明map，也就是table</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">map</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Jack&#39;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">21</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 遍历table</span>
+</span></span><span class="line"><span class="cl"><span class="kr">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="kr">in</span> <span class="n">pairs</span><span class="p">(</span><span class="n">map</span><span class="p">)</span> <span class="kr">do</span>
+</span></span><span class="line"><span class="cl">   <span class="n">print</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="kr">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="33条件控制函数">3.3.条件控制、函数</h2>
+<p>Lua中的条件控制和函数声明与Java类似。</p>
+<h3 id="331函数">3.3.1.函数</h3>
+<p>定义函数的语法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="kr">function</span> <span class="nf">函数名</span><span class="p">(</span> <span class="n">argument1</span><span class="p">,</span> <span class="n">argument2</span><span class="p">...,</span> <span class="n">argumentn</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 函数体</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">return</span> <span class="err">返回值</span>
+</span></span><span class="line"><span class="cl"><span class="kr">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>例如，定义一个函数，用来打印数组：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="kr">function</span> <span class="nf">printArr</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span> <span class="kr">in</span> <span class="n">ipairs</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="kr">do</span>
+</span></span><span class="line"><span class="cl">        <span class="n">print</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">end</span>
+</span></span><span class="line"><span class="cl"><span class="kr">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="332条件控制">3.3.2.条件控制</h3>
+<p>类似Java的条件控制，例如if、else语法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="kr">if</span><span class="p">(</span><span class="err">布尔表达式</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="kr">then</span>
+</span></span><span class="line"><span class="cl">   <span class="c1">--[ 布尔表达式为 true 时执行该语句块 --]</span>
+</span></span><span class="line"><span class="cl"><span class="kr">else</span>
+</span></span><span class="line"><span class="cl">   <span class="c1">--[ 布尔表达式为 false 时执行该语句块 --]</span>
+</span></span><span class="line"><span class="cl"><span class="kr">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>与java不同，布尔表达式中的逻辑运算是基于英文单词：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821092657918.png" alt="image-20210821092657918"></p>
+<h3 id="333案例">3.3.3.案例</h3>
+<p>需求：自定义一个函数，可以打印table，当参数为nil时，打印错误信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="kr">function</span> <span class="nf">printArr</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">if</span> <span class="ow">not</span> <span class="n">arr</span> <span class="kr">then</span>
+</span></span><span class="line"><span class="cl">        <span class="n">print</span><span class="p">(</span><span class="s1">&#39;数组不能为空！&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">end</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span> <span class="kr">in</span> <span class="n">ipairs</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span> <span class="kr">do</span>
+</span></span><span class="line"><span class="cl">        <span class="n">print</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">end</span>
+</span></span><span class="line"><span class="cl"><span class="kr">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="4实现多级缓存">4.实现多级缓存</h1>
+<p>多级缓存的实现离不开Nginx编程，而Nginx编程又离不开OpenResty。</p>
+<h2 id="41安装openresty">4.1.安装OpenResty</h2>
+<p>OpenResty® 是一个基于 Nginx的高性能 Web 平台，用于方便地搭建能够处理超高并发、扩展性极高的动态 Web 应用、Web 服务和动态网关。具备下列特点：</p>
+<ul>
+<li>具备Nginx的完整功能</li>
+<li>基于Lua语言进行扩展，集成了大量精良的 Lua 库、第三方模块</li>
+<li>允许使用Lua<strong>自定义业务逻辑</strong>、<strong>自定义库</strong></li>
+</ul>
+<p>官方网站： <a href="https://openresty.org/cn/">https://openresty.org/cn/</a></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821092902946.png" alt="image-20210821092902946"></p>
+<h2 id="42openresty快速入门">4.2.OpenResty快速入门</h2>
+<p>我们希望达到的多级缓存架构如图：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/yeVDlwtfMx.png" alt="yeVDlwtfMx"></p>
+<p>其中：</p>
+<ul>
+<li>
+<p>windows上的nginx用来做反向代理服务，将前端的查询商品的ajax请求代理到OpenResty集群</p>
+</li>
+<li>
+<p>OpenResty集群用来编写多级缓存业务</p>
+</li>
+</ul>
+<h3 id="421反向代理流程">4.2.1.反向代理流程</h3>
+<p>现在，商品详情页使用的是假的商品数据。不过在浏览器中，可以看到页面有发起ajax请求查询真实商品数据。</p>
+<p>这个请求如下：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821093144700.png" alt="image-20210821093144700"></p>
+<p>请求地址是localhost，端口是80，就被windows上安装的Nginx服务给接收到了。然后代理给了OpenResty集群：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821094447709.png" alt="image-20210821094447709"></p>
+<p>我们需要在OpenResty中编写业务，查询商品数据并返回到浏览器。</p>
+<p>但是这次，我们先在OpenResty接收请求，返回假的商品数据。</p>
+<h3 id="422openresty监听请求">4.2.2.OpenResty监听请求</h3>
+<p>OpenResty的很多功能都依赖于其目录下的Lua库，需要在nginx.conf中指定依赖库的目录，并导入依赖：</p>
+<p>1）添加对OpenResty的Lua模块的加载</p>
+<p>修改<code>/usr/local/openresty/nginx/conf/nginx.conf</code>文件，在其中的http下面，添加下面代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-nginx" data-lang="nginx"><span class="line"><span class="cl"><span class="c1"># lua模块
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">lua_package_path</span> <span class="s">&#34;/usr/local/openresty/lualib/?.lua</span><span class="p">;</span>;<span class="k">&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># c模块     
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">lua_package_cpath</span> <span class="s">&#34;/usr/local/openresty/lualib/?.so</span><span class="p">;</span>;<span class="k">&#34;</span><span class="p">;</span>  
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>2）监听/api/item路径</p>
+<p>修改<code>/usr/local/openresty/nginx/conf/nginx.conf</code>文件，在nginx.conf的server下面，添加对/api/item这个路径的监听：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-nginx" data-lang="nginx"><span class="line"><span class="cl"><span class="k">location</span>  <span class="s">/api/item</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 默认的响应类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kn">default_type</span> <span class="s">application/json</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 响应结果由lua/item.lua文件来决定
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kn">content_by_lua_file</span> <span class="s">lua/item.lua</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个监听，就类似于SpringMVC中的<code>@GetMapping(&quot;/api/item&quot;)</code>做路径映射。</p>
+<p>而<code>content_by_lua_file lua/item.lua</code>则相当于调用item.lua这个文件，执行其中的业务，把结果返回给用户。相当于java中调用service。</p>
+<h3 id="423编写itemlua">4.2.3.编写item.lua</h3>
+<p>1）在<code>/usr/loca/openresty/nginx</code>目录创建文件夹：lua</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821100755080.png" alt="image-20210821100755080"></p>
+<p>2）在<code>/usr/loca/openresty/nginx/lua</code>文件夹下，新建文件：item.lua</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821100801756.png" alt="image-20210821100801756"></p>
+<p>3）编写item.lua，返回假数据</p>
+<p>item.lua中，利用ngx.say()函数返回数据到Response中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="n">ngx.say</span><span class="p">(</span><span class="s1">&#39;{&#34;id&#34;:10001,&#34;name&#34;:&#34;SALSA AIR&#34;,&#34;title&#34;:&#34;RIMOWA 21寸托运箱拉杆箱 SALSA AIR系列果绿色 820.70.36.4&#34;,&#34;price&#34;:17900,&#34;image&#34;:&#34;https://m.360buyimg.com/mobilecms/s720x720_jfs/t6934/364/1195375010/84676/e9f2c55f/597ece38N0ddcbc77.jpg!q70.jpg.webp&#34;,&#34;category&#34;:&#34;拉杆箱&#34;,&#34;brand&#34;:&#34;RIMOWA&#34;,&#34;spec&#34;:&#34;&#34;,&#34;status&#34;:1,&#34;createTime&#34;:&#34;2019-04-30T16:00:00.000+00:00&#34;,&#34;updateTime&#34;:&#34;2019-04-30T16:00:00.000+00:00&#34;,&#34;stock&#34;:2999,&#34;sold&#34;:31290}&#39;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>4）重新加载配置</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">nginx -s reload
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>刷新商品页面：http://localhost/item.html?id=1001，即可看到效果：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821101217089.png" alt="image-20210821101217089"></p>
+<h2 id="43请求参数处理">4.3.请求参数处理</h2>
+<p>上一节中，我们在OpenResty接收前端请求，但是返回的是假数据。</p>
+<p>要返回真实数据，必须根据前端传递来的商品id，查询商品信息才可以。</p>
+<p>那么如何获取前端传递的商品参数呢？</p>
+<h3 id="431获取参数的api">4.3.1.获取参数的API</h3>
+<p>OpenResty中提供了一些API用来获取不同类型的前端请求参数：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821101433528.png" alt="image-20210821101433528"></p>
+<h3 id="432获取参数并返回">4.3.2.获取参数并返回</h3>
+<p>在前端发起的ajax请求如图：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821101721649.png" alt="image-20210821101721649"></p>
+<p>可以看到商品id是以路径占位符方式传递的，因此可以利用正则表达式匹配的方式来获取ID</p>
+<p>1）获取商品id</p>
+<p>修改<code>/usr/loca/openresty/nginx/nginx.conf</code>文件中监听/api/item的代码，利用正则表达式获取ID：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-nginx" data-lang="nginx"><span class="line"><span class="cl"><span class="k">location</span> <span class="p">~</span> <span class="sr">/api/item/(\d+)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 默认的响应类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kn">default_type</span> <span class="s">application/json</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 响应结果由lua/item.lua文件来决定
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kn">content_by_lua_file</span> <span class="s">lua/item.lua</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>2）拼接ID并返回</p>
+<p>修改<code>/usr/loca/openresty/nginx/lua/item.lua</code>文件，获取id并拼接到结果中返回：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 获取商品id</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">id</span> <span class="o">=</span> <span class="n">ngx.var</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 拼接并返回</span>
+</span></span><span class="line"><span class="cl"><span class="n">ngx.say</span><span class="p">(</span><span class="s1">&#39;{&#34;id&#34;:&#39;</span> <span class="o">..</span> <span class="n">id</span> <span class="o">..</span> <span class="s1">&#39;,&#34;name&#34;:&#34;SALSA AIR&#34;,&#34;title&#34;:&#34;RIMOWA 21寸托运箱拉杆箱 SALSA AIR系列果绿色 820.70.36.4&#34;,&#34;price&#34;:17900,&#34;image&#34;:&#34;https://m.360buyimg.com/mobilecms/s720x720_jfs/t6934/364/1195375010/84676/e9f2c55f/597ece38N0ddcbc77.jpg!q70.jpg.webp&#34;,&#34;category&#34;:&#34;拉杆箱&#34;,&#34;brand&#34;:&#34;RIMOWA&#34;,&#34;spec&#34;:&#34;&#34;,&#34;status&#34;:1,&#34;createTime&#34;:&#34;2019-04-30T16:00:00.000+00:00&#34;,&#34;updateTime&#34;:&#34;2019-04-30T16:00:00.000+00:00&#34;,&#34;stock&#34;:2999,&#34;sold&#34;:31290}&#39;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>3）重新加载并测试</p>
+<p>运行命令以重新加载OpenResty配置：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">nginx -s reload
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>刷新页面可以看到结果中已经带上了ID：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821102235467.png" alt="image-20210821102235467"></p>
+<h2 id="44查询tomcat">4.4.查询Tomcat</h2>
+<p>拿到商品ID后，本应去缓存中查询商品信息，不过目前我们还未建立nginx、redis缓存。因此，这里我们先根据商品id去tomcat查询商品信息。我们实现如图部分：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821102610167.png" alt="image-20210821102610167"></p>
+<p>需要注意的是，我们的OpenResty是在虚拟机，Tomcat是在Windows电脑上。两者IP一定不要搞错了。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821102959829.png" alt="image-20210821102959829"></p>
+<h3 id="441发送http请求的api">4.4.1.发送http请求的API</h3>
+<p>nginx提供了内部API用以发送http请求：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">resp</span> <span class="o">=</span> <span class="n">ngx.location</span><span class="p">.</span><span class="n">capture</span><span class="p">(</span><span class="s2">&#34;/path&#34;</span><span class="p">,{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">method</span> <span class="o">=</span> <span class="n">ngx.HTTP_GET</span><span class="p">,</span>   <span class="c1">-- 请求方式</span>
+</span></span><span class="line"><span class="cl">    <span class="n">args</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">},</span>  <span class="c1">-- get方式传参数</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>返回的响应内容包括：</p>
+<ul>
+<li>resp.status：响应状态码</li>
+<li>resp.header：响应头，是一个table</li>
+<li>resp.body：响应体，就是响应数据</li>
+</ul>
+<p>注意：这里的path是路径，并不包含IP和端口。这个请求会被nginx内部的server监听并处理。</p>
+<p>但是我们希望这个请求发送到Tomcat服务器，所以还需要编写一个server来对这个路径做反向代理：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-nginx" data-lang="nginx"><span class="line"><span class="cl"> <span class="k">location</span> <span class="s">/path</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">     <span class="c1"># 这里是windows电脑的ip和Java服务端口，需要确保windows防火墙处于关闭状态
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>     <span class="kn">proxy_pass</span> <span class="s">http://192.168.150.1:8081</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl"> <span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>原理如图：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821104149061.png" alt="image-20210821104149061"></p>
+<h3 id="442封装http工具">4.4.2.封装http工具</h3>
+<p>下面，我们封装一个发送Http请求的工具，基于ngx.location.capture来实现查询tomcat。</p>
+<p>1）添加反向代理，到windows的Java服务</p>
+<p>因为item-service中的接口都是/item开头，所以我们监听/item路径，代理到windows上的tomcat服务。</p>
+<p>修改 <code>/usr/local/openresty/nginx/conf/nginx.conf</code>文件，添加一个location：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-nginx" data-lang="nginx"><span class="line"><span class="cl"><span class="k">location</span> <span class="s">/item</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kn">proxy_pass</span> <span class="s">http://192.168.150.1:8081</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>以后，只要我们调用<code>ngx.location.capture(&quot;/item&quot;)</code>，就一定能发送请求到windows的tomcat服务。</p>
+<p>2）封装工具类</p>
+<p>之前我们说过，OpenResty启动时会加载以下两个目录中的工具文件：</p>
+<p><img src="C:/Users/cold-bin/Desktop/Redis%E7%AC%94%E8%AE%B0/03-%E9%AB%98%E7%BA%A7%E7%AF%87/%E8%AE%B2%E4%B9%89/02-%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/assets/image-20210821104857413.png" alt="image-20210821104857413"></p>
+<p>所以，自定义的http工具也需要放到这个目录下。</p>
+<p>在<code>/usr/local/openresty/lualib</code>目录下，新建一个common.lua文件：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">vi /usr/local/openresty/lualib/common.lua
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>内容如下:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 封装函数，发送http请求，并解析响应</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="kr">function</span> <span class="nf">read_http</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">local</span> <span class="n">resp</span> <span class="o">=</span> <span class="n">ngx.location</span><span class="p">.</span><span class="n">capture</span><span class="p">(</span><span class="n">path</span><span class="p">,{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">method</span> <span class="o">=</span> <span class="n">ngx.HTTP_GET</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">args</span> <span class="o">=</span> <span class="n">params</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">if</span> <span class="ow">not</span> <span class="n">resp</span> <span class="kr">then</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">-- 记录错误信息，返回404</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ngx.log</span><span class="p">(</span><span class="n">ngx.ERR</span><span class="p">,</span> <span class="s2">&#34;http请求查询失败, path: &#34;</span><span class="p">,</span> <span class="n">path</span> <span class="p">,</span> <span class="s2">&#34;, args: &#34;</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ngx.exit</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">end</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">return</span> <span class="n">resp.body</span>
+</span></span><span class="line"><span class="cl"><span class="kr">end</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 将方法导出</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">_M</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">read_http</span> <span class="o">=</span> <span class="n">read_http</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kr">return</span> <span class="n">_M</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个工具将read_http函数封装到_M这个table类型的变量中，并且返回，这类似于导出。</p>
+<p>使用的时候，可以利用<code>require('common')</code>来导入该函数库，这里的common是函数库的文件名。</p>
+<p>3）实现商品查询</p>
+<p>最后，我们修改<code>/usr/local/openresty/lua/item.lua</code>文件，利用刚刚封装的函数库实现对tomcat的查询：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 引入自定义common工具模块，返回值是common中返回的 _M</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">common</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s2">&#34;common&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 从common中获取read_http这个函数</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">read_http</span> <span class="o">=</span> <span class="n">common.read_http</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 获取路径参数</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">id</span> <span class="o">=</span> <span class="n">ngx.var</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 根据id查询商品</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">itemJSON</span> <span class="o">=</span> <span class="n">read_http</span><span class="p">(</span><span class="s2">&#34;/item/&#34;</span><span class="o">..</span> <span class="n">id</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 根据id查询商品库存</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">itemStockJSON</span> <span class="o">=</span> <span class="n">read_http</span><span class="p">(</span><span class="s2">&#34;/item/stock/&#34;</span><span class="o">..</span> <span class="n">id</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这里查询到的结果是json字符串，并且包含商品、库存两个json字符串，页面最终需要的是把两个json拼接为一个json：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821110441222.png" alt="image-20210821110441222"></p>
+<p>这就需要我们先把JSON变为lua的table，完成数据整合后，再转为JSON。</p>
+<h3 id="443cjson工具类">4.4.3.CJSON工具类</h3>
+<p>OpenResty提供了一个cjson的模块用来处理JSON的序列化和反序列化。</p>
+<p>官方地址： <a href="https://github.com/openresty/lua-cjson/">https://github.com/openresty/lua-cjson/</a></p>
+<p>1）引入cjson模块：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">cjson</span> <span class="o">=</span> <span class="n">require</span> <span class="s2">&#34;cjson&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>2）序列化：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">obj</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;jack&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">age</span> <span class="o">=</span> <span class="mi">21</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 把 table 序列化为 json</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">json</span> <span class="o">=</span> <span class="n">cjson.encode</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>3）反序列化：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">json</span> <span class="o">=</span> <span class="s1">&#39;{&#34;name&#34;: &#34;jack&#34;, &#34;age&#34;: 21}&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 反序列化 json为 table</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">cjson.decode</span><span class="p">(</span><span class="n">json</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">print</span><span class="p">(</span><span class="n">obj.name</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="444实现tomcat查询">4.4.4.实现Tomcat查询</h3>
+<p>下面，我们修改之前的item.lua中的业务，添加json处理功能：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 导入common函数库</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">common</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;common&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">read_http</span> <span class="o">=</span> <span class="n">common.read_http</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 导入cjson库</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">cjson</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;cjson&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- 获取路径参数</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">id</span> <span class="o">=</span> <span class="n">ngx.var</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 根据id查询商品</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">itemJSON</span> <span class="o">=</span> <span class="n">read_http</span><span class="p">(</span><span class="s2">&#34;/item/&#34;</span><span class="o">..</span> <span class="n">id</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 根据id查询商品库存</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">itemStockJSON</span> <span class="o">=</span> <span class="n">read_http</span><span class="p">(</span><span class="s2">&#34;/item/stock/&#34;</span><span class="o">..</span> <span class="n">id</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- JSON转化为lua的table</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">item</span> <span class="o">=</span> <span class="n">cjson.decode</span><span class="p">(</span><span class="n">itemJSON</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">stock</span> <span class="o">=</span> <span class="n">cjson.decode</span><span class="p">(</span><span class="n">stockJSON</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- 组合数据</span>
+</span></span><span class="line"><span class="cl"><span class="n">item.stock</span> <span class="o">=</span> <span class="n">stock.stock</span>
+</span></span><span class="line"><span class="cl"><span class="n">item.sold</span> <span class="o">=</span> <span class="n">stock.sold</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- 把item序列化为json返回结果</span>
+</span></span><span class="line"><span class="cl"><span class="n">ngx.say</span><span class="p">(</span><span class="n">cjson.encode</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="445基于id负载均衡">4.4.5.基于ID负载均衡</h3>
+<p>刚才的代码中，我们的tomcat是单机部署。而实际开发中，tomcat一定是集群模式：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821111023255.png" alt="image-20210821111023255"></p>
+<p>因此，OpenResty需要对tomcat集群做负载均衡。</p>
+<p>而默认的负载均衡规则是轮询模式，当我们查询/item/10001时：</p>
+<ul>
+<li>第一次会访问8081端口的tomcat服务，在该服务内部就形成了JVM进程缓存</li>
+<li>第二次会访问8082端口的tomcat服务，该服务内部没有JVM缓存（因为JVM缓存无法共享），会查询数据库</li>
+<li>&hellip;</li>
+</ul>
+<p>你看，因为轮询的原因，第一次查询8081形成的JVM缓存并未生效，直到下一次再次访问到8081时才可以生效，缓存命中率太低了。</p>
+<p>怎么办？</p>
+<p>如果能让同一个商品，每次查询时都访问同一个tomcat服务，那么JVM缓存就一定能生效了。</p>
+<p>也就是说，我们需要根据商品id做负载均衡，而不是轮询。</p>
+<h4 id="1原理">1）原理</h4>
+<p>nginx提供了基于请求路径做负载均衡的算法：</p>
+<p>nginx根据请求路径做hash运算，把得到的数值对tomcat服务的数量取余，余数是几，就访问第几个服务，实现负载均衡。</p>
+<p>例如：</p>
+<ul>
+<li>我们的请求路径是 /item/10001</li>
+<li>tomcat总数为2台（8081、8082）</li>
+<li>对请求路径/item/1001做hash运算求余的结果为1</li>
+<li>则访问第一个tomcat服务，也就是8081</li>
+</ul>
+<p>只要id不变，每次hash运算结果也不会变，那就可以保证同一个商品，一直访问同一个tomcat服务，确保JVM缓存生效。</p>
+<h4 id="2实现">2）实现</h4>
+<p>修改<code>/usr/local/openresty/nginx/conf/nginx.conf</code>文件，实现基于ID做负载均衡。</p>
+<p>首先，定义tomcat集群，并设置基于路径做负载均衡：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-nginx" data-lang="nginx"><span class="line"><span class="cl"><span class="k">upstream</span> <span class="s">tomcat-cluster</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kn">hash</span> <span class="nv">$request_uri</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kn">server</span> <span class="n">192.168.150.1</span><span class="p">:</span><span class="mi">8081</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kn">server</span> <span class="n">192.168.150.1</span><span class="p">:</span><span class="mi">8082</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后，修改对tomcat服务的反向代理，目标指向tomcat集群：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-nginx" data-lang="nginx"><span class="line"><span class="cl"><span class="k">location</span> <span class="s">/item</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kn">proxy_pass</span> <span class="s">http://tomcat-cluster</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>重新加载OpenResty</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">nginx -s reload
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="3测试">3）测试</h4>
+<p>启动两台tomcat服务：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821112420464.png" alt="image-20210821112420464"></p>
+<p>同时启动：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821112444482.png" alt="image-20210821112444482"></p>
+<p>清空日志后，再次访问页面，可以看到不同id的商品，访问到了不同的tomcat服务：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821112559965.png" alt="image-20210821112559965"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821112637430.png" alt="image-20210821112637430"></p>
+<h2 id="45redis缓存预热">4.5.Redis缓存预热</h2>
+<p>Redis缓存会面临冷启动问题：</p>
+<p><strong>冷启动</strong>：服务刚刚启动时，Redis中并没有缓存，如果所有商品数据都在第一次查询时添加缓存，可能会给数据库带来较大压力。</p>
+<p><strong>缓存预热</strong>：在实际开发中，我们可以利用大数据统计用户访问的热点数据，在项目启动时将这些热点数据提前查询并保存到Redis中。</p>
+<p>我们数据量较少，并且没有数据统计相关功能，目前可以在启动时将所有数据都放入缓存中。</p>
+<p>1）利用Docker安装Redis</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">docker run --name redis -p 6379:6379 -d redis redis-server --appendonly yes
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>2）在item-service服务中引入Redis依赖</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-data-redis<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>3）配置Redis地址</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">spring</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">redis</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="m">192.168.150.101</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>4）编写初始化类</p>
+<p>缓存预热需要在项目启动时完成，并且必须是拿到RedisTemplate之后。</p>
+<p>这里我们利用InitializingBean接口来实现，因为InitializingBean可以在对象被Spring创建并且成员变量全部注入后执行。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nn">com.heima.item.config</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.fasterxml.jackson.core.JsonProcessingException</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.fasterxml.jackson.databind.ObjectMapper</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.heima.item.pojo.Item</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.heima.item.pojo.ItemStock</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.heima.item.service.IItemService</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.heima.item.service.IItemStockService</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.beans.factory.InitializingBean</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Autowired</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.data.redis.core.StringRedisTemplate</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.stereotype.Component</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@Component</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RedisHandler</span> <span class="kd">implements</span> <span class="n">InitializingBean</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">StringRedisTemplate</span> <span class="n">redisTemplate</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">IItemService</span> <span class="n">itemService</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">IItemStockService</span> <span class="n">stockService</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">ObjectMapper</span> <span class="n">MAPPER</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectMapper</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">afterPropertiesSet</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 初始化缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 1.查询商品信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span> <span class="n">itemList</span> <span class="o">=</span> <span class="n">itemService</span><span class="o">.</span><span class="na">list</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 2.放入缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">Item</span> <span class="n">item</span> <span class="o">:</span> <span class="n">itemList</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 2.1.item序列化为JSON
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">String</span> <span class="n">json</span> <span class="o">=</span> <span class="n">MAPPER</span><span class="o">.</span><span class="na">writeValueAsString</span><span class="o">(</span><span class="n">item</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 2.2.存入redis
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">redisTemplate</span><span class="o">.</span><span class="na">opsForValue</span><span class="o">().</span><span class="na">set</span><span class="o">(</span><span class="s">&#34;item🆔&#34;</span> <span class="o">+</span> <span class="n">item</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="n">json</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 3.查询商品库存信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">ItemStock</span><span class="o">&gt;</span> <span class="n">stockList</span> <span class="o">=</span> <span class="n">stockService</span><span class="o">.</span><span class="na">list</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 4.放入缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">ItemStock</span> <span class="n">stock</span> <span class="o">:</span> <span class="n">stockList</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 2.1.item序列化为JSON
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">String</span> <span class="n">json</span> <span class="o">=</span> <span class="n">MAPPER</span><span class="o">.</span><span class="na">writeValueAsString</span><span class="o">(</span><span class="n">stock</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 2.2.存入redis
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">redisTemplate</span><span class="o">.</span><span class="na">opsForValue</span><span class="o">().</span><span class="na">set</span><span class="o">(</span><span class="s">&#34;item:stock:id:&#34;</span> <span class="o">+</span> <span class="n">stock</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="n">json</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="46查询redis缓存">4.6.查询Redis缓存</h2>
+<p>现在，Redis缓存已经准备就绪，我们可以再OpenResty中实现查询Redis的逻辑了。如下图红框所示：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821113340111.png" alt="image-20210821113340111"></p>
+<p>当请求进入OpenResty之后：</p>
+<ul>
+<li>优先查询Redis缓存</li>
+<li>如果Redis缓存未命中，再查询Tomcat</li>
+</ul>
+<h3 id="461封装redis工具">4.6.1.封装Redis工具</h3>
+<p>OpenResty提供了操作Redis的模块，我们只要引入该模块就能直接使用。但是为了方便，我们将Redis操作封装到之前的common.lua工具库中。</p>
+<p>修改<code>/usr/local/openresty/lualib/common.lua</code>文件：</p>
+<p>1）引入Redis模块，并初始化Redis对象</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 导入redis</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">redis</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;resty.redis&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 初始化redis</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">red</span> <span class="o">=</span> <span class="n">redis</span><span class="p">:</span><span class="n">new</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">red</span><span class="p">:</span><span class="n">set_timeouts</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>2）封装函数，用来释放Redis连接，其实是放入连接池</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 关闭redis连接的工具方法，其实是放入连接池</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="kr">function</span> <span class="nf">close_redis</span><span class="p">(</span><span class="n">red</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">local</span> <span class="n">pool_max_idle_time</span> <span class="o">=</span> <span class="mi">10000</span> <span class="c1">-- 连接的空闲时间，单位是毫秒</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">local</span> <span class="n">pool_size</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1">--连接池大小</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">local</span> <span class="n">ok</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">red</span><span class="p">:</span><span class="n">set_keepalive</span><span class="p">(</span><span class="n">pool_max_idle_time</span><span class="p">,</span> <span class="n">pool_size</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">if</span> <span class="ow">not</span> <span class="n">ok</span> <span class="kr">then</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ngx.log</span><span class="p">(</span><span class="n">ngx.ERR</span><span class="p">,</span> <span class="s2">&#34;放入redis连接池失败: &#34;</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">end</span>
+</span></span><span class="line"><span class="cl"><span class="kr">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>3）封装函数，根据key查询Redis数据</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 查询redis的方法 ip和port是redis地址，key是查询的key</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="kr">function</span> <span class="nf">read_redis</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 获取一个连接</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">local</span> <span class="n">ok</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">red</span><span class="p">:</span><span class="n">connect</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">if</span> <span class="ow">not</span> <span class="n">ok</span> <span class="kr">then</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ngx.log</span><span class="p">(</span><span class="n">ngx.ERR</span><span class="p">,</span> <span class="s2">&#34;连接redis失败 : &#34;</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">end</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 查询redis</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">local</span> <span class="n">resp</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">red</span><span class="p">:</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 查询失败处理</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">if</span> <span class="ow">not</span> <span class="n">resp</span> <span class="kr">then</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ngx.log</span><span class="p">(</span><span class="n">ngx.ERR</span><span class="p">,</span> <span class="s2">&#34;查询Redis失败: &#34;</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="s2">&#34;, key = &#34;</span> <span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">end</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">--得到的数据为空处理</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">if</span> <span class="n">resp</span> <span class="o">==</span> <span class="n">ngx.null</span> <span class="kr">then</span>
+</span></span><span class="line"><span class="cl">        <span class="n">resp</span> <span class="o">=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ngx.log</span><span class="p">(</span><span class="n">ngx.ERR</span><span class="p">,</span> <span class="s2">&#34;查询Redis数据为空, key = &#34;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">end</span>
+</span></span><span class="line"><span class="cl">    <span class="n">close_redis</span><span class="p">(</span><span class="n">red</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">return</span> <span class="n">resp</span>
+</span></span><span class="line"><span class="cl"><span class="kr">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>4）导出</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 将方法导出</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">_M</span> <span class="o">=</span> <span class="p">{</span>  
+</span></span><span class="line"><span class="cl">    <span class="n">read_http</span> <span class="o">=</span> <span class="n">read_http</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">read_redis</span> <span class="o">=</span> <span class="n">read_redis</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>  
+</span></span><span class="line"><span class="cl"><span class="kr">return</span> <span class="n">_M</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>完整的common.lua：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 导入redis</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">redis</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;resty.redis&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 初始化redis</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">red</span> <span class="o">=</span> <span class="n">redis</span><span class="p">:</span><span class="n">new</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">red</span><span class="p">:</span><span class="n">set_timeouts</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- 关闭redis连接的工具方法，其实是放入连接池</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="kr">function</span> <span class="nf">close_redis</span><span class="p">(</span><span class="n">red</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">local</span> <span class="n">pool_max_idle_time</span> <span class="o">=</span> <span class="mi">10000</span> <span class="c1">-- 连接的空闲时间，单位是毫秒</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">local</span> <span class="n">pool_size</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1">--连接池大小</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">local</span> <span class="n">ok</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">red</span><span class="p">:</span><span class="n">set_keepalive</span><span class="p">(</span><span class="n">pool_max_idle_time</span><span class="p">,</span> <span class="n">pool_size</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">if</span> <span class="ow">not</span> <span class="n">ok</span> <span class="kr">then</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ngx.log</span><span class="p">(</span><span class="n">ngx.ERR</span><span class="p">,</span> <span class="s2">&#34;放入redis连接池失败: &#34;</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">end</span>
+</span></span><span class="line"><span class="cl"><span class="kr">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- 查询redis的方法 ip和port是redis地址，key是查询的key</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="kr">function</span> <span class="nf">read_redis</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 获取一个连接</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">local</span> <span class="n">ok</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">red</span><span class="p">:</span><span class="n">connect</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">if</span> <span class="ow">not</span> <span class="n">ok</span> <span class="kr">then</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ngx.log</span><span class="p">(</span><span class="n">ngx.ERR</span><span class="p">,</span> <span class="s2">&#34;连接redis失败 : &#34;</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">end</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 查询redis</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">local</span> <span class="n">resp</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">red</span><span class="p">:</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 查询失败处理</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">if</span> <span class="ow">not</span> <span class="n">resp</span> <span class="kr">then</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ngx.log</span><span class="p">(</span><span class="n">ngx.ERR</span><span class="p">,</span> <span class="s2">&#34;查询Redis失败: &#34;</span><span class="p">,</span> <span class="n">err</span><span class="p">,</span> <span class="s2">&#34;, key = &#34;</span> <span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">end</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">--得到的数据为空处理</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">if</span> <span class="n">resp</span> <span class="o">==</span> <span class="n">ngx.null</span> <span class="kr">then</span>
+</span></span><span class="line"><span class="cl">        <span class="n">resp</span> <span class="o">=</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ngx.log</span><span class="p">(</span><span class="n">ngx.ERR</span><span class="p">,</span> <span class="s2">&#34;查询Redis数据为空, key = &#34;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">end</span>
+</span></span><span class="line"><span class="cl">    <span class="n">close_redis</span><span class="p">(</span><span class="n">red</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">return</span> <span class="n">resp</span>
+</span></span><span class="line"><span class="cl"><span class="kr">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- 封装函数，发送http请求，并解析响应</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="kr">function</span> <span class="nf">read_http</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">local</span> <span class="n">resp</span> <span class="o">=</span> <span class="n">ngx.location</span><span class="p">.</span><span class="n">capture</span><span class="p">(</span><span class="n">path</span><span class="p">,{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">method</span> <span class="o">=</span> <span class="n">ngx.HTTP_GET</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">args</span> <span class="o">=</span> <span class="n">params</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">if</span> <span class="ow">not</span> <span class="n">resp</span> <span class="kr">then</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">-- 记录错误信息，返回404</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ngx.log</span><span class="p">(</span><span class="n">ngx.ERR</span><span class="p">,</span> <span class="s2">&#34;http查询失败, path: &#34;</span><span class="p">,</span> <span class="n">path</span> <span class="p">,</span> <span class="s2">&#34;, args: &#34;</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ngx.exit</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">end</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">return</span> <span class="n">resp.body</span>
+</span></span><span class="line"><span class="cl"><span class="kr">end</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 将方法导出</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">_M</span> <span class="o">=</span> <span class="p">{</span>  
+</span></span><span class="line"><span class="cl">    <span class="n">read_http</span> <span class="o">=</span> <span class="n">read_http</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">read_redis</span> <span class="o">=</span> <span class="n">read_redis</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>  
+</span></span><span class="line"><span class="cl"><span class="kr">return</span> <span class="n">_M</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="462实现redis查询">4.6.2.实现Redis查询</h3>
+<p>接下来，我们就可以去修改item.lua文件，实现对Redis的查询了。</p>
+<p>查询逻辑是：</p>
+<ul>
+<li>根据id查询Redis</li>
+<li>如果查询失败则继续查询Tomcat</li>
+<li>将查询结果返回</li>
+</ul>
+<p>1）修改<code>/usr/local/openresty/lua/item.lua</code>文件，添加一个查询函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 导入common函数库</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">common</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;common&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">read_http</span> <span class="o">=</span> <span class="n">common.read_http</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">read_redis</span> <span class="o">=</span> <span class="n">common.read_redis</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 封装查询函数</span>
+</span></span><span class="line"><span class="cl"><span class="kr">function</span> <span class="nf">read_data</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 查询本地缓存</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">local</span> <span class="n">val</span> <span class="o">=</span> <span class="n">read_redis</span><span class="p">(</span><span class="s2">&#34;127.0.0.1&#34;</span><span class="p">,</span> <span class="mi">6379</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 判断查询结果</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">if</span> <span class="ow">not</span> <span class="n">val</span> <span class="kr">then</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ngx.log</span><span class="p">(</span><span class="n">ngx.ERR</span><span class="p">,</span> <span class="s2">&#34;redis查询失败，尝试查询http， key: &#34;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">-- redis查询失败，去查询http</span>
+</span></span><span class="line"><span class="cl">        <span class="n">val</span> <span class="o">=</span> <span class="n">read_http</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">end</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 返回数据</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">return</span> <span class="n">val</span>
+</span></span><span class="line"><span class="cl"><span class="kr">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>2）而后修改商品查询、库存查询的业务：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821114528954.png" alt="image-20210821114528954"></p>
+<p>3）完整的item.lua代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 导入common函数库</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">common</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;common&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">read_http</span> <span class="o">=</span> <span class="n">common.read_http</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">read_redis</span> <span class="o">=</span> <span class="n">common.read_redis</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 导入cjson库</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">cjson</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;cjson&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- 封装查询函数</span>
+</span></span><span class="line"><span class="cl"><span class="kr">function</span> <span class="nf">read_data</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 查询本地缓存</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">local</span> <span class="n">val</span> <span class="o">=</span> <span class="n">read_redis</span><span class="p">(</span><span class="s2">&#34;127.0.0.1&#34;</span><span class="p">,</span> <span class="mi">6379</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 判断查询结果</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">if</span> <span class="ow">not</span> <span class="n">val</span> <span class="kr">then</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ngx.log</span><span class="p">(</span><span class="n">ngx.ERR</span><span class="p">,</span> <span class="s2">&#34;redis查询失败，尝试查询http， key: &#34;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">-- redis查询失败，去查询http</span>
+</span></span><span class="line"><span class="cl">        <span class="n">val</span> <span class="o">=</span> <span class="n">read_http</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">end</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 返回数据</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">return</span> <span class="n">val</span>
+</span></span><span class="line"><span class="cl"><span class="kr">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- 获取路径参数</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">id</span> <span class="o">=</span> <span class="n">ngx.var</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- 查询商品信息</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">itemJSON</span> <span class="o">=</span> <span class="n">read_data</span><span class="p">(</span><span class="s2">&#34;item🆔&#34;</span> <span class="o">..</span> <span class="n">id</span><span class="p">,</span>  <span class="s2">&#34;/item/&#34;</span> <span class="o">..</span> <span class="n">id</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 查询库存信息</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">stockJSON</span> <span class="o">=</span> <span class="n">read_data</span><span class="p">(</span><span class="s2">&#34;item:stock:id:&#34;</span> <span class="o">..</span> <span class="n">id</span><span class="p">,</span> <span class="s2">&#34;/item/stock/&#34;</span> <span class="o">..</span> <span class="n">id</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- JSON转化为lua的table</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">item</span> <span class="o">=</span> <span class="n">cjson.decode</span><span class="p">(</span><span class="n">itemJSON</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">stock</span> <span class="o">=</span> <span class="n">cjson.decode</span><span class="p">(</span><span class="n">stockJSON</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 组合数据</span>
+</span></span><span class="line"><span class="cl"><span class="n">item.stock</span> <span class="o">=</span> <span class="n">stock.stock</span>
+</span></span><span class="line"><span class="cl"><span class="n">item.sold</span> <span class="o">=</span> <span class="n">stock.sold</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- 把item序列化为json 返回结果</span>
+</span></span><span class="line"><span class="cl"><span class="n">ngx.say</span><span class="p">(</span><span class="n">cjson.encode</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="47nginx本地缓存">4.7.Nginx本地缓存</h2>
+<p>现在，整个多级缓存中只差最后一环，也就是nginx的本地缓存了。如图：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821114742950.png" alt="image-20210821114742950"></p>
+<h3 id="471本地缓存api">4.7.1.本地缓存API</h3>
+<p>OpenResty为Nginx提供了<strong>shard dict</strong>的功能，可以在nginx的多个worker之间共享数据，实现缓存功能。</p>
+<p>1）开启共享字典，在nginx.conf的http下添加配置：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-nginx" data-lang="nginx"><span class="line"><span class="cl"> <span class="c1"># 共享字典，也就是本地缓存，名称叫做：item_cache，大小150m
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span> <span class="k">lua_shared_dict</span> <span class="s">item_cache</span> <span class="mi">150m</span><span class="p">;</span> 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>2）操作共享字典：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 获取本地缓存对象</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">item_cache</span> <span class="o">=</span> <span class="n">ngx.shared</span><span class="p">.</span><span class="n">item_cache</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 存储, 指定key、value、过期时间，单位s，默认为0代表永不过期</span>
+</span></span><span class="line"><span class="cl"><span class="n">item_cache</span><span class="p">:</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 读取</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">val</span> <span class="o">=</span> <span class="n">item_cache</span><span class="p">:</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="472实现本地缓存查询">4.7.2.实现本地缓存查询</h3>
+<p>1）修改<code>/usr/local/openresty/lua/item.lua</code>文件，修改read_data查询函数，添加本地缓存逻辑：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 导入共享词典，本地缓存</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">item_cache</span> <span class="o">=</span> <span class="n">ngx.shared</span><span class="p">.</span><span class="n">item_cache</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- 封装查询函数</span>
+</span></span><span class="line"><span class="cl"><span class="kr">function</span> <span class="nf">read_data</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">expire</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 查询本地缓存</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">local</span> <span class="n">val</span> <span class="o">=</span> <span class="n">item_cache</span><span class="p">:</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">if</span> <span class="ow">not</span> <span class="n">val</span> <span class="kr">then</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ngx.log</span><span class="p">(</span><span class="n">ngx.ERR</span><span class="p">,</span> <span class="s2">&#34;本地缓存查询失败，尝试查询Redis， key: &#34;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">-- 查询redis</span>
+</span></span><span class="line"><span class="cl">        <span class="n">val</span> <span class="o">=</span> <span class="n">read_redis</span><span class="p">(</span><span class="s2">&#34;127.0.0.1&#34;</span><span class="p">,</span> <span class="mi">6379</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">-- 判断查询结果</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">if</span> <span class="ow">not</span> <span class="n">val</span> <span class="kr">then</span>
+</span></span><span class="line"><span class="cl">            <span class="n">ngx.log</span><span class="p">(</span><span class="n">ngx.ERR</span><span class="p">,</span> <span class="s2">&#34;redis查询失败，尝试查询http， key: &#34;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">-- redis查询失败，去查询http</span>
+</span></span><span class="line"><span class="cl">            <span class="n">val</span> <span class="o">=</span> <span class="n">read_http</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">end</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">end</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 查询成功，把数据写入本地缓存</span>
+</span></span><span class="line"><span class="cl">    <span class="n">item_cache</span><span class="p">:</span><span class="n">set</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">expire</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 返回数据</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">return</span> <span class="n">val</span>
+</span></span><span class="line"><span class="cl"><span class="kr">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>2）修改item.lua中查询商品和库存的业务，实现最新的read_data函数：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821115108528.png" alt="image-20210821115108528"></p>
+<p>其实就是多了缓存时间参数，过期后nginx缓存会自动删除，下次访问即可更新缓存。</p>
+<p>这里给商品基本信息设置超时时间为30分钟，库存为1分钟。</p>
+<p>因为库存更新频率较高，如果缓存时间过长，可能与数据库差异较大。</p>
+<p>3）完整的item.lua文件：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="line"><span class="cl"><span class="c1">-- 导入common函数库</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">common</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;common&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">read_http</span> <span class="o">=</span> <span class="n">common.read_http</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">read_redis</span> <span class="o">=</span> <span class="n">common.read_redis</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 导入cjson库</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">cjson</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;cjson&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 导入共享词典，本地缓存</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">item_cache</span> <span class="o">=</span> <span class="n">ngx.shared</span><span class="p">.</span><span class="n">item_cache</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- 封装查询函数</span>
+</span></span><span class="line"><span class="cl"><span class="kr">function</span> <span class="nf">read_data</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">expire</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 查询本地缓存</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">local</span> <span class="n">val</span> <span class="o">=</span> <span class="n">item_cache</span><span class="p">:</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">if</span> <span class="ow">not</span> <span class="n">val</span> <span class="kr">then</span>
+</span></span><span class="line"><span class="cl">        <span class="n">ngx.log</span><span class="p">(</span><span class="n">ngx.ERR</span><span class="p">,</span> <span class="s2">&#34;本地缓存查询失败，尝试查询Redis， key: &#34;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">-- 查询redis</span>
+</span></span><span class="line"><span class="cl">        <span class="n">val</span> <span class="o">=</span> <span class="n">read_redis</span><span class="p">(</span><span class="s2">&#34;127.0.0.1&#34;</span><span class="p">,</span> <span class="mi">6379</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">-- 判断查询结果</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">if</span> <span class="ow">not</span> <span class="n">val</span> <span class="kr">then</span>
+</span></span><span class="line"><span class="cl">            <span class="n">ngx.log</span><span class="p">(</span><span class="n">ngx.ERR</span><span class="p">,</span> <span class="s2">&#34;redis查询失败，尝试查询http， key: &#34;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">-- redis查询失败，去查询http</span>
+</span></span><span class="line"><span class="cl">            <span class="n">val</span> <span class="o">=</span> <span class="n">read_http</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">end</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">end</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 查询成功，把数据写入本地缓存</span>
+</span></span><span class="line"><span class="cl">    <span class="n">item_cache</span><span class="p">:</span><span class="n">set</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">expire</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">-- 返回数据</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">return</span> <span class="n">val</span>
+</span></span><span class="line"><span class="cl"><span class="kr">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- 获取路径参数</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">id</span> <span class="o">=</span> <span class="n">ngx.var</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- 查询商品信息</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">itemJSON</span> <span class="o">=</span> <span class="n">read_data</span><span class="p">(</span><span class="s2">&#34;item🆔&#34;</span> <span class="o">..</span> <span class="n">id</span><span class="p">,</span> <span class="mi">1800</span><span class="p">,</span>  <span class="s2">&#34;/item/&#34;</span> <span class="o">..</span> <span class="n">id</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 查询库存信息</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">stockJSON</span> <span class="o">=</span> <span class="n">read_data</span><span class="p">(</span><span class="s2">&#34;item:stock:id:&#34;</span> <span class="o">..</span> <span class="n">id</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">&#34;/item/stock/&#34;</span> <span class="o">..</span> <span class="n">id</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- JSON转化为lua的table</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">item</span> <span class="o">=</span> <span class="n">cjson.decode</span><span class="p">(</span><span class="n">itemJSON</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">local</span> <span class="n">stock</span> <span class="o">=</span> <span class="n">cjson.decode</span><span class="p">(</span><span class="n">stockJSON</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">-- 组合数据</span>
+</span></span><span class="line"><span class="cl"><span class="n">item.stock</span> <span class="o">=</span> <span class="n">stock.stock</span>
+</span></span><span class="line"><span class="cl"><span class="n">item.sold</span> <span class="o">=</span> <span class="n">stock.sold</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">-- 把item序列化为json 返回结果</span>
+</span></span><span class="line"><span class="cl"><span class="n">ngx.say</span><span class="p">(</span><span class="n">cjson.encode</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="5缓存同步">5.缓存同步</h1>
+<p>大多数情况下，浏览器查询到的都是缓存数据，如果缓存数据与数据库数据存在较大差异，可能会产生比较严重的后果。</p>
+<p>所以我们必须保证数据库数据、缓存数据的一致性，这就是缓存与数据库的同步。</p>
+<h2 id="51数据同步策略">5.1.数据同步策略</h2>
+<p>缓存数据同步的常见方式有三种：</p>
+<p><strong>设置有效期</strong>：给缓存设置有效期，到期后自动删除。再次查询时更新</p>
+<ul>
+<li>优势：简单、方便</li>
+<li>缺点：时效性差，缓存过期之前可能不一致</li>
+<li>场景：更新频率较低，时效性要求低的业务</li>
+</ul>
+<p><strong>同步双写</strong>：在修改数据库的同时，直接修改缓存</p>
+<ul>
+<li>优势：时效性强，缓存与数据库强一致</li>
+<li>缺点：有代码侵入，耦合度高</li>
+<li>场景：对一致性、时效性要求较高的缓存数据</li>
+</ul>
+<p>**异步通知：**修改数据库时发送事件通知，相关服务监听到通知后修改缓存数据</p>
+<ul>
+<li>优势：低耦合，可以同时通知多个缓存服务</li>
+<li>缺点：时效性一般，可能存在中间不一致状态</li>
+<li>场景：时效性要求一般，有多个服务需要同步</li>
+</ul>
+<p>而异步实现又可以基于MQ或者Canal来实现：</p>
+<p>1）基于MQ的异步通知：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821115552327.png" alt="image-20210821115552327"></p>
+<p>解读：</p>
+<ul>
+<li>商品服务完成对数据的修改后，只需要发送一条消息到MQ中。</li>
+<li>缓存服务监听MQ消息，然后完成对缓存的更新</li>
+</ul>
+<p>依然有少量的代码侵入</p>
+<p>2）基于Canal的通知</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821115719363.png" alt="image-20210821115719363"></p>
+<p>解读：</p>
+<ul>
+<li>商品服务完成商品修改后，业务直接结束，没有任何代码侵入</li>
+<li>Canal监听MySQL变化，当发现变化后，立即通知缓存服务</li>
+<li>缓存服务接收到canal通知，更新缓存</li>
+</ul>
+<p>代码零侵入</p>
+<h2 id="52安装canal">5.2.安装Canal</h2>
+<h3 id="521认识canal">5.2.1.认识Canal</h3>
+<p><strong>Canal [kə&rsquo;næl]</strong>，译意为水道/管道/沟渠，canal是阿里巴巴旗下的一款开源项目，基于Java开发。基于数据库增量日志解析，提供增量数据订阅&amp;消费。GitHub的地址：https://github.com/alibaba/canal</p>
+<p>Canal是基于mysql的主从同步来实现的，MySQL主从同步的原理如下：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821115914748.png" alt="image-20210821115914748"></p>
+<ol>
+<li>MySQL master 将数据变更写入二进制日志( binary log），其中记录的数据叫做binary log events</li>
+<li>MySQL slave 将 master 的 binary log events拷贝到它的中继日志(relay log)</li>
+<li>MySQL slave 重放 relay log 中事件，将数据变更反映它自己的数据</li>
+</ol>
+<p>而Canal就是把自己伪装成MySQL的一个slave节点，从而监听master的binary log变化。再把得到的变化信息通知给Canal的客户端，进而完成对其它数据库的同步。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821115948395.png" alt="image-20210821115948395"></p>
+<h3 id="522安装canal">5.2.2.安装Canal</h3>
+<h2 id="53监听canal">5.3.监听Canal</h2>
+<p>Canal提供了各种语言的客户端，当Canal监听到binlog变化时，会通知Canal的客户端。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20210821120049024.png" alt="image-20210821120049024"></p>
+<p>我们可以利用Canal提供的Java客户端，监听Canal通知消息。当收到变化的消息时，完成对缓存的更新。</p>
+<p>不过这里我们会使用GitHub上的第三方开源的canal-starter客户端。地址：https://github.com/NormanGyllenhaal/canal-client</p>
+<p>与SpringBoot完美整合，自动装配，比官方客户端要简单好用很多。</p>
+<h3 id="531引入依赖">5.3.1.引入依赖：</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>top.javatool<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>canal-spring-boot-starter<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;version&gt;</span>1.2.1-RELEASE<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="532编写配置">5.3.2.编写配置：</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">canal</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span><span class="l">heima</span><span class="w"> </span><span class="c"># canal的集群名字，要与安装canal时设置的名称一致</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">server</span><span class="p">:</span><span class="w"> </span><span class="m">192.168.150.101</span><span class="p">:</span><span class="m">11111</span><span class="w"> </span><span class="c"># canal服务地址</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="533修改item实体类">5.3.3.修改Item实体类</h3>
+<p>通过@Id、@Column、等注解完成Item与数据库表字段的映射：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nn">com.heima.item.pojo</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.baomidou.mybatisplus.annotation.IdType</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.baomidou.mybatisplus.annotation.TableField</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.baomidou.mybatisplus.annotation.TableId</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.baomidou.mybatisplus.annotation.TableName</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">lombok.Data</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.data.annotation.Id</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.data.annotation.Transient</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">javax.persistence.Column</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.util.Date</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@Data</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@TableName</span><span class="o">(</span><span class="s">&#34;tb_item&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Item</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@TableId</span><span class="o">(</span><span class="n">type</span> <span class="o">=</span> <span class="n">IdType</span><span class="o">.</span><span class="na">AUTO</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@Id</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">Long</span> <span class="n">id</span><span class="o">;</span><span class="c1">//商品id
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nd">@Column</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&#34;name&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span><span class="c1">//商品名称
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">String</span> <span class="n">title</span><span class="o">;</span><span class="c1">//商品标题
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">Long</span> <span class="n">price</span><span class="o">;</span><span class="c1">//价格（分）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">String</span> <span class="n">image</span><span class="o">;</span><span class="c1">//商品图片
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">String</span> <span class="n">category</span><span class="o">;</span><span class="c1">//分类名称
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">String</span> <span class="n">brand</span><span class="o">;</span><span class="c1">//品牌名称
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">String</span> <span class="n">spec</span><span class="o">;</span><span class="c1">//规格
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">Integer</span> <span class="n">status</span><span class="o">;</span><span class="c1">//商品状态 1-正常，2-下架
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">Date</span> <span class="n">createTime</span><span class="o">;</span><span class="c1">//创建时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kd">private</span> <span class="n">Date</span> <span class="n">updateTime</span><span class="o">;</span><span class="c1">//更新时间
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nd">@TableField</span><span class="o">(</span><span class="n">exist</span> <span class="o">=</span> <span class="kc">false</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@Transient</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">Integer</span> <span class="n">stock</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@TableField</span><span class="o">(</span><span class="n">exist</span> <span class="o">=</span> <span class="kc">false</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@Transient</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">Integer</span> <span class="n">sold</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="534编写监听器">5.3.4.编写监听器</h3>
+<p>通过实现<code>EntryHandler&lt;T&gt;</code>接口编写监听器，监听Canal消息。注意两点：</p>
+<ul>
+<li>实现类通过<code>@CanalTable(&quot;tb_item&quot;)</code>指定监听的表信息</li>
+<li>EntryHandler的泛型是与表对应的实体类</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nn">com.heima.item.canal</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.github.benmanes.caffeine.cache.Cache</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.heima.item.config.RedisHandler</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.heima.item.pojo.Item</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Autowired</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.stereotype.Component</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">top.javatool.canal.client.annotation.CanalTable</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">top.javatool.canal.client.handler.EntryHandler</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@CanalTable</span><span class="o">(</span><span class="s">&#34;tb_item&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@Component</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ItemHandler</span> <span class="kd">implements</span> <span class="n">EntryHandler</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">RedisHandler</span> <span class="n">redisHandler</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">Cache</span><span class="o">&lt;</span><span class="n">Long</span><span class="o">,</span> <span class="n">Item</span><span class="o">&gt;</span> <span class="n">itemCache</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">insert</span><span class="o">(</span><span class="n">Item</span> <span class="n">item</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 写数据到JVM进程缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">itemCache</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">item</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="n">item</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 写数据到redis
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">redisHandler</span><span class="o">.</span><span class="na">saveItem</span><span class="o">(</span><span class="n">item</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">update</span><span class="o">(</span><span class="n">Item</span> <span class="n">before</span><span class="o">,</span> <span class="n">Item</span> <span class="n">after</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 写数据到JVM进程缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">itemCache</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">after</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="n">after</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 写数据到redis
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">redisHandler</span><span class="o">.</span><span class="na">saveItem</span><span class="o">(</span><span class="n">after</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">delete</span><span class="o">(</span><span class="n">Item</span> <span class="n">item</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 删除数据到JVM进程缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">itemCache</span><span class="o">.</span><span class="na">invalidate</span><span class="o">(</span><span class="n">item</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 删除数据到redis
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">redisHandler</span><span class="o">.</span><span class="na">deleteItemById</span><span class="o">(</span><span class="n">item</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在这里对Redis的操作都封装到了RedisHandler这个对象中，是我们之前做缓存预热时编写的一个类，内容如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nn">com.heima.item.config</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.fasterxml.jackson.core.JsonProcessingException</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.fasterxml.jackson.databind.ObjectMapper</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.heima.item.pojo.Item</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.heima.item.pojo.ItemStock</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.heima.item.service.IItemService</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">com.heima.item.service.IItemStockService</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.beans.factory.InitializingBean</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Autowired</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.data.redis.core.StringRedisTemplate</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">org.springframework.stereotype.Component</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@Component</span>
+</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RedisHandler</span> <span class="kd">implements</span> <span class="n">InitializingBean</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">StringRedisTemplate</span> <span class="n">redisTemplate</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">IItemService</span> <span class="n">itemService</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nd">@Autowired</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="n">IItemStockService</span> <span class="n">stockService</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">ObjectMapper</span> <span class="n">MAPPER</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ObjectMapper</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">afterPropertiesSet</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 初始化缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// 1.查询商品信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span> <span class="n">itemList</span> <span class="o">=</span> <span class="n">itemService</span><span class="o">.</span><span class="na">list</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 2.放入缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">Item</span> <span class="n">item</span> <span class="o">:</span> <span class="n">itemList</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 2.1.item序列化为JSON
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">String</span> <span class="n">json</span> <span class="o">=</span> <span class="n">MAPPER</span><span class="o">.</span><span class="na">writeValueAsString</span><span class="o">(</span><span class="n">item</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 2.2.存入redis
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">redisTemplate</span><span class="o">.</span><span class="na">opsForValue</span><span class="o">().</span><span class="na">set</span><span class="o">(</span><span class="s">&#34;item🆔&#34;</span> <span class="o">+</span> <span class="n">item</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="n">json</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 3.查询商品库存信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">List</span><span class="o">&lt;</span><span class="n">ItemStock</span><span class="o">&gt;</span> <span class="n">stockList</span> <span class="o">=</span> <span class="n">stockService</span><span class="o">.</span><span class="na">list</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 4.放入缓存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">for</span> <span class="o">(</span><span class="n">ItemStock</span> <span class="n">stock</span> <span class="o">:</span> <span class="n">stockList</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 2.1.item序列化为JSON
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">String</span> <span class="n">json</span> <span class="o">=</span> <span class="n">MAPPER</span><span class="o">.</span><span class="na">writeValueAsString</span><span class="o">(</span><span class="n">stock</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 2.2.存入redis
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">redisTemplate</span><span class="o">.</span><span class="na">opsForValue</span><span class="o">().</span><span class="na">set</span><span class="o">(</span><span class="s">&#34;item:stock:id:&#34;</span> <span class="o">+</span> <span class="n">stock</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="n">json</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">saveItem</span><span class="o">(</span><span class="n">Item</span> <span class="n">item</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">String</span> <span class="n">json</span> <span class="o">=</span> <span class="n">MAPPER</span><span class="o">.</span><span class="na">writeValueAsString</span><span class="o">(</span><span class="n">item</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">redisTemplate</span><span class="o">.</span><span class="na">opsForValue</span><span class="o">().</span><span class="na">set</span><span class="o">(</span><span class="s">&#34;item🆔&#34;</span> <span class="o">+</span> <span class="n">item</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="n">json</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">JsonProcessingException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">throw</span> <span class="k">new</span> <span class="n">RuntimeException</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">deleteItemById</span><span class="o">(</span><span class="n">Long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">redisTemplate</span><span class="o">.</span><span class="na">delete</span><span class="o">(</span><span class="s">&#34;item🆔&#34;</span> <span class="o">+</span> <span class="n">id</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-01-24
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/lua%E8%84%9A%E6%9C%AC/">lua脚本</a>
+          <a href="/tags/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/">多级缓存</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%86%85%E4%B8%AD%E6%96%AD/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">汇编之内中断</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A0%87%E5%BF%97%E5%AF%84%E5%AD%98%E5%99%A8/">
+            <span class="next-text nav-default">汇编之标志寄存器</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-01-24 16:08:44 \u002b0800 CST',
+        title: 'Redis高级篇之多级缓存',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

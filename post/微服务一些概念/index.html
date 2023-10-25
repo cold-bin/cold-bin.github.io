@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>微服务一些概念 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="微服务概念 微服务的粒度小，服务之间耦合度低，由于每个微服务都由独立的小团队负责，因此它敏捷性更高，分布式服务最后都会向微服务架构演化，这是一" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="微服务一些概念" />
+<meta property="og:description" content="微服务概念 微服务的粒度小，服务之间耦合度低，由于每个微服务都由独立的小团队负责，因此它敏捷性更高，分布式服务最后都会向微服务架构演化，这是一" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-08-19T10:13:32+08:00" />
+<meta property="article:modified_time" content="2022-08-19T10:13:32+08:00" />
+<meta itemprop="name" content="微服务一些概念">
+<meta itemprop="description" content="微服务概念 微服务的粒度小，服务之间耦合度低，由于每个微服务都由独立的小团队负责，因此它敏捷性更高，分布式服务最后都会向微服务架构演化，这是一"><meta itemprop="datePublished" content="2022-08-19T10:13:32+08:00" />
+<meta itemprop="dateModified" content="2022-08-19T10:13:32+08:00" />
+<meta itemprop="wordCount" content="2549">
+<meta itemprop="keywords" content="微服务," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="微服务一些概念"/>
+<meta name="twitter:description" content="微服务概念 微服务的粒度小，服务之间耦合度低，由于每个微服务都由独立的小团队负责，因此它敏捷性更高，分布式服务最后都会向微服务架构演化，这是一"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">微服务一些概念</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2022-08-19 </span>
+        <div class="post-category">
+            <a href="/categories/golang/"> golang </a>
+            <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/"> 分布式系统 </a>
+            </div>
+          <span class="more-meta"> 约 2549 字 </span>
+          <span class="more-meta"> 预计阅读 6 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#微服务概念">微服务概念</a>
+          <ul>
+            <li><a href="#快速开发与迭代">快速开发与迭代</a></li>
+            <li><a href="#自动化部署">自动化部署</a></li>
+            <li><a href="#独立部署">独立部署</a></li>
+            <li><a href="#错误隔离">错误隔离</a></li>
+            <li><a href="#负载均衡">负载均衡</a></li>
+            <li><a href="#出错处理">出错处理</a></li>
+            <li><a href="#链路追踪">链路追踪</a></li>
+            <li><a href="#服务发现">服务发现</a></li>
+            <li><a href="#动态扩容">动态扩容</a></li>
+            <li><a href="#熔断降级">熔断、降级</a></li>
+            <li><a href="#ddd领域驱动设计">DDD领域驱动设计</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h2 id="微服务概念">微服务概念</h2>
+<p>微服务的粒度小，服务之间耦合度低，由于每个微服务都由独立的小团队负责，因此它敏捷性更高，分布式服务最后都会向微服务架构演化，这是一种趋势， 不过服务微服务化后带来的挑战也是显而易见的，例如服务粒度小，数量大，后期运维将会比较困难。所以又有<strong>容器+微服务</strong>的出现。</p>
+<p>这里就不细说容器与微服务了，着重理清微服务的一些概念、好处。</p>
+<h3 id="快速开发与迭代">快速开发与迭代</h3>
+<p>微服务，顾名思义，就是微小的一个服务。与传统单机架构不同，微服务的功能比较单一，<strong>专做一件事情</strong>，而单机架构需要把所有事情全部完成，可想而知，如果单机架构的应用出现了问题，那么整个项目都会下线，然后不断排查并检修，这个过程明显影响了用户体验，不应该只是因为单机架构的某一个小部分出了问题就需要停掉整个应用。因此，为了解决这个问题，微服务应运而生。微服务将原来的单机架构应用进行拆分，拆分成多个粒度更小的微服务，进行分别开发并部署，服务之间显然是RPC调用。这样做，就不会因为某种小原因而把整个应用都停掉，哪个服务出了问题，只需要将哪个服务停掉就行了。另外，进行服务拆分时，不同的服务还可以是不同编程语言进行开发，这样可以更具灵活性。</p>
+<h3 id="自动化部署">自动化部署</h3>
+<p>自动化部署的目标就是<strong>持续交付</strong>，对于微服务来说，多个服务的自动化是必不可少的。通过自动化编译，自动化测试，自动化集成和自动化部署，可以大大的减轻开发团队和运维团队的任务，提升开发效率。</p>
+<h3 id="独立部署">独立部署</h3>
+<p>原来的单机架构只能一次性部署，而多个微服务基本上都是单独部署在不同的主机上。这样做可以减少粒度，哪个服务更新就只需要部署对应的服务即可，而不必更新所有微服务。</p>
+<h3 id="错误隔离">错误隔离</h3>
+<p>在传统单机架构下一旦应用发生故障，整个服务的可用性都会受到影响，因为所有的模块都耦合在一个大的单体进程里，这个进程的所有程序都共享进程内的资源。所以，发生故障、错误的位置很难确定，应用也很难从故障种恢复过来。所以，我们需要将单体应用拆分成功能独立、相互隔离的微服务应用，这些微服务通过定义良好的协议进行通信。这样互相隔离的微服务之间，错误、故障也被隔离起来。</p>
+<h3 id="负载均衡">负载均衡</h3>
+<p>可以将相同的服务部署到多台主机上，实现负载均衡</p>
+<h3 id="出错处理">出错处理</h3>
+<p>在传统单机架构的应用里，调用函数时，错误只会是自己内部的错误，包括入参错误、自身设计的一些缺陷等。但是在微服务里，就显得不同了。一个微服务需要使用到另一个微服务时，中间需要RPC调用，这样出错的原因不仅是入参、自身的设计缺陷，还可能是网络延时、另一个微服务挂掉等情况。</p>
+<h3 id="链路追踪">链路追踪</h3>
+<p>在大型系统的微服务化构建中，一个系统被拆分成了许多模块。这些模块负责不同的功能，组合成系统，最终可以提供丰富的功能。在这种架构中，一次请求往往需要涉及到多个服务。互联网应用构建在不同的软件模块集上，这些软件模块，有可能是由不同的团队开发、可能使用不同的编程语言来实现、有可能布在了几千台服务器，横跨多个不同的数据中心。</p>
+<p>微服务架构是通过业务来划分服务的，使用 REST 调用。对外暴露的一个接口，可能需要很多个服务协同才能完成这个接口功能，如果链路上任何一个服务出现问题或者网络超时，都会形成导致接口调用失败。随着业务的不断扩张，服务之间互相调用会越来越复杂。</p>
+<p>所以，为了更好地掌握一次请求到底经历了哪些服务，需要进行<strong>链路追踪</strong></p>
+<h3 id="服务发现">服务发现</h3>
+<p>现代网络程序中主要分为前端和后端两部分，当前端的程序访问后端的时候，必须要知道后端服务的网络地址（即IP地址或者端口号）。以前每一个服务都被固定的部署到某一台机器上，所以说每个服务的端口号和IP地址都是固定的，可以通过配置文件进行修改。但是，在微服务体系中，由于服务的实例有可能发送失败重启、自动扩容、升级等情况，导致这些服务实例对应的网络地址是在动态变化的。如何精准、准确地使前端能够发现后端是一个难以解决的问题。</p>
+<p>在微服务体系结构中，所谓的服务发现就是用户可以通过服务的名字，在注册中心找到可以提供正常服务的实例的网络地址（即IP地址和端口号）。这种根据服务名字发现服务的可用地址的机制就叫做服务发现。</p>
+<p><strong>服务发现的过程</strong>：</p>
+<ol>
+<li>服务提供者将实例信息注册到<strong>服务注册中心</strong>。</li>
+<li>服务调用者根据服务标识，从注册中心查询服务，<strong>获取包含网络地址的服务实例列表</strong>。</li>
+<li>与服务实现通信。</li>
+</ol>
+<h3 id="动态扩容">动态扩容</h3>
+<p>某个时间段里，出现一个热点事件，导致某一个服务被频繁调用，那么为了应对这个大流量的需求，显然需要将这个服务动态扩容：在高负载的时候自动扩容，低负载的时候自动缩容。</p>
+<h3 id="熔断降级">熔断、降级</h3>
+<p>熔断主要针对具体某个接口出现问题时，对这个接口采用的临时方案，它站在接口或者服务的层面来考虑问题。防止因为某个接口出现问题，导致问题蔓延，直至整个系统不可用。例如：某个接口的提供方宕机，导致接口调用方频繁超时，调用方的上游受到影响，进而也会超时，最终整个链路都会变得超时，如果超时时间很长的话，会导致客户端系统资源浪费(一些池化的资源，长时间得不到释放)。此时可以在接口的调用方进行对该接口的熔断，具体做法，可以直接返回一个默认值，防止频繁的调用超时。同时通过不断的对该接口进行可用性探测，当检测到该接口可用时，对熔断逻辑进行撤销</p>
+<p>降级是系统应对突发流量的解决方案，它站在系统层面来考虑问题，目的是为了保证整个系统的可用性。因为受系统自身资源的限制，可以处理的流量是是有限的，不能对突发流量进行完全处理，那么此时就应该对流量进行有选择的处理，让系统只处理优先级高的流量，优先级低的流量不进行处理，直接返回默认值(或者其他处理策略)，也就是对部分低优先级流量进行舍弃，例如，双十一期间，很多电商网站的评论，收藏功能变得不可用，这里就是系统为了保证网站核心功能可用，对评论和收藏功能进行了降级，将系统资源用在核心业务上，正所谓&quot;好钢用在刀刃上&quot;。</p>
+<p>但是，这种方案为什么叫做&quot;降级&quot;呢？好像没有体现出&quot;降级&quot;的语义。其实降级，是站在整个系统维度来说的，举例来说：系统正常情况下，可以对外提供10个接口服务，在降级的情况下，只能对外提供5个接口服务，那么此时的系统，就是有&quot;瑕疵&quot;的系统，能够完整提供服务的系统，我们给系统打5星，现在系统中一部分功能不可用了，那么此时系统只能打3星，系统的&quot;级别&quot;有所下降了。</p>
+<h3 id="ddd领域驱动设计">DDD领域驱动设计</h3>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2022-08-19
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/rpc%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">RPC与微服务</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/golang%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E9%9B%86%E9%94%A6/">
+            <span class="next-text nav-default">Golang编程思想集锦</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2022-08-19 10:13:32 \u002b0800 CST',
+        title: '微服务一些概念',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

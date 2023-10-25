@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>colly框架 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/colly%E6%A1%86%E6%9E%B6/</link>
+    <description>Recent content in colly框架 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Mon, 09 Jan 2023 10:28:50 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/colly%E6%A1%86%E6%9E%B6/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go爬虫</title>
+      <link>https://cold-bin.github.io/post/go%E7%88%AC%E8%99%AB/</link>
+      <pubDate>Mon, 09 Jan 2023 10:28:50 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/go%E7%88%AC%E8%99%AB/</guid>
+      <description>Go爬虫 爬虫就是模拟客户端程序访问服务端某个url下的资源，再将资源进行部分提取（使用正则筛选html等），然后在存储至某端，或者放在某网页</description>
+    </item>
+    
+  </channel>
+</rss>

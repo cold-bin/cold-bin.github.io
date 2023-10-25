@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>八股系列|操作系统|文件系统 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="以下文章摘自小林coding 文件系统 不多 BB，直接上「硬菜」。 #文件系统的基本组成 文件系统是操作系统中负责管理持久数据的子系统，说简单点，就" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="八股系列|操作系统|文件系统" />
+<meta property="og:description" content="以下文章摘自小林coding 文件系统 不多 BB，直接上「硬菜」。 #文件系统的基本组成 文件系统是操作系统中负责管理持久数据的子系统，说简单点，就" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-08-23T21:35:11+08:00" />
+<meta property="article:modified_time" content="2023-08-23T21:35:11+08:00" />
+<meta itemprop="name" content="八股系列|操作系统|文件系统">
+<meta itemprop="description" content="以下文章摘自小林coding 文件系统 不多 BB，直接上「硬菜」。 #文件系统的基本组成 文件系统是操作系统中负责管理持久数据的子系统，说简单点，就"><meta itemprop="datePublished" content="2023-08-23T21:35:11+08:00" />
+<meta itemprop="dateModified" content="2023-08-23T21:35:11+08:00" />
+<meta itemprop="wordCount" content="10814">
+<meta itemprop="keywords" content="操作系统文件系统," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="八股系列|操作系统|文件系统"/>
+<meta name="twitter:description" content="以下文章摘自小林coding 文件系统 不多 BB，直接上「硬菜」。 #文件系统的基本组成 文件系统是操作系统中负责管理持久数据的子系统，说简单点，就"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">八股系列|操作系统|文件系统</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-08-23 </span>
+        <div class="post-category">
+            <a href="/categories/%E5%85%AB%E8%82%A1%E6%96%87/"> 八股文 </a>
+            <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"> 操作系统 </a>
+            </div>
+          <span class="more-meta"> 约 10814 字 </span>
+          <span class="more-meta"> 预计阅读 22 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#文件系统">文件系统</a>
+      <ul>
+        <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtml文件系统的基本组成文件系统的基本组成"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E6%88%90">#</a>文件系统的基本组成</a></li>
+        <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtml虚拟文件系统虚拟文件系统"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F">#</a>虚拟文件系统</a></li>
+        <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtml文件的使用文件的使用"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E6%96%87%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8">#</a>文件的使用</a></li>
+        <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtml文件的存储文件的存储"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E6%96%87%E4%BB%B6%E7%9A%84%E5%AD%98%E5%82%A8">#</a>文件的存储</a>
+          <ul>
+            <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtml连续空间存放方式连续空间存放方式"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F">#</a>连续空间存放方式</a></li>
+            <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtml非连续空间存放方式非连续空间存放方式"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E9%9D%9E%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F">#</a>非连续空间存放方式</a></li>
+            <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtmlunix-文件的实现方式unix-文件的实现方式"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#unix-%E6%96%87%E4%BB%B6%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F">#</a>Unix 文件的实现方式</a></li>
+          </ul>
+        </li>
+        <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtml空闲空间管理空闲空间管理"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E7%A9%BA%E9%97%B2%E7%A9%BA%E9%97%B4%E7%AE%A1%E7%90%86">#</a>空闲空间管理</a>
+          <ul>
+            <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtml空闲表法空闲表法"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E7%A9%BA%E9%97%B2%E8%A1%A8%E6%B3%95">#</a>空闲表法</a></li>
+            <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtml空闲链表法空闲链表法"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E7%A9%BA%E9%97%B2%E9%93%BE%E8%A1%A8%E6%B3%95">#</a>空闲链表法</a></li>
+            <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtml位图法位图法"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E4%BD%8D%E5%9B%BE%E6%B3%95">#</a>位图法</a></li>
+          </ul>
+        </li>
+        <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtml文件系统的结构文件系统的结构"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%BB%93%E6%9E%84">#</a>文件系统的结构</a></li>
+        <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtml目录的存储目录的存储"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E7%9B%AE%E5%BD%95%E7%9A%84%E5%AD%98%E5%82%A8">#</a>目录的存储</a></li>
+        <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtml软链接和硬链接软链接和硬链接"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E8%BD%AF%E9%93%BE%E6%8E%A5%E5%92%8C%E7%A1%AC%E9%93%BE%E6%8E%A5">#</a>软链接和硬链接</a></li>
+        <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtml文件-i-o文件-io"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E6%96%87%E4%BB%B6-i-o">#</a>文件 I/O</a>
+          <ul>
+            <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtml缓冲与非缓冲-i-o缓冲与非缓冲-io"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E7%BC%93%E5%86%B2%E4%B8%8E%E9%9D%9E%E7%BC%93%E5%86%B2-i-o">#</a>缓冲与非缓冲 I/O</a></li>
+            <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtml直接与非直接-i-o直接与非直接-io"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E7%9B%B4%E6%8E%A5%E4%B8%8E%E9%9D%9E%E7%9B%B4%E6%8E%A5-i-o">#</a>直接与非直接 I/O</a></li>
+            <li><a href="#httpsxiaolincodingcomos6_file_systemfile_systemhtml阻塞与非阻塞-i-o-vs-同步与异步-i-o阻塞与非阻塞-io-vs-同步与异步-io"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E9%98%BB%E5%A1%9E%E4%B8%8E%E9%9D%9E%E9%98%BB%E5%A1%9E-i-o-vs-%E5%90%8C%E6%AD%A5%E4%B8%8E%E5%BC%82%E6%AD%A5-i-o">#</a>阻塞与非阻塞 I/O VS 同步与异步 I/O</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <hr>
+<blockquote>
+<p>以下文章摘自<a href="">小林coding</a></p>
+</blockquote>
+<h1 id="文件系统">文件系统</h1>
+<p>不多 BB，直接上「硬菜」。</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-%E6%8F%90%E7%BA%B2.png" alt="img"></p>
+<hr>
+<h2 id="httpsxiaolincodingcomos6_file_systemfile_systemhtml文件系统的基本组成文件系统的基本组成"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%84%E6%88%90">#</a>文件系统的基本组成</h2>
+<p>文件系统是操作系统中负责管理持久数据的子系统，说简单点，就是负责把用户的文件存到磁盘硬件中，因为即使计算机断电了，磁盘里的数据并不会丢失，所以可以持久化的保存文件。</p>
+<p>文件系统的基本数据单位是文件，它的目的是对磁盘上的文件进行组织管理，那组织的方式不同，就会形成不同的文件系统。</p>
+<p>Linux 最经典的一句话是：「<strong>一切皆文件</strong>」，不仅普通的文件和目录，就连块设备、管道、socket 等，也都是统一交给文件系统管理的。</p>
+<p>Linux 文件系统会为每个文件分配两个数据结构：<strong>索引节点（*index node*）和目录项（*directory entry*）</strong>，它们主要用来记录文件的元信息和目录层次结构。</p>
+<ul>
+<li>索引节点，也就是 <em>inode</em>，用来记录文件的元信息，比如 inode 编号、文件大小、访问权限、创建时间、修改时间、<strong>数据在磁盘的位置</strong>等等。索引节点是文件的<strong>唯一</strong>标识，它们之间一一对应，也同样都会被存储在硬盘中，所以<strong>索引节点同样占用磁盘空间</strong>。</li>
+<li>目录项，也就是 <em>dentry</em>，用来记录文件的名字、<strong>索引节点指针</strong>以及与其他目录项的层级关联关系。多个目录项关联起来，就会形成目录结构，但它与索引节点不同的是，<strong>目录项是由内核维护的一个数据结构，不存放于磁盘，而是缓存在内存</strong>。</li>
+</ul>
+<p>由于索引节点唯一标识一个文件，而目录项记录着文件的名字，所以目录项和索引节点的关系是多对一，也就是说，一个文件可以有多个别名。比如，硬链接的实现就是多个目录项中的索引节点指向同一个文件。</p>
+<p>注意，目录也是文件，也是用索引节点唯一标识，和普通文件不同的是，普通文件在磁盘里面保存的是文件数据，而目录文件在磁盘里面保存子目录或文件。</p>
+<blockquote>
+<p>目录项和目录是一个东西吗？</p>
+</blockquote>
+<p>虽然名字很相近，但是它们不是一个东西，目录是个文件，持久化存储在磁盘，而目录项是内核一个数据结构，缓存在内存。</p>
+<p>如果查询目录频繁从磁盘读，效率会很低，所以内核会把已经读过的目录用目录项这个数据结构缓存在内存，下次再次读到相同的目录时，只需从内存读就可以，大大提高了文件系统的效率。</p>
+<p>注意，目录项这个数据结构不只是表示目录，也是可以表示文件的。</p>
+<blockquote>
+<p>那文件数据是如何存储在磁盘的呢？</p>
+</blockquote>
+<p>磁盘读写的最小单位是<strong>扇区</strong>，扇区的大小只有 <code>512B</code> 大小，很明显，如果每次读写都以这么小为单位，那这读写的效率会非常低。</p>
+<p>所以，文件系统把多个扇区组成了一个<strong>逻辑块</strong>，每次读写的最小单位就是逻辑块（数据块），Linux 中的逻辑块大小为 <code>4KB</code>，也就是一次性读写 8 个扇区，这将大大提高了磁盘的读写的效率。</p>
+<p>以上就是索引节点、目录项以及文件数据的关系，下面这个图就很好的展示了它们之间的关系：</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E7%9B%AE%E5%BD%95%E9%A1%B9%E5%92%8C%E7%B4%A2%E5%BC%95%E5%85%B3%E7%B3%BB%E5%9B%BE.png" alt="img"></p>
+<p>索引节点是存储在硬盘上的数据，那么为了加速文件的访问，通常会把索引节点加载到内存中。</p>
+<p>另外，磁盘进行格式化的时候，会被分成三个存储区域，分别是超级块、索引节点区和数据块区。</p>
+<ul>
+<li><em>超级块</em>，用来存储文件系统的详细信息，比如块个数、块大小、空闲块等等。</li>
+<li><em>索引节点区</em>，用来存储索引节点；</li>
+<li><em>数据块区</em>，用来存储文件或目录数据；</li>
+</ul>
+<p>我们不可能把超级块和索引节点区全部加载到内存，这样内存肯定撑不住，所以只有当需要使用的时候，才将其加载进内存，它们加载进内存的时机是不同的：</p>
+<ul>
+<li>超级块：当文件系统挂载时进入内存；</li>
+<li>索引节点区：当文件被访问时进入内存；</li>
+</ul>
+<hr>
+<h2 id="httpsxiaolincodingcomos6_file_systemfile_systemhtml虚拟文件系统虚拟文件系统"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F">#</a>虚拟文件系统</h2>
+<p>文件系统的种类众多，而操作系统希望<strong>对用户提供一个统一的接口</strong>，于是在用户层与文件系统层引入了中间层，这个中间层就称为<strong>虚拟文件系统（*Virtual File System，VFS*）。</strong></p>
+<p>VFS 定义了一组所有文件系统都支持的数据结构和标准接口，这样程序员不需要了解文件系统的工作原理，只需要了解 VFS 提供的统一接口即可。</p>
+<p>在 Linux 文件系统中，用户空间、系统调用、虚拟文件系统、缓存、文件系统以及存储之间的关系如下图：</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E8%99%9A%E6%8B%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F.png" alt="img"></p>
+<p>Linux 支持的文件系统也不少，根据存储位置的不同，可以把文件系统分为三类：</p>
+<ul>
+<li><em>磁盘的文件系统</em>，它是直接把数据存储在磁盘中，比如 Ext 2/3/4、XFS 等都是这类文件系统。</li>
+<li><em>内存的文件系统</em>，这类文件系统的数据不是存储在硬盘的，而是占用内存空间，我们经常用到的 <code>/proc</code> 和 <code>/sys</code> 文件系统都属于这一类，读写这类文件，实际上是读写内核中相关的数据。</li>
+<li><em>网络的文件系统</em>，用来访问其他计算机主机数据的文件系统，比如 NFS、SMB 等等。</li>
+</ul>
+<p>文件系统首先要先挂载到某个目录才可以正常使用，比如 Linux 系统在启动时，会把文件系统挂载到根目录。</p>
+<hr>
+<h2 id="httpsxiaolincodingcomos6_file_systemfile_systemhtml文件的使用文件的使用"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E6%96%87%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8">#</a>文件的使用</h2>
+<p>我们从用户角度来看文件的话，就是我们要怎么使用文件？首先，我们得通过系统调用来打开一个文件。</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E5%86%99%E5%88%B0%E7%A3%81%E7%9B%98%E8%BF%87%E7%A8%8B.png" alt="write 的过程"></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">fd</span> <span class="o">=</span> <span class="nf">open</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">flag</span><span class="p">);</span> <span class="err">#</span> <span class="err">打开文件</span>
+</span></span><span class="line"><span class="cl"><span class="p">...</span>
+</span></span><span class="line"><span class="cl"><span class="nf">write</span><span class="p">(</span><span class="n">fd</span><span class="p">,...);</span>         <span class="err">#</span> <span class="err">写数据</span>
+</span></span><span class="line"><span class="cl"><span class="p">...</span>
+</span></span><span class="line"><span class="cl"><span class="nf">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>             <span class="err">#</span> <span class="err">关闭文件</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面简单的代码是读取一个文件的过程：</p>
+<ul>
+<li>首先用 <code>open</code> 系统调用打开文件，<code>open</code> 的参数中包含文件的路径名和文件名。</li>
+<li>使用 <code>write</code> 写数据，其中 <code>write</code> 使用 <code>open</code> 所返回的<strong>文件描述符</strong>，并不使用文件名作为参数。</li>
+<li>使用完文件后，要用 <code>close</code> 系统调用关闭文件，避免资源的泄露。</li>
+</ul>
+<p>我们打开了一个文件后，操作系统会跟踪进程打开的所有文件，所谓的跟踪呢，就是操作系统为每个进程维护一个打开文件表，文件表里的每一项代表「<strong>文件描述符</strong>」，所以说文件描述符是打开文件的标识。</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E6%89%93%E5%BC%80%E8%A1%A8.png" alt="打开文件表"></p>
+<p>操作系统在打开文件表中维护着打开文件的状态和信息：</p>
+<ul>
+<li>文件指针：系统跟踪上次读写位置作为当前文件位置指针，这种指针对打开文件的某个进程来说是唯一的；</li>
+<li>文件打开计数器：文件关闭时，操作系统必须重用其打开文件表条目，否则表内空间不够用。因为多个进程可能打开同一个文件，所以系统在删除打开文件条目之前，必须等待最后一个进程关闭文件，该计数器跟踪打开和关闭的数量，当该计数为 0 时，系统关闭文件，删除该条目；</li>
+<li>文件磁盘位置：绝大多数文件操作都要求系统修改文件数据，该信息保存在内存中，以免每个操作都从磁盘中读取；</li>
+<li>访问权限：每个进程打开文件都需要有一个访问模式（创建、只读、读写、添加等），该信息保存在进程的打开文件表中，以便操作系统能允许或拒绝之后的 I/O 请求；</li>
+</ul>
+<p>在用户视角里，文件就是一个持久化的数据结构，但操作系统并不会关心你想存在磁盘上的任何的数据结构，操作系统的视角是如何把文件数据和磁盘块对应起来。</p>
+<p>所以，用户和操作系统对文件的读写操作是有差异的，用户习惯以字节的方式读写文件，而操作系统则是以数据块来读写文件，那屏蔽掉这种差异的工作就是文件系统了。</p>
+<p>我们来分别看一下，读文件和写文件的过程：</p>
+<ul>
+<li>当用户进程从文件读取 1 个字节大小的数据时，文件系统则需要获取字节所在的数据块，再返回数据块对应的用户进程所需的数据部分。</li>
+<li>当用户进程把 1 个字节大小的数据写进文件时，文件系统则找到需要写入数据的数据块的位置，然后修改数据块中对应的部分，最后再把数据块写回磁盘。</li>
+</ul>
+<p>所以说，<strong>文件系统的基本操作单位是数据块</strong>。</p>
+<hr>
+<h2 id="httpsxiaolincodingcomos6_file_systemfile_systemhtml文件的存储文件的存储"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E6%96%87%E4%BB%B6%E7%9A%84%E5%AD%98%E5%82%A8">#</a>文件的存储</h2>
+<p>文件的数据是要存储在硬盘上面的，数据在磁盘上的存放方式，就像程序在内存中存放的方式那样，有以下两种：</p>
+<ul>
+<li>连续空间存放方式</li>
+<li>非连续空间存放方式</li>
+</ul>
+<p>其中，非连续空间存放方式又可以分为「链表方式」和「索引方式」。</p>
+<p>不同的存储方式，有各自的特点，重点是要分析它们的存储效率和读写性能，接下来分别对每种存储方式说一下。</p>
+<h3 id="httpsxiaolincodingcomos6_file_systemfile_systemhtml连续空间存放方式连续空间存放方式"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F">#</a>连续空间存放方式</h3>
+<p>连续空间存放方式顾名思义，<strong>文件存放在磁盘「连续的」物理空间中</strong>。这种模式下，文件的数据都是紧密相连，<strong>读写效率很高</strong>，因为一次磁盘寻道就可以读出整个文件。</p>
+<p>使用连续存放的方式有一个前提，必须先知道一个文件的大小，这样文件系统才会根据文件的大小在磁盘上找到一块连续的空间分配给文件。</p>
+<p>所以，<strong>文件头里需要指定「起始块的位置」和「长度」</strong>，有了这两个信息就可以很好的表示文件存放方式是一块连续的磁盘空间。</p>
+<p>注意，此处说的文件头，就类似于 Linux 的 inode。</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F.png" alt="连续空间存放方式"></p>
+<p>连续空间存放的方式虽然读写效率高，<strong>但是有「磁盘空间碎片」和「文件长度不易扩展」的缺陷。</strong></p>
+<p>如下图，如果文件 B 被删除，磁盘上就留下一块空缺，这时，如果新来的文件小于其中的一个空缺，我们就可以将其放在相应空缺里。但如果该文件的大小大于所有的空缺，但却小于空缺大小之和，则虽然磁盘上有足够的空缺，但该文件还是不能存放。当然了，我们可以通过将现有文件进行挪动来腾出空间以容纳新的文件，但是这个在磁盘挪动文件是非常耗时，所以这种方式不太现实。</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F-%E7%A3%81%E7%9B%98%E7%A2%8E%E7%89%87.png" alt="磁盘碎片"></p>
+<p>另外一个缺陷是文件长度扩展不方便，例如上图中的文件 A 要想扩大一下，需要更多的磁盘空间，唯一的办法就只能是挪动的方式，前面也说了，这种方式效率是非常低的。</p>
+<p>那么有没有更好的方式来解决上面的问题呢？答案当然有，既然连续空间存放的方式不太行，那么我们就改变存放的方式，使用非连续空间存放方式来解决这些缺陷。</p>
+<h3 id="httpsxiaolincodingcomos6_file_systemfile_systemhtml非连续空间存放方式非连续空间存放方式"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E9%9D%9E%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F">#</a>非连续空间存放方式</h3>
+<p>非连续空间存放方式分为「链表方式」和「索引方式」。</p>
+<blockquote>
+<p>我们先来看看链表的方式。</p>
+</blockquote>
+<p>链表的方式存放是<strong>离散的，不用连续的</strong>，于是就可以<strong>消除磁盘碎片</strong>，可大大提高磁盘空间的利用率，同时<strong>文件的长度可以动态扩展</strong>。根据实现的方式的不同，链表可分为「<strong>隐式链表</strong>」和「<strong>显式链接</strong>」两种形式。</p>
+<p>文件要以「<strong>隐式链表</strong>」的方式存放的话，<strong>实现的方式是文件头要包含「第一块」和「最后一块」的位置，并且每个数据块里面留出一个指针空间，用来存放下一个数据块的位置</strong>，这样一个数据块连着一个数据块，从链头开始就可以顺着指针找到所有的数据块，所以存放的方式可以是不连续的。</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E9%9D%9E%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F-%E9%93%BE%E8%A1%A8%E6%96%B9%E5%BC%8F.png" alt="隐式链表"></p>
+<p>隐式链表的存放方式的<strong>缺点在于无法直接访问数据块，只能通过指针顺序访问文件，以及数据块指针消耗了一定的存储空间</strong>。隐式链接分配的<strong>稳定性较差</strong>，系统在运行过程中由于软件或者硬件错误<strong>导致链表中的指针丢失或损坏，会导致文件数据的丢失。</strong></p>
+<p>如果取出每个磁盘块的指针，把它放在内存的一个表中，就可以解决上述隐式链表的两个不足。那么，这种实现方式是「<strong>显式链接</strong>」，它指<strong>把用于链接文件各数据块的指针，显式地存放在内存的一张链接表中</strong>，该表在整个磁盘仅设置一张，<strong>每个表项中存放链接指针，指向下一个数据块号</strong>。</p>
+<p>对于显式链接的工作方式，我们举个例子，文件 A 依次使用了磁盘块 4、7、2、10 和 12 ，文件 B 依次使用了磁盘块 6、3、11 和 14 。利用下图中的表，可以从第 4 块开始，顺着链走到最后，找到文件 A 的全部磁盘块。同样，从第 6 块开始，顺着链走到最后，也能够找出文件 B 的全部磁盘块。最后，这两个链都以一个不属于有效磁盘编号的特殊标记（如 -1 ）结束。内存中的这样一个表格称为<strong>文件分配表（*File Allocation Table，FAT*）</strong>。</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E5%88%86%E9%85%8D%E8%A1%A8.png" alt="显式链接"></p>
+<p>由于查找记录的过程是在内存中进行的，因而不仅显著地<strong>提高了检索速度</strong>，而且<strong>大大减少了访问磁盘的次数</strong>。但也正是整个表都存放在内存中的关系，它的主要的缺点是<strong>不适用于大磁盘</strong>。</p>
+<p>比如，对于 200GB 的磁盘和 1KB 大小的块，这张表需要有 2 亿项，每一项对应于这 2 亿个磁盘块中的一个块，每项如果需要 4 个字节，那这张表要占用 800MB 内存，很显然 FAT 方案对于大磁盘而言不太合适。</p>
+<blockquote>
+<p>接下来，我们来看看索引的方式。</p>
+</blockquote>
+<p>链表的方式解决了连续分配的磁盘碎片和文件动态扩展的问题，但是不能有效支持直接访问（FAT除外），索引的方式可以解决这个问题。</p>
+<p>索引的实现是为每个文件创建一个「<strong>索引数据块</strong>」，里面存放的是<strong>指向文件数据块的指针列表</strong>，说白了就像书的目录一样，要找哪个章节的内容，看目录查就可以。</p>
+<p>另外，<strong>文件头需要包含指向「索引数据块」的指针</strong>，这样就可以通过文件头知道索引数据块的位置，再通过索引数据块里的索引信息找到对应的数据块。</p>
+<p>创建文件时，索引块的所有指针都设为空。当首次写入第 i 块时，先从空闲空间中取得一个块，再将其地址写到索引块的第 i 个条目。</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E9%9D%9E%E8%BF%9E%E7%BB%AD%E7%A9%BA%E9%97%B4%E5%AD%98%E6%94%BE%E6%96%B9%E5%BC%8F-%E7%B4%A2%E5%BC%95%E6%96%B9%E5%BC%8F.png" alt="索引的方式"></p>
+<p>索引的方式优点在于：</p>
+<ul>
+<li>文件的创建、增大、缩小很方便；</li>
+<li>不会有碎片的问题；</li>
+<li>支持顺序读写和随机读写；</li>
+</ul>
+<p>由于索引数据也是存放在磁盘块的，如果文件很小，明明只需一块就可以存放的下，但还是需要额外分配一块来存放索引数据，所以缺陷之一就是存储索引带来的开销。</p>
+<p>如果文件很大，大到一个索引数据块放不下索引信息，这时又要如何处理大文件的存放呢？我们可以通过组合的方式，来处理大文件的存。</p>
+<p>先来看看链表 + 索引的组合，这种组合称为「<strong>链式索引块</strong>」，它的实现方式是<strong>在索引数据块留出一个存放下一个索引数据块的指针</strong>，于是当一个索引数据块的索引信息用完了，就可以通过指针的方式，找到下一个索引数据块的信息。那这种方式也会出现前面提到的链表方式的问题，万一某个指针损坏了，后面的数据也就会无法读取了。</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E9%93%BE%E5%BC%8F%E7%B4%A2%E5%BC%95%E5%9D%97.png" alt="链式索引块"></p>
+<p>还有另外一种组合方式是索引 + 索引的方式，这种组合称为「<strong>多级索引块</strong>」，实现方式是<strong>通过一个索引块来存放多个索引数据块</strong>，一层套一层索引，像极了俄罗斯套娃是吧。</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E5%A4%9A%E7%BA%A7%E7%B4%A2%E5%BC%95%E5%9D%97.png" alt="多级索引块"></p>
+<h3 id="httpsxiaolincodingcomos6_file_systemfile_systemhtmlunix-文件的实现方式unix-文件的实现方式"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#unix-%E6%96%87%E4%BB%B6%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F">#</a>Unix 文件的实现方式</h3>
+<p>我们先把前面提到的文件实现方式，做个比较：</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F%E6%AF%94%E8%BE%83.png" alt="img"></p>
+<p>那早期 Unix 文件系统是组合了前面的文件存放方式的优点，如下图：</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/Unix%20%E5%A4%9A%E7%BA%A7%E7%B4%A2%E5%BC%95.png" alt="早期 Unix 文件系统"></p>
+<p>它是根据文件的大小，存放的方式会有所变化：</p>
+<ul>
+<li>如果存放文件所需的数据块小于 10 块，则采用直接查找的方式；</li>
+<li>如果存放文件所需的数据块超过 10 块，则采用一级间接索引方式；</li>
+<li>如果前面两种方式都不够存放大文件，则采用二级间接索引方式；</li>
+<li>如果二级间接索引也不够存放大文件，这采用三级间接索引方式；</li>
+</ul>
+<p>那么，文件头（<em>Inode</em>）就需要包含 13 个指针：</p>
+<ul>
+<li>10 个指向数据块的指针；</li>
+<li>第 11 个指向索引块的指针；</li>
+<li>第 12 个指向二级索引块的指针；</li>
+<li>第 13 个指向三级索引块的指针；</li>
+</ul>
+<p>所以，这种方式能很灵活地支持小文件和大文件的存放：</p>
+<ul>
+<li>对于小文件使用直接查找的方式可减少索引数据块的开销；</li>
+<li>对于大文件则以多级索引的方式来支持，所以大文件在访问数据块时需要大量查询；</li>
+</ul>
+<p>这个方案就用在了 Linux Ext 2/3 文件系统里，虽然解决大文件的存储，但是对于大文件的访问，需要大量的查询，效率比较低。</p>
+<p>为了解决这个问题，Ext 4 做了一定的改变，具体怎么解决的，本文就不展开了。</p>
+<hr>
+<h2 id="httpsxiaolincodingcomos6_file_systemfile_systemhtml空闲空间管理空闲空间管理"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E7%A9%BA%E9%97%B2%E7%A9%BA%E9%97%B4%E7%AE%A1%E7%90%86">#</a>空闲空间管理</h2>
+<p>前面说到的文件的存储是针对已经被占用的数据块组织和管理，接下来的问题是，如果我要保存一个数据块，我应该放在硬盘上的哪个位置呢？难道需要将所有的块扫描一遍，找个空的地方随便放吗？</p>
+<p>那这种方式效率就太低了，所以针对磁盘的空闲空间也是要引入管理的机制，接下来介绍几种常见的方法：</p>
+<ul>
+<li>空闲表法</li>
+<li>空闲链表法</li>
+<li>位图法</li>
+</ul>
+<h3 id="httpsxiaolincodingcomos6_file_systemfile_systemhtml空闲表法空闲表法"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E7%A9%BA%E9%97%B2%E8%A1%A8%E6%B3%95">#</a>空闲表法</h3>
+<p>空闲表法就是为所有空闲空间建立一张表，表内容包括空闲区的第一个块号和该空闲区的块个数，注意，这个方式是连续分配的。如下图：</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E7%A9%BA%E9%97%B2%E8%A1%A8%E6%B3%95.png" alt="空闲表法"></p>
+<p>当请求分配磁盘空间时，系统依次扫描空闲表里的内容，直到找到一个合适的空闲区域为止。当用户撤销一个文件时，系统回收文件空间。这时，也需顺序扫描空闲表，寻找一个空闲表条目并将释放空间的第一个物理块号及它占用的块数填到这个条目中。</p>
+<p>这种方法仅当有少量的空闲区时才有较好的效果。因为，如果存储空间中有着大量的小的空闲区，则空闲表变得很大，这样查询效率会很低。另外，这种分配技术适用于建立连续文件。</p>
+<h3 id="httpsxiaolincodingcomos6_file_systemfile_systemhtml空闲链表法空闲链表法"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E7%A9%BA%E9%97%B2%E9%93%BE%E8%A1%A8%E6%B3%95">#</a>空闲链表法</h3>
+<p>我们也可以使用「链表」的方式来管理空闲空间，每一个空闲块里有一个指针指向下一个空闲块，这样也能很方便的找到空闲块并管理起来。如下图：</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E7%A9%BA%E9%97%B2%E5%9D%97%E9%93%BE%E8%A1%A8.png" alt="空闲链表法"></p>
+<p>当创建文件需要一块或几块时，就从链头上依次取下一块或几块。反之，当回收空间时，把这些空闲块依次接到链头上。</p>
+<p>这种技术只要在主存中保存一个指针，令它指向第一个空闲块。其特点是简单，但不能随机访问，工作效率低，因为每当在链上增加或移动空闲块时需要做很多 I/O 操作，同时数据块的指针消耗了一定的存储空间。</p>
+<p>空闲表法和空闲链表法都不适合用于大型文件系统，因为这会使空闲表或空闲链表太大。</p>
+<h3 id="httpsxiaolincodingcomos6_file_systemfile_systemhtml位图法位图法"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E4%BD%8D%E5%9B%BE%E6%B3%95">#</a>位图法</h3>
+<p>位图是利用二进制的一位来表示磁盘中一个盘块的使用情况，磁盘上所有的盘块都有一个二进制位与之对应。</p>
+<p>当值为 0 时，表示对应的盘块空闲，值为 1 时，表示对应的盘块已分配。它形式如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">1111110011111110001110110111111100111 ...
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在 Linux 文件系统就采用了位图的方式来管理空闲空间，不仅用于数据空闲块的管理，还用于 inode 空闲块的管理，因为 inode 也是存储在磁盘的，自然也要有对其管理。</p>
+<hr>
+<h2 id="httpsxiaolincodingcomos6_file_systemfile_systemhtml文件系统的结构文件系统的结构"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%BB%93%E6%9E%84">#</a>文件系统的结构</h2>
+<p>前面提到 Linux 是用位图的方式管理空闲空间，用户在创建一个新文件时，Linux 内核会通过 inode 的位图找到空闲可用的 inode，并进行分配。要存储数据时，会通过块的位图找到空闲的块，并分配，但仔细计算一下还是有问题的。</p>
+<p>数据块的位图是放在磁盘块里的，假设是放在一个块里，一个块 4K，每位表示一个数据块，共可以表示 <code>4 * 1024 * 8 = 2^15</code> 个空闲块，由于 1 个数据块是 4K 大小，那么最大可以表示的空间为 <code>2^15 * 4 * 1024 = 2^27</code> 个 byte，也就是 128M。</p>
+<p>也就是说按照上面的结构，如果采用「一个块的位图 + 一系列的块」，外加「一个块的 inode 的位图 + 一系列的 inode 的结构」能表示的最大空间也就 128M，这太少了，现在很多文件都比这个大。</p>
+<p>在 Linux 文件系统，把这个结构称为一个<strong>块组</strong>，那么有 N 多的块组，就能够表示 N 大的文件。</p>
+<p>下图给出了 Linux Ext2 整个文件系统的结构和块组的内容，文件系统都由大量块组组成，在硬盘上相继排布：</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E5%9D%97%E7%BB%84.png" alt="img"></p>
+<p>最前面的第一个块是引导块，在系统启动时用于启用引导，接着后面就是一个一个连续的块组了，块组的内容如下：</p>
+<ul>
+<li><em>超级块</em>，包含的是文件系统的重要信息，比如 inode 总个数、块总个数、每个块组的 inode 个数、每个块组的块个数等等。</li>
+<li><em>块组描述符</em>，包含文件系统中各个块组的状态，比如块组中空闲块和 inode 的数目等，每个块组都包含了文件系统中「所有块组的组描述符信息」。</li>
+<li><em>数据位图和 inode 位图</em>， 用于表示对应的数据块或 inode 是空闲的，还是被使用中。</li>
+<li><em>inode 列表</em>，包含了块组中所有的 inode，inode 用于保存文件系统中与各个文件和目录相关的所有元数据。</li>
+<li><em>数据块</em>，包含文件的有用数据。</li>
+</ul>
+<p>你可以会发现每个块组里有很多重复的信息，比如<strong>超级块和块组描述符表，这两个都是全局信息，而且非常的重要</strong>，这么做是有两个原因：</p>
+<ul>
+<li>如果系统崩溃破坏了超级块或块组描述符，有关文件系统结构和内容的所有信息都会丢失。如果有冗余的副本，该信息是可能恢复的。</li>
+<li>通过使文件和管理数据尽可能接近，减少了磁头寻道和旋转，这可以提高文件系统的性能。</li>
+</ul>
+<p>不过，Ext2 的后续版本采用了稀疏技术。该做法是，超级块和块组描述符表不再存储到文件系统的每个块组中，而是只写入到块组 0、块组 1 和其他 ID 可以表示为 3、 5、7 的幂的块组中。</p>
+<hr>
+<h2 id="httpsxiaolincodingcomos6_file_systemfile_systemhtml目录的存储目录的存储"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E7%9B%AE%E5%BD%95%E7%9A%84%E5%AD%98%E5%82%A8">#</a>目录的存储</h2>
+<p>在前面，我们知道了一个普通文件是如何存储的，但还有一个特殊的文件，经常用到的目录，它是如何保存的呢？</p>
+<p>基于 Linux 一切皆文件的设计思想，目录其实也是个文件，你甚至可以通过 <code>vim</code> 打开它，它也有 inode，inode 里面也是指向一些块。</p>
+<p>和普通文件不同的是，<strong>普通文件的块里面保存的是文件数据，而目录文件的块里面保存的是目录里面一项一项的文件信息。</strong></p>
+<p>在目录文件的块中，最简单的保存格式就是<strong>列表</strong>，就是一项一项地将目录下的文件信息（如文件名、文件 inode、文件类型等）列在表里。</p>
+<p>列表中每一项就代表该目录下的文件的文件名和对应的 inode，通过这个 inode，就可以找到真正的文件。</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E7%9B%AE%E5%BD%95%E5%93%88%E5%B8%8C%E8%A1%A8.png" alt="目录格式哈希表"></p>
+<p>通常，第一项是「<code>.</code>」，表示当前目录，第二项是「<code>..</code>」，表示上一级目录，接下来就是一项一项的文件名和 inode。</p>
+<p>如果一个目录有超级多的文件，我们要想在这个目录下找文件，按照列表一项一项的找，效率就不高了。</p>
+<p>于是，保存目录的格式改成<strong>哈希表</strong>，对文件名进行哈希计算，把哈希值保存起来，如果我们要查找一个目录下面的文件名，可以通过名称取哈希。如果哈希能够匹配上，就说明这个文件的信息在相应的块里面。</p>
+<p>Linux 系统的 ext 文件系统就是采用了哈希表，来保存目录的内容，这种方法的优点是查找非常迅速，插入和删除也较简单，不过需要一些预备措施来避免哈希冲突。</p>
+<p>目录查询是通过在磁盘上反复搜索完成，需要不断地进行 I/O 操作，开销较大。所以，为了减少 I/O 操作，把当前使用的文件目录缓存在内存，以后要使用该文件时只要在内存中操作，从而降低了磁盘操作次数，提高了文件系统的访问速度。</p>
+<hr>
+<h2 id="httpsxiaolincodingcomos6_file_systemfile_systemhtml软链接和硬链接软链接和硬链接"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E8%BD%AF%E9%93%BE%E6%8E%A5%E5%92%8C%E7%A1%AC%E9%93%BE%E6%8E%A5">#</a>软链接和硬链接</h2>
+<p>有时候我们希望给某个文件取个别名，那么在 Linux 中可以通过<strong>硬链接（*Hard Link*）</strong> 和<strong>软链接（*Symbolic Link*）</strong> 的方式来实现，它们都是比较特殊的文件，但是实现方式也是不相同的。</p>
+<p>硬链接是<strong>多个目录项中的「索引节点」指向一个文件</strong>，也就是指向同一个 inode，但是 inode 是不可能跨越文件系统的，每个文件系统都有各自的 inode 数据结构和列表，所以<strong>硬链接是不可用于跨文件系统的</strong>。由于多个目录项都是指向一个 inode，那么<strong>只有删除文件的所有硬链接以及源文件时，系统才会彻底删除该文件。</strong></p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E7%A1%AC%E9%93%BE%E6%8E%A5-2.png" alt="硬链接"></p>
+<p>软链接相当于重新创建一个文件，这个文件有<strong>独立的 inode</strong>，但是这个<strong>文件的内容是另外一个文件的路径</strong>，所以访问软链接的时候，实际上相当于访问到了另外一个文件，所以<strong>软链接是可以跨文件系统的</strong>，甚至<strong>目标文件被删除了，链接文件还是在的，只不过指向的文件找不到了而已。</strong></p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E8%BD%AF%E9%93%BE%E6%8E%A5.png" alt="软链接"></p>
+<hr>
+<h2 id="httpsxiaolincodingcomos6_file_systemfile_systemhtml文件-i-o文件-io"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E6%96%87%E4%BB%B6-i-o">#</a>文件 I/O</h2>
+<p>文件的读写方式各有千秋，对于文件的 I/O 分类也非常多，常见的有</p>
+<ul>
+<li>缓冲与非缓冲 I/O</li>
+<li>直接与非直接 I/O</li>
+<li>阻塞与非阻塞 I/O VS 同步与异步 I/O</li>
+</ul>
+<p>接下来，分别对这些分类讨论讨论。</p>
+<h3 id="httpsxiaolincodingcomos6_file_systemfile_systemhtml缓冲与非缓冲-i-o缓冲与非缓冲-io"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E7%BC%93%E5%86%B2%E4%B8%8E%E9%9D%9E%E7%BC%93%E5%86%B2-i-o">#</a>缓冲与非缓冲 I/O</h3>
+<p>文件操作的标准库是可以实现数据的缓存，那么<strong>根据「是否利用标准库缓冲」，可以把文件 I/O 分为缓冲 I/O 和非缓冲 I/O</strong>：</p>
+<ul>
+<li>缓冲 I/O，利用的是标准库的缓存实现文件的加速访问，而标准库再通过系统调用访问文件。</li>
+<li>非缓冲 I/O，直接通过系统调用访问文件，不经过标准库缓存。</li>
+</ul>
+<p>这里所说的「缓冲」特指标准库内部实现的缓冲。</p>
+<p>比方说，很多程序遇到换行时才真正输出，而换行前的内容，其实就是被标准库暂时缓存了起来，这样做的目的是，减少系统调用的次数，毕竟系统调用是有 CPU 上下文切换的开销的。</p>
+<h3 id="httpsxiaolincodingcomos6_file_systemfile_systemhtml直接与非直接-i-o直接与非直接-io"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E7%9B%B4%E6%8E%A5%E4%B8%8E%E9%9D%9E%E7%9B%B4%E6%8E%A5-i-o">#</a>直接与非直接 I/O</h3>
+<p>我们都知道磁盘 I/O 是非常慢的，所以 Linux 内核为了减少磁盘 I/O 次数，在系统调用后，会把用户数据拷贝到内核中缓存起来，这个内核缓存空间也就是「页缓存」，只有当缓存满足某些条件的时候，才发起磁盘 I/O 的请求。</p>
+<p>那么，<strong>根据是「否利用操作系统的缓存」，可以把文件 I/O 分为直接 I/O 与非直接 I/O</strong>：</p>
+<ul>
+<li>直接 I/O，不会发生内核缓存和用户程序之间数据复制，而是直接经过文件系统访问磁盘。</li>
+<li>非直接 I/O，读操作时，数据从内核缓存中拷贝给用户程序，写操作时，数据从用户程序拷贝给内核缓存，再由内核决定什么时候写入数据到磁盘。</li>
+</ul>
+<p>如果你在使用文件操作类的系统调用函数时，指定了 <code>O_DIRECT</code> 标志，则表示使用直接 I/O。如果没有设置过，默认使用的是非直接 I/O。</p>
+<blockquote>
+<p>如果用了非直接 I/O 进行写数据操作，内核什么情况下才会把缓存数据写入到磁盘？</p>
+</blockquote>
+<p>以下几种场景会触发内核缓存的数据写入磁盘：</p>
+<ul>
+<li>在调用 <code>write</code> 的最后，当发现内核缓存的数据太多的时候，内核会把数据写到磁盘上；</li>
+<li>用户主动调用 <code>sync</code>，内核缓存会刷到磁盘上；</li>
+<li>当内存十分紧张，无法再分配页面时，也会把内核缓存的数据刷到磁盘上；</li>
+<li>内核缓存的数据的缓存时间超过某个时间时，也会把数据刷到磁盘上；</li>
+</ul>
+<h3 id="httpsxiaolincodingcomos6_file_systemfile_systemhtml阻塞与非阻塞-i-o-vs-同步与异步-i-o阻塞与非阻塞-io-vs-同步与异步-io"><a href="https://xiaolincoding.com/os/6_file_system/file_system.html#%E9%98%BB%E5%A1%9E%E4%B8%8E%E9%9D%9E%E9%98%BB%E5%A1%9E-i-o-vs-%E5%90%8C%E6%AD%A5%E4%B8%8E%E5%BC%82%E6%AD%A5-i-o">#</a>阻塞与非阻塞 I/O VS 同步与异步 I/O</h3>
+<p>为什么把阻塞 / 非阻塞与同步与异步放一起说的呢？因为它们确实非常相似，也非常容易混淆，不过它们之间的关系还是有点微妙的。</p>
+<p>先来看看<strong>阻塞 I/O</strong>，当用户程序执行 <code>read</code> ，线程会被阻塞，一直等到内核数据准备好，并把数据从内核缓冲区拷贝到应用程序的缓冲区中，当拷贝过程完成，<code>read</code> 才会返回。</p>
+<p>注意，<strong>阻塞等待的是「内核数据准备好」和「数据从内核态拷贝到用户态」这两个过程</strong>。过程如下图：</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E9%98%BB%E5%A1%9E%20I_O.png" alt="阻塞 I/O"></p>
+<p>知道了阻塞 I/O ，来看看<strong>非阻塞 I/O</strong>，非阻塞的 read 请求在数据未准备好的情况下立即返回，可以继续往下执行，此时应用程序不断轮询内核，直到数据准备好，内核将数据拷贝到应用程序缓冲区，<code>read</code> 调用才可以获取到结果。过程如下图：</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E9%9D%9E%E9%98%BB%E5%A1%9E%20I_O%20.png" alt="非阻塞 I/O"></p>
+<p>注意，<strong>这里最后一次 read 调用，获取数据的过程，是一个同步的过程，是需要等待的过程。这里的同步指的是内核态的数据拷贝到用户程序的缓存区这个过程。</strong></p>
+<p>举个例子，访问管道或 socket 时，如果设置了 <code>O_NONBLOCK</code> 标志，那么就表示使用的是非阻塞 I/O 的方式访问，而不做任何设置的话，默认是阻塞 I/O。</p>
+<p>应用程序每次轮询内核的 I/O 是否准备好，感觉有点傻乎乎，因为轮询的过程中，应用程序啥也做不了，只是在循环。</p>
+<p>为了解决这种傻乎乎轮询方式，于是 <strong>I/O 多路复用</strong>技术就出来了，如 select、poll，它是通过 I/O 事件分发，当内核数据准备好时，再以事件通知应用程序进行操作。</p>
+<p>这个做法大大改善了 CPU 的利用率，因为当调用了 I/O 多路复用接口，如果没有事件发生，那么当前线程就会发生阻塞，这时 CPU 会切换其他线程执行任务，等内核发现有事件到来的时候，会唤醒阻塞在 I/O 多路复用接口的线程，然后用户可以进行后续的事件处理。</p>
+<p>整个流程要比阻塞 IO 要复杂，似乎也更浪费性能。但 <strong>I/O 多路复用接口最大的优势在于，用户可以在一个线程内同时处理多个 socket 的 IO 请求</strong>（参见：<a href="https://xiaolincoding.com/os/8_network_system/selete_poll_epoll.html">I/O 多路复用：select/poll/epoll (opens new window)</a>）。用户可以注册多个 socket，然后不断地调用 I/O 多路复用接口读取被激活的 socket，即可达到在同一个线程内同时处理多个 IO 请求的目的。而在同步阻塞模型中，必须通过多线程的方式才能达到这个目的。</p>
+<p>下图是使用 select I/O 多路复用过程。注意，<code>read</code> 获取数据的过程（数据从内核态拷贝到用户态的过程），也是一个<strong>同步的过程</strong>，需要等待：</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E5%9F%BA%E4%BA%8E%E9%9D%9E%E9%98%BB%E5%A1%9E%20I_O%20%E7%9A%84%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8.png" alt="I/O 多路复用"></p>
+<p>实际上，无论是阻塞 I/O、非阻塞 I/O，还是基于非阻塞 I/O 的多路复用<strong>都是同步调用。因为它们在 read 调用时，内核将数据从内核空间拷贝到应用程序空间，过程都是需要等待的，也就是说这个过程是同步的，如果内核实现的拷贝效率不高，read 调用就会在这个同步过程中等待比较长的时间。</strong></p>
+<p>而真正的<strong>异步 I/O</strong> 是「内核数据准备好」和「数据从内核态拷贝到用户态」这两个过程都不用等待。</p>
+<p>当我们发起 <code>aio_read</code> 之后，就立即返回，内核自动将数据从内核空间拷贝到应用程序空间，这个拷贝过程同样是异步的，内核自动完成的，和前面的同步操作不一样，应用程序并不需要主动发起拷贝动作。过程如下图：</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E5%BC%82%E6%AD%A5%20I_O.png" alt="异步 I/O"></p>
+<p>下面这张图，总结了以上几种 I/O 模型：</p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/%E5%90%8C%E6%AD%A5VS%E5%BC%82%E6%AD%A5IO.png" alt="img"></p>
+<p>在前面我们知道了，I/O 是分为两个过程的：</p>
+<ol>
+<li>数据准备的过程</li>
+<li>数据从内核空间拷贝到用户进程缓冲区的过程</li>
+</ol>
+<p>阻塞 I/O 会阻塞在「过程 1 」和「过程 2」，而非阻塞 I/O 和基于非阻塞 I/O 的多路复用只会阻塞在「过程 2」，所以这三个都可以认为是同步 I/O。</p>
+<p>异步 I/O 则不同，「过程 1 」和「过程 2 」都不会阻塞。</p>
+<blockquote>
+<p>用故事去理解这几种 I/O 模型</p>
+</blockquote>
+<p>举个你去饭堂吃饭的例子，你好比用户程序，饭堂好比操作系统。</p>
+<p>阻塞 I/O 好比，你去饭堂吃饭，但是饭堂的菜还没做好，然后你就一直在那里等啊等，等了好长一段时间终于等到饭堂阿姨把菜端了出来（数据准备的过程），但是你还得继续等阿姨把菜（内核空间）打到你的饭盒里（用户空间），经历完这两个过程，你才可以离开。</p>
+<p>非阻塞 I/O 好比，你去了饭堂，问阿姨菜做好了没有，阿姨告诉你没，你就离开了，过几十分钟，你又来饭堂问阿姨，阿姨说做好了，于是阿姨帮你把菜打到你的饭盒里，这个过程你是得等待的。</p>
+<p>基于非阻塞的 I/O 多路复用好比，你去饭堂吃饭，发现有一排窗口，饭堂阿姨告诉你这些窗口都还没做好菜，等做好了再通知你，于是等啊等（<code>select</code> 调用中），过了一会阿姨通知你菜做好了，但是不知道哪个窗口的菜做好了，你自己看吧。于是你只能一个一个窗口去确认，后面发现 5 号窗口菜做好了，于是你让 5 号窗口的阿姨帮你打菜到饭盒里，这个打菜的过程你是要等待的，虽然时间不长。打完菜后，你自然就可以离开了。</p>
+<p>异步 I/O 好比，你让饭堂阿姨将菜做好并把菜打到饭盒里后，把饭盒送到你面前，整个过程你都不需要任何等待。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-08-23
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">操作系统文件系统</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E4%B9%8B%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">常见算法之滑动窗口</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/">
+            <span class="next-text nav-default">八股系列|操作系统|调度算法</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-08-23 21:35:11 \u002b0800 CST',
+        title: '八股系列|操作系统|文件系统',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>中断 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/%E4%B8%AD%E6%96%AD/</link>
+    <description>Recent content in 中断 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Wed, 15 Mar 2023 18:32:26 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/%E4%B8%AD%E6%96%AD/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>操作系统之概述</title>
+      <link>https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A6%82%E8%BF%B0/</link>
+      <pubDate>Wed, 15 Mar 2023 18:32:26 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A6%82%E8%BF%B0/</guid>
+      <description>[toc] 操作系统概念 操作系统（operation system，简称OS），是管理计算机硬件与软件资源的计算机程序。 例如，在windows上win+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>redo与undo on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/redo%E4%B8%8Eundo/</link>
+    <description>Recent content in redo与undo on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Thu, 20 Oct 2022 22:17:42 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/redo%E4%B8%8Eundo/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL事务篇</title>
+      <link>https://cold-bin.github.io/post/mysql%E4%BA%8B%E5%8A%A1%E7%AF%87/</link>
+      <pubDate>Thu, 20 Oct 2022 22:17:42 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/mysql%E4%BA%8B%E5%8A%A1%E7%AF%87/</guid>
+      <description>[toc] 第13章_事务基础知识 1. 数据库事务概述 1.1 存储引擎支持情况 SHOW ENGINES 命令来查看当前 MySQL 支持的存储引擎都有哪些，以及这些存储引擎是否支持事务。 能看出在</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,1892 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>自动化接口文档swag使用指南 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="swag 目录 快速开始 支持的Web框架 如何与Gin集成 格式化说明 开发现状 声明式注释格式 通用API信息 API操作 安全性 样例 多行的描述 用户自定义的具有数" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="自动化接口文档swag使用指南" />
+<meta property="og:description" content="swag 目录 快速开始 支持的Web框架 如何与Gin集成 格式化说明 开发现状 声明式注释格式 通用API信息 API操作 安全性 样例 多行的描述 用户自定义的具有数" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-01-09T10:29:26+08:00" />
+<meta property="article:modified_time" content="2023-01-09T10:29:26+08:00" />
+<meta itemprop="name" content="自动化接口文档swag使用指南">
+<meta itemprop="description" content="swag 目录 快速开始 支持的Web框架 如何与Gin集成 格式化说明 开发现状 声明式注释格式 通用API信息 API操作 安全性 样例 多行的描述 用户自定义的具有数"><meta itemprop="datePublished" content="2023-01-09T10:29:26+08:00" />
+<meta itemprop="dateModified" content="2023-01-09T10:29:26+08:00" />
+<meta itemprop="wordCount" content="5171">
+<meta itemprop="keywords" content="swagger,接口文档自动化," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="自动化接口文档swag使用指南"/>
+<meta name="twitter:description" content="swag 目录 快速开始 支持的Web框架 如何与Gin集成 格式化说明 开发现状 声明式注释格式 通用API信息 API操作 安全性 样例 多行的描述 用户自定义的具有数"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">自动化接口文档swag使用指南</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-01-09 </span>
+        <div class="post-category">
+            <a href="/categories/golang/"> golang </a>
+            </div>
+          <span class="more-meta"> 约 5171 字 </span>
+          <span class="more-meta"> 预计阅读 11 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#swag">swag</a>
+      <ul>
+        <li><a href="#目录">目录</a></li>
+        <li><a href="#快速开始">快速开始</a></li>
+        <li><a href="#swag-cli">swag cli</a></li>
+        <li><a href="#支持的web框架">支持的Web框架</a></li>
+        <li><a href="#如何与gin集成">如何与Gin集成</a></li>
+        <li><a href="#格式化说明">格式化说明</a></li>
+        <li><a href="#开发现状">开发现状</a></li>
+        <li><a href="#声明式注释格式">声明式注释格式</a></li>
+        <li><a href="#通用api信息">通用API信息</a>
+          <ul>
+            <li><a href="#使用markdown描述">使用Markdown描述</a></li>
+          </ul>
+        </li>
+        <li><a href="#api操作">API操作</a></li>
+        <li><a href="#mime类型">Mime类型</a></li>
+        <li><a href="#参数类型">参数类型</a></li>
+        <li><a href="#数据类型">数据类型</a></li>
+        <li><a href="#安全性">安全性</a></li>
+        <li><a href="#属性">属性</a>
+          <ul>
+            <li><a href="#当前可用的">当前可用的</a></li>
+            <li><a href="#进一步的">进一步的</a></li>
+          </ul>
+        </li>
+        <li><a href="#样例">样例</a>
+          <ul>
+            <li><a href="#多行的描述">多行的描述</a></li>
+            <li><a href="#用户自定义的具有数组类型的结构">用户自定义的具有数组类型的结构</a></li>
+            <li><a href="#响应对象中的模型组合">响应对象中的模型组合</a></li>
+            <li><a href="#在响应中增加头字段">在响应中增加头字段</a></li>
+            <li><a href="#使用多路径参数">使用多路径参数</a></li>
+            <li><a href="#结构体的示例值">结构体的示例值</a></li>
+            <li><a href="#结构体描述">结构体描述</a></li>
+            <li><a href="#使用swaggertype标签更改字段类型">使用<code>swaggertype</code>标签更改字段类型</a></li>
+            <li><a href="#使用swaggerignore标签排除字段">使用<code>swaggerignore</code>标签排除字段</a></li>
+            <li><a href="#将扩展信息添加到结构字段">将扩展信息添加到结构字段</a></li>
+            <li><a href="#对展示的模型重命名">对展示的模型重命名</a></li>
+            <li><a href="#如何使用安全性注释">如何使用安全性注释</a></li>
+            <li><a href="#token的api注解"><code>token</code>的api注解</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h1 id="swag">swag</h1>
+<h2 id="目录">目录</h2>
+<ul>
+<li><a href="#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B">快速开始</a></li>
+<li><a href="#%E6%94%AF%E6%8C%81%E7%9A%84web%E6%A1%86%E6%9E%B6">支持的Web框架</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E4%B8%8Egin%E9%9B%86%E6%88%90">如何与Gin集成</a></li>
+<li><a href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%AF%B4%E6%98%8E">格式化说明</a></li>
+<li><a href="#%E5%BC%80%E5%8F%91%E7%8E%B0%E7%8A%B6">开发现状</a></li>
+<li><a href="#%E5%A3%B0%E6%98%8E%E5%BC%8F%E6%B3%A8%E9%87%8A%E6%A0%BC%E5%BC%8F">声明式注释格式</a>
+<ul>
+<li><a href="#%E9%80%9A%E7%94%A8api%E4%BF%A1%E6%81%AF">通用API信息</a></li>
+<li><a href="#api%E6%93%8D%E4%BD%9C">API操作</a></li>
+<li><a href="#%E5%AE%89%E5%85%A8%E6%80%A7">安全性</a></li>
+</ul>
+</li>
+<li><a href="#%E6%A0%B7%E4%BE%8B">样例</a>
+<ul>
+<li><a href="#%E5%A4%9A%E8%A1%8C%E7%9A%84%E6%8F%8F%E8%BF%B0">多行的描述</a></li>
+<li><a href="#%E7%94%A8%E6%88%B7%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84%E5%85%B7%E6%9C%89%E6%95%B0%E7%BB%84%E7%B1%BB%E5%9E%8B%E7%9A%84%E7%BB%93%E6%9E%84">用户自定义的具有数组类型的结构</a></li>
+<li><a href="#%E5%93%8D%E5%BA%94%E5%AF%B9%E8%B1%A1%E4%B8%AD%E7%9A%84%E6%A8%A1%E5%9E%8B%E7%BB%84%E5%90%88">响应对象中的模型组合</a></li>
+<li><a href="#%E5%9C%A8%E5%93%8D%E5%BA%94%E4%B8%AD%E5%A2%9E%E5%8A%A0%E5%A4%B4%E5%AD%97%E6%AE%B5">在响应中增加头字段</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E5%A4%9A%E8%B7%AF%E5%BE%84%E5%8F%82%E6%95%B0">使用多路径参数</a></li>
+<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93%E7%9A%84%E7%A4%BA%E4%BE%8B%E5%80%BC">结构体的示例值</a></li>
+<li><a href="#%E7%BB%93%E6%9E%84%E4%BD%93%E6%8F%8F%E8%BF%B0">结构体描述</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%60swaggertype%60%E6%A0%87%E7%AD%BE%E6%9B%B4%E6%94%B9%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B">使用<code>swaggertype</code>标签更改字段类型</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8swaggerignore%E6%A0%87%E7%AD%BE%E6%8E%92%E9%99%A4%E5%AD%97%E6%AE%B5">使用<code>swaggerignore</code>标签排除字段</a></li>
+<li><a href="#%E5%B0%86%E6%89%A9%E5%B1%95%E4%BF%A1%E6%81%AF%E6%B7%BB%E5%8A%A0%E5%88%B0%E7%BB%93%E6%9E%84%E5%AD%97%E6%AE%B5">将扩展信息添加到结构字段</a></li>
+<li><a href="#%E5%AF%B9%E5%B1%95%E7%A4%BA%E7%9A%84%E6%A8%A1%E5%9E%8B%E9%87%8D%E5%91%BD%E5%90%8D">对展示的模型重命名</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E5%AE%89%E5%85%A8%E6%80%A7%E6%B3%A8%E9%87%8A">如何使用安全性注释</a></li>
+</ul>
+</li>
+<li><a href="#%E9%A1%B9%E7%9B%AE%E7%9B%B8%E5%85%B3">项目相关</a></li>
+</ul>
+<h2 id="快速开始">快速开始</h2>
+<ol>
+<li>将注释添加到API源代码中，请参阅声明性注释格式。</li>
+<li>使用如下命令下载swag：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ go get -u github.com/swaggo/swag/cmd/swag
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 1.16 及以上版本</span>
+</span></span><span class="line"><span class="cl">$ go install github.com/swaggo/swag/cmd/swag@latest
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从源码开始构建的话，需要有Go环境（1.15及以上版本）。</p>
+<p>或者从github的release页面下载预编译好的二进制文件。</p>
+<ol start="3">
+<li>在包含<code>main.go</code>文件的项目根目录运行<code>swag init</code>。这将会解析注释并生成需要的文件（<code>docs</code>文件夹和<code>docs/docs.go</code>）。</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">swag init
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>确保导入了生成的<code>docs/docs.go</code>文件，这样特定的配置文件才会被初始化。如果通用API指数没有写在<code>main.go</code>中，可以使用<code>-g</code>标识符来告知swag。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">swag init -g http/api.go
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>(可选) 使用<code>fmt</code>格式化 SWAG 注释。(请先升级到最新版本)</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">swag fmt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="swag-cli">swag cli</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">swag init -h
+</span></span><span class="line"><span class="cl">NAME:
+</span></span><span class="line"><span class="cl">   swag init - Create docs.go
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">USAGE:
+</span></span><span class="line"><span class="cl">   swag init <span class="o">[</span><span class="nb">command</span> options<span class="o">]</span> <span class="o">[</span>arguments...<span class="o">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">OPTIONS:
+</span></span><span class="line"><span class="cl">   --generalInfo value, -g value          API通用信息所在的go源文件路径，如果是相对路径则基于API解析目录 <span class="o">(</span>默认: <span class="s2">&#34;main.go&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">   --dir value, -d value                  API解析目录 <span class="o">(</span>默认: <span class="s2">&#34;./&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">   --exclude value                        解析扫描时排除的目录，多个目录可用逗号分隔（默认：空）
+</span></span><span class="line"><span class="cl">   --propertyStrategy value, -p value     结构体字段命名规则，三种：snakecase,camelcase,pascalcase <span class="o">(</span>默认: <span class="s2">&#34;camelcase&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">   --output value, -o value               文件<span class="o">(</span>swagger.json, swagger.yaml and doc.go<span class="o">)</span>输出目录 <span class="o">(</span>默认: <span class="s2">&#34;./docs&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">   --parseVendor                          是否解析vendor目录里的go源文件，默认不
+</span></span><span class="line"><span class="cl">   --parseDependency                      是否解析依赖目录中的go源文件，默认不
+</span></span><span class="line"><span class="cl">   --markdownFiles value, --md value      指定API的描述信息所使用的markdown文件所在的目录
+</span></span><span class="line"><span class="cl">   --generatedTime                        是否输出时间到输出文件docs.go的顶部，默认是
+</span></span><span class="line"><span class="cl">   --codeExampleFiles value, --cef value  解析包含用于 x-codeSamples 扩展的代码示例文件的文件夹，默认禁用
+</span></span><span class="line"><span class="cl">   --parseInternal                        解析 internal 包中的go文件，默认禁用
+</span></span><span class="line"><span class="cl">   --parseDepth value                     依赖解析深度 <span class="o">(</span>默认: 100<span class="o">)</span>
+</span></span><span class="line"><span class="cl">   --instanceName value                   设置文档实例名 <span class="o">(</span>默认: <span class="s2">&#34;swagger&#34;</span><span class="o">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">swag fmt -h
+</span></span><span class="line"><span class="cl">NAME:
+</span></span><span class="line"><span class="cl">   swag fmt - format swag comments
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">USAGE:
+</span></span><span class="line"><span class="cl">   swag fmt <span class="o">[</span><span class="nb">command</span> options<span class="o">]</span> <span class="o">[</span>arguments...<span class="o">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">OPTIONS:
+</span></span><span class="line"><span class="cl">   --dir value, -d value          API解析目录 <span class="o">(</span>默认: <span class="s2">&#34;./&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">   --exclude value                解析扫描时排除的目录，多个目录可用逗号分隔（默认：空）
+</span></span><span class="line"><span class="cl">   --generalInfo value, -g value  API通用信息所在的go源文件路径，如果是相对路径则基于API解析目录 <span class="o">(</span>默认: <span class="s2">&#34;main.go&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">   --help, -h                     show <span class="nb">help</span> <span class="o">(</span>default: <span class="nb">false</span><span class="o">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="支持的web框架">支持的Web框架</h2>
+<ul>
+<li><a href="http://github.com/swaggo/gin-swagger">gin</a></li>
+<li><a href="http://github.com/swaggo/echo-swagger">echo</a></li>
+<li><a href="https://github.com/swaggo/buffalo-swagger">buffalo</a></li>
+<li><a href="https://github.com/swaggo/http-swagger">net/http</a></li>
+</ul>
+<h2 id="如何与gin集成">如何与Gin集成</h2>
+<p><a href="https://github.com/swaggo/swag/tree/master/example/celler">点击此处</a>查看示例源代码。</p>
+<ol>
+<li>使用<code>swag init</code>生成Swagger2.0文档后，导入如下代码包：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">import</span> <span class="s">&#34;github.com/swaggo/gin-swagger&#34;</span> <span class="c1">// gin-swagger middleware
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kn">import</span> <span class="s">&#34;github.com/swaggo/files&#34;</span> <span class="c1">// swagger embed files
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>在<code>main.go</code>源代码中添加通用的API注释：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// @title           Swagger Example API
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @version         1.0
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @description     This is a sample server celler server.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @termsOfService  http://swagger.io/terms/
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// @contact.name   API Support
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @contact.url    http://www.swagger.io/support
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @contact.email  support@swagger.io
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// @license.name  Apache 2.0
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// @host      localhost:8080
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @BasePath  /api/v1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// @securityDefinitions.basic  BasicAuth
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">r</span> <span class="o">:=</span> <span class="nx">gin</span><span class="p">.</span><span class="nf">Default</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">c</span> <span class="o">:=</span> <span class="nx">controller</span><span class="p">.</span><span class="nf">NewController</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">v1</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;/api/v1&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">accounts</span> <span class="o">:=</span> <span class="nx">v1</span><span class="p">.</span><span class="nf">Group</span><span class="p">(</span><span class="s">&#34;/accounts&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">accounts</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;:id&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">ShowAccount</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">accounts</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">ListAccounts</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">accounts</span><span class="p">.</span><span class="nf">POST</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">AddAccount</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">accounts</span><span class="p">.</span><span class="nf">DELETE</span><span class="p">(</span><span class="s">&#34;:id&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">DeleteAccount</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">accounts</span><span class="p">.</span><span class="nf">PATCH</span><span class="p">(</span><span class="s">&#34;:id&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">UpdateAccount</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">accounts</span><span class="p">.</span><span class="nf">POST</span><span class="p">(</span><span class="s">&#34;:id/images&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">UploadAccountImage</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">//...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">r</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/swagger/*any&#34;</span><span class="p">,</span> <span class="nx">ginSwagger</span><span class="p">.</span><span class="nf">WrapHandler</span><span class="p">(</span><span class="nx">swaggerFiles</span><span class="p">.</span><span class="nx">Handler</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">r</span><span class="p">.</span><span class="nf">Run</span><span class="p">(</span><span class="s">&#34;:8080&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//...
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>此外，可以动态设置一些通用的API信息。生成的代码包<code>docs</code>导出<code>SwaggerInfo</code>变量，使用该变量可以通过编码的方式设置标题、描述、版本、主机和基础路径。使用Gin的示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/gin-gonic/gin&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/swaggo/files&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/swaggo/gin-swagger&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;./docs&#34;</span> <span class="c1">// docs is generated by Swag CLI, you have to import it.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// @contact.name   API Support
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @contact.url    http://www.swagger.io/support
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @contact.email  support@swagger.io
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// @license.name  Apache 2.0
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// programatically set swagger info
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">docs</span><span class="p">.</span><span class="nx">SwaggerInfo</span><span class="p">.</span><span class="nx">Title</span> <span class="p">=</span> <span class="s">&#34;Swagger Example API&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">docs</span><span class="p">.</span><span class="nx">SwaggerInfo</span><span class="p">.</span><span class="nx">Description</span> <span class="p">=</span> <span class="s">&#34;This is a sample server Petstore server.&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">docs</span><span class="p">.</span><span class="nx">SwaggerInfo</span><span class="p">.</span><span class="nx">Version</span> <span class="p">=</span> <span class="s">&#34;1.0&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">docs</span><span class="p">.</span><span class="nx">SwaggerInfo</span><span class="p">.</span><span class="nx">Host</span> <span class="p">=</span> <span class="s">&#34;petstore.swagger.io&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">docs</span><span class="p">.</span><span class="nx">SwaggerInfo</span><span class="p">.</span><span class="nx">BasePath</span> <span class="p">=</span> <span class="s">&#34;/v2&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">docs</span><span class="p">.</span><span class="nx">SwaggerInfo</span><span class="p">.</span><span class="nx">Schemes</span> <span class="p">=</span> <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;http&#34;</span><span class="p">,</span> <span class="s">&#34;https&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">r</span> <span class="o">:=</span> <span class="nx">gin</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// use ginSwagger middleware to serve the API docs
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">r</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/swagger/*any&#34;</span><span class="p">,</span> <span class="nx">ginSwagger</span><span class="p">.</span><span class="nf">WrapHandler</span><span class="p">(</span><span class="nx">swaggerFiles</span><span class="p">.</span><span class="nx">Handler</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">r</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>在<code>controller</code>代码中添加API操作注释：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">controller</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;strconv&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/gin-gonic/gin&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/swaggo/swag/example/celler/httputil&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;github.com/swaggo/swag/example/celler/model&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// ShowAccount godoc
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Summary      Show an account
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Description  get string by ID
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Tags         accounts
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Accept       json
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Produce      json
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Param        id   path      int  true  &#34;Account ID&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Success      200  {object}  model.Account
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Failure      400  {object}  httputil.HTTPError
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Failure      404  {object}  httputil.HTTPError
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Failure      500  {object}  httputil.HTTPError
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Router       /accounts/{id} [get]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Controller</span><span class="p">)</span> <span class="nf">ShowAccount</span><span class="p">(</span><span class="nx">ctx</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">id</span> <span class="o">:=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nf">Param</span><span class="p">(</span><span class="s">&#34;id&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">aid</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">Atoi</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">httputil</span><span class="p">.</span><span class="nf">NewError</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">http</span><span class="p">.</span><span class="nx">StatusBadRequest</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">account</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">model</span><span class="p">.</span><span class="nf">AccountOne</span><span class="p">(</span><span class="nx">aid</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">httputil</span><span class="p">.</span><span class="nf">NewError</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">http</span><span class="p">.</span><span class="nx">StatusNotFound</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ctx</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="nx">account</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// ListAccounts godoc
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Summary      List accounts
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Description  get accounts
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Tags         accounts
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Accept       json
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Produce      json
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Param        q    query     string  false  &#34;name search by q&#34;  Format(email)
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Success      200  {array}   model.Account
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Failure      400  {object}  httputil.HTTPError
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Failure      404  {object}  httputil.HTTPError
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Failure      500  {object}  httputil.HTTPError
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Router       /accounts [get]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">Controller</span><span class="p">)</span> <span class="nf">ListAccounts</span><span class="p">(</span><span class="nx">ctx</span> <span class="o">*</span><span class="nx">gin</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">q</span> <span class="o">:=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">Request</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nf">Query</span><span class="p">().</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;q&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">accounts</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">model</span><span class="p">.</span><span class="nf">AccountsAll</span><span class="p">(</span><span class="nx">q</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">httputil</span><span class="p">.</span><span class="nf">NewError</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">http</span><span class="p">.</span><span class="nx">StatusNotFound</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ctx</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="nx">accounts</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//...
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">swag init
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>运行程序，然后在浏览器中访问 http://localhost:8080/swagger/index.html 。将看到Swagger 2.0 Api文档，如下所示：</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/swaggo/swag/master/assets/swagger-image.png" alt="swagger_index.html"></p>
+<h2 id="格式化说明">格式化说明</h2>
+<p>可以针对Swag的注释自动格式化，就像<code>go fmt</code>。<br>
+此处查看格式化结果 <a href="https://github.com/swaggo/swag/tree/master/example/celler">here</a>.</p>
+<p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">swag fmt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>排除目录（不扫描）示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">swag fmt -d ./ --exclude ./internal
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="开发现状">开发现状</h2>
+<p><a href="https://swagger.io/docs/specification/2-0/basic-structure/">Swagger 2.0 文档</a></p>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> Basic Structure</li>
+<li><input checked="" disabled="" type="checkbox"> API Host and Base Path</li>
+<li><input checked="" disabled="" type="checkbox"> Paths and Operations</li>
+<li><input checked="" disabled="" type="checkbox"> Describing Parameters</li>
+<li><input checked="" disabled="" type="checkbox"> Describing Request Body</li>
+<li><input checked="" disabled="" type="checkbox"> Describing Responses</li>
+<li><input checked="" disabled="" type="checkbox"> MIME Types</li>
+<li><input checked="" disabled="" type="checkbox"> Authentication
+<ul>
+<li><input checked="" disabled="" type="checkbox"> Basic Authentication</li>
+<li><input checked="" disabled="" type="checkbox"> API Keys</li>
+</ul>
+</li>
+<li><input checked="" disabled="" type="checkbox"> Adding Examples</li>
+<li><input checked="" disabled="" type="checkbox"> File Upload</li>
+<li><input checked="" disabled="" type="checkbox"> Enums</li>
+<li><input checked="" disabled="" type="checkbox"> Grouping Operations With Tags</li>
+<li><input disabled="" type="checkbox"> Swagger Extensions</li>
+</ul>
+<h2 id="声明式注释格式">声明式注释格式</h2>
+<h2 id="通用api信息">通用API信息</h2>
+<p><strong>示例</strong> <a href="https://github.com/swaggo/swag/blob/master/example/celler/main.go"><code>celler/main.go</code></a></p>
+<table>
+<thead>
+<tr>
+<th>注释</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>title</td>
+<td><strong>必填</strong> 应用程序的名称。</td>
+<td>// @title Swagger Example API</td>
+</tr>
+<tr>
+<td>version</td>
+<td><strong>必填</strong> 提供应用程序API的版本。</td>
+<td>// @version 1.0</td>
+</tr>
+<tr>
+<td>description</td>
+<td>应用程序的简短描述。</td>
+<td>// @description This is a sample server celler server.</td>
+</tr>
+<tr>
+<td>tag.name</td>
+<td>标签的名称。</td>
+<td>// @tag.name This is the name of the tag</td>
+</tr>
+<tr>
+<td>tag.description</td>
+<td>标签的描述。</td>
+<td>// @tag.description Cool Description</td>
+</tr>
+<tr>
+<td>tag.docs.url</td>
+<td>标签的外部文档的URL。</td>
+<td>// @tag.docs.url <a href="https://example.com">https://example.com</a></td>
+</tr>
+<tr>
+<td>tag.docs.description</td>
+<td>标签的外部文档说明。</td>
+<td>// @tag.docs.description Best example documentation</td>
+</tr>
+<tr>
+<td>termsOfService</td>
+<td>API的服务条款。</td>
+<td>// @termsOfService <a href="http://swagger.io/terms/">http://swagger.io/terms/</a></td>
+</tr>
+<tr>
+<td>contact.name</td>
+<td>公开的API的联系信息。</td>
+<td>// @contact.name API Support</td>
+</tr>
+<tr>
+<td>contact.url</td>
+<td>联系信息的URL。 必须采用网址格式。</td>
+<td>// @contact.url <a href="http://www.swagger.io/support">http://www.swagger.io/support</a></td>
+</tr>
+<tr>
+<td>contact.email</td>
+<td>联系人/组织的电子邮件地址。 必须采用电子邮件地址的格式。</td>
+<td>// @contact.email <a href="mailto:support@swagger.io">support@swagger.io</a></td>
+</tr>
+<tr>
+<td>license.name</td>
+<td><strong>必填</strong> 用于API的许可证名称。</td>
+<td>// @license.name Apache 2.0</td>
+</tr>
+<tr>
+<td>license.url</td>
+<td>用于API的许可证的URL。 必须采用网址格式。</td>
+<td>// @license.url <a href="http://www.apache.org/licenses/LICENSE-2.0.html">http://www.apache.org/licenses/LICENSE-2.0.html</a></td>
+</tr>
+<tr>
+<td>host</td>
+<td>运行API的主机（主机名或IP地址）。</td>
+<td>// @host localhost:8080</td>
+</tr>
+<tr>
+<td>BasePath</td>
+<td>运行API的基本路径。</td>
+<td>// @BasePath /api/v1</td>
+</tr>
+<tr>
+<td>accept</td>
+<td>API 可以使用的 MIME 类型列表。 请注意，Accept 仅影响具有请求正文的操作，例如 POST、PUT 和 PATCH。 值必须如“<a href="#mime%E7%B1%BB%E5%9E%8B">Mime类型</a>”中所述。</td>
+<td>// @accept json</td>
+</tr>
+<tr>
+<td>produce</td>
+<td>API可以生成的MIME类型的列表。值必须如“<a href="#mime%E7%B1%BB%E5%9E%8B">Mime类型</a>”中所述。</td>
+<td>// @produce json</td>
+</tr>
+<tr>
+<td>query.collection.format</td>
+<td>请求URI query里数组参数的默认格式：csv，multi，pipes，tsv，ssv。 如果未设置，则默认为csv。</td>
+<td>// @query.collection.format multi</td>
+</tr>
+<tr>
+<td>schemes</td>
+<td>用空格分隔的请求的传输协议。</td>
+<td>// @schemes http https</td>
+</tr>
+<tr>
+<td>x-name</td>
+<td>扩展的键必须以x-开头，并且只能使用json值</td>
+<td>// @x-example-key {&ldquo;key&rdquo;: &ldquo;value&rdquo;}</td>
+</tr>
+</tbody>
+</table>
+<h3 id="使用markdown描述">使用Markdown描述</h3>
+<p>如果文档中的短字符串不足以完整表达，或者需要展示图片，代码示例等类似的内容，则可能需要使用Markdown描述。要使用Markdown描述，请使用一下注释。</p>
+<table>
+<thead>
+<tr>
+<th>注释</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>title</td>
+<td><strong>必填</strong> 应用程序的名称。</td>
+<td>// @title Swagger Example API</td>
+</tr>
+<tr>
+<td>version</td>
+<td><strong>必填</strong> 提供应用程序API的版本。</td>
+<td>// @version 1.0</td>
+</tr>
+<tr>
+<td>description.markdown</td>
+<td>应用程序的简短描述。 从<code>api.md</code>文件中解析。 这是<code>@description</code>的替代用法。</td>
+<td>// @description.markdown No value needed, this parses the description from api.md</td>
+</tr>
+<tr>
+<td>tag.name</td>
+<td>标签的名称。</td>
+<td>// @tag.name This is the name of the tag</td>
+</tr>
+<tr>
+<td>tag.description.markdown</td>
+<td>标签说明，这是<code>tag.description</code>的替代用法。 该描述将从名为<code>tagname.md的</code>文件中读取。</td>
+<td>// @tag.description.markdown</td>
+</tr>
+</tbody>
+</table>
+<h2 id="api操作">API操作</h2>
+<p>Example <a href="https://github.com/swaggo/swag/tree/master/example/celler/controller">celler/controller</a></p>
+<table>
+<thead>
+<tr>
+<th>注释</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>description</td>
+<td>操作行为的详细说明。</td>
+</tr>
+<tr>
+<td>description.markdown</td>
+<td>应用程序的简短描述。该描述将从名为<code>endpointname.md</code>的文件中读取。</td>
+</tr>
+<tr>
+<td>id</td>
+<td>用于标识操作的唯一字符串。在所有API操作中必须唯一。</td>
+</tr>
+<tr>
+<td>tags</td>
+<td>每个API操作的标签列表，以逗号分隔。</td>
+</tr>
+<tr>
+<td>summary</td>
+<td>该操作的简短摘要。</td>
+</tr>
+<tr>
+<td>accept</td>
+<td>API 可以使用的 MIME 类型列表。 请注意，Accept 仅影响具有请求正文的操作，例如 POST、PUT 和 PATCH。 值必须如“<a href="#mime%E7%B1%BB%E5%9E%8B">Mime类型</a>”中所述。</td>
+</tr>
+<tr>
+<td>produce</td>
+<td>API可以生成的MIME类型的列表。值必须如“<a href="#mime%E7%B1%BB%E5%9E%8B">Mime类型</a>”中所述。</td>
+</tr>
+<tr>
+<td>param</td>
+<td>用空格分隔的参数。<code>param name</code>,<code>param type</code>,<code>data type</code>,<code>is mandatory?</code>,<code>comment</code> <code>attribute(optional)</code></td>
+</tr>
+<tr>
+<td>security</td>
+<td>每个API操作的<a href="#%E5%AE%89%E5%85%A8%E6%80%A7">安全性</a>。</td>
+</tr>
+<tr>
+<td>success</td>
+<td>以空格分隔的成功响应。<code>return code</code>,<code>{param type}</code>,<code>data type</code>,<code>comment</code></td>
+</tr>
+<tr>
+<td>failure</td>
+<td>以空格分隔的故障响应。<code>return code</code>,<code>{param type}</code>,<code>data type</code>,<code>comment</code></td>
+</tr>
+<tr>
+<td>response</td>
+<td>与success、failure作用相同</td>
+</tr>
+<tr>
+<td>header</td>
+<td>以空格分隔的头字段。 <code>return code</code>,<code>{param type}</code>,<code>data type</code>,<code>comment</code></td>
+</tr>
+<tr>
+<td>router</td>
+<td>以空格分隔的路径定义。 <code>path</code>,<code>[httpMethod]</code></td>
+</tr>
+<tr>
+<td>x-name</td>
+<td>扩展字段必须以<code>x-</code>开头，并且只能使用json值。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="mime类型">Mime类型</h2>
+<p><code>swag</code> 接受所有格式正确的MIME类型, 即使匹配 <code>*/*</code>。除此之外，<code>swag</code>还接受某些MIME类型的别名，如下所示：</p>
+<table>
+<thead>
+<tr>
+<th>Alias</th>
+<th>MIME Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>json</td>
+<td>application/json</td>
+</tr>
+<tr>
+<td>xml</td>
+<td>text/xml</td>
+</tr>
+<tr>
+<td>plain</td>
+<td>text/plain</td>
+</tr>
+<tr>
+<td>html</td>
+<td>text/html</td>
+</tr>
+<tr>
+<td>mpfd</td>
+<td>multipart/form-data</td>
+</tr>
+<tr>
+<td>x-www-form-urlencoded</td>
+<td>application/x-www-form-urlencoded</td>
+</tr>
+<tr>
+<td>json-api</td>
+<td>application/vnd.api+json</td>
+</tr>
+<tr>
+<td>json-stream</td>
+<td>application/x-json-stream</td>
+</tr>
+<tr>
+<td>octet-stream</td>
+<td>application/octet-stream</td>
+</tr>
+<tr>
+<td>png</td>
+<td>image/png</td>
+</tr>
+<tr>
+<td>jpeg</td>
+<td>image/jpeg</td>
+</tr>
+<tr>
+<td>gif</td>
+<td>image/gif</td>
+</tr>
+</tbody>
+</table>
+<h2 id="参数类型">参数类型</h2>
+<ul>
+<li>
+<p>query： 表示带在 url 之后的参数</p>
+</li>
+<li>
+<p>path ：表示请求路径上得url变量</p>
+</li>
+<li>
+<p>header ： 表示带在 header 信息中得参数</p>
+</li>
+<li>
+<p>body ：表示是一个 raw 数据请求，当<code>Accept</code>是<code>JSON</code>格式时，我们使用该字段指定接收的JSON类型</p>
+</li>
+<li>
+<p>formData ：表示是form表单请求的数据，需要加对应的api注解：<code>// @accept mpfd</code>，表单数据提交一般不会用于<code>GET</code>方法，<code>GET</code>方法常见于<code>url</code>参数或变量的使用中。</p>
+</li>
+</ul>
+<h2 id="数据类型">数据类型</h2>
+<ul>
+<li>string (string)</li>
+<li>integer (int, uint, uint32, uint64)</li>
+<li>number (float32)</li>
+<li>boolean (bool)</li>
+<li>user defined struct</li>
+</ul>
+<h2 id="安全性">安全性</h2>
+<table>
+<thead>
+<tr>
+<th>注释</th>
+<th>描述</th>
+<th>参数</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>securitydefinitions.basic</td>
+<td><a href="https://swagger.io/docs/specification/2-0/authentication/basic-authentication/">Basic</a> auth.</td>
+<td></td>
+<td>// @securityDefinitions.basic BasicAuth</td>
+</tr>
+<tr>
+<td>securitydefinitions.apikey</td>
+<td><a href="https://swagger.io/docs/specification/2-0/authentication/api-keys/">API key</a> auth.</td>
+<td>in, name</td>
+<td>// @securityDefinitions.apikey ApiKeyAuth</td>
+</tr>
+<tr>
+<td>securitydefinitions.oauth2.application</td>
+<td><a href="https://swagger.io/docs/specification/authentication/oauth2/">OAuth2 application</a> auth.</td>
+<td>tokenUrl, scope</td>
+<td>// @securitydefinitions.oauth2.application OAuth2Application</td>
+</tr>
+<tr>
+<td>securitydefinitions.oauth2.implicit</td>
+<td><a href="https://swagger.io/docs/specification/authentication/oauth2/">OAuth2 implicit</a> auth.</td>
+<td>authorizationUrl, scope</td>
+<td>// @securitydefinitions.oauth2.implicit OAuth2Implicit</td>
+</tr>
+<tr>
+<td>securitydefinitions.oauth2.password</td>
+<td><a href="https://swagger.io/docs/specification/authentication/oauth2/">OAuth2 password</a> auth.</td>
+<td>tokenUrl, scope</td>
+<td>// @securitydefinitions.oauth2.password OAuth2Password</td>
+</tr>
+<tr>
+<td>securitydefinitions.oauth2.accessCode</td>
+<td><a href="https://swagger.io/docs/specification/authentication/oauth2/">OAuth2 access code</a> auth.</td>
+<td>tokenUrl, authorizationUrl, scope</td>
+<td>// @securitydefinitions.oauth2.accessCode OAuth2AccessCode</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>参数注释</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>in</td>
+<td>// @in header</td>
+</tr>
+<tr>
+<td>name</td>
+<td>// @name Authorization</td>
+</tr>
+<tr>
+<td>tokenUrl</td>
+<td>// @tokenUrl <a href="https://example.com/oauth/token">https://example.com/oauth/token</a></td>
+</tr>
+<tr>
+<td>authorizationurl</td>
+<td>// @authorizationurl <a href="https://example.com/oauth/authorize">https://example.com/oauth/authorize</a></td>
+</tr>
+<tr>
+<td>scope.hoge</td>
+<td>// @scope.write Grants write access</td>
+</tr>
+</tbody>
+</table>
+<h2 id="属性">属性</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// @Param   enumstring  query     string     false  &#34;string enums&#34;       Enums(A, B, C)
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Param   enumint     query     int        false  &#34;int enums&#34;          Enums(1, 2, 3)
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Param   enumnumber  query     number     false  &#34;int enums&#34;          Enums(1.1, 1.2, 1.3)
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Param   string      query     string     false  &#34;string valid&#34;       minlength(5)  maxlength(10)
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Param   int         query     int        false  &#34;int valid&#34;          minimum(1)    maximum(10)
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Param   default     query     string     false  &#34;string default&#34;     default(A)
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Param   collection  query     []string   false  &#34;string collection&#34;  collectionFormat(multi)
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Param   extensions  query     []string   false  &#34;string collection&#34;  extensions(x-example=test,x-nullable)
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>也适用于结构体字段：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Foo</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Bar</span> <span class="kt">string</span> <span class="s">`minLength:&#34;4&#34; maxLength:&#34;16&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Baz</span> <span class="kt">int</span> <span class="s">`minimum:&#34;10&#34; maximum:&#34;20&#34; default:&#34;15&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Qux</span> <span class="p">[]</span><span class="kt">string</span> <span class="s">`enums:&#34;foo,bar,baz&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="当前可用的">当前可用的</h3>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>default</td>
+<td>*</td>
+<td>声明如果未提供任何参数，则服务器将使用的默认参数值，例如，如果请求中的客户端未提供该参数，则用于控制每页结果数的“计数”可能默认为100。 （注意：“default”对于必需的参数没有意义）。参看 <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-6.2">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-6.2</a>。 与JSON模式不同，此值务必符合此参数的定义<a href="#parameterType">类型</a>。</td>
+</tr>
+<tr>
+<td>maximum</td>
+<td><code>number</code></td>
+<td>参看 <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.1.2">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.1.2</a>.</td>
+</tr>
+<tr>
+<td>minimum</td>
+<td><code>number</code></td>
+<td>参看 <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.1.3">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.1.3</a>.</td>
+</tr>
+<tr>
+<td>maxLength</td>
+<td><code>integer</code></td>
+<td>参看 <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.2.1">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.2.1</a>.</td>
+</tr>
+<tr>
+<td>minLength</td>
+<td><code>integer</code></td>
+<td>参看 <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.2.2">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.2.2</a>.</td>
+</tr>
+<tr>
+<td>enums</td>
+<td>[*]</td>
+<td>参看 <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.5.1">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.5.1</a>.</td>
+</tr>
+<tr>
+<td>format</td>
+<td><code>string</code></td>
+<td>上面提到的<a href="#parameterType">类型</a>的扩展格式。有关更多详细信息，请参见<a href="https://swagger.io/specification/v2/#dataTypeFormat">数据类型格式</a>。</td>
+</tr>
+<tr>
+<td>collectionFormat</td>
+<td><code>string</code></td>
+<td>指定query数组参数的格式。 可能的值为： <ul><li><code>csv</code> - 逗号分隔值 <code>foo,bar</code>. <li><code>ssv</code> - 空格分隔值 <code>foo bar</code>. <li><code>tsv</code> - 制表符分隔值 <code>foo\tbar</code>. <li><code>pipes</code> - 管道符分隔值 <code>foo|bar</code>. <li><code>multi</code> - 对应于多个参数实例，而不是单个实例 <code>foo=bar＆foo=baz</code> 的多个值。这仅对“<code>query</code>”或“<code>formData</code>”中的参数有效。 </ul> 默认值是 <code>csv</code>。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="进一步的">进一步的</h3>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th style="text-align:center">类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>multipleOf</td>
+<td style="text-align:center"><code>number</code></td>
+<td>See <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.1.1">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.1.1</a>.</td>
+</tr>
+<tr>
+<td>pattern</td>
+<td style="text-align:center"><code>string</code></td>
+<td>See <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.2.3">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.2.3</a>.</td>
+</tr>
+<tr>
+<td>maxItems</td>
+<td style="text-align:center"><code>integer</code></td>
+<td>See <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.3.2">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.3.2</a>.</td>
+</tr>
+<tr>
+<td>minItems</td>
+<td style="text-align:center"><code>integer</code></td>
+<td>See <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.3.3">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.3.3</a>.</td>
+</tr>
+<tr>
+<td>uniqueItems</td>
+<td style="text-align:center"><code>boolean</code></td>
+<td>See <a href="https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.3.4">https://tools.ietf.org/html/draft-fge-json-schema-validation-00#section-5.3.4</a>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="样例">样例</h2>
+<h3 id="多行的描述">多行的描述</h3>
+<p>可以在常规api描述或路由定义中添加跨越多行的描述，如下所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// @description This is the first line
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @description This is the second line
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @description And so forth.
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="用户自定义的具有数组类型的结构">用户自定义的具有数组类型的结构</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// @Success 200 {array} model.Account &lt;-- This is a user defined struct.
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">model</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Account</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ID</span>   <span class="kt">int</span>    <span class="s">`json:&#34;id&#34; example:&#34;1&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Name</span> <span class="kt">string</span> <span class="s">`json:&#34;name&#34; example:&#34;account name&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="响应对象中的模型组合">响应对象中的模型组合</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// JSONResult的data字段类型将被proto.Order类型替换
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">@</span><span class="nx">success</span> <span class="mi">200</span> <span class="p">{</span><span class="nx">object</span><span class="p">}</span> <span class="nx">jsonresult</span><span class="p">.</span><span class="nx">JSONResult</span><span class="p">{</span><span class="nx">data</span><span class="p">=</span><span class="nx">proto</span><span class="p">.</span><span class="nx">Order</span><span class="p">}</span> <span class="s">&#34;desc&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">JSONResult</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Code</span>    <span class="kt">int</span>          <span class="s">`json:&#34;code&#34; `</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Message</span> <span class="kt">string</span>       <span class="s">`json:&#34;message&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Data</span>    <span class="kd">interface</span><span class="p">{}</span>  <span class="s">`json:&#34;data&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Order</span> <span class="kd">struct</span> <span class="p">{</span> <span class="c1">//in `proto` package
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>还支持对象数组和原始类型作为嵌套响应</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="err">@</span><span class="nx">success</span> <span class="mi">200</span> <span class="p">{</span><span class="nx">object</span><span class="p">}</span> <span class="nx">jsonresult</span><span class="p">.</span><span class="nx">JSONResult</span><span class="p">{</span><span class="nx">data</span><span class="p">=[]</span><span class="nx">proto</span><span class="p">.</span><span class="nx">Order</span><span class="p">}</span> <span class="s">&#34;desc&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">@</span><span class="nx">success</span> <span class="mi">200</span> <span class="p">{</span><span class="nx">object</span><span class="p">}</span> <span class="nx">jsonresult</span><span class="p">.</span><span class="nx">JSONResult</span><span class="p">{</span><span class="nx">data</span><span class="p">=</span><span class="kt">string</span><span class="p">}</span> <span class="s">&#34;desc&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">@</span><span class="nx">success</span> <span class="mi">200</span> <span class="p">{</span><span class="nx">object</span><span class="p">}</span> <span class="nx">jsonresult</span><span class="p">.</span><span class="nx">JSONResult</span><span class="p">{</span><span class="nx">data</span><span class="p">=[]</span><span class="kt">string</span><span class="p">}</span> <span class="s">&#34;desc&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>替换多个字段的类型。如果某字段不存在，将添加该字段。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="err">@</span><span class="nx">success</span> <span class="mi">200</span> <span class="p">{</span><span class="nx">object</span><span class="p">}</span> <span class="nx">jsonresult</span><span class="p">.</span><span class="nx">JSONResult</span><span class="p">{</span><span class="nx">data1</span><span class="p">=</span><span class="kt">string</span><span class="p">,</span><span class="nx">data2</span><span class="p">=[]</span><span class="kt">string</span><span class="p">,</span><span class="nx">data3</span><span class="p">=</span><span class="nx">proto</span><span class="p">.</span><span class="nx">Order</span><span class="p">,</span><span class="nx">data4</span><span class="p">=[]</span><span class="nx">proto</span><span class="p">.</span><span class="nx">Order</span><span class="p">}</span> <span class="s">&#34;desc&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="在响应中增加头字段">在响应中增加头字段</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// @Success      200              {string}  string    &#34;ok&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @failure      400              {string}  string    &#34;error&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @response     default          {string}  string    &#34;other error&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Header       200              {string}  Location  &#34;/entity/1&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Header       200,400,default  {string}  Token     &#34;token&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Header       all              {string}  Token2    &#34;token2&#34;
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="使用多路径参数">使用多路径参数</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">/// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Param  group_id    path  int  true  &#34;Group ID&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Param  account_id  path  int  true  &#34;Account ID&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Router /examples/groups/{group_id}/accounts/{account_id} [get]
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="结构体的示例值">结构体的示例值</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Account</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ID</span>   <span class="kt">int</span>    <span class="s">`json:&#34;id&#34; example:&#34;1&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Name</span> <span class="kt">string</span> <span class="s">`json:&#34;name&#34; example:&#34;account name&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">PhotoUrls</span> <span class="p">[]</span><span class="kt">string</span> <span class="s">`json:&#34;photo_urls&#34; example:&#34;http://test/image/1.jpg,http://test/image/2.jpg&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="结构体描述">结构体描述</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Account</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ID this is userid
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">ID</span>   <span class="kt">int</span>    <span class="s">`json:&#34;id&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Name</span> <span class="kt">string</span> <span class="s">`json:&#34;name&#34;`</span> <span class="c1">// This is Name
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="使用swaggertype标签更改字段类型">使用<code>swaggertype</code>标签更改字段类型</h3>
+<p><a href="https://github.com/swaggo/swag/issues/201#issuecomment-475479409">#201</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">TimestampTime</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">///实现encoding.JSON.Marshaler接口
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">TimestampTime</span><span class="p">)</span> <span class="nf">MarshalJSON</span><span class="p">()</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">bin</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">bin</span> <span class="p">=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">AppendInt</span><span class="p">(</span><span class="nx">bin</span><span class="p">[:</span><span class="mi">0</span><span class="p">],</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Time</span><span class="p">.</span><span class="nf">Unix</span><span class="p">(),</span> <span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">bin</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">///实现encoding.JSON.Unmarshaler接口
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">TimestampTime</span><span class="p">)</span> <span class="nf">UnmarshalJSON</span><span class="p">(</span><span class="nx">bin</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">v</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nf">ParseInt</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">bin</span><span class="p">),</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">t</span><span class="p">.</span><span class="nx">Time</span> <span class="p">=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Unix</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">///
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Account</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 使用`swaggertype`标签将别名类型更改为内置类型integer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">ID</span>     <span class="nx">sql</span><span class="p">.</span><span class="nx">NullInt64</span> <span class="s">`json:&#34;id&#34; swaggertype:&#34;integer&#34;`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 使用`swaggertype`标签更改struct类型为内置类型integer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">RegisterTime</span> <span class="nx">TimestampTime</span> <span class="s">`json:&#34;register_time&#34; swaggertype:&#34;primitive,integer&#34;`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Array types can be overridden using &#34;array,&lt;prim_type&gt;&#34; format
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">Coeffs</span> <span class="p">[]</span><span class="nx">big</span><span class="p">.</span><span class="nx">Float</span> <span class="s">`json:&#34;coeffs&#34; swaggertype:&#34;array,number&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><a href="https://github.com/swaggo/swag/issues/379">#379</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">CerticateKeyPair</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Crt</span> <span class="p">[]</span><span class="kt">byte</span> <span class="s">`json:&#34;crt&#34; swaggertype:&#34;string&#34; format:&#34;base64&#34; example:&#34;U3dhZ2dlciByb2Nrcw==&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Key</span> <span class="p">[]</span><span class="kt">byte</span> <span class="s">`json:&#34;key&#34; swaggertype:&#34;string&#34; format:&#34;base64&#34; example:&#34;U3dhZ2dlciByb2Nrcw==&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>生成的swagger文档如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="s">&#34;api.MyBinding&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;type&#34;</span><span class="p">:</span><span class="s">&#34;object&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="s">&#34;properties&#34;</span><span class="p">:{</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;crt&#34;</span><span class="p">:{</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;type&#34;</span><span class="p">:</span><span class="s">&#34;string&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;format&#34;</span><span class="p">:</span><span class="s">&#34;base64&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;example&#34;</span><span class="p">:</span><span class="s">&#34;U3dhZ2dlciByb2Nrcw==&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;key&#34;</span><span class="p">:{</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;type&#34;</span><span class="p">:</span><span class="s">&#34;string&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;format&#34;</span><span class="p">:</span><span class="s">&#34;base64&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;example&#34;</span><span class="p">:</span><span class="s">&#34;U3dhZ2dlciByb2Nrcw==&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="使用swaggerignore标签排除字段">使用<code>swaggerignore</code>标签排除字段</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Account</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ID</span>   <span class="kt">string</span>    <span class="s">`json:&#34;id&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Name</span> <span class="kt">string</span>     <span class="s">`json:&#34;name&#34;`</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Ignored</span> <span class="kt">int</span>     <span class="s">`swaggerignore:&#34;true&#34;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="将扩展信息添加到结构字段">将扩展信息添加到结构字段</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Account</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ID</span>   <span class="kt">string</span>    <span class="s">`json:&#34;id&#34;   extensions:&#34;x-nullable,x-abc=def,!x-omitempty&#34;`</span> <span class="c1">// 扩展字段必须以&#34;x-&#34;开头
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>生成swagger文档，如下所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="s">&#34;Account&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;type&#34;</span><span class="p">:</span> <span class="s">&#34;object&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s">&#34;properties&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s">&#34;id&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="s">&#34;type&#34;</span><span class="p">:</span> <span class="s">&#34;string&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s">&#34;x-nullable&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s">&#34;x-abc&#34;</span><span class="p">:</span> <span class="s">&#34;def&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s">&#34;x-omitempty&#34;</span><span class="p">:</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="对展示的模型重命名">对展示的模型重命名</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Resp</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">Code</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span><span class="c1">//@name Response
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="如何使用安全性注释">如何使用安全性注释</h3>
+<p>通用API信息。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// @securityDefinitions.basic BasicAuth
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// @securitydefinitions.oauth2.application OAuth2Application
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @tokenUrl https://example.com/oauth/token
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @scope.write Grants write access
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @scope.admin Grants read and write access to administrative information
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>每个API操作。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// @Security ApiKeyAuth
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用AND条件。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// @Security ApiKeyAuth
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @Security OAuth2Application[write, admin]
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="token的api注解"><code>token</code>的api注解</h3>
+<p>swagger除了可以查看文档外，还可以直接<code>try it out</code> 调用接口，有些接口是需要登录后才能调用。有个token鉴权。</p>
+<p>校验token 的api接口 header中必须有正确的 <strong>Authorization</strong></p>
+<p>可以通过添加通用的API注释来设置全局接口的header值</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// @securityDefinitions.apikey CoreAPI
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @name Authorization
+</span></span></span><span class="line"><span class="cl"><span class="c1">// @in header
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">//设置header字段 Authorization
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后在需要token接口注释上增加</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// @Security CoreAPI
+</span></span></span><span class="line"><span class="cl"><span class="c1">//并且需要携带对应的token，一般token放在Bear开头，所以需要如下图操作：（Bear{token}，注意两者之间有空格）
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://img2018.cnblogs.com/blog/866435/201912/866435-20191225094144056-809753624.png" alt="img"></p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-01-09
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/swagger/">swagger</a>
+          <a href="/tags/%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3%E8%87%AA%E5%8A%A8%E5%8C%96/">接口文档自动化</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">常见算法总结</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/go%E7%88%AC%E8%99%AB/">
+            <span class="next-text nav-default">Go爬虫</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-01-09 10:29:26 \u002b0800 CST',
+        title: '自动化接口文档swag使用指南',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

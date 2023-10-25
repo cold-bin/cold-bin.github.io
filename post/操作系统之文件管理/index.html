@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>操作系统之文件管理 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="[toc] 文件系统基础 文件的概念 由于系统的内存有限并且不能长期保存，故平时总是把它们以文件的形式存放在外存中，需要时再将它们调入内存。如何高效的对文" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="操作系统之文件管理" />
+<meta property="og:description" content="[toc] 文件系统基础 文件的概念 由于系统的内存有限并且不能长期保存，故平时总是把它们以文件的形式存放在外存中，需要时再将它们调入内存。如何高效的对文" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-05-21T15:19:47+08:00" />
+<meta property="article:modified_time" content="2023-05-21T15:19:47+08:00" />
+<meta itemprop="name" content="操作系统之文件管理">
+<meta itemprop="description" content="[toc] 文件系统基础 文件的概念 由于系统的内存有限并且不能长期保存，故平时总是把它们以文件的形式存放在外存中，需要时再将它们调入内存。如何高效的对文"><meta itemprop="datePublished" content="2023-05-21T15:19:47+08:00" />
+<meta itemprop="dateModified" content="2023-05-21T15:19:47+08:00" />
+<meta itemprop="wordCount" content="13100">
+<meta itemprop="keywords" content="链接," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="操作系统之文件管理"/>
+<meta name="twitter:description" content="[toc] 文件系统基础 文件的概念 由于系统的内存有限并且不能长期保存，故平时总是把它们以文件的形式存放在外存中，需要时再将它们调入内存。如何高效的对文"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">操作系统之文件管理</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-05-21 </span>
+        <div class="post-category">
+            <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"> 操作系统 </a>
+            </div>
+          <span class="more-meta"> 约 13100 字 </span>
+          <span class="more-meta"> 预计阅读 27 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#文件系统基础">文件系统基础</a>
+          <ul>
+            <li><a href="#文件的概念">文件的概念</a></li>
+            <li><a href="#文件的结构">文件的结构</a></li>
+            <li><a href="#文件的共享">文件的共享</a></li>
+            <li><a href="#文件的保护">文件的保护</a></li>
+          </ul>
+        </li>
+        <li><a href="#文件系统实现">文件系统实现</a>
+          <ul>
+            <li><a href="#文件系统层次结构">文件系统层次结构</a></li>
+            <li><a href="#目录实现">目录实现</a></li>
+            <li><a href="#文件实现">文件实现</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <p>[toc]</p>
+<h2 id="文件系统基础">文件系统基础</h2>
+<h3 id="文件的概念">文件的概念</h3>
+<p>由于系统的内存有限并且不能长期保存，故平时总是把它们以文件的形式存放在外存中，需要时再将它们调入内存。如何高效的对文件进行管理是操作系统实现的目标。</p>
+<h4 id="文件和文件系统">文件和文件系统</h4>
+<p>现代OS几乎都是通过文件系统来组织和管理在计算机中所存储的大量程序和数据的。<strong>文件系统的管理功能是通过把它所管理的程序和数据组织成一系列文件的方法来实现</strong>的。而<strong>文件则是指具有文件名的若干相关元素的集合</strong>。<strong>元素通常是记录，而记录是一组有意义的数据项的集合</strong>。可以把数据组成分为数据项、记录、文件。</p>
+<ol>
+<li><strong>数据项</strong>，数据项是最低级数据组织形式。分为基本数据项（用于描述一个对象某种属性的字符集，是数据组织中可以明明的最小逻辑数据单位，即原子数据，又称为数据元素或字段）和组合数据项（由若干个基本数据项组成）</li>
+<li><strong>记录</strong>，是一组相关数据项的集合，用于描述一个对象在某方面的属性，为了能够唯一标识一个记录，需要在记录中确定一个或集合数据项，把他们的集合称为关键字，关键字是能够唯一标识一个记录的数据项。</li>
+<li><strong>文件</strong>，文件是具有文件名的一组相关元素的集合，分为有结构文件和无结构文件。<strong>有结构文件由若干个相关记录组成，无结构文件则被看成一个字符流</strong>。文件是文件系统的最大数据单位。文件应该具有自己的属性，包括文件类型（如源文件、目标文件、可执行文件等），文件长度（文件的当前长度，也可能是最大允许长度），文件的物理位置（指示文件在哪一个设备上及在该设备的哪个位置的指针），文件的建立时间（文件最后一次修改时间）。</li>
+</ol>
+<p>一个文件可对应若干个记录，一个记录可对应若干个数据项。</p>
+<p>文件系统管理的对象有：<strong>文件</strong>（作为文件管理的直接对象），<strong>目录</strong>（为了方便用户对文件的存取和检索，在文件系统中配置目录，每个目录项中，必须含有文件名及该文件所在的物理地址，对目录的组织和管理是方便和提高对文件存取速度的关键），<strong>磁盘（磁盘）存储空间</strong>（文件和目录必定占用存储空间，对这部分空间的有效管理，不仅能提高外存的利用率，而且能提高对文件的存取速度）。</p>
+<h5 id="文件操作">文件操作</h5>
+<ol>
+<li><strong>创建文件</strong>，在创建一个新文件时，系统首先要为新文件分配必要的外存空间，并在文件系统的目录中，为之建立一个目录项，目录项中应该记录新文件的文件名及其在外存的地址等属性。</li>
+<li><strong>删除文件</strong>，当已不再需要某文件时，可将其从文件系统中删除。在删除时，系统应先从目录中找到要删除文件的目录项，使之成为空项，然后回收该文件所占用的存储空间。</li>
+<li><strong>读文件</strong>，读文件时，须在相应系统调用中给出文件名和应读入的内存目标地址。此时，系统要查找目录，找到指定目录项，从中得到被读文件在外存中的位置。在目录项中，还有一个指针用于对文件进行读/写。</li>
+<li><strong>写文件</strong>，写文件时，须在相应系统调用中给出文件名和其在内存源地址。此时，系统要查找目录，找到指定目录项，从再利用目录中的写指针进行写操作。</li>
+<li><strong>截断文件</strong>，如果一个文件的内容已经陈旧而需要全部更新时，一种方法是将此文件删除，再重新创建一个新文件，但如果文件名和属性均无改变，则可采取截断文件的方法，其将原有的文件长度设置为0，放弃原有文件的内容，再将新内容读入。</li>
+<li><strong>设置文件的读/写位置</strong>，用于设置文件读/写指针的位置，以便每次读/写文件时，不需要从始端开始而是从所设置的位置开始操作。可以改顺序存取为随机存取。</li>
+</ol>
+<p>当前OS所提供的大多数对文件的操作，其过程大致都是这样两步：</p>
+<ol>
+<li>
+<p>首先，检索文件目录来找到指定文件的属性及其在外存上的位置；</p>
+</li>
+<li>
+<p>然后，对文件实施相应的操作，如读/写文件等。</p>
+<blockquote>
+<p>当用户要求对一个文件实施多次读/写或其他操作时，每次都要从检索目录开始，为了避免多次重复地检索目录，在大多数OS中都引入了打开这一文件系统调用，当用户第一次请求对某文件系统进行操作时，先利用open系统调用将该文件打开。<strong>打开是指系统将指名文件的属性（包括该文件在外存上的物理位置）从外存拷贝到内存打开文件表的一个表目中，并将该表目的编号（索引号）返回给用户</strong>，以后，当用户再要求对该文件进行操作时，便可利用系统所返回的索引号向系统提出操作请求，系统便可直接利用该索引号到打开文件表中去查找，从而避免了对该文件的再次检索，如果用户不再需要对该文件实施操作，可利用关闭系统调用来关闭此文件，OS将会把该文件从打开文件表中的表目上删除掉。</p>
+<p><strong>小tips</strong>：如果没有调用close系统调用来关闭文件资源，操作系统会在程序结束时自动关闭文件资源。但是，如果程序在关闭文件之前崩溃或意外退出，文件资源可能会一直处于打开状态，导致资源泄漏。此外，如果程序打开了大量文件而没有关闭它们，可能会导致系统资源不足，从而影响其他程序的运行。因此，为了保证程序的稳定性和性能，建议在读写文件完毕后及时调用close系统调用来关闭文件资源。</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="文件的结构">文件的结构</h3>
+<p>对任何的文件，都存在以下两种形式的结构</p>
+<ul>
+<li>
+<p><strong>文件的逻辑结构</strong>，这是从用户观点出发所观察到的文件组织形式，是用户可以直接处理的数据及其结构，独立于文件的物理特性，又称为文件组织。</p>
+</li>
+<li>
+<p><strong>文件的物理结构</strong>，又称为文件的存储结构，是指文件在外存上的存储组织形式，不仅与存储介质有关，还与外存分配方式有关。</p>
+</li>
+</ul>
+<p>文件物理结构涉及硬件，不是操作系统关注的重点</p>
+<h4 id="文件逻辑结构的类型">文件逻辑结构的类型</h4>
+<p>文件的逻辑结构可分为两大类，一类是有结构文件，这是指由一个以上的记录构成的文件，故把他称为记录式文件，另一类是无结构文件，这是指由字符流构成的文件，又称为流式文件。</p>
+<ul>
+<li>
+<p><strong>有结构文件（记录式文件）</strong></p>
+<p>每个记录都用于描述实体集中的一个实体，各记录有着相同或不同数目的数据项，记录分为定长记录（文件中所有记录的长度都是相同的，所有记录中的各数据项都处在记录中相同的位置，具有相同的顺序和长度）和变长记录（文件中个记录的长度不相同，可能由于一个记录中所包含的数据项目并不相同）。</p>
+<p>根据用户和系统的需要，可采用多种方式来组织这些记录，如顺序文件（记录按照某种顺序排列所形成的文件，记录通常是定长的，能较快查找到文件中的记录），索引文件（记录为可变长度时，通常建立一张索引表，并为每个记录设置一个表项，加快对记录检索的速度），索引顺序文件（为文件建立一张索引表，为每一组记录中的第一个记录设置一个表项）。</p>
+</li>
+<li>
+<p><strong>无结构文件（流式文件）</strong></p>
+<p>对于源程序、可执行文件、库函数等通常采用的是无结构文件形式，即流式文件，其长度以字节为单位。</p>
+<blockquote>
+<p>库函数文件通常是库函数文件通常是二进制文件，其文件类型取决于库函数的编译方式和目标平台。在Unix/Linux系统中，常用的库函数文件扩展名为.so（共享对象）或.a（静态库），在Windows系统中则通常是.dll（动态链接库）或.lib（静态库）。这些库文件包含了编译好的函数和代码，可以被程序调用和链接，以实现特定的功能。库函数文件可以由开发者自己编写，也可以使用第三方库，如标准C库或开源库等。</p>
+</blockquote>
+</li>
+</ul>
+<h5 id="顺序文件">顺序文件</h5>
+<p>顺序文件是有结构文件。文件是记录的集合，它可以按照各种不同的顺序进行排列，一般地，可归纳为以下两种情况。</p>
+<ul>
+<li><strong>链表结构（变长）</strong>，各记录之间的顺序与关键字无关，通常按照时间先后排序，最先存入的记录作为第一个记录，其次，为第二个记录，以此类推。链表结构存储检索效率低下，所以定位删除、更新、查询的效率都较为低下。</li>
+<li><strong>顺序结构（定长）</strong>，文件中所有记录按照关键字排列，可以按照关键词长度从大到小排列。顺序结构的检索效率更高，但增加删除效率低下，需要删除原分配空间，另外分配一个更小，将所有没有删除的数据拷贝到新分配好的空间中去，<strong>可以类比二维数组实现</strong>。</li>
+</ul>
+<p>顺序文件的最佳应用场合是在对诸记录进行批量存取时，即每次要读或写一大批记录时，此时，对顺序文件的存取效率是所有逻辑文件中最高的，此外，只有顺序文件才能存储在磁带上，并能有效工作。但是想要增加或删除一个文件比较困难。</p>
+<h5 id="索引文件">索引文件</h5>
+<p>对于定长记录文件，顺序文件的实现，可以方便的实现顺序存取和直接存取。然而，顺序文件对于变长记录就很难实现。为了解决变长记录检索问题，可为变长记录文件建立一张索引表，对主文件中的每个记录，在索引表中设有一个相应的表项，用于记录该记录的长度L及指向该记录的指针（指向该记录在逻辑地址空间的首址），由于索引表示按记录键排序的，因此，<strong>索引表本身是一个定长记录的顺序文件</strong>。从而可以方便实现直接存取。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/616953-20160629142812609-701482299.png" alt="img"></p>
+<p>在对索引文件进行检索时，首先根据用户（程序)提供的关键字，并利用折半查找检索索引表，从中找到相应的表项，再利用该表项给出的指向记录的指针值，去访问所需的记录。每当要向索引文件中增加一个新纪录时，便须对索引表进行修改。索引表的问题在于除了有主文件外，还需要配置一张索引表，每个记录需要有一个索引项，因此提高了存储费用。</p>
+<h5 id="索引顺序文件">索引顺序文件</h5>
+<p>其有效克服了变长记录不便于直接存取的缺点，而且所付出的代价也不算太大，它是顺序文件和索引文件相结合的产物，它<strong>将顺序文件中的所有记录分为若干个组，为顺序文件建立一张索引表，在索引表中为每组中的第一个记录建立一个索引项，其中含有该记录的键值和指向记录的指针</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/616953-20160629143622906-56225907.png" alt="img"></p>
+<p>在对索引顺序文件进行检索时，首先利用用户（程序）所提供的关键字及某种查找算法去检索索引表，找到该记录组中的第一个记录的表项，从中得到该记录组第一个记录在主文件中的位置，然后，再利用顺序查找法去查找主文件，从中找出所要求的记录。</p>
+<blockquote>
+<p>类似于字典查找，先找拼音或部首缩小范围，再找具体的字。</p>
+</blockquote>
+<h5 id="直接文件">直接文件</h5>
+<p>对于直接文件，则根据给定的记录键值，直接获得指定记录的物理地址，换言之，<strong>记录键值本身就决定了记录的物理地址</strong>，这种由记录键值到记录物理地址的转换被称为键值转换。</p>
+<h5 id="哈希文件">哈希文件</h5>
+<p><strong>利用Hash函数可将记录键值转换为相应记录的地址</strong>，为了能实现文件存储空间的动态分配，通常由Hash函数所求得的并非是相应记录的地址，而是指向一目录表相应表目的指针，该表目的内容指向相应记录所在的物理块。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/616953-20160629144528812-1046254793.png" alt="img"></p>
+<h4 id="文件的目录结构">文件的目录结构</h4>
+<p>为了能够对文件实施有效的管理，必须对它们加以妥善组织，这主要是通过文件目录实现的，文件目录也是一种数据结构，用于标识系统中的文件及其物理地址，供检索时使用，对目录的管理要求如下：</p>
+<ul>
+<li><strong>实现按名存取</strong>，即用户只须向系统提供所需访问的文件的名字，便能够快速准确地找到指定文件在外存上的存储位置，这是目录管理中最基本的功能。</li>
+<li><strong>提高对目录检索速度</strong>，通过合理地组织目录结构的方法，可加快对目录的检索速度，从而提高对文件的存取速度。</li>
+<li><strong>文件共享</strong>，在多用户系统中，应该允许用户共享一个文件。</li>
+<li><strong>允许文件重名</strong>，系统应允许不同用户对不同文件采用相同的名字，以便用户按照自己的习惯给文件命名和使用文件。</li>
+</ul>
+<h5 id="文件控制块fcb">文件控制块（FCB）</h5>
+<p>一个FCB条目可能是文件，也可能是目录，但不能即是文件，又是目录。因为目录也是文件的一种。<strong>FCB的有序集合称为文件目录</strong>，一个FCB就是一个文件目录项。为了创建一个新文件，系统将分配一个FCB并存放在文件目录中，称为目录项。</p>
+<p><strong>值得注意的是，FCB是存储在目录中，而并不是目录项中。也就是说，目录文件会存储当前目录里的FCB，而当前目录的FCB是在上级目录中存放</strong></p>
+<ul>
+<li>基本信息：文件名、类型、物理位置</li>
+<li>存取控制权限信息：文件读写权限</li>
+<li>使用信息：创建时间等</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/616953-20160629170530499-1935685549.png" alt="img"></p>
+<h5 id="索引节点index-node">索引节点<code>index node</code></h5>
+<blockquote>
+<p>理解<code>inode</code>，要从文件储存说起。文件储存在硬盘上，硬盘的最小存储单位叫做”扇区”（Sector）。每个扇区储存512字节（相当于0.5KB）。操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个”块”（block）。这种由多个扇区组成的”块”，是文件存取的最小单位。”块”的大小，最常见的是4KB，即连续八个 sector组成一个 block。文件数据都储存在”块”中，那么很显然，我们还必须找到一个地方储存文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种储存文件元信息的区域就叫做<code>inode</code>，中文译名为”索引节点” 。</p>
+</blockquote>
+<h6 id="inode包含内容"><code>inode</code>包含内容</h6>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/616953-20160629220451749-1048812791.png" alt=""></p>
+<p>Linux中目录的数据块中的每一项中都包含了文件名和其对应的<code>inode</code>。<code>inode</code>记录了文件的属性以及该文件实际存储位置，即数据块号（block number），每一个block（常见大小4KB），通过<code>inode</code>可以实现文件的查找定位。<code>inode</code>是Linux中的，Unix中是<code>vnode</code>。</p>
+<p>基本上，<code>inode</code>包含的信息至少有如下这些：（1）文件的类型 （2）文件访问权限； （3）文件的所有者与组； （4）文件的大小； （5）链接数，即指向该<code>inode</code>的文件名总数； （6）文件的状态改变时间（ctime）、最近访问时间（atime）和最近修改时间（mtime）； （7）文件特殊属性，SUID、SGID和SBIT； （8）文件内容的真正指向（pointer）。</p>
+<p>可以用stat命令，查看某个文件的<code>inode</code>信息。</p>
+<p>每个文件都只占用一个<code>inode</code>。因此，文件系统能够建立的文件数量与<code>inode</code>数量有关。系统读取档案时需要先找到<code>inode</code>，并分析<code>inode</code>所记录的权限与用户是否符合，若符合才能够开始实际读取block的内容。</p>
+<h6 id="操作系统读取磁盘文件的流程">操作系统读取磁盘文件的流程</h6>
+<ol>
+<li>根据给定的文件的所在目录，获取该目录的数据实体。再根据数据实体中的数据项，找到对应文件的<code>inode</code>（拿到了<code>inode</code>地址）；</li>
+<li>根据文件<code>inode</code>，找到<code>inodeTable</code>；</li>
+<li>根据<code>inodeTable</code>中的对应关系，找到对应的block；</li>
+<li>读取文件。</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/chnshae3vr.png" alt="img"></p>
+<h6 id="inode的优点"><code>inode</code>的优点</h6>
+<ul>
+<li>对于有些无法删除的文件可以通过删除<code>inode</code>节点来删除；</li>
+<li>移动或者重命名文件，只是改变了目录下的文件名到<code>inode</code>的映射，并不需要实际对硬盘操作；</li>
+<li>删除文件的时候，只需要删除<code>inode</code>，不需要实际清空那块硬盘，只需要在下次写入的时候覆盖即可（这也是为什么删除了数据可以进行数据恢复的原因之一）；</li>
+<li>打开一个文件后，只需要通过<code>inode</code>来识别文件。</li>
+</ul>
+<h5 id="inode和fcb的关系"><code>inode</code>和FCB的关系</h5>
+<ul>
+<li>FCB = 文件名 + <code>inode</code>的所有内容</li>
+<li>FCB是在文件打开时创建的，而<code>inode</code>是在文件创建时就被创建的</li>
+<li>FCB随着文件关闭而释放，<code>inode</code>并不会</li>
+<li>寻找文件时，需要通过<code>inode</code>包含的文件物理地址查询</li>
+</ul>
+<h5 id="目录结构">目录结构</h5>
+<p>目录结构的组织，关系到文件系统的存取速度，也关系到文件的共享性和安全性，目前常用的目录结构形式有单级目录、两级目录、多级目录。</p>
+<h6 id="单级目录">单级目录</h6>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/616953-20160629192436109-1963104738.png" alt="img"></p>
+<p>在整个系统中只建立一张目录表，每个文件占一个目录项，目录项中含文件名、文件扩展名、文件长度、文件类型、文件物理地址、状态位（表示目录项是否空闲）等。</p>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>查找速度慢：所有文件都在同一个目录下，文件越多，查询越慢</li>
+<li>无法实现文件重名：在同一目录下，没有办法实现重名，只能每个文件都取不同名字</li>
+<li>不便于实现多用户的文件共享：单级目录下，多个用户使用相同的文件名对一个文件进行访问，但不能实现多个用户使用不同文件名对一个文件进行访问。</li>
+</ul>
+<h6 id="两级目录">两级目录</h6>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/616953-20160629191430843-2061259116.png" alt="img"></p>
+<p>为每个用户建立一个单独的<strong>用户文件目录UFD</strong>（User File Directory），这些文件目录具有相似的结构，由用户所有文件的文件控制块组成。此外，系统中还有一个<strong>主文件目录MFD</strong>（Master File Directory），在主文件目录中，每个用户目录文件都占有一个目录项，其目录项包括<strong>用户名和指向用户目录文件的指针</strong>。</p>
+<p><strong>优点：</strong></p>
+<ul>
+<li>相对于单级目录，提高了检索速度</li>
+<li>相对于单级目录，不同用户可以使用相同的文件名</li>
+<li>不同用户还可以使用不同文件名访问系统中的同一个共享文件</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>但在多个用户需要合作完成一个大任务时，不便于用户之间共享文件</li>
+</ul>
+<h6 id="多级目录">多级目录</h6>
+<p>对于大型文件系统，通常采用三级或三级以上的目录结构，以提高对目录的检索速度和文件系统的性能。多级目录结构又称为树形目录结构，<strong>主目录被称为根目录</strong>，把<strong>数据文件称为树叶</strong>，<strong>其他的目录均作为树的结点</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/616953-20160629194037327-113223554.png" alt="img"></p>
+<blockquote>
+<p>说明：方框代表目录文件，圆圈代表数据文件，主目录中有是哪个用户总目录A、B、C，在B用户的总目录B中，又包括三个分目录F、E、D，其中每个分目录中又包含多个文件，为提高系统的灵活性，<strong>应该允许在一个目录文件中的目录项既是作为目录文件的FCB，又是数据文件的FCB</strong>，这一信息可用目录项中的一位来指示。如用户A总目录中，目录项A是目录文件FCB，而目录项B和D则是数据文件的FCB。</p>
+</blockquote>
+<p>在树形目录结构中，从根目录到任何数据文件，都只有一条唯一的通路，在该路径上从树的根开始，把全部目录文件名和数据文件名依次用&quot;/&ldquo;连接起来，即构成该数据文件的路径名。<strong>系统中的每个文件都有唯一的路径名</strong>。例如，用户B访问文件J，则使用路径名/B/F/J来访问。</p>
+<p>当一个文件系统含有很多级时，每访问一个文件，都要使用从树根开始直到树叶（数据文件）为止的、包含各中间节点（目录）的全路径名，这非常麻烦，可为每个进程设置一个当前目录，又称为工作目录，进程对各文件的访问都相对于当前目录而进行的。<strong>把从当前目录开始值得数据文件为止所构成的路径名称为相对路径名</strong>，而<strong>把从树根开始的路径名称为绝对路径名</strong>。</p>
+<h6 id="增加或删除目录">增加或删除目录</h6>
+<p>增加目录没啥好说的。</p>
+<ul>
+<li>删除目录为空：简单地将其删除，使它在其上一级目录中所对应的目录项为空</li>
+<li>不删除非空目录：当目录不为空时，为了删除一个非空目录，必须先删除目录中所有的文件，使之称为空目录，然后再删除，如果目录中包含有子目录，则应该递归调用方式删除</li>
+<li>删除非空目录：将目录中的所有文件和子目录同时删除</li>
+</ul>
+<h3 id="文件的共享">文件的共享</h3>
+<p>文件共享使多个用户（进程）共享同一份文件，系统中只需保留该文件的一份副本。如果系统不能提供共享功能，那么每个需要该文件的用户都要有各自的副本，会造成对存储空间的极大浪费。随着计算机技术的发展，文件共享的范围已由单机系统发展到多机系统，进而通过网络扩展到全球。</p>
+<p>这些文件的分享是通过分布式文件系统、远程文件系统、分布式信息系统实现的。这些系统允许多个客户通过C/S模型共享网络中的服务器文件。</p>
+<p>现代常用的两种文件共享方法有：硬链接和软链接</p>
+<h4 id="硬链接基于索引结点的共享方式">硬链接：基于索引结点的共享方式</h4>
+<p>在树形结构的目录中，当有两个或多个用户要共享一个子目录或文件时，必须将共享文件或子目录链接到两个或多个用户的目录中，才能方便地找到该文件，如图所示</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/112522_90746cd6_508704.png" alt="输入图片说明"></p>
+<p>在这种共享方式中引用索引结点，即诸如文件的物理地址及其他的文件属性等信息，不再是放在目录项中，而是放在索引结点中。</p>
+<p>在文件目录中只设置文件名及指向相应索引结点的指针。在索引结点中还应有一个链接计数count,用于表示链接到本索引结点（亦即文件）上的用户目录项的数目。只有当count=0时，也就是文件没有其他用户被硬链接，此时可以删除掉文件；count&gt;0时，不能删除文件。</p>
+<p><strong>优点：</strong></p>
+<ul>
+<li>读取效率高：多个用户访问共享文件时，无需经过路径名，只需要找到当前用户的共享文件名，即可拿到索引节点；</li>
+<li>存储开销小：共享文件只有一个索引节点，没有额外存储开销。</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>可能会出现访问共享文件异常空指针地情况：如果删除掉索引节点时，还有用户保留了共享文件。那么这个共享文件的<code>inode</code>指针将会为空，访问会出错。</li>
+<li>不好实现网络文件地共享</li>
+</ul>
+<h5 id="示例说明">示例说明</h5>
+<p>当count=2时，表示有两个用户目录项链接到本文件上，或者说是有两个用户共享此文件。</p>
+<p>当用户A创建一个新文件时，它便是该文件的所有者，此时将count置为1。</p>
+<p>当有用户 B要共享此文件时，在用户B的目录中增加一个目录项，并设置一指针指向该文件的索引结点。</p>
+<p>此时，文件主仍然是用户A，count=2。如果用户A不再需要此文件，不能将文件直接删除。</p>
+<p>因为，若删除了该文件，也必然删除了该文件的索引结点，这样便会便用户B的指针悬空，而用户B则可能正在此文件上执行写操作，此时用户B会无法访问到文件。</p>
+<p>因此用户A不能删除此文件，只是将该文件的count减1，然后删除自己目录中的相应目录项。用户B仍可以使用该文件。</p>
+<p>当count=0时，表示没有用户使用该文件，系统将负责删除该文件。</p>
+<h4 id="软链接利用符号链实现文件共享">软链接：利用符号链实现文件共享</h4>
+<p>为使用户B能共享用户A的一个文件F,可以由系统创建一个<code>LINK</code>类型的新文件，也取名为F，并将文件F写入用户B的目录中，以实现用户B的目录与文件F的链接。</p>
+<p>在新文件中只包含被链接文件F的路径名或URL。这样的链接方法被称为符号链接。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20230527212247331.png" alt="image-20230527212247331" style="zoom:50%;" />
+<p>值得注意的是：在利用符号链方式实现文件共享时，只有文件的拥有者才拥有指向其索引结点的指针；而共享该文件的其他用户则只有该文件的路径名，并不拥有指向其索引结点的指针，也就是说，通过符号链的方式共享文件时，需要通过路径名来查找索引节点，显然比较慢。而且，每个软链接文件都需要创建一个link类型文件的索引节点，增加了存储开销。</p>
+<p><strong>优点：</strong></p>
+<ul>
+<li>不存在异常悬空指针的情况：当文件的拥有者把一个共享文件删除后，其他用户通过符号链去访问它时，会出现访问失败，于是将符号链删除，此时不会产生任何影响。</li>
+<li>方便地获取网络文件：网络共享只需提供该文件所在机器的网络地址以及该机器中的文件路径</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>读取效率较低：当其他用户读共享文件时，需要根据文件路径名逐个地查找目录，直至找到该文件的索引结点。因此，每次访问时，都可能要多次地读盘，使得访问文件的开销变大并增加了启动磁盘的频率；</li>
+<li>存储开销更大：符号链文件共享就是创建一个link类型的文件，所以也需要创建一个索引节点来保存link类型文件的元信息；</li>
+</ul>
+<h3 id="文件的保护">文件的保护</h3>
+<p>为了防止文件共享可能会导致文件被破坏或未经核准的用户修改文件，文件系统必须控制用户对文件的存取，即解决对文件的读、写、执行的许可问题。</p>
+<p>为此，必须在文件系统中建立相应的文件保护机制。</p>
+<p>文件保护通过<strong>口令保护</strong>、<strong>加密保护</strong>和<strong>访问控制</strong>等方式实现。其中，口令保护和加密保护是为了防止用户文件被他人存取或窃取，而访问控制则用于控制用户对文件的访问方式。</p>
+<h4 id="口令保护与加密保护">口令保护与加密保护</h4>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20230527214748052.png" alt="image-20230527214748052" style="zoom:50%;" />
+<ul>
+<li>口令保护：用户需要输入对的口令，才能拿到索引节点，之后再通过索引节点中文件物理地址去访问磁盘上的文件。但是口令保护有个无法忽视的缺点，那就是如果某用户越过了索引节点，直接拿到文件物理地址，口令保护就会失去作用；</li>
+<li>加密保护：对存储的文件进行可靠加密，只有解密才能拿到文件内容，可以很好的起到文件保护作用。</li>
+</ul>
+<h4 id="访问控制">访问控制</h4>
+<p>控制的含义就是控制不同文件的操作权限。解决访问控制最常用的方法是<strong>根据用户身份进行文件操作控制</strong>。</p>
+<p>而实现基于身份访问的最为普通的方法是为每个文件和目录增加一个访问控制列表(Access-Control List, ACL)，以规定每个用户名及其所允许的访问类型。</p>
+<p>这种方法的优点是可以使用复杂的访同方法。其缺点是长度无法预期并且可能导致复杂的空间管理，使用精简的访问列表可以解决这个问题。</p>
+<p>精简的访问列表釆用拥有者、组和其他三种用户类型。</p>
+<ul>
+<li>拥有者：创建文件的用户。</li>
+<li>组：一组需要共享文件且具有类似访问的用户。</li>
+<li>其他：系统内的所有其他用户。</li>
+</ul>
+<p>这样只需用三个域列出访问表中这三类用户的访问权限即可。</p>
+<p>文件拥有者在创建文件时，说明创建者用户名及所在的组名，系统在创建文件时也将文件主的名字、所属组名列在该文件的FCB中。</p>
+<p>用户访问该文件时，按照拥有者所拥有的权限访问文件，如果用户和拥有者在同一个用户组则按照同组权限访问，否则只能按其他用户权限访问。UNIX操作系统即釆用此种方法。</p>
+<h2 id="文件系统实现">文件系统实现</h2>
+<h3 id="文件系统层次结构">文件系统层次结构</h3>
+<ul>
+<li><strong>文件系统接口</strong>。文件系统为用户提供与文件及目录有关的调用，如新建、打开、读写、关闭、删除文件，建立、删除目录等。此层由若干程序模块组成，每一模块对应一条系统调用，用户发出系统调用时，控制即转入相应的模块。</li>
+<li><strong>文件目录系统</strong>的主要功能是管理文件目录，其任务有管理活跃文件目录表、管理读写状态信息表、管理用户进程的打开文件表、管理与组织在存储设备上的文件目录结构、调用下一级存取控制模块。</li>
+<li>实现文件保护主要由<strong>存取控制模块</strong>完成，它把用户的访问要求与FCB中指示的访问控制权限进行比较，以确认访问的合法性。</li>
+<li><strong>逻辑文件系统</strong>与<strong>文件信息缓冲区</strong>的主要功能是根据文件的逻辑结构将用户要读写的逻辑记录转换成文件的逻辑结构内的相应块号。</li>
+<li><strong>物理文件系统</strong>的主要功能是把逻辑记录所在的相对块号转换成实际的物理地址。</li>
+<li><strong>辅助分配模块</strong>的主要功能是管理辅存空间，即负责分配辅存空闲空间和回收辅存空间。</li>
+<li><strong>设备管理程序模块</strong>的主要功能是分配设备、分配设备读写缓冲区、磁盘调度、启动设备、处理设备中断、释放设备读写缓冲区、释放设备等。</li>
+</ul>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20230529214148981.png" alt="image-20230529214148981" style="zoom:67%;" />
+<h3 id="目录实现">目录实现</h3>
+<p>在读文件前，必须先打开文件。打开文件时，操作系统利用路径名找到相应目录项，目录项中提供了查找文件磁盘块所需要的信息，目录实现的基本方法有线性列表和哈希表两种方法。</p>
+<blockquote>
+<p>目录就是FCB的集合</p>
+</blockquote>
+<h4 id="线性表">线性表</h4>
+<p>线性表的项是由文件名和数据块指针组成。（数据块指针指向的可能是子目录，也可能是一个具体的文件）</p>
+<blockquote>
+<p>下图的画法是链表实现，当然，也可以是数组实现。</p>
+</blockquote>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/535100501_68412.png" alt="img"  />
+<p>**优点：**实现较为简单</p>
+<p>**缺点：**线性表的增删操作较为复杂耗时，而且查询也比较耗时(O(n))</p>
+<h4 id="哈希表">哈希表</h4>
+<p>哈希表根据文件名得到一个值，并返回一个指向线性列表中元素的指针。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/168100504_55429.png" alt="img" style="zoom: 80%;" />
+<p>**优点：**查询目录速度更快</p>
+<p>**缺点：**可能会发生哈希冲突，导致文件可能会被覆盖；增删文件时，会触发重哈希，较为耗损性能。</p>
+<blockquote>
+<p>目录查询必须通过在磁盘上反复搜索完成，需要不断的进行IO操作，开销较大。所以如前面所述，为了减少IO操作，把当前使用的文件目录复制到内存，以后要使用该文件时只要在内存中操作，从而降低了磁盘操作次数。</p>
+</blockquote>
+<h3 id="文件实现">文件实现</h3>
+<p>文件分配对应于文件的物理结构，是指如何为文件分配磁盘块。常用的磁盘空间分配方式有三种：连续分配、链接分配和索引分配。有的系统对三种方式都支持，但是更普遍的是一个系统只提供一种方法支持。</p>
+<h4 id="文件分配方式">文件分配方式</h4>
+<h5 id="连续分配">连续分配</h5>
+<p>如果将块分配给文件，使得文件的所有逻辑块都得到硬盘中的连续物理块，则这种分配方案被称为连续分配。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/7bd9ab140bff47bf8c89f85ded015b24" alt="操作系统基础51-磁盘空间的分配方法" style="zoom:80%;" />
+<p><strong>优点：</strong></p>
+<ul>
+<li>实现简单。只需要在目录项中记录文件名、起始地址和文件长度即可。</li>
+<li>可以获得优秀的读取性能。通过连续分配磁盘空间块的方式，作业访问磁盘时需要的寻道数和寻道时间最小。</li>
+<li>支持随机访问文件。可以通过指针指定当前的读写位置，后续就可以直接再这个指针上进行偏移读取文件任何部分内容。（因为文件在磁盘上的数据是连续的，所以可以不断地偏移指针）</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>文件长度不能随便动态增加。因为一个文件末尾后的盘块可能已经分配给其他文件，一旦需要增加，就需要大量移动盘块。</li>
+<li>外部碎片增加。反复增删文件后会产生外部碎片。所以给文件连续分配磁盘空间块时，比较适合文件长度固定的文件。</li>
+</ul>
+<h5 id="链接分配">链接分配</h5>
+<h6 id="隐式链接分配">隐式链接分配</h6>
+<p>链接分配解决了连续分配的所有问题。也就是说，链接分配可以实现文件长度动态增加，而且不存在外部碎片。</p>
+<p>在链接分配中，分配给特定文件的磁盘块不需要在磁盘上连续存在。分配给文件的每个磁盘块都包含一个指向分配给同一文件的下一个磁盘块的指针。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/212100513_86908.png" alt="img"></p>
+<p><strong>优点</strong></p>
+<ul>
+<li>链接分配没有外部碎片。通过链接的方式，所有的磁盘空闲块都能得到利用，所以也就没有外部碎片。</li>
+<li>可以使用任何空闲块来满足文件块请求。只要是空闲块都可以被链接写入文件。</li>
+<li>只要空闲块可用，文件可以继续增长。</li>
+<li>目录条目将仅包含起始块地址。</li>
+</ul>
+<p><strong>缺点</strong></p>
+<ul>
+<li>随机（直接）访问不提供。因为每个块直接并不是地址连续的，而是一个块包含下一个块的指针。所以，扫描一块后，就需要取出下一个块的地址，无法通过指针直接偏移到文件的任何位置。这个过程都是在磁盘里的。</li>
+<li>额外的空间占用。指针在磁盘块中需要一些空间。</li>
+<li>会有数据丢失风险。链接列表中的任何指针都不能被破坏，否则文件将被损坏。</li>
+<li>文件访问性能较低。需要遍历每个块。</li>
+</ul>
+<h6 id="显式链接分配">显式链接分配</h6>
+<p>链接分配的显式实现——文件分配表FAT。</p>
+<p>隐式链表分配的主要缺点是它不提供对特定块的随机访问。要访问一个块，我们还需要访问它之前的所有块。</p>
+<p>文件分配表克服了链表分配的缺点。在这个方案中，维护一个文件分配表，它收集所有的磁盘块链接。该表对每个磁盘块都有一个条目，并按块编号进行索引。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/825140523_44646.png" alt="img"></p>
+<p><strong>优点</strong></p>
+<ul>
+<li>使用整个磁盘块获取数据。</li>
+<li>坏磁盘块不会导致所有连续的块丢失。FAT将指向下一个磁盘的指针和磁盘数据分离了。</li>
+<li>提供随机访问，尽管它不太快。为什么说隐式链接分配提供了随机访问呢？因为通过FAT的记录，我们也可以做到指针确切偏移到文件存储磁盘的任意一个位置，只是相比于连续分配方式，隐式链接分配的指针偏移要更加复杂一点，需要在FAT中取出下一个要偏移的块。这个过程都是在内存进行的。</li>
+<li>每个文件操作中只需要遍历FAT。</li>
+</ul>
+<p><strong>缺点</strong></p>
+<ul>
+<li>每个磁盘块都需要一个FAT条目。</li>
+<li>根据FAT条目的数量，FAT大小可能非常大。</li>
+<li>可以通过增加块大小来减少FAT条目的数量，但也会增加内部碎片。</li>
+</ul>
+<h6 id="区别">区别</h6>
+<ul>
+<li>显式链接分配方式，就是数据块和指向下一个数据块的指针都存于同一个磁盘块；</li>
+<li>而隐式连接分配方式，就是将数据块和指向下一个数据块的指针进行分离，所有的指针存于FAT中，而FAT需要加载到内存里。</li>
+</ul>
+<h5 id="索引分配">索引分配</h5>
+<p><strong>FAT的限制</strong>：</p>
+<p>文件分配表尽量解决尽可能多的问题，但会导致一个缺点。 块的数量越多，FAT的大小就越大。</p>
+<p>因此，我们需要为文件分配表分配更多空间。 由于文件分配表需要被缓存，因此不可能在缓存中具有尽可能多的空间。 在这里我们需要一种可以解决这些问题的新技术。</p>
+<p>索引分配方案不是维护所有磁盘指针的文件分配表，而是将一个文件中所有磁盘指针存储在一个称为索引块的磁盘块中。 索引块不包含文件数据，但它保存指向分配给该特定文件的所有磁盘块的指针。目录条目将只包含索引块地址。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/314140526_74560.png" alt="img"></p>
+<p><strong>优点</strong></p>
+<ul>
+<li>支持直接访问。</li>
+<li>坏数据块会导致只有该块的丢失。</li>
+</ul>
+<p><strong>缺点</strong></p>
+<ul>
+<li>坏索引块可能导致整个文件丢失。</li>
+<li>文件的大小取决于数据块的数量，索引块可以容纳。</li>
+<li>文件较小时，会造成索引块的浪费。</li>
+<li>更多的指针开销</li>
+</ul>
+<p>如果文件太大，一个索引块无法存下时，那么就需要多个索引块进行索引，如何组织多个索引块呢？</p>
+<h6 id="单级索引分配">单级索引分配</h6>
+<p>在索引分配中，文件大小取决于磁盘块的大小。要允许大文件，我们必须将几个索引块链接在一起。在链接索引分配中，</p>
+<ul>
+<li>提供文件名称的小标题</li>
+<li>前100个块地址的集合</li>
+<li>指向另一个索引块的指针</li>
+</ul>
+<p>对于较大的文件，索引块的最后一个条目是一个指向另一个索引块的指针。 这也被称为链接模式。</p>
+<p><strong>优点:</strong> 它消除了文件大小限制
+<strong>缺点:</strong> 随机访问变得有点困难</p>
+<h6 id="多级索引分配">多级索引分配</h6>
+<p>在多级指数分配中，有各种索引级别。 有外层索引块包含指向内层索引块的指针，内层索引块包含指向文件数据的指针。</p>
+<ul>
+<li>外层索引用于查找内层索引。</li>
+<li>内层索引用于查找所需的数据块。</li>
+</ul>
+<p><strong>优点:</strong> 随机访问变得更好，更高效。
+<strong>缺点:</strong> 文件的访问时间会更长；文件最大大小有限。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/453140530_93344.png" alt="img"></p>
+<blockquote>
+<p>值得注意的是，多级索引的索引层数，将决定能存储文件的容量上限，不能无休止的增加文件长度。</p>
+</blockquote>
+<h4 id="文件存储空间管理">文件存储空间管理</h4>
+<p>由于文件存储设备是分成若干个大小相等的物理块，并以块为单位来交换信息的，因此，文件存储空间的管理实质上是一个空闲块的组织和管理问题，它包括空闲块组织，空闲块的分配和空闲块的回收等几个问题。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20230530113807756.png" alt="image-20230530113807756" style="zoom:67%;" />
+<h5 id="空闲表法">空闲表法</h5>
+<p>空闲表法就是为所有空闲空间建立一张表，表内容包括空闲区的第一个块号和该空闲区的块个数，注意，这个方式是连续分配的。如下图：</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/v2-1ec1e7e0b313a92e0028691ae97c9766_1440w.webp" alt="img" style="zoom: 50%;" />
+<p>当请求分配磁盘空间时，系统依次扫描空闲表里的内容，直到找到一个合适的空闲区域为止。当用户撤销一个文件时，系统回收文件空间。这时，也需顺序扫描空闲表，寻找一个空闲表条目并将释放空间的第一个物理块号及它占用的块数填到这个条目中。</p>
+<p>这种方法仅当有少量的空闲区时才有较好的效果。因为，如果存储空间中有着大量的小的空闲区，则空闲表变得很大，这样查询效率会很低。另外，这种分配技术适用于建立连续文件。</p>
+<h5 id="空闲链表法">空闲链表法</h5>
+<p>我们也可以使用「链表」的方式来管理空闲空间，每一个空闲块里有一个指针指向下一个空闲块，这样也能很方便的找到空闲块并管理起来。如下图：</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20230530114517356.png" alt="image-20230530114517356" style="zoom:50%;" />
+<p>当创建文件需要一块或几块时，就从链头上依次取下一块或几块。反之，当回收空间时，把这些空闲块依次接到链头上。</p>
+<p>这种技术只要在主存中保存一个指针，令它指向第一个空闲块。其特点是简单，但不能随机访问，工作效率低，因为每当在链上增加或移动空闲块时需要做很多 I/O 操作，同时数据块的指针消耗了一定的存储空间。</p>
+<blockquote>
+<p>空闲表法和空闲链表法都不适合用于大型文件系统，因为这会使空闲表或空闲链表太大。</p>
+</blockquote>
+<h5 id="成组链表法">成组链表法</h5>
+<p>在 UNIX 系统中采用的是成组链接法，这是将上述两种方法相结合而形成的一种空闲盘块管理方法，它兼备了上述两种方法的优点而克服了两种方法均有的表太长的缺点。</p>
+<p>其大致思想是：把顺序的n个空闲扇区地址保存在第一个空闲扇区内，其后一个空闲扇区则保存另一顺序空闲扇区的地址和空闲块数，如此继续直至所有空闲扇区均予以链接。系统只需要保存一个指向第一个空闲扇区的指针。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20170508235227203" alt="img" style="zoom: 80%;" />
+<h5 id="位示图法">位示图法</h5>
+<p>位图是利用二进制的一位来表示磁盘中一个盘块的使用情况，磁盘上所有的盘块都有一个二进制位与之对应。</p>
+<p>当值为 0 时，表示对应的盘块空闲，值为 1 时，表示对应的盘块已分配。它形式如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">1111110011111110001110110111111100111 ...
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>盘块分配与回收过程如下：</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20230530115427513.png" alt="image-20230530115427513" style="zoom:50%;" />
+<p>在 Linux 文件系统就采用了位图的方式来管理空闲空间，不仅用于数据空闲块的管理，还用于 inode 空闲块的管理，因为 inode 也是存储在磁盘的，自然也要有对其管理。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-05-21
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E9%93%BE%E6%8E%A5/">链接</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E7%AE%A1%E7%90%86/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">操作系统之输入输出管理</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">
+            <span class="next-text nav-default">操作系统之内存管理</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-05-21 15:19:47 \u002b0800 CST',
+        title: '操作系统之文件管理',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

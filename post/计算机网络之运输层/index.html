@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>计算机网络之运输层 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="[toc] 运输层概述 运输层的基本功能 运输层协议为运行在不同主机上的应用进程之间提供了逻辑通信功能，使得运行在不同主机上的进程像直连一样。 复用和分用 差" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E8%BF%90%E8%BE%93%E5%B1%82/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="计算机网络之运输层" />
+<meta property="og:description" content="[toc] 运输层概述 运输层的基本功能 运输层协议为运行在不同主机上的应用进程之间提供了逻辑通信功能，使得运行在不同主机上的进程像直连一样。 复用和分用 差" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E8%BF%90%E8%BE%93%E5%B1%82/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-07-11T17:36:16+08:00" />
+<meta property="article:modified_time" content="2023-07-11T17:36:16+08:00" />
+<meta itemprop="name" content="计算机网络之运输层">
+<meta itemprop="description" content="[toc] 运输层概述 运输层的基本功能 运输层协议为运行在不同主机上的应用进程之间提供了逻辑通信功能，使得运行在不同主机上的进程像直连一样。 复用和分用 差"><meta itemprop="datePublished" content="2023-07-11T17:36:16+08:00" />
+<meta itemprop="dateModified" content="2023-07-11T17:36:16+08:00" />
+<meta itemprop="wordCount" content="16508">
+<meta itemprop="keywords" content="tcp协议,udp协议," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="计算机网络之运输层"/>
+<meta name="twitter:description" content="[toc] 运输层概述 运输层的基本功能 运输层协议为运行在不同主机上的应用进程之间提供了逻辑通信功能，使得运行在不同主机上的进程像直连一样。 复用和分用 差"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">计算机网络之运输层</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-07-11 </span>
+        <div class="post-category">
+            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"> 计算机网络 </a>
+            </div>
+          <span class="more-meta"> 约 16508 字 </span>
+          <span class="more-meta"> 预计阅读 33 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#运输层概述">运输层概述</a>
+          <ul>
+            <li><a href="#运输层的基本功能">运输层的基本功能</a></li>
+            <li><a href="#多路复用和多路分解">多路复用和多路分解</a></li>
+            <li><a href="#运输层和网络层的关系">运输层和网络层的关系</a></li>
+            <li><a href="#端口号">端口号</a></li>
+          </ul>
+        </li>
+        <li><a href="#udp协议">UDP协议</a>
+          <ul>
+            <li><a href="#特点">特点</a></li>
+            <li><a href="#udp的使用场景">UDP的使用场景</a></li>
+            <li><a href="#udp协议报文格式">UDP协议报文格式</a></li>
+          </ul>
+        </li>
+        <li><a href="#tcp协议">TCP协议</a>
+          <ul>
+            <li><a href="#特点-1">特点</a></li>
+            <li><a href="#tcp报文段格式">TCP报文段格式</a></li>
+            <li><a href="#tcp可靠传输原理">TCP可靠传输原理</a></li>
+            <li><a href="#tcp的发送时机">TCP的发送时机</a></li>
+            <li><a href="#nagle算法">Nagle算法</a></li>
+            <li><a href="#重传机制">重传机制</a></li>
+            <li><a href="#滑动窗口">滑动窗口</a></li>
+            <li><a href="#流量控制">流量控制</a></li>
+            <li><a href="#拥塞控制">拥塞控制</a></li>
+            <li><a href="#连接管理">连接管理</a></li>
+            <li><a href="#计时器">计时器</a></li>
+            <li><a href="#heading"></a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <p>[toc]</p>
+<h2 id="运输层概述">运输层概述</h2>
+<h3 id="运输层的基本功能">运输层的基本功能</h3>
+<ul>
+<li>运输层协议为运行在不同主机上的应用进程之间提供了逻辑通信功能，使得运行在不同主机上的进程像直连一样。</li>
+<li>复用和分用</li>
+<li>差错检验</li>
+</ul>
+<blockquote>
+<p>进程到进程的数据交付（多路复用和多路分解）和差错检查是两个最低限度的运输层服务，也是UDP能提供的仅有的两种服务。</p>
+</blockquote>
+<h3 id="多路复用和多路分解">多路复用和多路分解</h3>
+<ul>
+<li>
+<p>多路复用</p>
+<p>在数据的发送端，传输层收集各个套接字中需要发送的数据，将它们封装上首部信息后（之后用于分解），交给网络层；</p>
+</li>
+<li>
+<p>多路分解</p>
+<p>在数据的接收端，传输层接收到网络层的报文后，将它交付到正确的套接字上；</p>
+</li>
+</ul>
+<blockquote>
+<p>复用强调的是多个用户进程能够复用相同的运输层协议，例如不同进程的UDP套接字的发送缓冲区数据能被收集后统一交给运输层的UDP协议处理和封装。</p>
+</blockquote>
+<h3 id="运输层和网络层的关系">运输层和网络层的关系</h3>
+<ul>
+<li>运输层为不同主机的应用程序提供了逻辑通信和数据交付服务</li>
+<li>网络层为主机和主机提供了逻辑通信和数据交付服务。</li>
+</ul>
+<p>运输层是基于网络层的服务的，只有实现了主机间逻辑通信才能再此基础上实现端到端进程间通信；运输层是网络层的功能扩展，网络层不能保证数据的可靠传输，而运输层则扩展了这个功能。</p>
+<p>总结就是：网络层是运输层的基础和服务者，运输层是网络层的扩展，其实协议栈的每个上下层都是这个关系。</p>
+<h3 id="端口号">端口号</h3>
+<p>在TCP/IP体系的运输层中，不同操作系统采用的进程标识符结构不一样，所以，为了保证主机与主机中各个进程之间的通信，所以我们采用16位端口号来映射主机内的某个进程。</p>
+<p>端口号分为3类</p>
+<ol>
+<li>熟知端口（0~1023号端口）：作为指定用途的端口（如80是Web服务器端口），不会随机对口进行分配</li>
+<li>登记端口（1024~49151）：可以作为服务器进程被随机分配的端口</li>
+<li>短暂端口（49152~65535）：客户端在与对端连接通信时动态选择，连接关闭后端口就关闭，被系统收回，因此又叫短暂端口。</li>
+</ol>
+<h2 id="udp协议">UDP协议</h2>
+<p>UDP是一种无连接的、面向报文的、尽最大努力交付（不保证可靠交付）的运输层协议。</p>
+<h3 id="特点">特点</h3>
+<ul>
+<li><strong>不建立连接</strong>：减少了3次握手的时延。</li>
+<li><strong>不保证可靠交付</strong>：报文可能丢失、乱序（但不会比特差错），而且不负责重发。丢失时可以通知应用层，让应用层组织重发。因为不保证可靠交付，所以也没有确认应答机制。</li>
+<li><strong>面向报文</strong>：一次交付一个完整报文。<strong>UDP协议不会对应用层交付给运输层的报文切分</strong>（即使这个应用层报文很大），而是直接对应用层报文加上首部就交给网络层（但网络层会对其分片的），保留了报文的边界。需要应用层决定一次发送多少数据以避免发生IP分片。</li>
+<li><strong>没有拥塞控制</strong>：网络出现拥塞时也不限制发送端的发送速率（对发送端自己有利，但对其所在的网络不利）。这意味着发送速率稳定，但发生拥塞时会因为路由器缓存溢出而丢失分组，而且不限速的发送也会导致拥塞和加重拥塞。</li>
+<li><strong>支持多种交互通信</strong>：支持一对一，一对多，多对多，多对一的交互通信，而TCP只能做到一对一。这里的一对一和一对多是指socket，具体是指一个服务端的socket可以为多个客户端的socket通信和服务。而TCP服务端的一个client套接字只能为一个客户端socket收发消息。</li>
+<li><strong>首部开销小</strong>：8个字节，比TCP的20字节首部短。</li>
+</ul>
+<h3 id="udp的使用场景">UDP的使用场景</h3>
+<ul>
+<li>实时应用：语音电话或视频会议。利用了UDP开销小、效率高、没有拥塞的特点。</li>
+<li>一次性传小量数据的应用：如果一次性大量数据则不利于UDP不切分数据的特点。</li>
+<li>多媒体应用：如播放视频。因为视频对传输可靠性没那么高，即使小部分数据丢失也不影响视频播放。</li>
+</ul>
+<h3 id="udp协议报文格式">UDP协议报文格式</h3>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307112013661.png" alt="img" style="zoom:50%;" />
+<p>每个UDP报文分为UDP报头和UDP数据区两部分。报头由<strong>4个16位长</strong>(2字节) 字段组成，分别说明该报文的<strong>源端口、目的端口、报文长度、校验值</strong></p>
+<h2 id="tcp协议">TCP协议</h2>
+<p>TCP协议是一种面向连接、面向字节流、提供可靠传输服务的一对一通信传输层协议。</p>
+<h3 id="特点-1">特点</h3>
+<ul>
+<li>面向连接：数据收发前需要建立连接，数据收发要通过这个逻辑的虚拟信道。</li>
+<li>全双工通信：通信两端都可收可发，而且双向的收发可以同时发生。</li>
+<li>一对一通信：一个client socket只能与一个server socket进行数据收发。如果要实现多个client数据接收，只能开启相应数量的server</li>
+<li>面向字节流：TCP只把数据看成一连串有序而无结构的字节流。</li>
+<li>可靠传输服务：数据不丢失、不重复、无差错、不乱序。</li>
+</ul>
+<p>TCP功能在UDP功能（数据交付和差错检验）的基础上加上了连接管理、超时重传、流量控制和拥塞控制。</p>
+<h3 id="tcp报文段格式">TCP报文段格式</h3>
+<p>TCP首部的前20个字节是固定的（TCP首部最小长度为20字节，最大长度60），后面4n字节是按需增加的选项。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307112040070.png" alt="img" style="zoom:50%;" />
+<ul>
+<li>
+<p><strong>序号（seq）</strong>：TCP数据的每个字节是按序编号的，TCP首部的“序号”字段就是本报文携带数据的第一个字节的编号，范围在0~2^32-1， 超过则下一个序号会回到0重新增长。</p>
+<blockquote>
+<p>初始序号（ISN）在建立连接时设置，ISN是一个随时间动态增长的非0序号，这也是为了防止被攻击者伪造初始序号和TCP报文。</p>
+<p>序号是TCP实现可靠传输的基础，其作用有：防止接收方接收重复分组；确认应答机制基于序号，给字节标记序号便于超时重传触发时发送方知道自己应该重发那哪分组。</p>
+</blockquote>
+</li>
+<li>
+<p><strong>确认号（ACK）</strong>：是一端期望收到对端下一个报文段数据的第一个字节的序号，也是本端上一次发送的报文段的最后一个字节序号+1。</p>
+</li>
+<li>
+<p><strong>数据偏移</strong>：表示TCP首部的长度，占4个比特，每个比特的单位是4字节。因此TCP首部最大长度为60字节。</p>
+</li>
+<li>
+<p><strong>6个标志位</strong></p>
+<ul>
+<li>
+<p><strong>紧急位 URG</strong>：URG = 1时报头的紧急指针字段生效，表示报文段有紧急数据要尽快传送。</p>
+<p>socket有发送缓冲区，运输层会择机将发送缓冲区的数据发送出去（3个时机），但如果URG = 1的报文段则无需等待这3个时机，可以直接发送。</p>
+</li>
+<li>
+<p><strong>确认位 ACK</strong>：ACK = 1时，报头的确认号(ACK)字段才有效，表示本报文是一个确认报文（tcp的应答确认机制）。TCP规定在连接建立后所有传送的报文段都必须把ACK置为1。</p>
+</li>
+<li>
+<p><strong>推送位 PSH</strong>：PSH=1的报文段，接收方会尽快上交给应用进程（不要在接收缓冲区中缓存），该标志位是针对接收方的。</p>
+</li>
+<li>
+<p><strong>重置连接位 RST</strong>：RST =1 的报文段标明TCP连接出现差错，必须释放连接，然后重新建立连接。</p>
+</li>
+<li>
+<p><strong>同部位 SYN</strong>：SYN = 1表示这是一个连接请求报文。</p>
+</li>
+<li>
+<p><strong>终止位 FIN</strong>：FIN = 1表示这是一个请求释放连接的报文</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>窗口字段</strong>：接收方告诉发送方，下一次容许发送方能够发送的最大数据长度（取决于接收方的接收缓冲区大小）。</p>
+</li>
+<li>
+<p><strong>检验和</strong>：同UDP校验和。</p>
+</li>
+<li>
+<p><strong>紧急指针</strong>：指出本报文段中紧急数据有多少字节，紧急数据放在报文段数据的最前面，所以紧急指针等于紧急数据在本报文的最后一个字节的位置。窗口为0时也可以发送紧急数据。</p>
+</li>
+<li>
+<p><strong>选项字段（最大40字节）</strong>：该字段长度可变。有如下可选项：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307112042938.png" alt="img"></p>
+<p>所有可选选项都包含该选项的类型长度还有实际内容（例如下面的时间戳选项，kind=8表示这是一个时间戳选项，length表示时间戳选项长度为10字节).所有可选选项都在建立连接时的SYN报文指定开启。</p>
+<ul>
+<li>
+<p><strong>窗口扩大选项</strong> 使用窗口扩大项后，可以是窗口大小从原本最大 2^16 - 1 扩大到最大 2^30 - 1个字节。</p>
+</li>
+<li>
+<p>这是考虑到链路可能有长又肥（即带宽很大，且链路很长(即时延很长)），如果一次发的数据太少就无法充分利用带宽，吞吐率也低。发送端的发送窗口（TCP头部的窗口大小）由<strong>接收方的接收缓存大小</strong> **（流量窗口）**以及 **链路带宽和拥塞情况（拥塞窗口）**共同决定的。</p>
+</li>
+<li>
+<p><strong>选择确认选项</strong>：接收方告诉发送方自己收到的连续字节块。用于数据段失序到达时，发送端重复发送数据段。</p>
+</li>
+<li>
+<p><strong>时间戳选项</strong>：占10字节，包含最主要的是时间戳值字段（4字节）和时间戳回送回答字段（4字节）。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307112045037.png" alt="img"></p>
+<blockquote>
+<p>有两个作用：</p>
+<p>A. 计算报文在两端传输层的往返时延（接近于RTT）</p>
+<p>A发送报文时会将发送时间戳放入 timestamp（时间戳值字段）， B接收到报文后将timestamp复制到timestamp echo（时间戳回显重试字段），并在返回ACK报文时将当前时间戳放入timestamp。</p>
+<p>回复报文到达A后，A可以用当前时间戳 - timestamp echo得到往返时间，而且该往返时间可认为就是RTT。</p>
+<p>B. 防止序号回绕带来的问题</p>
+<p>需要注意，填充的时间戳不是真实的时间戳，而是一个自增的整型，而且发送方填入的timestamp和接收方填入的timestamp可以是独立的，例如发送方填入timestamp = 5012， 接收方填入timestamp = 197720862，也就是说两端的时间戳可以不用同步。</p>
+</blockquote>
+</li>
+<li>
+<p><strong>MSS 最大报文段大小</strong></p>
+<p>MSS 最大报文段数据大小，用于告诉对端，我所在的局域网链路能容纳的最大报文段的数据长度。<strong>MSS和窗口无关，和网络带宽有关</strong>。在建立TCP连接时，通信双方都要在SYN报文指明自己允许的MSS大小，MSS是双向的。</p>
+<p>MSS可以控制TCP的传输效率，MSS太大可能导致报文段在网络层分片，太小可能导致传输效率降低（假设MSS设为1个字节，那么一个报文段的数据包含只有1个字节但头部有20个字节，你说效率低不低）。应该尽量设置MSS接近网络层一个分片的大小，使得该报文段刚好不用分片，这取决于从源主机到目的主机链路的最小MTU（MTU是网络层的包的最大长度）。</p>
+<p>MSS + TCP头部 = TCP报文段长度。</p>
+<p>MSS + TCP头部 + IP头部 &lt;= MTU</p>
+<p>MSS默认是536字节（这也是合理的最小MSS），因为任何主机都应该至少处理576字节的IPv4数据报（含IP头部），如果按最小的IPv4和TCP头部计算，最小IPv4数据报下的最大MSS = 576 - 20 - 20 = 536。</p>
+<p>在以太网中IPv4协议下，MSS应该设置的比较合适的值是略小于1460，因为以太网MTU=1500, 而TCP和IP头部分别为20字节，1460 + 20 +20 = 1500，刚好达到网络层不用对IP包分片的最大包大小，也刚好到达以太网链路的最大报文数据的传输大小。</p>
+<p>在以太网中IPv6协议下，MSS应该设置的比较合适的值是略小于1440，因为IPv6的头部为40字节。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="tcp可靠传输原理">TCP可靠传输原理</h3>
+<h4 id="停止等待协议">停止等待协议</h4>
+<p>简单来说，就是发一个数据包，就等待一个ACK，然后再发一个数据包；如果等不到ACK就需要重发一个数据包。</p>
+<p>停止等待协议，是一个保证可靠传输的协议，主要有以下机制构成：</p>
+<h5 id="确认应答机制">确认应答机制</h5>
+<p>接收方接收到一个正确分组时，需要回复一个带确认号和ACK位为1的确认报文给发送方。此时发送方就知道分组已到达；</p>
+<p>分组由于比特差错被接收方检测到会被直接丢弃，不发送ACK报文（在TCP协议中即使一个分组发生比特错误，对端也会发送ACK，但确认的是出错报文之前的报文）；</p>
+<p>分组由于丢失无法到达接收方则不发送ACK报文；</p>
+<h5 id="停等机制">停等机制</h5>
+<p>指发送方每发送完一个分组就停止发送，等待对方确认，收到确认后再发下一个分组。</p>
+<h5 id="自动超时重传机制arq">自动超时重传机制（ARQ）</h5>
+<p>发送方为每个分组设置一个超时计时器（TCP中是为每个窗口设置一个超时计时器），超过指定重传时间（RTO）未收到接收方的ACK报文，发送方就会重发报文。</p>
+<p>ARQ的意思是不用接收方请求重传，而是发送方通过计时器计时来自动重传。</p>
+<p>这里需要注意3点：</p>
+<ul>
+<li>发送方必须暂时保留已发送的分组的副本以便重传时使用，收到相应分组的确认才可以清除副本。</li>
+<li>分组必须编号，这才能明确哪个分组得到确认（而且编号也有助于接收方丢弃重复接收过的分组）。</li>
+<li>重传时间RTO 应该略大于RTT</li>
+</ul>
+<p><strong>一个问题</strong>：超时重传时间应该定为多少？</p>
+<blockquote>
+<p>答：超时重传时间太大会使网络链路空闲，降低传输效率；太小会使报文不必要的重传，加大网络负荷引起拥塞。TCP采用了一种<strong>自适应算法计算超时时间RTO</strong>。RTO应该略大于报文往返时间RTT。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">新的RTTS = (1-α) * (旧的RTTS) + α * (新的RTT样本)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">RTTD = （1-β）* 旧的RTTD + β * | RTTS - 新的RTT样本 |
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">RTO = RTTS + 4*RTTD
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>TCP需要计算一个加权平均往返时间RTTS，反映多次报文传输的整体RTT，每次确认报文到达发送端，发送端都会更新一次RTTS。</p>
+<p>“新的RTT样本”可以使用发送方接收到ACK分组的时间戳 - 分组头部时间戳选项计算得到。</p>
+<p>α由系统和协议栈开发者决定，α接近0表示新的RTT影响不大，更新较慢；建议标准的RFC规范推荐α=1/8。</p>
+<p>RTTD是RTT的加权平均标准差，反应了多次RTT的抖动程度。β推荐为 1/4。</p>
+</blockquote>
+<p><strong>另一个问题</strong>：假设发生了重传，并且收到了确认报文，如何确定该ACK报文是对先发送的报文的确认还是重传报文的确认？</p>
+<blockquote>
+<p>这个问题对RTTS的计算很重要（假设时间戳选项没开启）。如果该ACK是对重传报文的确认，却被误认为是对原来报文的确认，则更新后的RTTS和RTO会偏大。该问题不解决，RTO会因为重传越变越大。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307112101061.png" alt="img"></p>
+<p>答：Karn算法提出，如果报文段重传收到ACK，无需判断ACK是之前报文的确认还是重传报文的确认，直接不更新本次的RTTS和RTO即可。</p>
+<p>这会带来新的问题：如果一段时间内TCP会重传很多报文，采用上述做法会导致RTO失去多次更新，变得不准确。</p>
+<p>修正的Karn算法提出，报文段每重传一次就把RTO增大一点：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">重传时新RTO = γ * 旧的RTO
+</span></span></code></pre></td></tr></table>
+</div>
+</div></blockquote>
+<h5 id="举例">举例</h5>
+<p>停止等待协议下的通信会出现如下情况</p>
+<h6 id="无差错的情况">无差错的情况</h6>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307112104202.png" alt="img"></p>
+<h6 id="有差错的情况分组丢失或差错">有差错的情况（分组丢失或差错）</h6>
+<p>在接收⽅ B 会出现两种情况：</p>
+<ul>
+<li>B 接收 M1 时检测出了差错，就丢弃 M1，其他什么也不做；</li>
+<li>M1 在传输过程中丢失了，这时 B 当然什么都不知道，也什么都不做。</li>
+</ul>
+<p>解决⽅法：超时重传（ARQ）</p>
+<ul>
+<li>A 为每⼀个已发送的分组都设置超时计时器，A由于重传时间RTO内（略大于RTT）没收到M1的确认因此会重发M1；A 在超时计时器到期之前收到了相应的确认，撤销该超时计时器，继续发送下⼀个分组 M2 。</li>
+</ul>
+<h6 id="确认报文丢失或迟到">确认报文丢失或迟到</h6>
+<p>假设B收到了报文（发送端的报文没丢失）而且报文没有错误，但是B的确认报文丢失或过了很久才到达A。</p>
+<ul>
+<li>
+<p>子情况1：确认报文丢失。</p>
+<p>由于A收不到 M1 的确认报文，A 在超时计时器到期后重传 M1。 B ⼜收到了重传的分组 M1，所以丢弃这个重复的分组 M1（通过序号和时间戳选项判断分组是否重复），不向上层交付，并向 A 发送确认。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307112113669.png" alt="img"></p>
+</li>
+<li>
+<p>子情况2：确认报文迟到</p>
+<p>由于A收不到 M1 的确认报文，A 在超时计时器到期后重传 M1。 B ⼜收到了重传的分组 M1，所以丢弃这个重复的分组 M1，并向 A 发送确认。A由于会收到2个ACK号相同的确认报文，A会丢弃其中晚到达的一个。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307112113229.png" alt="img"></p>
+</li>
+</ul>
+<p>结论：<strong>停等协议可以保证可靠传输的实现，但通信效率不高</strong></p>
+<h4 id="连续arq协议">连续ARQ协议</h4>
+<p>在一定限度k内，发送方连续发出k个包后停下，如果ACK报文返回则可以继续发送；如果一定时间内没有返回ack则重传；</p>
+<p>连续ARQ协议在停止等待协议的基础之上提升了信道利用率，它除了要遵循确认应答机制和自动超时重传机制外，还包括以下机制：</p>
+<h5 id="流水线传输机制">流水线传输机制</h5>
+<p>指发送方可以连续发送多个分组不必每发一个分组就等待对方的确认，与停止等待协议对立，可以提高信道利用率和链路的吞吐量。当然连续发送的分组数量是有限的，这取决于滑动窗口的大小。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307112130991.png" alt="img"></p>
+<h5 id="累积确认机制">累积确认机制</h5>
+<p>指接收方不必为每个到达的分组都发送确认，而是收到若干个分组后对按序到达的最后一个分组发送确认。当然TCP协议既可能出现累积确认，也可能出现对单个分组确认。</p>
+<p>确认的时机（这里也是TCP确认的时机）：</p>
+<ul>
+<li>收到 2*MSS 长度的数据就做确认应答（有些系统是不管数据长度，而是收到2个报文就确认）；</li>
+<li>最大延迟0.5秒发送确认应答，即使即使只收到一个分组也要确认（多数系统是0.2秒），该延迟时间由延迟应答计时器来计时；</li>
+<li>当接收方接收到失序的报文段时就立刻发出确认（对最后一个有序分组的确认），以便快速重传（当发送方收到连续3个ack号相同的ack报文时就会重传）。</li>
+<li>若干分组到达后，累计确认</li>
+</ul>
+<p>累积确认是为了提高信道的利用率，提升系统性能，能少发报文就少发报文。当然如果延迟确认的时间长了可能引发发送端重传，也会降低传输效率。</p>
+<h5 id="捎带确认机制">捎带确认机制</h5>
+<p>如果接收方发送确认时刚好也要发送自己的数据报文，那么这个ACK确认可能会捎带到这个数据报文中，此时就减少了一个报文头部的开销，这叫做<strong>捎带确认</strong>。</p>
+<h5 id="回退n机制">回退N机制</h5>
+<p>指当报文乱序到达接收端，接收端收到的分组不是连续的，而是缺了某些分组，此时接收端只确认第一个空缺分组之前的分组，空缺分组以及其之后的n个分组都要发送方重传，这就是回退N。</p>
+<p>B收到1 2 4 5号分组但由于3号分组未收到就到达确认时机，只能选择确认1和2分组，发送端A需要重发 3~5 号分组。</p>
+<p><strong>为了避免回退N机制重复发送已经发过的报文，可以使用TCP选项中的“选择确认SACK功能”。其机制如下：</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307112134442.png" alt="img"></p>
+<p>上图空缺的序号是 1000~1500 和 3001~3501。</p>
+<p>SACK的原理是，把乱序到达的分组先暂存在接收缓冲区，并且把空缺分组相邻分组的左右边界序号（必须是成对边界，在本例子中有3个边界0~999 / 1501~3000 / 3501~4500，共 6 * 4字节=24字节）放到头部的SACK选项告诉发送方，发送方就会只重传空缺的数据给接收方，而无需回退N步。</p>
+<p>⾸部选项的⻓度最⼤有 40 字节，指明⼀个对序号⽤掉 8 字节，因此在选项中最多只能指明 4 对序号的边界信息，也就是指明最多3个空缺范围（4对序号用掉 32字节，还需要2个字节指明选项类型和长度）。</p>
+<p>SACK文档并未有指明发送方应该怎样响应SACK，所以大多数的实现还是会回退N，重传所有未确认的数据块1000~4500。</p>
+<h4 id="对比">对比</h4>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307112136444.png" alt="img"></p>
+<h4 id="tcp可靠传输的实现">TCP可靠传输的实现</h4>
+<p>TCP的可靠传输以上述连续ARQ协议为基础做出了一些变动，并研究更多的细节如滑动窗口的实现、超时计时器如何设置超时时间、选择确认、流量控制和拥塞控制。</p>
+<p>TCP可靠传输基于4点：<strong>窗口、序号、确认和重传</strong>。其中后3点实现了可靠传输，第1点提高TCP传输效率。</p>
+<h3 id="tcp的发送时机">TCP的发送时机</h3>
+<p>为了保证TCP传输效率，TCP不会在发送缓冲区一有数据就立刻发送，而是会遵循一些发送的时机，当满足以下3个条件中的一个才会发送数据：</p>
+<ol>
+<li>TCP维持一个MSS变量，当缓存中的数据到达MSS字节时，就组装成一个报文段发送；</li>
+<li>当发送方进程指明要求推送报文段（PSH=1）或者是发送紧急数据（URG=1）</li>
+<li>发送方设置一个<strong>TCP发送报文计时器</strong>，如果到时了，即便发送缓存中的数据量不够MSS也要发送出去。</li>
+</ol>
+<p>当然<strong>情况1和3要在发送方的可用窗口大于0</strong>的情况下才能发送出去。</p>
+<h3 id="nagle算法">Nagle算法</h3>
+<p>Nagle算法用于发送方比较空闲，没有什么数据要发送的情况下，为提高传输效率的一种算法。假设发送方的应用层是逐字节发送数据给协议栈的缓冲区，则Nagle会这样处理：</p>
+<ol>
+<li>若进程要把发送的数据逐个字节的发送到TCP的发送缓存，则发送⽅先发送第⼀个数据字节，缓存后⾯到达的数据字节；</li>
+<li>发送⽅收到对第⼀个数据字符的确认后，把发送缓存中的所有数据组装成⼀个报⽂段（不超过MSS）发送出去，继续对随后到达的数据进⾏缓存；</li>
+<li>只有在收到对前⼀个报⽂段的确认后继续发送下⼀个报⽂段（相当于退化成停等协议）；</li>
+<li>当到达缓冲区的数据已达到发送窗⼝⼤⼩的⼀半或已达到报⽂段的最⼤⻓度时，（即使上一个报文的确认没到达）也⽴即发送⼀个报⽂段。</li>
+<li>接收方此时应该适当延迟回发确认报文，并尽量使用捎带确认。</li>
+</ol>
+<p>该算法总结一下就是，在应用进程的数据到达发送缓冲区的速度比较慢的时候就<strong>退化成停等协议</strong>，比较快且快到满足上述第4点的时候就立刻发送报文。</p>
+<h3 id="重传机制">重传机制</h3>
+<p>TCP 实现可靠传输的方式之一，是通过序列号与确认应答。</p>
+<p>在 TCP 中，当发送端的数据到达接收主机时，接收端主机会返回一个确认应答消息，表示已收到消息。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121217925.png" alt="正常的数据传输" style="zoom:50%;" />
+<p>但在错综复杂的网络，并不一定能如上图那么顺利能正常的数据传输，万一数据在传输过程中丢失了呢？</p>
+<p>所以 TCP 针对数据包丢失的情况，会用<strong>重传机制</strong>解决。</p>
+<p>接下来说说常见的重传机制：</p>
+<ul>
+<li>超时重传</li>
+<li>快速重传</li>
+<li>SACK</li>
+<li>D-SACK</li>
+</ul>
+<h4 id="超时重传">超时重传</h4>
+<p>重传机制的其中一个方式，就是在发送数据时，设定一个定时器，当超过指定的时间后，没有收到对方的 <code>ACK</code> 确认应答报文，就会重发该数据，也就是我们常说的<strong>超时重传</strong>。</p>
+<p>TCP 会在以下两种情况发生超时重传：</p>
+<ul>
+<li>数据包丢失</li>
+<li>确认应答丢失</li>
+</ul>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121217963.png" alt="超时重传的两种情况" style="zoom:50%;" />
+<blockquote>
+<p>超时时间应该设置为多少呢？</p>
+</blockquote>
+<p>我们先来了解一下什么是 <code>RTT</code>（Round-Trip Time 往返时延），从下图我们就可以知道：</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121218339.jpeg" alt="RTT" style="zoom:50%;" />
+<p><code>RTT</code> 指的是<strong>数据发送时刻到接收到确认的时刻的差值</strong>，也就是包的往返时间。</p>
+<p>超时重传时间是以 <code>RTO</code> （Retransmission Timeout 超时重传时间）表示。</p>
+<p>假设在重传的情况下，超时时间 <code>RTO</code> 「较长或较短」时，会发生什么事情呢？</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121218833.png" alt="超时时间较长与较短" style="zoom:50%;" />
+<p>上图中有两种超时时间不同的情况：</p>
+<ul>
+<li>当超时时间 <strong>RTO 较大</strong>时，重发就慢，丢了老半天才重发，没有效率，性能差；</li>
+<li>当超时时间 <strong>RTO 较小</strong>时，会导致可能并没有丢就重发，于是重发的就快，会增加网络拥塞，导致更多的超时，更多的超时导致更多的重发。</li>
+</ul>
+<p>精确的测量超时时间 <code>RTO</code> 的值是非常重要的，这可让我们的重传机制更高效。</p>
+<p>根据上述的两种情况，我们可以得知，<strong>超时重传时间 RTO 的值应该略大于报文往返 RTT 的值</strong>。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121235386.png" alt="RTO 应略大于 RTT" style="zoom:50%;" />
+<p>至此，可能大家觉得超时重传时间 <code>RTO</code> 的值计算，也不是很复杂嘛。</p>
+<p>好像就是在发送端发包时记下 <code>t0</code> ，然后接收端再把这个 <code>ack</code> 回来时再记一个 <code>t1</code>，于是 <code>RTT = t1 – t0</code>。没那么简单，<strong>这只是一个采样，不能代表普遍情况</strong>。</p>
+<p>实际上「报文往返 RTT 的值」是经常变化的，因为我们的网络也是时常变化的。也就因为「报文往返 RTT 的值」 是经常波动变化的，所以「超时重传时间 RTO 的值」应该是一个<strong>动态变化的值</strong>。</p>
+<p>我们来看看 Linux 是如何计算 <code>RTO</code> 的呢？</p>
+<p>估计往返时间，通常需要采样以下两个：</p>
+<ul>
+<li>需要 TCP 通过采样 RTT 的时间，然后进行加权平均，算出一个平滑 RTT 的值，而且这个值还是要不断变化的，因为网络状况不断地变化。</li>
+<li>除了采样 RTT，还要采样 RTT 的波动范围，这样就避免如果 RTT 有一个大的波动的话，很难被发现的情况。</li>
+</ul>
+<p>RFC6289 建议使用以下的公式计算 RTO：</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121221838.png" alt="RFC6289 建议的 RTO 计算 " style="zoom:50%;" />
+<p>其中 <code>SRTT</code> 是计算平滑的RTT ，<code>DevRTR</code> 是计算平滑的RTT 与 最新 RTT 的差距。</p>
+<p>在 Linux 下，<strong>α = 0.125，β = 0.25， μ = 1，∂ = 4</strong>。别问怎么来的，问就是大量实验中调出来的。</p>
+<p>如果超时重发的数据，再次超时的时候，又需要重传的时候，TCP 的策略是<strong>超时间隔加倍。</strong></p>
+<p>也就是<strong>每当遇到一次超时重传的时候，都会将下一次超时时间间隔设为先前值的两倍。两次超时，就说明网络环境差，不宜频繁反复发送。</strong></p>
+<p>超时触发重传存在的问题是，超时周期可能相对较长。那是不是可以有更快的方式呢？</p>
+<p>于是就可以用「快速重传」机制来解决超时重发的时间等待。</p>
+<h4 id="快速重传">快速重传</h4>
+<p>TCP 还有另外一种<strong>快速重传（Fast Retransmit）机制</strong>，它<strong>不以时间为驱动，而是以数据驱动重传</strong>。</p>
+<p>快速重传机制，是如何工作的呢？其实很简单，一图胜千言。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121225922.png" alt="快速重传机制" style="zoom:50%;" />
+<p>在上图，发送方发出了 1，2，3，4，5 份数据：</p>
+<ul>
+<li>第一份 Seq1 先送到了，于是就 Ack 回 2；</li>
+<li>结果 Seq2 因为某些原因没收到，Seq3 到达了，于是还是 Ack 回 2；（因为数据包乱序到达接收端，所以不能给乱序的到达的数据包发送ACK，只能给最后一个有序到达的数据包发ACK，因此也就重发ACK2）</li>
+<li>后面的 Seq4 和 Seq5 都到了，但还是 Ack 回 2，因为 Seq2 还是没有收到；</li>
+<li><strong>发送端收到了三个 Ack = 2 的确认，知道了 Seq2 还没有收到，就会在定时器过期之前，重传丢失的 Seq2。</strong>（至于为什么会是三次，而不是两次、一次。如果次数较少，可能会频繁触发重传）</li>
+<li>最后，收到了 Seq2，此时因为 Seq3，Seq4，Seq5 都收到了，于是 Ack 回 6 。</li>
+</ul>
+<p>所以，快速重传的工作方式是当收到三个相同的 ACK 报文时，会在定时器过期之前，重传丢失的报文段。</p>
+<p>快速重传机制只解决了一个问题，就是超时时间的问题，但是它依然面临着另外一个问题。就是<strong>重传的时候，是重传一个，还是重传所有的问题。</strong></p>
+<p>举个例子，假设发送方发了 6 个数据，编号的顺序是 Seq1 ~ Seq6 ，但是 Seq2、Seq3 都丢失了，那么接收方在收到 Seq4、Seq5、Seq6 时，都是回复 ACK2 给发送方，但是发送方并不清楚这连续的 ACK2 是接收方收到哪个报文而回复的， 那是选择重传 Seq2 一个报文，还是重传 Seq2 之后已发送的所有报文呢（Seq2、Seq3、 Seq4、Seq5、 Seq6） 呢？</p>
+<ul>
+<li>如果只选择重传 Seq2 一个报文，那么重传的效率很低。因为对于丢失的 Seq3 报文，还得在后续收到三个重复的 ACK3 才能触发重传。</li>
+<li>如果选择重传 Seq2 之后已发送的所有报文，虽然能同时重传已丢失的 Seq2 和 Seq3 报文，但是 Seq4、Seq5、Seq6 的报文是已经被接收过了，对于重传 Seq4 ～Seq6 折部分数据相当于做了一次无用功，浪费资源。</li>
+</ul>
+<p>可以看到，不管是重传一个报文，还是重传已发送的报文，都存在问题。</p>
+<p>为了解决不知道该重传哪些 TCP 报文，于是就有 <code>SACK</code> 方法。</p>
+<h4 id="sack-方法">SACK 方法</h4>
+<p>还有一种实现重传机制的方式叫：<code>SACK</code>（ Selective Acknowledgment）， <strong>选择性确认</strong>。</p>
+<p>这种方式需要在 TCP 头部「选项」字段里加一个 <code>SACK</code> 的东西，它<strong>可以将已收到的数据的信息发送给「发送方」</strong>，这样发送方就可以知道哪些数据收到了，哪些数据没收到，知道了这些信息，就可以<strong>只重传丢失的数据</strong>。</p>
+<p>如下图，发送方收到了三次同样的 ACK 确认报文，于是就会触发快速重发机制，通过 <code>SACK</code> 信息发现只有 <code>200~299</code> 这段数据丢失，则重发时，就只选择了这个 TCP 段进行重复。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121229035.png" alt="选择性确认" style="zoom:50%;" />
+<p>如果要支持 <code>SACK</code>，必须双方都要支持。在 Linux 下，可以通过 <code>net.ipv4.tcp_sack</code> 参数打开这个功能（Linux 2.4 后默认打开）。</p>
+<h4 id="duplicate-sack">Duplicate SACK</h4>
+<p>Duplicate SACK 又称 <code>D-SACK</code>，其主要<strong>使用了 SACK 来告诉「发送方」有哪些数据被重复接收了。</strong></p>
+<p>下面举例两个栗子，来说明 <code>D-SACK</code> 的作用。</p>
+<p><em>栗子一号：ACK 丢包</em></p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121229966.png" alt="ACK 丢包" style="zoom:50%;" />
+<ul>
+<li>「接收方」发给「发送方」的两个 ACK 确认应答都丢失了，所以发送方超时后，重传第一个数据包（3000 ~ 3499）</li>
+<li><strong>于是「接收方」发现数据是重复收到的，于是回了一个 SACK = 3000~3500</strong>，告诉「发送方」 3000~3500 的数据早已被接收了，因为 ACK 都到了 4000 了，已经意味着 4000 之前的所有数据都已收到，所以这个 SACK 就代表着 <code>D-SACK</code>。</li>
+<li>这样「发送方」就知道了，数据没有丢，是「接收方」的 ACK 确认报文丢了。</li>
+</ul>
+<p><em>栗子二号：网络延时</em></p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121232642.png" alt="网络延时" style="zoom:50%;" />
+<ul>
+<li>数据包（1000~1499） 被网络延迟了，导致「发送方」没有收到 Ack 1500 的确认报文。</li>
+<li>而后面报文到达的三个相同的 ACK 确认报文，就触发了快速重传机制，但是在重传后，被延迟的数据包（1000~1499）又到了「接收方」；</li>
+<li><strong>所以「接收方」回了一个 SACK=1000~1500，因为 ACK 已经到了 3000，所以这个 SACK 是 D-SACK，表示收到了重复的包。</strong></li>
+<li>这样发送方就知道快速重传触发的原因不是发出去的包丢了，也不是因为回应的 ACK 包丢了，而是因为网络延迟了。</li>
+</ul>
+<p>可见，<code>D-SACK</code> 有这么几个好处：</p>
+<ol>
+<li>可以让「发送方」知道，是发出去的包丢了，还是接收方回应的 ACK 包丢了;</li>
+<li>可以知道是不是「发送方」的数据包被网络延迟了;</li>
+<li>可以知道网络中是不是把「发送方」的数据包给复制了;</li>
+</ol>
+<p>在 Linux 下可以通过 <code>net.ipv4.tcp_dsack</code> 参数开启/关闭这个功能（Linux 2.4 后默认打开）。</p>
+<h3 id="滑动窗口">滑动窗口</h3>
+<p>通信过程中一个传输方向上所有的字节的序号（seq）可以看做一个序列（这些序列在socket的缓冲区中），而窗口则是序列中的一个子集。该窗口用于做流量控制以及拥塞控制。</p>
+<p>滑动窗口的单位是字节而不是分组。一个连接的两端都各有一对窗口分别是发送窗口和接收窗口，因此一个连接有4个窗口，且是动态变化的。</p>
+<ul>
+<li>
+<p>发送窗口包含 已发送但未确认的数据 和 准备发送的数据。</p>
+<p>已发送但未确认的数据是为了方便超时重传的实现。</p>
+</li>
+<li>
+<p>接收窗口包含 按序到达但未被应⽤程序接收的数据 和 不按序到达的数据。</p>
+<p>接收窗口缓存一下未被接收的数据；缓存一下不按序到达的数据，以避免大量数据的重传。</p>
+</li>
+</ul>
+<p>窗口指针保存在套接字中。在不考虑拥塞的情况，发送端A的发送窗口和接收方B的接收窗口大小从整个传输过程来看是一致的（但不是强一致，并不总是一样大）。</p>
+<p>发送窗口越大，发送方在收到确认前能连续发送的数据越多，在不考虑网络拥塞因素下传输效率越高。</p>
+<h4 id="滑动窗口的工作过程">滑动窗口的工作过程</h4>
+<p><strong>只观察发送方的发送缓冲区和接收方的接收缓冲区</strong>:</p>
+<p>1、某一时刻，A 收到了 B 的确认报⽂段：报文携带的窗口值 20 字节，确认号为 31。A 可以把落⼊发送窗⼝中的序号字节⼀次连续性全部发送出去：边发送边接收确认。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121059808.png" alt="img"></p>
+<p>2、下一刻A发送了31~41号字节，<strong>在确认前会保留在窗口中以便超时重传时使用</strong>。</p>
+<p>B的接收窗口显示，B没有收到31，32~33是未按需到达的数据，要临时存放在接收窗口，不能上交给应用进程。B的接收窗口也不能移动。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121059274.png" alt="img"></p>
+<p>3、下一刻B收到了31，B将31~33字节交付应用层，并从接收缓冲区中删除，且B接收窗口右移3个字节，发送ack=33的确认报文（假设确认报文的窗口大小字段仍是20）。A收到确认后窗口右移3字节。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121059018.png" alt="img"></p>
+<p>4、当P2=P3时，可用窗口为0，会停止发送。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121100146.png" alt="img"></p>
+<h4 id="缓冲区与窗口的关联">缓冲区与窗口的关联</h4>
+<h5 id="发送方的发送缓存与发送窗口">发送方的发送缓存与发送窗口</h5>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121109594.png" alt="img"></p>
+<p>发送窗⼝通常只是 发送缓存的⼀部分，具体来说 发送缓存 = 发送应用程序最后写入发送缓冲区的最后一个字节 - 发送窗口P1字节。缓冲区中，p1指针之前的数据由于已经发送和收到确认，因此被释放出缓冲区。</p>
+<h5 id="接受方的接收缓存与接收窗口">接受方的接收缓存与接收窗口</h5>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121109001.png" alt="img"></p>
+<h3 id="流量控制">流量控制</h3>
+<p>流量控制是指<strong>动态控制滑动窗口的大小使得发送方发送数据的速率略小于或等于接收方接收的速率</strong>（接收速率其实又由应用程序取走接收缓冲区的速率决定），防止接收方的接收缓存溢出造成分组丢失。</p>
+<p>流量控制的实现是通过在接收方的ACK报文携带窗口大小（假设大小X，X=接收方的接收缓冲区的空闲空间大小）同步给发送方，使发送方调整自己的可用窗口（P3-P2部分）为X。</p>
+<p>需要注意的是发送窗口的p2-p1取决于ack号，P3-P2取决于ACK报文中的窗口大小。</p>
+<p>下面是一个流量控制的过程（不考虑拥塞的情况下）：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121117561.png" alt="img"></p>
+<blockquote>
+<p>图中<code>rwnd</code>(receiver window)表示容许的接收方窗口。</p>
+</blockquote>
+<h4 id="持续计时器">持续计时器</h4>
+<p>考虑一种情况，如果B向A发送了一个零窗口报文后，A停止向B发数据，后来B又向A发送了一个<code>rwnd=400</code>的ACK报文M。但M丢失了，A一直在等B的非零窗口通知，B也在等A发过来的数据，陷入死锁局面。</p>
+<p>解决方法：</p>
+<blockquote>
+<p>TCP为每个连接设有一个<strong>持续计时器</strong>，只要一端A收到零窗口通知就启动该计时器，时间到期，A就发送一个仅携带1字节的“零窗口探测报文”。对端B就会确认这个报文的时候携带新的<code>rwnd</code>值。如果<code>rwnd</code>仍为0则重新启动持续计时器，否则A开始发送数据。</p>
+</blockquote>
+<h3 id="拥塞控制">拥塞控制</h3>
+<p><strong>什么情况下叫做拥塞？</strong></p>
+<blockquote>
+<p>网络中，链路容量（带宽）、交换机和路由器中的缓存和处理机都是网络的资源，在某段时间，若对网络中某一资源的需求超过了该资源能提供的部分，导致分组在链路中丢失，这种情况就叫<strong>拥塞</strong>。</p>
+</blockquote>
+<p>有了TCP的窗口控制后，使计算机网络中两个主机之间不再是以单个数据段的形式发送了，而是能够连续发送大量的数据包。然而，大量数据包同时夜伴随着其他问题，比如说网络负载、网络拥堵等问题。TCP因此使用了<strong>拥塞控制</strong>机制，使得在面临网络拥塞时遏制发送方的数据发送。</p>
+<p>拥塞控制主要有两种方法</p>
+<ul>
+<li><strong>端到端的拥塞控制</strong>： 因为网络层没有为运输层拥塞控制提供显示支持。所以即使网络中存在拥塞情况，端系统也要通过对网络行为的观察来推断。<strong>TCP 就是使用了端到端的拥塞控制方式</strong>。IP 层不会向端系统提供有关网络拥塞的反馈信息。那么 TCP 如何推断网络拥塞呢？<strong>如果超时或者三次冗余确认就被认为是网络拥塞，TCP 会减小窗口的大小，或者增加往返时延来避免</strong>。</li>
+<li><strong>网络辅助的拥塞控制</strong>: 在网络辅助的拥塞控制中，路由器会向发送方提供关于网络中拥塞状态的反馈。这种反馈信息就是一个比特信息，它指示链路中的拥塞情况。</li>
+</ul>
+<p><strong>拥塞的特点</strong>：</p>
+<p>1、网络拥塞是由网络资源中的短板资源所决定的，只有所有类型的网络资源同时提高供给才会真正改善网络性能（例如你提高了带宽，但是路由器的缓存较小，瓶颈就转移到了缓存那里）。</p>
+<p>2、拥塞趋于恶化，例如某个路由器没有足够的缓存，缓存溢出导致丢包和端系统重传，一旦重传又会加重网络拥塞。</p>
+<p>3、<strong>拥塞的直接表现就是丢包和重传</strong>，当端系统的重传次数明显增加，就表明网络很可能发生了拥塞。举个例子：如果是带宽出现瓶颈，则RTT会增加，导致超时重传；如果是路由器缓存瓶颈，分组到达路由器后因缓存溢出而丢包，又会导致超时重传。因此重传就是拥塞的表现。</p>
+<p><strong>拥塞的其他指标</strong>（了解即可）：</p>
+<p>• 由于缺少缓存空间⽽被丢弃的分组的百分数；</p>
+<p>• 平均队列⻓度；</p>
+<p>• 超时重传的分组数；</p>
+<p>• 平均分组时延；</p>
+<p>• 分组时延的标准差，等等。</p>
+<p>简单的记就是：<strong>丢包率、重传率和时延</strong>。拥塞控制是防⽌过多的数据注⼊到⽹络中，使⽹络中的路由器或 链路不致过载。</p>
+<p><strong>拥塞控制和流量控制的区别</strong></p>
+<ul>
+<li>流量控制是解决端与端的发送与接收速率不匹配的问题，需要发送方同步接收方的接收速度；</li>
+<li>拥塞控制是解决端系统的通信量与网络链路资源不匹配引起的路由器和链路过载问题，需要控制端系统注入到网络的数据量和速度。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121125099.png" alt="img"></p>
+<h4 id="拥塞控制的方法">拥塞控制的方法</h4>
+<p><strong>拥塞控制需要解决的三个问题</strong></p>
+<ol>
+<li>
+<p>TCP 发送方如何限制它向其他连接发送报文段的速率呢？</p>
+<p>TCP是由接收缓存、发送缓存等组成。发送方的TCP拥塞控制机制会跟踪一个变量，即<strong>拥塞窗口</strong>的变量，拥塞窗口表示为<code>cwnd</code>, <strong>用于限制TCP在接收到ACK之前可以发送到网络的数据量</strong>，而<strong>接收窗口</strong>是用来告诉接收方能够接受的数据量</p>
+<p>一般来说，发送方未确认的数据量不得超过 <code>cwnd</code> 和 <code>rwnd</code> 的最小值，也就是<code>LastByteSent−LastByteAcked&lt;=min(cwnd,rwnd)</code></p>
+<p>由于每个数据包的往返时间是RTT，我们假设接收端有足够的缓存空间用于接收数据，我们就不用考虑<code>rwnd</code>了，只用专注于<code>cwnd</code>，那么，该发送方的 <code>发送速率 = cwnd/RTT 字节/秒</code> . 通过调节<code>cwnd</code>，发送方因此能调整它向连接发送数据的速率。</p>
+</li>
+<li>
+<p>一个 TCP 发送方是如何感知到网络拥塞的呢？</p>
+<p>TCP 根据超时或者 3 个冗余 ACK(丢包了) 来感知的。这就是TCP的快速重传机制。</p>
+</li>
+<li>
+<p>当发送方感知到端到端的拥塞时，采用何种算法来改变其发送速率呢？</p>
+<p>慢开始、拥塞避免、快重传和快恢复。这4种方法的基本思路是，只要网络没有拥塞，拥塞窗口就可以增大些，出现拥塞就减小些。</p>
+</li>
+</ol>
+<h5 id="慢开始算法慢启动">慢开始算法（慢启动）</h5>
+<p>慢开始的思路是从小到大以指数方式增加拥塞窗口的数值。慢开始发生在刚建立连接后的数据收发。</p>
+<p>一开始发送方并不清楚网络的拥塞情况，就先将cwnd初始值设置为1~2个SMSS（发送方MSS），新的RFC标准则把初始<code>cwnd</code>设置为2~4，至于取2还是3还是4，取决于SMSS有多大。</p>
+<p>在每收到⼀个对新的报⽂段的确认（重传的确认不算）后，发送方的拥塞窗⼝就增加⼀个 SMSS 的数值，因此<code>cwnd</code>会呈指数级别增长。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121443061.png" alt="img"></p>
+<p>慢启动的窗口增长速度其实不慢（指数级别），之所以叫慢启动是因为它的初始<code>cwnd</code>值很小。</p>
+<p>顺带一提 ，新建立的连接会用到慢启动，TCP 还实现了 <strong>慢启动重启</strong> （SSR） 机制。这种机制会在持久连接空闲一定时间后重置拥塞窗口为初始cwnd值。道理很简单， 在连接空闲的同时，网络状况也可能发生了变化，为了避免拥塞，理应将拥塞窗 口重置回“安全的”默认值。</p>
+<p>为了不让窗口无限的指数增长，提出了慢开始门限，当窗口大小超过了慢开始门限 <code>ssthresh</code> 则使用拥塞避免算法线性增长窗口。</p>
+<p>慢开始⻔限 <code>ssthresh</code> ：</p>
+<p>当 <code>cwnd &lt; ssthresh</code> 时，使⽤慢开始算法；</p>
+<p>当 <code>cwnd &gt;= ssthresh</code> 时，停⽌使⽤慢开始算法⽽改⽤拥塞避免算法；</p>
+<h5 id="拥塞避免算法">拥塞避免算法</h5>
+<p>该算法是指：当<code>cwnd</code>超过慢开始门限后，每经过一个RTT，拥塞窗口就线性增长 <code>cwnd = cwnd + 1</code>。</p>
+<h5 id="快速重传算法">快速重传算法</h5>
+<p>该算法是指：如果发送方连续收到3个重复ack号的确认，说明接收方收到了乱序的报文（某个中间报文丢失或者迟到），发送方会立即进行重传，而不是等到超时时间用完才重传，避免发送方误认为发生了网络拥塞。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121445751.png" alt="img"></p>
+<p>中间报文的丢失或迟到极可能是意外丢失或迟到，而不是因为网络拥塞导致的丢失，但不排除拥塞的可能性。快速重传可以使网络的吞吐量提高20%。</p>
+<h5 id="快恢复算法">快恢复算法</h5>
+<p><strong>拥塞惩罚</strong>是指端系统检测到网络拥塞时（即发生重传时），降低自己<code>cwnd</code>窗口的行为。拥塞惩罚按超时重传和快速重传分为两种惩罚方式：</p>
+<ul>
+<li>当发生超时重传时，发送方会认为网络出现拥塞，拥塞窗口<code>cwnd</code>会变成1。</li>
+<li>当发生快速重传时，该分组很可能是意外丢失或迟到，但不排除拥塞的可能，因此<code>cwnd</code>会变为 <code>cwnd/2</code>。</li>
+</ul>
+<p><strong>快恢复算法</strong>是指当发生快速重传时，当前拥塞窗口大小减小一半，之后直接执行拥塞避免算法线性增长<code>cwnd</code>，而不是执行慢开始算法指数增长<code>cwnd</code>。</p>
+<p>下面是TCP拥塞控制流程图：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121450060.png" alt="img"></p>
+<h4 id="拥塞惩罚机制">拥塞惩罚机制</h4>
+<p>整个拥塞惩罚机制逻辑如下：</p>
+<p>超时重传的情况下：</p>
+<p>• 慢开始⻔限 ssthresh = max(cwnd/2，2)；</p>
+<p>• cwnd = 1；</p>
+<p>• 执⾏慢开始算法。</p>
+<p>快速重传的情况下（快速恢复）：</p>
+<p>• 慢开始⻔限 ssthresh = 当前拥塞窗⼝ cwnd / 2 ；</p>
+<p>• 新拥塞窗⼝ cwnd = 慢开始⻔限 ssthresh ；</p>
+<p>• 开始执⾏拥塞避免算法，使拥塞窗⼝缓慢地线性增⼤。</p>
+<p>无论是超时重传还是快速重传，都会导致慢开始门限减半，这会导致多次惩罚后，不再会执行指数增长，而是全变成线性增长。</p>
+<h4 id="tcp拥塞控制动态流程图">TCP拥塞控制动态流程图</h4>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121450440.png" alt="img"></p>
+<h4 id="主动队列管理-aqm">主动队列管理 AQM</h4>
+<p>对TCP拥塞控制影响最大的网络层策略是分组丢弃策略。该策略的内容为，到达路由器的分组会按先进先出原则放入到缓存队列中，一旦队列已满，后到达的分组会被丢弃。</p>
+<p>这种丢弃策略会导致<strong>一连串分组的丢失和超时重传，这一方向的所有TCP连接都进入慢开始状态，这种情况叫做全局同步</strong>，全局同步会导致通信量突然下降，不一会儿通信量又突然增大（因为报文指数增长）。</p>
+<p>为了避免全局同步，我们可以在队列长度到达某个警戒线时主动丢弃部分分组，而不是在分组数量达到最大队列长度时被动丢弃所有分组，这就是<strong>主动队列管理AQM</strong>。</p>
+<p>AQM有不同的实现方式，比较主流的是随机早期检测RED。</p>
+<p>RED规定路由器维持一个最小门限THmin和最大门限THmax。</p>
+<p>队列⻓度L ⼩于最⼩⻔限 THmin，将新到达的分组放⼊队 列进⾏排队；</p>
+<p>队列⻓度L 超过最⼤⻔限 THmax，将新到达的分组丢弃；</p>
+<p>队列⻓度L 在最⼩⻔限 THmin 和最⼤⻔限 THmax 之间，按 照概率 p 丢弃新到达的分组。而且随着队列长度L的增加，p也会变大。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121450720.png" alt="img"></p>
+<h3 id="连接管理">连接管理</h3>
+<p>TCP连接要解决3个问题：</p>
+<ol>
+<li>使对方知道自己的存在，且确认双方能发送能接收；</li>
+<li>允许双方协商一些参数（如最大窗口值，是否用窗口扩大选项和时间戳选项等）；</li>
+<li>分配运输资源（缓存大小，连接表中的项目）；</li>
+</ol>
+<h4 id="三次握手建立连接">三次握手建立连接</h4>
+<p>需要3个报文：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121459955.png" alt="img"></p>
+<p>下面是连接的状态变化</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121500199.png" alt="img"></p>
+<p>在连接之前，A和B会先创建传输控制块TCB，存储了连接相关的重要信息如 TCP连接表，指向发送和接收缓存的指针，指向重传队列的指针，seq和ack等。</p>
+<p>SYN不能携带数据，但需要消耗一个序号。ACK报文是可以携带数据的。</p>
+<p><strong>为什么建立连接是三次握手而不是两次？</strong></p>
+<p>是为了防止已失效的连接请求报文段传到了B产生错误。具体情境如下：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121500639.png" alt="img"></p>
+<p>A 发送的SYN报文丢失，A又重发了一个SYN报文，并建立连接成功，后来关闭了连接，通信结束。但丢失的SYN报文此时到达B，B发送第二次握手的报文（ACK报文）后直接进入连接状态，而A没有发起建立连接的请求，不会理睬这个ACK报文，但B会一直等待A发送数据报文段过来，B的资源白白浪费。</p>
+<h4 id="四次挥手断开连接">四次挥手断开连接</h4>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121500310.png" alt="img"></p>
+<p>需要注意：</p>
+<p>通信双方都可以主动发起关闭连接的请求报文。</p>
+<p>FIN可以携带数据，但如果不携带数据也会消耗一个序号。</p>
+<p>当被动关闭者B进入CLOSE-WAIT状态时，TCP连接处于半关闭状态，此时B可以发送数据，A无法发送数据，但可以接收数据。因此这个状态下，B可能还会继续发送消息给A。</p>
+<p>A进入TIME-WAIT状态后，必须经过时间等待计时器设置的时间2MSL后才能进入CLOSED状态。</p>
+<p>一个问题：A 为什么必须等待 2MSL （MSL是最长报文段寿命）的时间后才真正关闭连接？</p>
+<p>1、防止第四次挥手的ACK丢失后B无法进入CLOSED状态。</p>
+<p>假设A在第三次挥手之后直接进入CLOSED，而且最后一个ACK丢失，B会重发第三次挥手，假设A之前的端口是X，这时有两个情况：一个是A之前的端口又开始建立新的连接，那么A收到该FIN报文之后，会回应一个RST报文给B；一个是A之前的端口没有再开启过了，那么B的FIN报文不会得到ACK回应，B会不停的重传。</p>
+<p>2、保证本次连接产生的所有报文（FIN、SYN和数据报文）在这2MSL内从网络中消失，不会和新连接的报文发生混淆（尤其是新连接和旧连接的客户端端口是相同的情况下）。</p>
+<h5 id="tcp半关闭">TCP半关闭</h5>
+<p>半关闭是指建立连接的两端只有其中一端发送FIN报文，关闭双向连接的某一个方向。主动发送FIN的一端之后就无法向对端发送数据，只能接受对端发送的数据和发送ACK报文段。</p>
+<p>一端发送FIN报文之后，另一端发送FIN报文之前的连接状态称为“半关闭状态”。</p>
+<p>套接字的close()提供了全关闭操作，而shutdown()则提供了半关闭操作，实际应用中半关闭很少用到。</p>
+<h5 id="tcp同时打开与关闭">TCP同时打开与关闭</h5>
+<p>同时打开是指通信双方A和B，A发送SYN报文给B，并在报文段到达B之前，B也发送SYN报文给A。同时打开只会出现在A和B都是服务器端的情况下。</p>
+<p><img src="https://www.zbpblog.com/uploads/images/blog/00264e2cb422a246443172a1f49ad10b.png" alt="img"></p>
+<p><img src="https://www.zbpblog.com/uploads/images/blog/f46e861866b408d9deac3234393875a2.png" alt="img"></p>
+<h5 id="连接建立超时">连接建立超时</h5>
+<p>如果一个客户端发起连接请求时，服务器是关闭的，那么客户端会在连接等待超时后再重新发送SYN报文，并且每次超时，超时时间都会翻倍。这一行为被称为指数回退。</p>
+<p>在Linux中net.ipv4.tcp_syn_retries参数可以配置重发SYN的次数，而net.ipv4.tcp_synack_retries则是第二次握手的SYN报文的重发次数。这两个参数通常选择一个较小值5。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121501141.png" alt="img"></p>
+<h5 id="tcp有限状态机">TCP有限状态机</h5>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307121458302.png" alt="img"></p>
+<h3 id="计时器">计时器</h3>
+<ul>
+<li>超时重传计时器：略；</li>
+<li>零窗口持续计时器：零窗口时发送探测报文的计时器；</li>
+<li>Time-Wait计时器：time-wait等待2MSL的计时器；</li>
+<li>保活计时器：防止TCP连接长时间空闲；</li>
+<li>发送报文计时器：防止发送方长时间没有发送报文；</li>
+</ul>
+<blockquote>
+<p>PS: 保活计时器⽤来防⽌在TCP连接出现⻓时期的空闲以及判断对方是否故障下线。</p>
+<p>保活计时器 通常设置为2⼩时 。若服务器过了2⼩时还没 有收到客户的信息，它就发送探测报⽂段。若发送了10个 探测报⽂段（每⼀个相隔75秒）还没有响应，就假定客户 出了故障，因⽽就终⽌该连接。</p>
+</blockquote>
+<h3 id="heading"></h3>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-07-11
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/tcp%E5%8D%8F%E8%AE%AE/">tcp协议</a>
+          <a href="/tags/udp%E5%8D%8F%E8%AE%AE/">udp协议</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/c&#43;&#43;%E4%B9%8B%E6%8C%87%E9%92%88%E4%B8%8E%E5%BC%95%E7%94%A8/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">C&#43;&#43;之指针与引用</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82/">
+            <span class="next-text nav-default">计算机网络之网络层</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-07-11 17:36:16 \u002b0800 CST',
+        title: '计算机网络之运输层',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

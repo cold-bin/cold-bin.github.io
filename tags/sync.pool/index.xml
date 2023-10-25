@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>sync.pool on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/sync.pool/</link>
+    <description>Recent content in sync.pool on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Sat, 24 Sep 2022 15:09:27 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/sync.pool/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Sync.Pool的使用及源码分析</title>
+      <link>https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8F%8A%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+      <pubDate>Sat, 24 Sep 2022 15:09:27 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8F%8A%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+      <description>sync.Pool使用及源码浅析 sync.Pool使用 背景 “频繁创建对象，频繁销毁对象”是在项目开发里算比较常见。sync.Pool的出现就</description>
+    </item>
+    
+    <item>
+      <title>sync.pool的使用场景</title>
+      <link>https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/</link>
+      <pubDate>Mon, 29 Aug 2022 10:40:55 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/</guid>
+      <description>sync.Pool 的使用场景 一句话总结：保存和复用临时对象，减少内存分配，降低GC压力。 举个简单的例子： 1 2 3 4 5 6 7 8 9 10 11 12 type Student struct { Name string Age int32 Remark [1024]byte } var buf, _</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>常见算法总结 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="[toc] 常见算法总结 Floyd 判圈算法 Floyd判圈算法(Floyd Cycle Detection Algorithm)，又称龟兔赛跑算法(Tortoise and Hare Algorithm)，" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="常见算法总结" />
+<meta property="og:description" content="[toc] 常见算法总结 Floyd 判圈算法 Floyd判圈算法(Floyd Cycle Detection Algorithm)，又称龟兔赛跑算法(Tortoise and Hare Algorithm)，" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-01-09T10:29:45+08:00" />
+<meta property="article:modified_time" content="2023-01-09T10:29:45+08:00" />
+<meta itemprop="name" content="常见算法总结">
+<meta itemprop="description" content="[toc] 常见算法总结 Floyd 判圈算法 Floyd判圈算法(Floyd Cycle Detection Algorithm)，又称龟兔赛跑算法(Tortoise and Hare Algorithm)，"><meta itemprop="datePublished" content="2023-01-09T10:29:45+08:00" />
+<meta itemprop="dateModified" content="2023-01-09T10:29:45+08:00" />
+<meta itemprop="wordCount" content="13934">
+<meta itemprop="keywords" content="算法,kmp,floyd,快速幂,背包问题," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="常见算法总结"/>
+<meta name="twitter:description" content="[toc] 常见算法总结 Floyd 判圈算法 Floyd判圈算法(Floyd Cycle Detection Algorithm)，又称龟兔赛跑算法(Tortoise and Hare Algorithm)，"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">常见算法总结</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-01-09 </span>
+        <div class="post-category">
+            <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95/"> 数据结构与算法 </a>
+            </div>
+          <span class="more-meta"> 约 13934 字 </span>
+          <span class="more-meta"> 预计阅读 28 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#常见算法总结">常见算法总结</a>
+          <ul>
+            <li><a href="#floyd-判圈算法">Floyd 判圈算法</a></li>
+            <li><a href="#kmp算法">KMP算法</a></li>
+            <li><a href="#快速幂算法">快速幂算法</a></li>
+            <li><a href="#贪心算法">贪心算法</a></li>
+            <li><a href="#动态规划算法">动态规划算法</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <p>[toc]</p>
+<h2 id="常见算法总结">常见算法总结</h2>
+<h3 id="floyd-判圈算法">Floyd 判圈算法</h3>
+<p>Floyd判圈算法(Floyd Cycle Detection Algorithm)，又称龟兔赛跑算法(Tortoise and Hare Algorithm)，是一个可以在有限状态机、迭代函数或者链表上判断是否存在环，求出该环的起点与长度的算法。该算法据高德纳称由美国科学家罗伯特·弗洛伊德发明，但这一算法并没有出现在罗伯特·弗洛伊德公开发表的著作中。
+如果有限状态机、迭代函数或者链表上存在环，那么在某个环上以<strong>不同速度</strong>前进的2个指针必定会在某个时刻相遇。同时显然地，如果从同一个起点(即使这个起点不在某个环上)同时开始以不同速度前进的2个指针最终相遇，那么可以判定存在一个环，且可以求出二者相遇处所在的环的起点与长度。</p>
+<h4 id="算法描述">算法描述</h4>
+<h5 id="判断是否存在环路">判断是否存在环路</h5>
+<p>如果有限状态机、迭代函数或者链表存在环，那么一定存在一个起点可以到达某个环的某处(这个起点也可以在某个环上)。
+初始状态下，假设已知某个起点节点为节点S。现设两个指针t和h，将它们均指向S。接着，同时让t和h往前推进，但是二者的速度不同：t每前进1步，h前进2步。只要二者都可以前进而且没有相遇，就如此保持二者的推进。当h无法前进，即到达某个没有后继的节点时，就可以确定从S出发不会遇到环。反之当t与h再次相遇时，就可以确定从S出发一定会进入某个环，设其为环C。如果确定了存在某个环，就可以求此环的起点与长度。</p>
+<h5 id="求解环路的长度">求解环路的长度</h5>
+<p>上述算法刚判断出存在环C时，显然t和h位于同一节点，设其为节点M。显然，仅需令h不动，而t不断推进，最终又会返回节点M，统计这一次t推进的步数，显然这就是环C的长度。</p>
+<h5 id="求解环路的起点">求解环路的起点</h5>
+<p>为了求出环C的起点，只要令h仍均位于节点M，而令t移动至起点节点S，此时h与t之间距为环C长度的整数倍。随后，同时让t和h往前推进，且保持二者的速度相同：t每前进1步，h前进1步。持续该过程直至t与h再一次相遇，设此次相遇时位于同一节点P，则节点P即为从节点S出发所到达的环C的第一个节点，即环C的一个起点。</p>
+<p><strong>对于环路起点算法的解释：</strong></p>
+<p><img src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/Floyd%20%E5%88%A4%E5%9C%88%E7%AE%97%E6%B3%95.png" alt="img"></p>
+<p>假设出发起点到环起点的距离为<code>m</code>，已经确定有环，环的周长为<code>n</code>，（第一次）相遇点距离环的起点的距离是<code>k</code>。那么当两者相遇时，慢指针（t）移动的总距离<code>i = m + a * n + k</code>，快指针（h）的移动距离为<code>2i</code>，<code>2i = m + b * n + k</code>。其中，<code>a</code>和<code>b</code>分别为<code>t</code>和<code>h</code>在第一次相遇时转过的圈数。让两者相减（快减慢），那么有<code>i = (b - a) * n</code>。即<code>i</code>是圈长度的倍数，<code>b*n</code>和<code>a*n</code>都是环长度的倍数。</p>
+<p>​	    <strong><code>i=(b-a)*n = m+a*n+k</code> ==&gt; <code>3i = b*n+i+m+k = m+k+i</code> ==&gt; <code>2i = m+k</code>，所以得出<code>m+k</code>是环长的整数倍</strong></p>
+<p>将一个指针移到出发起点S，另一个指针仍呆在相遇节点M处，两者同时移动，每次移动一步。当第一个指针前进了<code>m</code>，即到达环起点时，另一个指针距离链表起点为<code>m+k </code>。考虑到<code>m+k</code>为圈长度的倍数，可以理解为指针从链表起点出发，走到环起点，然后绕环转了几圈，所以第二个指针也必然在环的起点。即两者相遇点就是环的起点。</p>
+<p><strong>伪代码：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">t := &amp;S
+</span></span><span class="line"><span class="cl">h := &amp;S                                        //令指针t和h均指向起点节点S。
+</span></span><span class="line"><span class="cl">repeat
+</span></span><span class="line"><span class="cl">    t := t-&gt;next
+</span></span><span class="line"><span class="cl">    h := h-&gt;next
+</span></span><span class="line"><span class="cl">    if h is not NULL                                //要注意这一判断一般不能省略
+</span></span><span class="line"><span class="cl">            h := h-&gt;next
+</span></span><span class="line"><span class="cl">until t = h or h = NULL
+</span></span><span class="line"><span class="cl">if h != NULL                                       //如果存在环的话
+</span></span><span class="line"><span class="cl">    n := 0
+</span></span><span class="line"><span class="cl">    repeat                                              //求环的长度
+</span></span><span class="line"><span class="cl">            t := t-&gt;next
+</span></span><span class="line"><span class="cl">            n := n+1
+</span></span><span class="line"><span class="cl">    until t = h
+</span></span><span class="line"><span class="cl">    t := &amp;S                                     //求环的一个起点
+</span></span><span class="line"><span class="cl">    while t != h
+</span></span><span class="line"><span class="cl">            t := t-&gt;next
+</span></span><span class="line"><span class="cl">            h := h-&gt;next
+</span></span><span class="line"><span class="cl">    P := *t
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>算法复杂度</strong></p>
+<ul>
+<li>
+<p>**时间复杂度：**注意到当指针t到达环C的一个起点节点P时(此时指针h显然在环C上)，之后指针t最多仅可能走1圈。若设节点S到P距离为 m，环C的长度为  n，则时间复杂度为 O(m+n)，是线性时间的算法。</p>
+</li>
+<li>
+<p>**空间复杂度：**仅需要创立指针t、指针h，保存环长n、环的一个起点P。空间复杂度为 O(1)，是常数空间的算法</p>
+</li>
+</ul>
+<h3 id="kmp算法">KMP算法</h3>
+<p>博客参考 =&gt; <a href="https://www.cnblogs.com/zzuuoo666/p/9028287.html">很详尽的KMP算法</a>&amp;<a href="https://www.cnblogs.com/aninock/p/13796006.html">详解KMP中next数组求解</a></p>
+<h4 id="暴力匹配算法">暴力匹配算法</h4>
+<p>假设现在我们面7899临这样一个问题：有一个0410文本串<code>S</code>，和一个模式串<code>P</code>，现在要查找<code>P</code>在<code>S</code>中的位置，怎么查找呢？</p>
+<p>如果用暴力匹配的思路，并假设现在文本串S匹配到 <code>i</code> 位置，模式串P匹配到 <code>j</code> 位置，则有：</p>
+<ul>
+<li>如果当前字符匹配成功（即<code>S[i] == P[j]</code>），则<code>i++</code>，<code>j++</code>，继续匹配下一个字符；</li>
+<li>如果失配（即<code>S[i]! = P[j]</code>），令<code>i = i - (j - 1)</code>，<code>j = 0</code>。相当于每次匹配失败时，<code>i</code>回溯到下一个字符，<code>j</code>被置为<code>0</code>。</li>
+</ul>
+<p>暴力匹配算法咋一看好像也没啥，能解决问题。但是如果需要匹配的字符串重复字符太多的话会发生什么呢？</p>
+<p>例如，文本串<code>txt=BBC ABCDAB ABCDABCDABDE</code>，子串<code>p=ABCDABD</code>。</p>
+<h4 id="kmp算法-1">KMP算法</h4>
+<p>在上面那个例子里，如果采用暴力匹配时，每次子串<code>p</code>匹配失败时，都会使得文本串<code>txt</code>回溯到下一个字符，显然这样回溯时间复杂度很高，而且可以发现其实我们没必要回溯到下一个字符，也就是要减少匹配的趟数。</p>
+<p>那么，如何减少匹配的趟数呢？其实在每一次匹配过程中，我们就能够判断后续几次匹配是否会成功，算法的核心就是<strong>每次匹配过程中推断出后续完全不可能匹配成功的匹配过程</strong>，从而减少比较的趟数，如图所示：</p>
+<p><img src="https://pic3.zhimg.com/v2-f917fb03305a122847eff23b283700c2_b.webp" alt="动图"></p>
+<p>因此，第一次匹配过之后，就可以得出可以直接跳到第四趟再进行判断的结论了。因为第一次匹配的时候，前5个序列和主串相同，只需要对模式串进行分析，模式串出现了重复单元(即AB)，在第一次匹配失败后就可以直接跳跃到出现重复单元的位置。</p>
+<p><img src="https://pic1.zhimg.com/80/v2-cad29d897f52a03463362753f1563280_1440w.webp" alt="img"></p>
+<p><strong>next数组</strong></p>
+<p>next数组实质上就是找出<strong>模式串中前后字符重复出现的个数</strong>，为了能够跳跃不可能匹配的步骤。
+next数组的定义为：next[i]表示模式串A[0]至A[i]这个字串，使得前k个字符等于后k个字符的最大值，特别的k不能取i+i,因为字串一共才i+1个字符，自己跟自己相等毫无意义。</p>
+<p><img src="https://pic2.zhimg.com/v2-b2671ed95403cd88a5a71d893d29a0cd_b.jpg" alt="动图封面"></p>
+<p>最终得到next数组为：</p>
+<p><img src="https://pic1.zhimg.com/80/v2-2b2ac606c9aa62459be0a7320eac7218_1440w.webp" alt="img"></p>
+<p>如何确定在移动过程中需要跳过多少步呢？下图更直观的体现了跳跃的过程：</p>
+<p><img src="https://pic1.zhimg.com/80/v2-f225476d948d9c1ac21c8dd1ddf705e0_1440w.webp" alt="img"></p>
+<p>对于上述红色部分的计算跳过长度的公式为<strong>跳过的趟数=匹配上字符串中间字符长度-重复字符串长度</strong></p>
+<p><img src="https://pic2.zhimg.com/80/v2-850ae8da2887132894116c6220de3e01_1440w.webp" alt="img"></p>
+<p>跳过这些步骤后<strong>并非再从头开始匹配</strong>，而是<strong>从重复位置开始匹配</strong>：</p>
+<p><img src="https://pic2.zhimg.com/80/v2-49a5aa24121290d74f2a89a4c3eb5d75_1440w.webp" alt="img"></p>
+<p>最终，我们不难得出如下结论：</p>
+<p><img src="https://pic1.zhimg.com/80/v2-dc01527ede39a513b3663b0aaa0b718c_1440w.webp" alt="img"></p>
+<h3 id="快速幂算法">快速幂算法</h3>
+<h4 id="递归思想">递归思想</h4>
+<p>「快速幂算法」的本质是分治算法。举个例子，如果我们要计算 x^64^，我们可以按照：
+$$
+x \to x^2 \to x^4 \to x^8 \to x^{16} \to x^{32} \to x^{64}
+$$
+的顺序，从 x 开始，每次直接把上一次的结果进行平方，计算 66 次就可以得到 x^64^ 的值，而不需要对 x 乘 63 次 x。</p>
+<p>再举一个例子，如果我们要计算 x^77^，我们可以按照：
+$$
+x \to x^2 \to x^4 \to x^9 \to x^{19} \to x^{38} \to x^{77}
+$$
+的顺序，在 $$x \to x^2，x^2 \to x^4，x^{19} \to x^{38}$$ 这些步骤中，我们直接把上一次的结果进行平方，而在 $$x^4 \to x^9，x^9 \to x^{19}，x^{38} \to x^{77}$$ 这些步骤中，我们把上一次的结果进行平方后，还要额外乘一个 x。</p>
+<p>直接从左到右进行推导看上去很困难，因为在每一步中，我们不知道在将上一次的结果平方之后，还需不需要额外乘 x。但如果我们从右往左看，分治的思想就十分明显了：</p>
+<ul>
+<li>当我们要计算 x^n^ 时，我们可以先递归地计算出 $$y = x^{\lfloor n/2 \rfloor}$$，其中 $$\lfloor a \rfloor$$ 表示对 a 进行下取整；</li>
+<li>根据递归计算的结果，如果 n 为偶数，那么 x^n^ = y^2^；如果 n 为奇数，那么 x^n^ = y^2^ ；</li>
+<li>递归的边界为 n = 0，任意数的 0 次方均为 1。</li>
+</ul>
+<p>由于每次递归都会使得指数减少一半，因此递归的层数为 O(log n)，算法可以在很快的时间内得到结果。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">double</span> <span class="nf">myPow</span><span class="o">(</span><span class="kt">double</span> <span class="n">x</span><span class="o">,</span> <span class="kt">int</span> <span class="n">n</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">long</span> <span class="n">N</span> <span class="o">=</span> <span class="n">n</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">N</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">?</span> <span class="n">quickMul</span><span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">N</span><span class="o">)</span> <span class="o">:</span> <span class="mi">1</span><span class="o">.</span><span class="na">0</span> <span class="o">/</span> <span class="n">quickMul</span><span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="o">-</span><span class="n">N</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">double</span> <span class="nf">quickMul</span><span class="o">(</span><span class="kt">double</span> <span class="n">x</span><span class="o">,</span> <span class="kt">long</span> <span class="n">N</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">N</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="mi">1</span><span class="o">.</span><span class="na">0</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">double</span> <span class="n">y</span> <span class="o">=</span> <span class="n">quickMul</span><span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">N</span> <span class="o">/</span> <span class="mi">2</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">N</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">?</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="o">:</span> <span class="n">y</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">x</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>复杂度分析</strong></p>
+<ul>
+<li>时间复杂度：O(log n)，即为递归的层数。</li>
+<li>空间复杂度：O(log n)，即为递归的层数。这是由于递归的函数调用会使用栈空间。</li>
+</ul>
+<h4 id="迭代思想">迭代思想</h4>
+<p>由于递归需要使用额外的栈空间，我们试着将递归转写为迭代。在方法一中，我们也提到过，从左到右进行推导是不容易的，因为我们不知道是否需要额外乘 x。但我们不妨找一找规律，看看哪些地方额外乘了 x，并且它们对答案产生了什么影响。</p>
+<p>我们还是以 x^77^ 作为例子：
+$$
+x \to x^2 \to x^4 \to^+ x^9 \to^+ x^{19} \to x^{38} \to^+ x^{77}
+$$
+并且把需要额外乘 x 的步骤打上了 + 标记。可以发现：</p>
+<ul>
+<li>$$x^{38} \to^+ x^{77}$$ 中额外乘的 x 在 x^77^ 中贡献了 x；</li>
+<li>$$x^9 \to^+ x^{19}$$ 中额外乘的 x 在之后被平方了 2 次，因此在 x^77^ 中贡献了 $$x^{2^2} = x^4$$；</li>
+<li>$$x^4 \to^+ x^9$$ 中额外乘的 x 在之后被平方了 3 次，因此在 x^77^ 中贡献了 $$x^{2^3} = x^8$$；</li>
+<li>最初的 x 在之后被平方了 6 次，因此在 x^77^ 中贡献了 $$x^{2^6} = x^{64}$$。</li>
+</ul>
+<p>我们把这些贡献相乘，$$x \times x^4 \times x^8 \times x^{64}$$ 恰好等于 x^77^。而这些贡献的指数部分又是什么呢？它们都是 2 的幂次，这是因为每个额外乘的 x 在之后都会被平方若干次。而这些指数 1，4，8 和 64，**恰好就对应了 77 的二进制表示 (1001101)~2~ 中的每个 1！</p>
+<p>因此我们借助整数的二进制拆分，就可以得到迭代计算的方法，一般地，如果整数 n 的二进制拆分为
+$$
+n = 2^{i_0} + 2^{i_1} + \cdots + 2^{i_k}
+$$
+那么
+$$
+x^n = x^{2^{i_0}} \times x^{2^{i_1}} \times \cdots \times x^{2^{i_k}}
+$$
+这样以来，我们从 x 开始不断地进行平方，得到 $$x^2, x^4, x^8, x^{16}, \cdots$$，如果 n 的第 k 个（从右往左，从 0 开始计数）二进制位为 1，那么我们就将对应的贡献 $$x^{2^k}$$计入答案。</p>
+<p>下面的代码给出了详细的注释。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">double</span> <span class="nf">myPow</span><span class="o">(</span><span class="kt">double</span> <span class="n">x</span><span class="o">,</span> <span class="kt">int</span> <span class="n">n</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">long</span> <span class="n">N</span> <span class="o">=</span> <span class="n">n</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">N</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">?</span> <span class="n">quickMul</span><span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">N</span><span class="o">)</span> <span class="o">:</span> <span class="mi">1</span><span class="o">.</span><span class="na">0</span> <span class="o">/</span> <span class="n">quickMul</span><span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="o">-</span><span class="n">N</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kd">public</span> <span class="kt">double</span> <span class="nf">quickMul</span><span class="o">(</span><span class="kt">double</span> <span class="n">x</span><span class="o">,</span> <span class="kt">long</span> <span class="n">N</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">double</span> <span class="n">ans</span> <span class="o">=</span> <span class="mi">1</span><span class="o">.</span><span class="na">0</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 贡献的初始值为 x
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="kt">double</span> <span class="n">x_contribute</span> <span class="o">=</span> <span class="n">x</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 在对 N 进行二进制拆分的同时计算答案
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">while</span> <span class="o">(</span><span class="n">N</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="o">(</span><span class="n">N</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 如果 N 二进制表示的最低位为 1，那么需要计入贡献
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                <span class="n">ans</span> <span class="o">*=</span> <span class="n">x_contribute</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="o">}</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 将贡献不断地平方
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">x_contribute</span> <span class="o">*=</span> <span class="n">x_contribute</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 舍弃 N 二进制表示的最低位，这样我们每次只要判断最低位即可
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">N</span> <span class="o">/=</span> <span class="mi">2</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">ans</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="贪心算法">贪心算法</h3>
+<p>转载 =&gt; <a href="https://mp.weixin.qq.com/s?__biz=MzI0NjAxMDU5NA==&amp;mid=2475930307&amp;idx=1&amp;sn=243c7b43b5aa3919129d0ac40a1b2fab&amp;chksm=ff22d54ec8555c586a07dbcfe671bdf6d79278ebcf42c706008211f54361a4556149ad911681&amp;token=1439040973&amp;lang=zh_CN#rd">https://mp.weixin.qq.com/s?__biz=MzI0NjAxMDU5NA==&amp;mid=2475930307&amp;idx=1&amp;sn=243c7b43b5aa3919129d0ac40a1b2fab&amp;chksm=ff22d54ec8555c586a07dbcfe671bdf6d79278ebcf42c706008211f54361a4556149ad911681&amp;token=1439040973&amp;lang=zh_CN#rd</a></p>
+<blockquote>
+<p>大家好呀，我是帅蛋。</p>
+<p>今天我们来学习<strong>贪心算法</strong>，它和我之前带大家玩儿的【<a href="http://mp.weixin.qq.com/s?__biz=MzI0NjAxMDU5NA==&amp;mid=2475925238&amp;idx=1&amp;sn=ea7eafee3e61b433642312f33a5a2413&amp;chksm=ff22f97bc855706d385c42fbb5132da5c7a2a53a2ca59e6a475f7ccfb3c2dc69195f6716e58a&amp;scene=21#wechat_redirect">递归算法</a>】、【<a href="http://mp.weixin.qq.com/s?__biz=MzI0NjAxMDU5NA==&amp;mid=2475925424&amp;idx=1&amp;sn=b83a152e2d86edcc5eef9005c99aa9ba&amp;chksm=ff22f83dc855712b66732098e90f93f79c3a1c050c06ffdc9c312f8e858a30de08468093d2da&amp;scene=21#wechat_redirect">分治算法</a>】类似，带着算法的名儿，但<strong>实际上是一种解决问题的思想策略</strong>。</p>
+<p>在正式开始之前，我想先说几句题外话：</p>
+<p>我知道贪心算法对很多同学来说有点难，这个难不是难在对概念的理解上，而是一看就会，一做题就废，接着半途而废。</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/2icbib745uOkNsbpANLHqFe5icJownhg8aWwtnf1nrsqCCPePWptAHHicHS57WXLLgM3ErqAggfAOHmydMsNdyTypw/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<p>这个我想说很正常，因为<strong>贪心算法是一种算法【思想】，但凡是这种的，就没什么套路可讲</strong>，不像我们在上个专题学二叉树的时候，解题就是递归 + 迭代，可以由上到下、由下到上、由左到右的整，套路明显。</p>
+<p>更不用说，后面碰到动态规划的时候，更容易贪心算法和动态规划用哪个傻傻分不清楚。</p>
+<p><strong>碰到这些问题怎么办？就是干，唯做题 + 总结。</strong></p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_gif/2icbib745uOkNsbpANLHqFe5icJownhg8aWmJNibYKzFVLEUNsXAkEBBTdXmgkbLQqsiartJNCggE4U7QjXKEoQEZww/640?wx_fmt=gif&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<p>写这篇文章应该篇幅不会很多，我会带你了解一下什么是贪心算法，重头戏是会在后面的实战题板块，我来带你做题和做总结，所以跟着搞就完事了。</p>
+<p>R u ready？gogogo！</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_png/2icbib745uOkOI12AYwlx5fTK7j2xO460dMpEKliaic8PbgeceQicYPH7dhwPWDibD84L0mqof8PBb97MA5eNU2w8GMA/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_png/UicAQic94NDTvl6r3YTHghmJrEefaroDoMSrfA9mesOLdN7QpTmobLbuLYZibl9hNVHoPibpFoLOwoVoiaOucqeMw9Q/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<p><strong>贪心算法</strong></p>
+<p>学习贪心算法，首先我们得从它的概念学起。</p>
+<p><strong>贪心算法（greedy algorithm）<strong>是指从问题初始转状态出发，通过在</strong>每一步</strong>选择中都采取最好或者最优（最有利）的选择，从而得到结果的最优值（或较优值）。</p>
+<p>通过概念我们能知道贪心算法的 <strong>2 个关键点</strong>：</p>
+<ul>
+<li>贪心算法在对问题进行求解时，总是做出当前看来最好的选择。</li>
+<li>通过贪心算法所得到的结果不一定是最优的结果，但肯定都是相对接近最优解的结果。</li>
+</ul>
+<p>看起来这 2 点可能不好理解，我用两个例子你就懂了。</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_gif/2icbib745uOkNsbpANLHqFe5icJownhg8aW5AW6fpF803m0oOxX0jbm3P5bPWCFlSJQibBjZ7A8UXfKL4Nuq84TQGA/640?wx_fmt=gif&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<p><strong>例 1</strong>：我们现在有 20、10、5、1 这 4 种数额的钱币，如果想要凑齐 36 元，那我最少需要几张钱币？</p>
+<p>如果根据贪心算法的话，我们上来肯定是看需要几张 20 的，这道题需要 1 张，那还剩 36 - 20 = 16。</p>
+<p>看完 20 的我们再来看 10 元的，需要 1 张 10 元，现在还剩 16 - 10 = 6。</p>
+<p>下面继续是看 5 和 1，分别就需要 1 张。</p>
+<p>最后我们得到的答案是，如果想要凑齐 36 元我们最少需要 4 张纸币。</p>
+<p>这个例子，每次都是用最大的纸币去匹配，剩下的余额再用较小点的面额去匹配，这个就是第 1 点我们说的，<strong>在对问题进行求解时，每次都是做出当前看来最好的选择</strong>。</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/2icbib745uOkNsbpANLHqFe5icJownhg8aWXNsY6w3WgnGKSeibibCLRfVhyAae0WJic3g4mf7c8ibdrXiaFX2IVYPUL8Q/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<p><strong>例 2</strong>：我们还是以撒币为例，现在我们有 10、9、1 这 3 种金额的钱币，如果想要凑齐 18 元，咱最少需要几张钱币？</p>
+<p>在这个例子，如果我们还是用上面的贪心策略，那就完蛋了。</p>
+<p>我上来就看需要几张 10 元，那这道题需要 1 张，剩余金额是 8 元，那我无法用 9 的纸币，只能用 8 张 1 元的纸币，那这最后的结果是用了 9 张纸币。</p>
+<p>而通过小学知识，我们肉眼就能看出用 2 张 9 元的纸币就 ok 了。</p>
+<p>通过这个例子就是说明了第 2 点：<strong>通过贪心算法所得到的结果不一定是最优的结过</strong>。</p>
+<p>看到这是不是懵了？懵了就对了。</p>
+<p>你现在就先记住一点：<strong>贪心算法只是在部分情况下有用。至于什么是部分情况，这个就得靠多做题了~</strong></p>
+<p>诶诶诶，你先别动手，那你看嘛，就比如上面的 2 个例子，你要看看数之间的规律，例 1 的中的币互相成倍数，例 2 中就没啥规律。</p>
+<p>这个就得是靠多做题多总结好伐~</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/2icbib745uOkNsbpANLHqFe5icJownhg8aWqb727LMPOxfrl7Seunk9DWuMA31NZkfF5DPgVzwIIGKmDtugEJSlEg/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<p><strong>什么时候用贪心？</strong></p>
+<p>说实话，这就是贪心算法对我们来说”难“的地方，即没有模式化的东西直接了当的告诉我们”这样就是用贪心“。</p>
+<p>如果硬要说的话，绝大多数用在像上一节中举的例子那种【<strong>组合优化</strong>】问题，<strong>求解的过程涉及到多步判断</strong>。</p>
+<p>碰到这样的题，你的想法可以往贪心算法上靠一靠，但也只是”可以“而已。</p>
+<p>因为你看到类似这种问题，你想到贪心算法，首先就要<strong>自己先搞出个贪心策略，之后你要验证你所用的贪心策略产生的结果是不是最优的</strong>，如果不是最优的，那可能就要用到我们下一个专题要学的【动态规划】。</p>
+<p>大家估计会问如何验证，直接就举几个<strong>靠谱的例子验证</strong>就好了。</p>
+<p>当然这里我说的是”靠谱“，就是一些特例，不然你随便整了几个例子，发现都对，这个时候你就觉得你做的就是对的，恰恰也可能你举的这几个例子正好巧了。</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/2icbib745uOkOI12AYwlx5fTK7j2xO460dY4flng6yGhicLp5aO9dwMykasAOWtXeJdZKB099mHrSicyJVEA2s69Zg/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<p>这里我还想多说几句：</p>
+<p>其实按照正常来说呢，<strong>像这种验证贪心算法的正确性，最靠谱的就是通过数学推导来弄</strong>，一般像什么数学归纳法、反正法这种方法。</p>
+<p>但是怎么说呢，数学推导虽然很对，结果也很正确，但是对于我们来说完全没有必要，且不说很多人根本不会推导，就算会，对我们来说意义也不大，毕竟目的性不一样，这样搞就走远了。</p>
+<p><strong>从我们刷题的角度来看，我们完全就可以靠举一些特例就能验证绝大多数问题</strong>。</p>
+<p>当然像这种举特例的能力，你要问我怎么举，我只能告诉你：多做题就有了。</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/2icbib745uOkOI12AYwlx5fTK7j2xO460d7yibN3yvztMa9ZJoJLZPbIywJCQ3ibvNiajQRkyWKx93W3JMokmjWZz2Q/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<p><strong>贪心法解题步骤</strong></p>
+<p>贪心算法的解题步骤，其实和分治算法很像的。</p>
+<p>我在之前讲分治算法的时候讲过分治算法的 3 个步骤：</p>
+<p><strong>划分（Divide）</strong>：将原问题划分为规模较小的子问题，子问题相互独立，与原问题形式相同。</p>
+<p><strong>求解（Conquer）</strong>：递归的求解划分之后的子问题。</p>
+<p><strong>合并（Combine）</strong>：这一步非必须。有些问题涉及合并子问题的解，将子问题的解合并成原问题的解。有的问题则不需要，只是求出子问题的解即可。</p>
+<p>贪心算法的步骤也类似，如果你确定是贪心算法可解，也是 <strong>3 个步骤</strong>：</p>
+<p>(1) 将问题分解为多个子问题。</p>
+<p>(2) 选择合适的贪心策略，得到每一个子问题的局部最优解。</p>
+<p>(3) 将子问题的局部最优解合并成原问题的最优解。</p>
+<p>是不是这么看觉得还挺简单的？嘿嘿嘿嘿，等做题的时候你就知道有时候看到的并不就是真实的感受~</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/2icbib745uOkOI12AYwlx5fTK7j2xO460dI74gXLU0EC3wfSURxbUBoo6c0o5Q3icyFYI8ObnV3zGaxpXB8AkSTcQ/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_png/UicAQic94NDTvl6r3YTHghmJrEefaroDoMSrfA9mesOLdN7QpTmobLbuLYZibl9hNVHoPibpFoLOwoVoiaOucqeMw9Q/640?wx_fmt=png&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<p>贪心算法的内容到这就说的差不多了，单纯理论上的东西确实不多，看完了也只是让你有个印象。</p>
+<p>关于理论上的东西你只要了解就行，<strong>你想学好贪心别无他法。就是要多做题多练习，见的多了就有感觉了</strong>。</p>
+<p>其实一连套的动作就是：诶，这道题看着能用贪心，试试，得出个结果，找几个特例验一验，是最优解万事大吉，不是最优解，就再想想是不是动态规划啥的可以解。</p>
+<p>最后再说一句，贪心算法不用慌，退一万步讲，贪心就算学的不好，问题也不大，<strong>面试的时候贪心考的一般比较少</strong>。</p>
+<p>毕竟生活啊，总归是要全局考虑，哪能只盯着眼前~</p>
+<p>我是帅蛋，我们下次见！</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/2icbib745uOkOI12AYwlx5fTK7j2xO460dwdHjvdD47aXfZv9T2wH0esGbOQY0jr4xia5NeR1Nd4yF9hDK5Co69dQ/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+</blockquote>
+<h3 id="动态规划算法">动态规划算法</h3>
+<p>转载 =&gt; <a href="https://mp.weixin.qq.com/s?__biz=MzI0NjAxMDU5NA==&amp;mid=2475932264&amp;idx=1&amp;sn=465412392bab644f2391c62148fcac2c&amp;chksm=ff22dde5c85554f3b66668a590b63c6ed27859ca83cf4018ede7653d25adf24764574adde5fc&amp;token=239743856&amp;lang=zh_CN#rd">https://mp.weixin.qq.com/s?__biz=MzI0NjAxMDU5NA==&amp;mid=2475932264&amp;idx=1&amp;sn=465412392bab644f2391c62148fcac2c&amp;chksm=ff22dde5c85554f3b66668a590b63c6ed27859ca83cf4018ede7653d25adf24764574adde5fc&amp;token=239743856&amp;lang=zh_CN#rd</a></p>
+<blockquote>
+<p>大家好呀，我是帅蛋！</p>
+<p>很多同学在动态规划和贪心算法上有些傻傻分不清楚，今天我就来解决<strong>动态规划和贪心算法的比较分析</strong>，当作加餐。</p>
+<p>前面我先比较概念，后面我会用两个例子带大家一步步分析。</p>
+<p>我尽量以我的理解给大家讲清楚！</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/2icbib745uOkM99uGjwiciaicqaia6S1Nno9kicCFfibJO9QNjEYhJMH0x7xhIwrM4xicDOBbSLxHnHxeel9XlqTDKva65w/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<p><strong>动态规划 vs 贪心算法</strong></p>
+<p>我在【<a href="http://mp.weixin.qq.com/s?__biz=MzI0NjAxMDU5NA==&amp;mid=2475932199&amp;idx=1&amp;sn=4564f67c3bdf6a21ae06e380441d5e55&amp;chksm=ff22ddaac85554bc54ba9fcdfc959dc2046b59a2ff8ea78da42ea25a51dbdaf728374300b286&amp;scene=21#wechat_redirect"><strong>动态规划</strong></a>】的文章中写过：</p>
+<p>动态规划将一个大的复杂的问题，拆成一个个的子问题，子问题再拆成更小的子问题，直至拆到到子问题可以用确定的条件解答，之后通过这些子问题的解反向得到原问题的解。</p>
+<p>它可以解决的问题包含 <strong>4 个特点</strong>：</p>
+<ul>
+<li>求最优性质问题</li>
+<li>有重叠子问题</li>
+<li>最优子结构</li>
+<li>无后效性</li>
+</ul>
+<p>同样，我在【<a href="http://mp.weixin.qq.com/s?__biz=MzI0NjAxMDU5NA==&amp;mid=2475930307&amp;idx=1&amp;sn=243c7b43b5aa3919129d0ac40a1b2fab&amp;chksm=ff22d54ec8555c586a07dbcfe671bdf6d79278ebcf42c706008211f54361a4556149ad911681&amp;scene=21#wechat_redirect"><strong>贪心算法</strong></a>】的文章中也解释过贪心的概念：</p>
+<p>**贪心算法（greedy algorithm）**是指从问题初始转状态出发，通过在每一步选择中都采取最好或者最优（最有利）的选择，从而得到结果的最优值（或较优值）。</p>
+<p>通过概念我们能知道贪心算法的 <strong>2 个关键点</strong>：</p>
+<ul>
+<li>贪心算法在对问题进行求解时，总是做出当前看来最好的选择。</li>
+<li>通过贪心算法所得到的结果不一定是最优的结果，但肯定都是相对接近最优解的结果。</li>
+</ul>
+<p>从贪心的概念提炼一下，其实贪心能解决的问题也包含 <strong>4 个特点</strong>：</p>
+<ul>
+<li>求最优性质问题</li>
+<li>贪心选择</li>
+<li>最优子结构</li>
+<li>无后效性：无后向性是指 以前出现状态 和 以前状态的变化过程 不会影响 将来的变化。</li>
+</ul>
+<p>综合可以看出，贪心和动态规划：</p>
+<p><strong>相似之处在于</strong>，<strong>都是求最优性质问题，问题具有”无后效性“，解决办法都是将问题拆成子问题，都有“最优子结构”。</strong></p>
+<p><strong>但区别是</strong>，<strong>贪心算法独有的”贪心选择“，它选的是当前最优解，而动态规划是通过子问题的最优解推出当前的最优解。</strong></p>
+<p>又是说了一堆概念上的东西，可能你看了还是觉得有点抽象很难解释。</p>
+<p>![图片](data:image/svg+xml,%3C%3Fxml version=&lsquo;1.0&rsquo; encoding=&lsquo;UTF-8&rsquo;%3F%3E%3Csvg width=&lsquo;1px&rsquo; height=&lsquo;1px&rsquo; viewBox=&lsquo;0 0 1 1&rsquo; version=&lsquo;1.1&rsquo; xmlns=&lsquo;<a href="http://www.w3.org/2000/svg'">http://www.w3.org/2000/svg'</a> xmlns:xlink=&lsquo;<a href="http://www.w3.org/1999/xlink'%3E%3Ctitle%3E%3C/title%3E%3Cg">http://www.w3.org/1999/xlink'%3E%3Ctitle%3E%3C/title%3E%3Cg</a> stroke=&lsquo;none&rsquo; stroke-width=&lsquo;1&rsquo; fill=&lsquo;none&rsquo; fill-rule=&lsquo;evenodd&rsquo; fill-opacity=&lsquo;0&rsquo;%3E%3Cg transform=&lsquo;translate(-249.000000, -126.000000)&rsquo; fill=&rsquo;%23FFFFFF&rsquo;%3E%3Crect x=&lsquo;249&rsquo; y=&lsquo;126&rsquo; width=&lsquo;1&rsquo; height=&lsquo;1&rsquo;%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E)</p>
+<p>诶诶诶，别动手，下面讲具体的了！我就<strong>用两个例子来解释一下</strong>~</p>
+<p>![图片](data:image/svg+xml,%3C%3Fxml version=&lsquo;1.0&rsquo; encoding=&lsquo;UTF-8&rsquo;%3F%3E%3Csvg width=&lsquo;1px&rsquo; height=&lsquo;1px&rsquo; viewBox=&lsquo;0 0 1 1&rsquo; version=&lsquo;1.1&rsquo; xmlns=&lsquo;<a href="http://www.w3.org/2000/svg'">http://www.w3.org/2000/svg'</a> xmlns:xlink=&lsquo;<a href="http://www.w3.org/1999/xlink'%3E%3Ctitle%3E%3C/title%3E%3Cg">http://www.w3.org/1999/xlink'%3E%3Ctitle%3E%3C/title%3E%3Cg</a> stroke=&lsquo;none&rsquo; stroke-width=&lsquo;1&rsquo; fill=&lsquo;none&rsquo; fill-rule=&lsquo;evenodd&rsquo; fill-opacity=&lsquo;0&rsquo;%3E%3Cg transform=&lsquo;translate(-249.000000, -126.000000)&rsquo; fill=&rsquo;%23FFFFFF&rsquo;%3E%3Crect x=&lsquo;249&rsquo; y=&lsquo;126&rsquo; width=&lsquo;1&rsquo; height=&lsquo;1&rsquo;%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/svg%3E)</p>
+<p>**问题：**我们现在有 20、10、5、1 这 4 种数额的钱币，如果想要凑齐 36 元，那我最少需要几张钱币？</p>
+<p>如果根据贪心算法的话，我们上来肯定是看需要几张 20 的，这道题需要 1 张，那还剩 36 - 20 = 16。</p>
+<p>看完 20 的我们再来看 10 元的，需要 1 张 10 元，现在还剩 16 - 10 = 6。</p>
+<p>下面继续是看 5 和 1，分别就需要 1 张。</p>
+<p>最后我们得到的答案是，如果想要凑齐 36 元我们最少需要 4 张纸币。</p>
+<p>这个例子，每次都是用最大的纸币去匹配，剩下的余额再用较小点的面额去匹配，这个就是贪心算法中我们说的，<strong>在对问题进行求解时，每次都是做出当前看来最好的选择</strong>。</p>
+<p>上面这个问题你看贪心可以，还挺得瑟，那你看我换一下。</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/2icbib745uOkM99uGjwiciaicqaia6S1Nno9kicZtVeZicI0ucFbUvoRMvMxLYMtKT1oXA0HB558GTMXBxXfOKficXUGXEg/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<p>**问题：**还是以撒币为例，现在我们有 10、9、1 这 3 种金额的钱币，如果想要凑齐 18 元，咱最少需要几张钱币？</p>
+<p>如果用贪心的话，我上来就看需要几张 10 元，那这道题需要 1 张，剩余金额是 8 元，那我无法用 9 的纸币，只能用 8 张 1 元的纸币，那这最后的结果是用了 9 张纸币。</p>
+<p>但是明明我们一眼就能看出用 2 张 9 元的纸币就 ok 了。</p>
+<p>这就是贪心算法”贪心选择“局限的地方，只考虑眼前的情况。</p>
+<p>我们重新分析这个例子。</p>
+<p>想要凑齐 18 元，如果我们取的金额钱币为 10，下面我们就要凑齐 18 - 10 = 8 元；如果取得金额钱币为 9，下面我们就要凑齐 18 - 9 = 9 元。</p>
+<p>这些问题其实都有一个相同的形式：为了凑齐 xx 元，最少需要几张钱币。这里我用 dp[n] 表示“凑出 n 元需要的最少钱币数”。</p>
+<p>对于凑齐 18 元，如果我们选了 10 元金额，那：</p>
+<p>dp[18] = dp[8] + 1 = 8 + 1 = 9。</p>
+<p>意思是利用 10 元凑出 18，相当于是“凑齐 8 元需要的纸币数 + 这一张 10 元钱币”。至于 dp[8] 怎么求出来的我们先不管。</p>
+<p>同理：</p>
+<p>选 9 元钱币，dp[18] = dp[9] + 1 = 1 + 1 = 2。</p>
+<p>选 1 元钱币，dp[18] = dp[17] + 1 = 8 + 1 = 9。</p>
+<p>显而易见的是，凑出 18 需要的最小钱币数是 2，是选取 9 这张钱币的方案。</p>
+<p>我们通过上面三个公式做出了正确的决策。</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/2icbib745uOkM99uGjwiciaicqaia6S1Nno9kictUAq6hyT3RdUIl1SiaeA04CqlJOD8ygSuznY3QrbvibSBylBfpEKL4Bg/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<p>可以看出 dp[18] 是与 dp[18 - 10]、dp[18 - 9]、dp[18 - 1] 有关，放大来看，即 dp[n] 与 dp[n - 10]、dp[n - 9]、dp[n - 1] 有关：</p>
+<p>dp[n] = min(dp[n - 10], dp[n - 9], dp[n - 1]) + 1。</p>
+<p>你看，我们想要求出 dp[n]，只需要管 dp[n - 10]、dp[n - 9]、dp[n - 1] ，至于更小的值是怎么求的，和我 dp[n] 就没关系了。</p>
+<p>这也是动态规划的“无后效性”的完美解释。</p>
+<p><strong>动态规划保证了我们解决问题的结果的正确性，比起贪心只关心眼前，动态规划会分别算出每种情况的最优解，从而得出自己的最优解。</strong></p>
+<p>现在你再看这句话：</p>
+<p><strong>贪心算法选的是当前最优解，而动态规划****是通过子问题的最优解推出当前的最优解。</strong></p>
+<p>是不是就突然理解了呢，这就是最关键的地方，下次再有人问你，别和他扯别的，就说这句话！</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/2icbib745uOkM99uGjwiciaicqaia6S1Nno9kicj9G4xIEvhsJDcqdGoDJKfsPUopGicrJEqhkibEfpOM74VvyWxIH5tBmQ/640?wx_fmt=jpeg&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+</blockquote>
+<h4 id="背包问题">背包问题</h4>
+<blockquote>
+<p>原文地址： <a href="https://zhuanlan.zhihu.com/p/93857890">https://zhuanlan.zhihu.com/p/93857890</a></p>
+</blockquote>
+<p>背包问题是一类经典的动态规划问题，它非常灵活，需要仔细琢磨体会，本文先对背包问题的几种常见类型作一个总结，然后再看看LeetCode上几个相关题目。</p>
+<blockquote>
+<p>本文首发于我的博客，<a href="https://link.zhihu.com/?target=https%3A//tangshusen.me/2019/11/24/knapsack-problem/">传送门</a></p>
+</blockquote>
+<p>根据<a href="https://link.zhihu.com/?target=https%3A//zh.wikipedia.org/wiki/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98">维基百科</a>，背包问题（Knapsack problem）是一种组合优化的NP完全（NP-Complete，NPC）问题。问题可以描述为：给定一组物品，每种物品都有自己的重量和价格，在限定的总重量内，我们如何选择，才能使得物品的总价格最高。NPC问题是没有多项式时间复杂度的解法的，但是利用动态规划，我们可以以伪多项式时间复杂度求解背包问题。一般来讲，背包问题有以下几种分类：</p>
+<ol>
+<li>01背包问题</li>
+<li>完全背包问题</li>
+<li>多重背包问题</li>
+</ol>
+<p>此外，还存在一些其他考法，例如恰好装满、求方案总数、求所有的方案等。本文接下来就分别讨论一下这些问题。</p>
+<h5 id="1-01背包">1. 01背包</h5>
+<p><strong>1.1 题目</strong></p>
+<p>最基本的背包问题就是01背包问题（01 knapsack problem）：一共有N件物品，第i（i从1开始）件物品的重量为w[i]，价值为v[i]。在总重量不超过背包承载上限W的情况下，能够装入背包的最大价值是多少？</p>
+<p><strong>1.2 分析</strong></p>
+<p>如果采用暴力穷举的方式，每件物品都存在装入和不装入两种情况，所以总的时间复杂度是O(2^N)，这是不可接受的。而使用动态规划可以将复杂度降至O(NW)。我们的目标是书包内物品的总价值，而变量是物品和书包的限重，所以我们可定义状态dp:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">dp[i][j]表示将前i件物品装进限重为j的背包可以获得的最大价值, 0&lt;=i&lt;=N, 0&lt;=j&lt;=W
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>那么我们可以将dp[0][0&hellip;W]初始化为0，表示将前0个物品（即没有物品）装入书包的最大价值为0。那么当 i &gt; 0 时<code>dp[i][j]</code>有两种情况：</p>
+<ol>
+<li>不装入第i件物品，即<code>dp[i−1][j]</code>；</li>
+<li>装入第i件物品（前提是能装下），即<code>dp[i−1][j−w[i]] + v[i]</code>。</li>
+</ol>
+<p>即状态转移方程为</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">dp[i][j] = max(dp[i−1][j], dp[i−1][j−w[i]]+v[i]) // j &gt;= w[i]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>由上述状态转移方程可知，<code>dp[i][j]</code>的值只与<code>dp[i-1][0,...,j-1]</code>有关，所以我们可以采用动态规划常用的方法（滚动数组）对空间进行优化（即去掉dp的第一维）。需要注意的是，为了防止上一层循环的<code>dp[0,...,j-1]</code>被覆盖，循环的时候 j 只能<strong>逆向枚举</strong>（空间优化前没有这个限制），伪代码为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">// 01背包问题伪代码(空间优化版)
+</span></span><span class="line"><span class="cl">dp[0,...,W] = 0
+</span></span><span class="line"><span class="cl">for i = 1,...,N
+</span></span><span class="line"><span class="cl">    for j = W,...,w[i] // 必须逆向枚举!!!
+</span></span><span class="line"><span class="cl">        dp[j] = max(dp[j], dp[j−w[i]]+v[i])
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>时间复杂度为O(NW), 空间复杂度为O(W)。由于W的值是W的位数的幂，所以这个时间复杂度是伪多项式时间。</p>
+<p>动态规划的核心思想<strong>避免重复计算</strong>在01背包问题中体现得淋漓尽致。第i件物品装入或者不装入而获得的最大价值完全可以由前面i-1件物品的最大价值决定，暴力枚举忽略了这个事实。</p>
+<h5 id="2-完全背包">2. 完全背包</h5>
+<p><strong>2.1 题目</strong></p>
+<p>完全背包（unbounded knapsack problem）与01背包不同就是每种物品可以有无限多个：一共有N种物品，每种物品有无限多个，第i（i从1开始）种物品的重量为w[i]，价值为v[i]。在总重量不超过背包承载上限W的情况下，能够装入背包的最大价值是多少？</p>
+<p><strong>2.2 分析一</strong></p>
+<p>我们的目标和变量和01背包没有区别，所以我们可定义与01背包问题几乎完全相同的状态dp:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">dp[i][j]表示将前i种物品装进限重为j的背包可以获得的最大价值, 0&lt;=i&lt;=N, 0&lt;=j&lt;=W
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>初始状态也是一样的，我们将dp[0][0&hellip;W]初始化为0，表示将前0种物品（即没有物品）装入书包的最大价值为0。那么当 i &gt; 0 时<code>dp[i][j]</code>也有两种情况：</p>
+<ol>
+<li>不装入第i种物品，即<code>dp[i−1][j]</code>，同01背包；</li>
+<li>装入第i种物品，此时和01背包不太一样，因为每种物品有无限个（但注意书包限重是有限的），所以此时不应该转移到<code>dp[i−1][j−w[i]]</code>而应该转移到<code>dp[i][j−w[i]]</code>，即装入第i种商品后还可以再继续装入第种商品。</li>
+</ol>
+<p>所以状态转移方程为</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">dp[i][j] = max(dp[i−1][j], dp[i][j−w[i]]+v[i]) // j &gt;= w[i]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个状态转移方程与01背包问题唯一不同就是max第二项不是dp[i-1]而是dp[i]。</p>
+<p>和01背包问题类似，也可进行空间优化，优化后不同点在于这里的 j 只能<strong>正向枚举</strong>而01背包只能逆向枚举，因为这里的max第二项是<code>dp[i]</code>而01背包是<code>dp[i-1]</code>，即这里就是需要覆盖而01背包需要避免覆盖。所以伪代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">// 完全背包问题思路一伪代码(空间优化版)
+</span></span><span class="line"><span class="cl">dp[0,...,W] = 0
+</span></span><span class="line"><span class="cl">for i = 1,...,N
+</span></span><span class="line"><span class="cl">    for j = w[i],...,W // 必须正向枚举!!!
+</span></span><span class="line"><span class="cl">        dp[j] = max(dp[j], dp[j−w[i]]+v[i])
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>由上述伪代码看出，01背包和完全背包问题此解法的空间优化版解法唯一不同就是前者的 j 只能逆向枚举而后者的 j 只能正向枚举，这是由二者的状态转移方程决定的。此解法时间复杂度为O(NW), 空间复杂度为O(W)。</p>
+<p><strong>2.3 分析二</strong></p>
+<p>除了分析一的思路外，完全背包还有一种常见的思路，但是复杂度高一些。我们从装入第 i 种物品多少件出发，01背包只有两种情况即取0件和取1件，而这里是取0件、1件、2件&hellip;直到超过限重（k &gt; j/w[i]），所以状态转移方程为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl"># k为装入第i种物品的件数, k &lt;= j/w[i]
+</span></span><span class="line"><span class="cl">dp[i][j] = max{(dp[i-1][j − k*w[i]] + k*v[i]) for every k}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>同理也可以进行空间优化，需要注意的是，这里max里面是<code>dp[i-1]</code>，和01背包一样，所以 j 必须<strong>逆向枚举</strong>，优化后伪代码为</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">// 完全背包问题思路二伪代码(空间优化版)
+</span></span><span class="line"><span class="cl">dp[0,...,W] = 0
+</span></span><span class="line"><span class="cl">for i = 1,...,N
+</span></span><span class="line"><span class="cl">    for j = W,...,w[i] // 必须逆向枚举!!!
+</span></span><span class="line"><span class="cl">        for k = [0, 1,..., j/w[i]]
+</span></span><span class="line"><span class="cl">            dp[j] = max(dp[j], dp[j−k*w[i]]+k*v[i])
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>相比于分析一，此种方法不是在O(1)时间求得dp[i][j]，所以总的时间复杂度就比分析一大些了，为 �(����¯)级别。</p>
+<p><strong>2.4 分析三、转换成01背包</strong></p>
+<p>01背包问题是最基本的背包问题，我们可以考虑把完全背包问题转化为01背包问题来解：将一种物品转换成若干件只能装入0件或者1件的01背包中的物品。</p>
+<p>最简单的想法是，考虑到第 i 种物品最多装入 W/w[i] 件，于是可以把第 i 种物品转化为 W/w[i] 件费用及价值均不变的物品，然后求解这个01背包问题。</p>
+<p>更高效的转化方法是采用二进制的思想：把第 i 种物品拆成重量为 ��2� 、价值为 ��2� 的若干件物品，其中 k 取遍满足 ��2�≤� 的非负整数。这是因为不管最优策略选几件第 i 种物品，总可以表示成若干个刚才这些物品的和（例：13 = 1 + 4 + 8）。这样就将转换后的物品数目降成了对数级别。</p>
+<h5 id="3-多重背包">3. 多重背包</h5>
+<p><strong>3.1 题目</strong></p>
+<p>多重背包（bounded knapsack problem）与前面不同就是每种物品是有限个：一共有N种物品，第i（i从1开始）种物品的数量为n[i]，重量为w[i]，价值为v[i]。在总重量不超过背包承载上限W的情况下，能够装入背包的最大价值是多少？</p>
+<p><strong>3.2 分析一</strong></p>
+<p>此时的分析和完全背包的分析二差不多，也是从装入第 i 种物品多少件出发：装入第i种物品0件、1件、&hellip;n[i]件（还要满足不超过限重）。所以状态方程为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl"># k为装入第i种物品的件数, k &lt;= min(n[i], j/w[i])
+</span></span><span class="line"><span class="cl">dp[i][j] = max{(dp[i-1][j − k*w[i]] + k*v[i]) for every k}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>同理也可以进行空间优化，而且 j 也必须<strong>逆向枚举</strong>，优化后伪代码为</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">// 完全背包问题思路二伪代码(空间优化版)
+</span></span><span class="line"><span class="cl">dp[0,...,W] = 0
+</span></span><span class="line"><span class="cl">for i = 1,...,N
+</span></span><span class="line"><span class="cl">    for j = W,...,w[i] // 必须逆向枚举!!!
+</span></span><span class="line"><span class="cl">        for k = [0, 1,..., min(n[i], j/w[i])]
+</span></span><span class="line"><span class="cl">            dp[j] = max(dp[j], dp[j−k*w[i]]+k*v[i])
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>3.3 分析二、转换成01背包</strong></p>
+<p>采用2.4节类似的思路可以将多重背包转换成01背包问题，采用二进制思路将第 i 种物品分成了 �(�����) 件物品，将原问题转化为了复杂度为 �(�∑������) 的 01 背包问题，相对于分析一是很大的改进。</p>
+<h5 id="4-其他情形">4. 其他情形</h5>
+<p>除了上述三种基本的背包问题外，还有一些其他的变种，如下图所示（<a href="https://link.zhihu.com/?target=https%3A//blog.csdn.net/weixin_41162823/article/details/87878853">图片来源</a>）。</p>
+<p><img src="https://pic1.zhimg.com/80/v2-47aefc64bf8e6e42b727f5a460b24bcc_1440w.webp" alt="img"></p>
+<p>本节列举几种比较常见的。</p>
+<h6 id="41-恰好装满">4.1 恰好装满</h6>
+<p>背包问题有时候还有一个限制就是必须恰好装满背包，此时基本思路没有区别，只是在初始化的时候有所不同。</p>
+<p>如果没有恰好装满背包的限制，我们将dp全部初始化成0就可以了。因为任何容量的背包都有一个合法解“什么都不装”，这个解的价值为0，所以初始时状态的值也就全部为0了。如果有恰好装满的限制，那只应该将dp[0,&hellip;,N][0]初始为0，其它dp值均初始化为<code>-inf</code>，因为此时只有容量为0的背包可以在什么也不装情况下被“恰好装满”，其它容量的背包初始均没有合法的解，应该被初始化为<code>-inf</code>。</p>
+<h6 id="42-求方案总数">4.2 求方案总数</h6>
+<p>除了在给定每个物品的价值后求可得到的最大价值外，还有一类问题是问装满背包或将背包装至某一指定容量的方案总数。对于这类问题，需要将状态转移方程中的 max 改成 sum ，大体思路是不变的。例如若每件物品均是完全背包中的物品，转移方程即为</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">dp[i][j] = sum(dp[i−1][j], dp[i][j−w[i]]) // j &gt;= w[i]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h6 id="43-二维背包">4.3 二维背包</h6>
+<p>前面讨论的背包容量都是一个量：重量。二维背包问题是指每个背包有两个限制条件（比如重量和体积限制），选择物品必须要满足这两个条件。此类问题的解法和一维背包问题不同就是dp数组要多开一维，其他和一维背包完全一样，例如5.4节。</p>
+<h6 id="44-求最优方案">4.4 求最优方案</h6>
+<p>一般而言，背包问题是要求一个最优值，如果要求输出这个最优值的方案，可以参照一般动态规划问题输出方案的方法：记录下每个状态的最优值是由哪一个策略推出来的，这样便可根据这条策略找到上一个状态，从上一个状态接着向前推即可。</p>
+<p>以01背包为例，我们可以再用一个数组G[i][j]来记录方案，设 <code>G[i][j] = 0</code>表示计算 dp[i][j] 的值时是采用了max中的前一项(也即dp[i−1][j])，<code>G[i][j] = 1</code> 表示采用了方程的后一项。即分别表示了两种策略: 未装入第 i 个物品及装了第 i 个物品。其实我们也可以直接从求好的dp[i][j]反推方案：若 <code>dp[i][j] = dp[i−1][j]</code> 说明未选第i个物品，反之说明选了。</p>
+<h5 id="5-leetcode相关题目">5. LeetCode相关题目</h5>
+<p>本节对LeetCode上面的背包问题进行讨论。</p>
+<h6 id="51-partition-equal-subset-sum分割等和子集">5.1 Partition Equal Subset Sum（分割等和子集）</h6>
+<p><a href="https://link.zhihu.com/?target=https%3A//leetcode.com/problems/partition-equal-subset-sum/">Loading&hellip;leetcode.com/problems/partition-equal-subset-sum/<img src="https://pic1.zhimg.com/v2-0c435ab948b151fd834be55f80a09794_180x120.jpg" alt="img"></a></p>
+<p>题目给定一个只包含正整数的非空数组。问是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。</p>
+<p>由于所有元素的和sum已知，所以两个子集的和都应该是sum/2（所以前提是sum不能是奇数），即题目转换成从这个数组里面选取一些元素使这些元素和为sum/2。如果我们将所有元素的值看做是物品的重量，每件物品价值都为1，所以这就是一个恰好装满的01背包问题。</p>
+<p>我们定义空间优化后的状态数组dp，由于是恰好装满，所以应该将dp[0]初始化为0而将其他全部初始化为<code>INT_MIN</code>，然后按照类似1.2节的伪代码更新dp：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">capacity</span> <span class="o">=</span> <span class="n">sum</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="n">dp</span><span class="p">(</span><span class="n">capacity</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">INT_MIN</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">capacity</span><span class="p">;</span> <span class="n">j</span> <span class="o">&gt;=</span> <span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span> <span class="n">j</span><span class="o">--</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">dp</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">dp</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">dp</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]]);</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>更新完毕后，如果dp[sum/2]大于0说明满足题意。</p>
+<p>由于此题最后求的是能不能进行划分，所以dp的每个元素定义成bool型就可以了，然后将dp[0]初始为true其他初始化为false，而转移方程就应该是用或操作而不是max操作。完整代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">bool</span> <span class="nf">canPartition</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">nums</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">nums</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="o">&amp;</span><span class="nl">num</span><span class="p">:</span> <span class="n">nums</span><span class="p">)</span> <span class="n">sum</span> <span class="o">+=</span> <span class="n">num</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span><span class="p">(</span><span class="n">sum</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">capacity</span> <span class="o">=</span> <span class="n">sum</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="n">dp</span><span class="p">(</span><span class="n">capacity</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">capacity</span><span class="p">;</span> <span class="n">j</span> <span class="o">&gt;=</span> <span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span> <span class="n">j</span><span class="o">--</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">dp</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dp</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">||</span> <span class="n">dp</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">dp</span><span class="p">[</span><span class="n">capacity</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>另外此题还有一个更巧妙更快的解法，基本思路是用一个bisets来记录所有可能子集的和，详见<a href="https://link.zhihu.com/?target=https%3A//github.com/ShusenTang/LeetCode/blob/master/solutions/416.%20Partition%20Equal%20Subset%20Sum.md">我的Github</a>。</p>
+</blockquote>
+<h6 id="52-coin-change零钱兑换">5.2 Coin Change（零钱兑换）</h6>
+<p><a href="https://link.zhihu.com/?target=https%3A//leetcode.com/problems/coin-change/">Loading&hellip;leetcode.com/problems/coin-change/<img src="https://pic1.zhimg.com/v2-0c435ab948b151fd834be55f80a09794_180x120.jpg" alt="img"></a></p>
+<p>题目给定一个价值amount和一些面值，假设每个面值的硬币数都是无限的，问我们最少能用几个硬币组成给定的价值。</p>
+<p>如果我们将面值看作是物品，面值金额看成是物品的重量，每件物品的价值均为1，这样此题就是是一个恰好装满的完全背包问题了。不过这里不是求最多装入多少物品而是求最少，我们只需要将2.2节的转态转移方程中的max改成min即可，又由于是恰好装满，所以除了dp[0]，其他都应初始化为<code>INT_MAX</code>。完整代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">coinChange</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">coins</span><span class="p">,</span> <span class="kt">int</span> <span class="n">amount</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="n">dp</span><span class="p">(</span><span class="n">amount</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">INT_MAX</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">coins</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">coins</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">amount</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 下行代码会在 1+INT_MAX 时溢出
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="c1">// dp[j] = min(dp[j], 1 + dp[j - coins[i-1]]); 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="k">if</span><span class="p">(</span><span class="n">dp</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="n">dp</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="n">coins</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+</span></span><span class="line"><span class="cl">                <span class="n">dp</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">dp</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="n">coins</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]];</span>   
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">dp</span><span class="p">[</span><span class="n">amount</span><span class="p">]</span> <span class="o">==</span> <span class="n">INT_MAX</span> <span class="o">?</span> <span class="o">-</span><span class="mi">1</span> <span class="o">:</span> <span class="n">dp</span><span class="p">[</span><span class="n">amount</span><span class="p">];</span>   
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>注意上面<code>1 + dp[j - coins[i-1]]</code>会存在溢出的风险，所以我们换了个写法。</p>
+<blockquote>
+<p>另外此题还可以进行搜索所有可能然后保持一个全局的结果res，但是直接搜索会超时，所以需要进行精心剪枝，剪枝后可击败99%。详见<a href="https://link.zhihu.com/?target=https%3A//github.com/ShusenTang/LeetCode/blob/master/solutions/322.%20Coin%20Change.md">我的Github</a>。</p>
+</blockquote>
+<h6 id="53-target-sum目标和">5.3 Target Sum（目标和）</h6>
+<p><a href="https://link.zhihu.com/?target=https%3A//leetcode.com/problems/target-sum/">Loading&hellip;leetcode.com/problems/target-sum/<img src="https://pic1.zhimg.com/v2-0c435ab948b151fd834be55f80a09794_180x120.jpg" alt="img"></a></p>
+<p>这道题给了我们一个数组（元素非负），和一个目标值，要求给数组中每个数字前添加正号或负号所组成的表达式结果与目标值S相等，求有多少种情况。</p>
+<p>假设所有元素和为sum，所有添加正号的元素的和为A，所有添加负号的元素和为B，则有<code>sum = A + B</code> 且 <code>S = A - B</code>，解方程得<code>A = (sum + S)/2</code>。即题目转换成：从数组中选取一些元素使和恰好为<code>(sum + S) / 2</code>。可见这是一个恰好装满的01背包问题，要求所有方案数，将1.2节状态转移方程中的max改成求和即可。需要注意的是，虽然这里是恰好装满，但是dp初始值不应该是<code>inf</code>，因为这里求的不是总价值而是方案数，应该全部初始为0（除了dp[0]初始化为1）。所以代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">findTargetSumWays</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">nums</span><span class="p">,</span> <span class="kt">int</span> <span class="n">S</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// for(int &amp;num: nums) sum += num;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">sum</span> <span class="o">=</span> <span class="n">accumulate</span><span class="p">(</span><span class="n">nums</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">nums</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span><span class="p">(</span><span class="n">S</span> <span class="o">&gt;</span> <span class="n">sum</span> <span class="o">||</span> <span class="n">sum</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">S</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// 肯定不行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span><span class="p">((</span><span class="n">S</span> <span class="o">+</span> <span class="n">sum</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// 奇数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int</span> <span class="n">target</span> <span class="o">=</span> <span class="p">(</span><span class="n">S</span> <span class="o">+</span> <span class="n">sum</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="n">dp</span><span class="p">(</span><span class="n">target</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">nums</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">target</span><span class="p">;</span> <span class="n">j</span> <span class="o">&gt;=</span> <span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span> <span class="n">j</span><span class="o">--</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="n">dp</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dp</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">dp</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">dp</span><span class="p">[</span><span class="n">target</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h6 id="54-ones-and-zeros一和零">5.4 Ones and Zeros（一和零）</h6>
+<p><a href="https://link.zhihu.com/?target=https%3A//leetcode.com/problems/ones-and-zeroes/">Loading&hellip;leetcode.com/problems/ones-and-zeroes/<img src="https://pic1.zhimg.com/v2-0c435ab948b151fd834be55f80a09794_180x120.jpg" alt="img"></a></p>
+<p>题目给定一个仅包含 0 和 1 字符串的数组。任务是从数组中选取尽可能多的字符串，使这些字符串包含的0和1的数目分别不超过m和n。</p>
+<p>我们把每个字符串看做是一件物品，把字符串中0的数目和1的数目看做是两种“重量”，所以就变成了一个二维01背包问题，书包的两个限重分别是 m 和 n，要求书包能装下的物品的最大数目（也相当于价值最大，设每个物品价值为1）。</p>
+<p>我们可以提前把每个字符串的两个“重量” <code>w0</code>和<code>w1</code>算出来用数组存放，但是注意到只需要用一次这两个值，所以我们只需在用到的时候计算<code>w0</code>和<code>w1</code>就行了，这样就不用额外的数组存放。完整代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">findMaxForm</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;&amp;</span> <span class="n">strs</span><span class="p">,</span> <span class="kt">int</span> <span class="n">m</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">num</span> <span class="o">=</span> <span class="n">strs</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">w0</span><span class="p">,</span> <span class="n">w1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="n">dp</span><span class="p">(</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">num</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">        <span class="n">w0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">w1</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 计算第i-1个字符串的两个重量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">for</span><span class="p">(</span><span class="kt">char</span> <span class="o">&amp;</span><span class="nl">c</span><span class="p">:</span> <span class="n">strs</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]){</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="o">==</span> <span class="sc">&#39;0&#39;</span><span class="p">)</span> <span class="n">w0</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">else</span> <span class="n">w1</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 01背包, 逆向迭代更新dp
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">m</span><span class="p">;</span> <span class="n">j</span> <span class="o">&gt;=</span> <span class="n">w0</span><span class="p">;</span> <span class="n">j</span><span class="o">--</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span> <span class="n">k</span> <span class="o">&gt;=</span> <span class="n">w1</span><span class="p">;</span> <span class="n">k</span><span class="o">--</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="n">dp</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">dp</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">k</span><span class="p">],</span> <span class="mi">1</span><span class="o">+</span><span class="n">dp</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="n">w0</span><span class="p">][</span><span class="n">k</span><span class="o">-</span><span class="n">w1</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">dp</span><span class="p">[</span><span class="n">m</span><span class="p">][</span><span class="n">n</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="6-总结">6. 总结</h5>
+<p>本文讨论了几类背包问题及LeetCode相关题目，其中01背包问题和完全背包问题是最常考的，另外还需要注意一些其他变种例如恰好装满、二维背包、求方案总数等等。除了本文讨论的这些背包问题之外，还存在一些其他的变种，但只要深刻领会本文所列的背包问题的思路和状态转移方程，遇到其它的变形问题，应该也不难想出算法。如果想更加详细地理解背包问题，推荐阅读经典的<a href="https://link.zhihu.com/?target=https%3A//github.com/tianyicui/pack/blob/master/V2.pdf">背包问题九讲</a>。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-01-09
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E7%AE%97%E6%B3%95/">算法</a>
+          <a href="/tags/kmp/">kmp</a>
+          <a href="/tags/floyd/">floyd</a>
+          <a href="/tags/%E5%BF%AB%E9%80%9F%E5%B9%82/">快速幂</a>
+          <a href="/tags/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/">背包问题</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E5%9F%BA%E4%BA%8Ego%E7%9A%84selenium%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">基于go的selenium使用详解</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/">
+            <span class="next-text nav-default">自动化接口文档swag使用指南</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-01-09 10:29:45 \u002b0800 CST',
+        title: '常见算法总结',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

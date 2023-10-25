@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>八股系列|操作系统|硬件结构 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="这里记录一些不是很体系化，但是偶尔乍现的问题与其解 操作系统之硬件结构 CPU是如何执行程序的？ CPU是计算机的核心部件，包含控制器、运算器和寄" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6%E7%BB%93%E6%9E%84/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="八股系列|操作系统|硬件结构" />
+<meta property="og:description" content="这里记录一些不是很体系化，但是偶尔乍现的问题与其解 操作系统之硬件结构 CPU是如何执行程序的？ CPU是计算机的核心部件，包含控制器、运算器和寄" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6%E7%BB%93%E6%9E%84/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-08-14T12:03:21+08:00" />
+<meta property="article:modified_time" content="2023-08-14T12:03:21+08:00" />
+<meta itemprop="name" content="八股系列|操作系统|硬件结构">
+<meta itemprop="description" content="这里记录一些不是很体系化，但是偶尔乍现的问题与其解 操作系统之硬件结构 CPU是如何执行程序的？ CPU是计算机的核心部件，包含控制器、运算器和寄"><meta itemprop="datePublished" content="2023-08-14T12:03:21+08:00" />
+<meta itemprop="dateModified" content="2023-08-14T12:03:21+08:00" />
+<meta itemprop="wordCount" content="4383">
+<meta itemprop="keywords" content="操作系统硬件结构," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="八股系列|操作系统|硬件结构"/>
+<meta name="twitter:description" content="这里记录一些不是很体系化，但是偶尔乍现的问题与其解 操作系统之硬件结构 CPU是如何执行程序的？ CPU是计算机的核心部件，包含控制器、运算器和寄"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">八股系列|操作系统|硬件结构</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-08-14 </span>
+        <div class="post-category">
+            <a href="/categories/%E5%85%AB%E8%82%A1%E6%96%87/"> 八股文 </a>
+            <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"> 操作系统 </a>
+            </div>
+          <span class="more-meta"> 约 4383 字 </span>
+          <span class="more-meta"> 预计阅读 9 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#操作系统之硬件结构">操作系统之硬件结构</a>
+      <ul>
+        <li><a href="#cpu是如何执行程序的">CPU是如何执行程序的？</a></li>
+        <li><a href="#磁盘比内存快几万倍">磁盘比内存快几万倍？</a></li>
+        <li><a href="#如何写出让cpu跑得快的代码">如何写出让CPU跑得快的代码？</a></li>
+        <li><a href="#怎样保证cache和主存的缓存一致性的">怎样保证cache和主存的缓存一致性的？</a></li>
+        <li><a href="#如何保证多级cache的缓存一致性">如何保证多级cache的缓存一致性？</a></li>
+        <li><a href="#为什么-cpu-里会有-l1l3-cache-">为什么 CPU 里会有 L1~L3 Cache ？</a></li>
+        <li><a href="#说一下cpu的局部性原理">说一下CPU的局部性原理</a></li>
+        <li><a href="#说一下cache的伪共享问题">说一下cache的伪共享问题</a></li>
+        <li><a href="#线程为什么叫轻量级进程呢">线程为什么叫轻量级进程呢？</a></li>
+        <li><a href="#中断是什么">中断是什么？</a></li>
+        <li><a href="#什么是软中断和硬中断什么是软件中断">什么是软中断和硬中断？什么是软件中断？</a></li>
+        <li><a href="#为什么负数要用补码表示而不用原码或反码">为什么负数要用补码表示？而不用原码或反码？</a></li>
+        <li><a href="#计算机如何存储小数">计算机如何存储小数？</a></li>
+        <li><a href="#01--02--03-吗">0.1 + 0.2 == 0.3 吗？</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <blockquote>
+<p>这里记录一些不是很体系化，但是偶尔乍现的问题与其解</p>
+</blockquote>
+<h1 id="操作系统之硬件结构">操作系统之硬件结构</h1>
+<h2 id="cpu是如何执行程序的">CPU是如何执行程序的？</h2>
+<p>CPU是计算机的核心部件，包含控制器、运算器和寄存器等部件。CPU是通过“取指执行”过程来执行程序的。我们编写的高级语言程序，最终会被解释成CPU看得懂的指令。然后CPU执行以下过程来执行指令：</p>
+<ol>
+<li>取出指令：CPU根据程序计数器（PC）中存储的地址，将指令从主存（内存）读到指令寄存器（IR）中，然后PC指向下一个指令；</li>
+<li>指令译码：按照预定的指令格式对指令进行译码，识别出不同指令的格式以及获取操作数的方式；</li>
+<li>执行指令：CPU按照指令译码得到的控制信号进行操作，期间可能会发生主存（内存）访问；</li>
+<li>访存取数：CPU根据指令的需要，有可能会访问内存，读取操作数。不同指令可能会采用不同的内存访问方式（立即寻址、直接寻找，间接寻址，寄存器寻址等）得到主存地址，然后根据地址取出操作数；</li>
+<li>结果写回：CPU执行完当前指令后，会把结果写入寄存器、主存或其他位置。</li>
+<li>然后又可以回到步骤1，循环执行；</li>
+</ol>
+<p>当然，指令执行并非一番风顺，可能会发生无法执行的指令，CPU会中断现场，从而让中断程序来处理。</p>
+<p>例如：<code>a = 2÷0</code>这段程序，CPU无法执行，会发生中断报除0错误。</p>
+<h2 id="磁盘比内存快几万倍">磁盘比内存快几万倍？</h2>
+<p>磁盘是机械结构，读写数据需要物理移动磁头，而内存读写是刷新DRAM里的电信号，两者相比内存要比磁盘块好几个数量级。</p>
+<p>下面是计算机系统存储系统组成图：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img2/202308231425211.png" alt="img"></p>
+<p>从上到下的存储器构成了一个类似于多级缓存体系的结构，CPU先读速度与CPU最匹配的寄存器，没有就去读速度稍慢的L1级cache；还没有再去读速度更慢的L2、L3级cache；再没有去读速度更更慢内存，还没有就读速度最慢的磁盘</p>
+<ul>
+<li>寄存器：属于CPU部件，寄存器的访问速度非常快，一般要求在半个 CPU 时钟周期内完成读写</li>
+<li>cache：使用SRAM芯片构成，只要有电就有数据，断电会丢失数据。每个 CPU 核心都有一块属于自己的 L1 高速缓存，指令和数据在 L1 是分开存放的，所以 L1 高速缓存通常分成<strong>指令缓存</strong>和<strong>数据缓存</strong>(哈弗结构)。</li>
+<li>主存（内存）：使用DRAM芯片构成。相比 SRAM，DRAM 的密度更高，功耗更低，有更大的容量，而且造价比 SRAM 芯片便宜很多。DRAM是通过电容带电来保存数据，所以需要不断的充放电，也就是刷新，来保证DRAM数据不丢失。和SRAM一样，断电会丢失数据，一直充电才能保存数据</li>
+<li>SSD/HHD：数据保存在物理上，断电后依然存在，可以作为持久化存储的介质</li>
+</ul>
+<h2 id="如何写出让cpu跑得快的代码">如何写出让CPU跑得快的代码？</h2>
+<p>如何才能让我们的代码跑得更快呢？应该从四方面考虑：</p>
+<ul>
+<li>
+<p>如何提升数据的cache命中率？</p>
+<p>举个例子：我们<code>先遍历第一行，再遍历第二行</code>和<code>先遍历第一列，再遍历第二列</code>哪个更快？</p>
+<p>因为二维数组是按照行来存储的。所以，我们<code>先遍历第一行，再遍历第二行</code>的方式其实就是顺序读取，一次读取cache会把相邻的数据也加载到cache，而相邻cache的数据有极大概率是数组的下一个数据；而<code>先遍历第一列，再遍历第二列</code>并不是顺序读取，假设读取数组第一行第一列的数据，cache加载第一行的数据进来，刚好cache满了，此时再读第二行第一列的数据，cache里没有，只能再去内存里加载进来第二行，如此循环往复，cache的命中率显然低于前者。（CPU的局部性原理）</p>
+<p><strong>总结：提升数据的缓存命中率的方式，是按照内存布局顺序访问</strong></p>
+</li>
+<li>
+<p><a href="https://xiaolincoding.com/os/1_hardware/how_to_make_cpu_run_faster.html#%E5%A6%82%E4%BD%95%E6%8F%90%E5%8D%87%E6%8C%87%E4%BB%A4%E7%BC%93%E5%AD%98%E7%9A%84%E5%91%BD%E4%B8%AD%E7%8E%87">如何提升指令的cache命中率？</a></p>
+<p>简单来说，就是在if判断之前，就预测接下来执行哪个分支的指令，从而把这些提前缓存下来，提高cache的命中率。</p>
+</li>
+<li>
+<p>如何提升多核CPU的cache命中率？</p>
+<p>每个CPU内核都有自己的L1、L2级cache和共同的L3级cache。如果一个线程在不同核心之间切换，可能会降低cache的命中率，因此我们可以把线程绑定到某个特定的核心上执行，从而提高cache命中率。</p>
+</li>
+<li>
+<p>如何使用到使用多核CPU的优势？</p>
+<p>单核CPU并不能做到并行，多核CPU可以做到并发+并行。我们可以将多个线程绑定到多个内核执行。也就是使用并发编程。</p>
+</li>
+</ul>
+<h2 id="怎样保证cache和主存的缓存一致性的">怎样保证cache和主存的缓存一致性的？</h2>
+<p>CPU 在读写数据的时候，都是在 CPU Cache 读写数据的，原因是 Cache 离 CPU 很近，读写性能相比内存高出很多。对于 Cache 里没有缓存 CPU 所需要读取的数据的这种情况，CPU 则会从内存读取数据，并将数据缓存到 Cache 里面，最后 CPU 再从 Cache 读取数据。</p>
+<p>而对于数据的写入，CPU 都会先写入到 Cache 里面，然后再在找个合适的时机写入到内存，那就有「写直达」和「写回」这两种策略来保证 Cache 与内存的数据一致性：</p>
+<ul>
+<li>写直达，只要有数据写入，都会直接把数据写入到内存里面，这种方式简单直观，但是性能就会受限于内存的访问速度；</li>
+<li>写回，对于已经缓存在 Cache 的数据的写入，只需要更新其数据就可以，不用写入到内存，只有在需要把缓存里面的脏数据交换出去的时候，才把数据同步到内存里，这种方式在缓存命中率高的情况，性能会更好；</li>
+</ul>
+<h2 id="如何保证多级cache的缓存一致性">如何保证多级cache的缓存一致性？</h2>
+<p>当今 CPU 都是多核的，每个核心都有各自独立的 L1/L2 Cache，只有 L3 Cache 是多个核心之间共享的。所以，我们要确保多核缓存是一致性的，否则会出现错误的结果。</p>
+<p>要想实现缓存一致性，关键是要满足 2 点：</p>
+<ul>
+<li>第一点是写传播，也就是当某个 CPU 核心发生写入操作时，需要把该事件广播通知给其他核心；</li>
+<li>第二点是事物的串行化，这个很重要，只有保证了这个，才能保障我们的数据是真正一致的，我们的程序在各个不同的核心上运行的结果也是一致的；</li>
+</ul>
+<p>基于总线嗅探机制的 MESI 协议，就满足上面了这两点，因此它是保障缓存一致性的协议。</p>
+<p>MESI 协议，是已修改、独占、共享、已失效这四个状态的英文缩写的组合。整个 MSI 状态的变更，则是根据来自本地 CPU 核心的请求，或者来自其他 CPU 核心通过总线传输过来的请求，从而构成一个流动的状态机。另外，对于在「已修改」或者「独占」状态的 Cache Line，修改更新其数据不需要发送广播给其他 CPU 核心。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img2/202308231509004.png" alt="img"></p>
+<h2 id="为什么-cpu-里会有-l1l3-cache-">为什么 CPU 里会有 L1~L3 Cache ？</h2>
+<p>cache的访问速度比内存快的多，CPU先访问cache，cache没命中再从内存里调入块到cache中，这样可以避免直接访问速度更慢的内存，加快了访问速度。</p>
+<h2 id="说一下cpu的局部性原理">说一下CPU的局部性原理</h2>
+<ul>
+<li>空间局部性原理：相邻存储的数据或指令，很有可能会被再次使用</li>
+<li>时间局部性原理：近期使用的数据或指令，很有可能会被再次使用</li>
+</ul>
+<p>我们利用局部性原理，我们加载数据的时候，无论是从磁盘到内存，还是内存到磁盘，都不仅仅只是加载一个字，而是一个块（64字节）。</p>
+<h2 id="说一下cache的伪共享问题">说一下cache的伪共享问题</h2>
+<blockquote>
+<p><a href="https://xiaolincoding.com/os/1_hardware/how_cpu_deal_task.html#%E5%88%86%E6%9E%90%E4%BC%AA%E5%85%B1%E4%BA%AB%E7%9A%84%E9%97%AE%E9%A2%98">cache伪共享</a></p>
+</blockquote>
+<p>cache的伪共享指的就是如果并发地更改同一个cache块的两个变量，cache本身就没有起作用，还需要从主存再次加载cache进来。</p>
+<blockquote>
+<p>现代CPU架构中多核且含多级cache，其中L1 cache和L2 cache每个核独有，L3 cache共享</p>
+</blockquote>
+<p>但是，CPU修改数据并不是直接修改主存，一定是修改L1 cache中的数据，如果没有会去后面的cache去调，还没有再从主存里调块过来。因此，为了避免伪共享问题发生，我们空间换时间：</p>
+<p>可能发生并发读写同一个结构体里多个变量（地址虽然不一定连续，但是可能都在一个cache块）这种情况，我们就在每个可能并发修改的变量中间加个padding（cache block size），让这并发修改的两个变量位于两个不同的cache块。这样就避免了伪共享问题发生</p>
+<h2 id="线程为什么叫轻量级进程呢">线程为什么叫轻量级进程呢？</h2>
+<p>在 Linux 内核中，进程和线程都是用 <code>task_struct</code> 结构体表示的，区别在于线程的 <code>task_struct</code> 结构体里部分资源是共享了进程已创建的资源，比如内存地址空间、代码段、文件描述符等，所以 Linux 中的线程也被称为轻量级进程，因为线程的<code>task_struct</code>相比进程的 <code>task_struct</code> 承载的 资源比较少，因此以「轻」得名。</p>
+<h2 id="中断是什么">中断是什么？</h2>
+<p>中断就是CPU接收来自硬件或软件的中断信号后，会中断当前程序的执行，转而去执行中断服务程序。中断处理程序在响应中断时，可能还会「临时关闭中断」，这意味着，如果当前中断处理程序没有执行完之前，系统中其他的中断请求都无法被响应，也就说中断有可能会丢失，所以中断处理程序要短且快。</p>
+<h2 id="什么是软中断和硬中断什么是软件中断">什么是软中断和硬中断？什么是软件中断？</h2>
+<ul>
+<li>
+<p>硬中断</p>
+<p>由与系统相连的硬件(比如网卡、硬盘)自动产生的。主要是用来通知操作系统系统外设状态的变化。比如当网卡收到数据包的时候，就会发出一个中断。</p>
+</li>
+<li>
+<p>软中断</p>
+<p>为了满足实时系统的要求，中断处理应该是越快越好。linux为了实现这个特点，当中断发生的时候，硬中断处理那些短时间就可以完成的工作，而将那些处理事件比较长的工作，放到后面来完成，也就是软中断(softirq)来完成。</p>
+<p>软中断由内核触发中断，异步处理上半部分剩下的工作</p>
+<blockquote>
+<p>所以，linux中断服务程序分为上半部（硬中断）和下半部（软中断）</p>
+</blockquote>
+</li>
+<li>
+<p>软中断指令</p>
+<p><code>int</code>是软中断指令。</p>
+<p>中断向量表是中断号和中断处理函数地址的对应表。</p>
+<p><code>int n</code> &ndash; 触发软中断<code>n</code>。相应的中断处理函数的地址为：<code>中断向量表地址 + 4 * n</code>。</p>
+</li>
+<li>
+<p>软中断和硬中断区别</p>
+<ul>
+<li>软中断是执行中断指令产生的，而硬中断是由外设引发的。</li>
+<li>硬中断的中断号是由中断控制器提供的，软中断的中断号由指令直接指出，无需使用中断控制器。</li>
+<li>硬中断是可屏蔽的，软中断不可屏蔽。</li>
+<li>硬中断处理程序要确保它能快速地完成任务，这样程序执行时才不会等待较长时间，称为上半部。</li>
+<li>软中断处理硬中断未完成的工作，是一种推后执行的机制，属于下半部。</li>
+</ul>
+</li>
+</ul>
+<h2 id="为什么负数要用补码表示而不用原码或反码">为什么负数要用补码表示？而不用原码或反码？</h2>
+<ul>
+<li>
+<p>原码就是数据二进制和最高位的符号位表示。最高位：0表示正数，1表示负数；</p>
+<p>原码就是原始数据。</p>
+</li>
+<li>
+<p>反码就是原码基础上所有数据位取反，符号位不变。</p>
+<p>反码就相当于数学里的负数，使得<code>2-1=2+(-1)</code>，把减法转化为加法，统一了加减法，让硬件电路设计更加简单。</p>
+</li>
+<li>
+<p>补码就是在反码基础上+1</p>
+<p>反码中<code>0</code>的表示有<code>-0</code>和<code>+0</code>两个不同的编码，但是代表同一个值。对于计算机来说很不好区分。所以采用补码的方式将<code>0</code>的表示统一</p>
+</li>
+</ul>
+<p>因此，计算机中负数采用补码表示，可以降低硬件电路设计复杂度和消除<code>0</code>的编码不唯一性。</p>
+<h2 id="计算机如何存储小数">计算机如何存储小数？</h2>
+<p>现在绝大多数计算机使用的浮点数，一般采用的是 IEEE 制定的国际标准，这种标准形式如下图：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img2/202308232120386.png" alt="img"></p>
+<p>这三个重要部分的意义如下：</p>
+<ul>
+<li><em>符号位</em>：表示数字是正数还是负数，为 0 表示正数，为 1 表示负数；</li>
+<li><em>指数位</em>：指定了小数点在数据中的位置，指数可以是负数，也可以是正数，<strong>指数位的长度越长则数值的表达范围就越大</strong>；</li>
+<li><em>尾数位</em>：小数点右侧的数字，也就是小数部分，比如二进制 1.0011 x 2^(-2)，尾数部分就是 0011，而且<strong>尾数的长度决定了这个数的精度</strong>，因此如果要表示精度更高的小数，则就要提高尾数位的长度；</li>
+</ul>
+<p>对于我们在从 float 的二进制浮点数转换成十进制时，要考虑到这个隐含的 1，转换公式如下：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img2/202308232121121.png" alt="img"></p>
+<h2 id="01--02--03-吗">0.1 + 0.2 == 0.3 吗？</h2>
+<p>答案是不等。为什么呢？那就要看浮点数是如何存储在计算机中的了：0.1是十进制表示，转化为二进制时，是一串无限循环二进制数，那么在IEEE 754规格化过程中势必要损失尾部多余的二进制位。同样0.2也无法完整表示。</p>
+<p>所以，0.1+0.2 ≈0.3</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-08-14
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6%E7%BB%93%E6%9E%84/">操作系统硬件结构</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B9%B6%E6%9F%A5%E9%9B%86/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">常见算法之并查集</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/mit6.824%E4%B9%8Blab1/">
+            <span class="next-text nav-default">Mit6.824之lab1</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-08-14 12:03:21 \u002b0800 CST',
+        title: '八股系列|操作系统|硬件结构',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>多级缓存 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/</link>
+    <description>Recent content in 多级缓存 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Tue, 24 Jan 2023 16:08:44 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis高级篇之多级缓存</title>
+      <link>https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/</link>
+      <pubDate>Tue, 24 Jan 2023 16:08:44 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/</guid>
+      <description>[toc] 多级缓存 1.什么是多级缓存 传统的缓存策略一般是请求到达Tomcat后，先查询Redis，如果未命中则查询数据库，如图： 存在下面的问题： 请求</description>
+    </item>
+    
+  </channel>
+</rss>

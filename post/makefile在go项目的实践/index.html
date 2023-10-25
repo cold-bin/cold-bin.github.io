@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Makefile在go项目的实践 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="Make介绍 make命令是GNU的工程化编译工具，用以实现工程化的管理，提高开发效率。 Make解释Makefile 中的指令（应该说是规则）。" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="Makefile在go项目的实践" />
+<meta property="og:description" content="Make介绍 make命令是GNU的工程化编译工具，用以实现工程化的管理，提高开发效率。 Make解释Makefile 中的指令（应该说是规则）。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-07-16T22:13:26+08:00" />
+<meta property="article:modified_time" content="2022-07-16T22:13:26+08:00" />
+<meta itemprop="name" content="Makefile在go项目的实践">
+<meta itemprop="description" content="Make介绍 make命令是GNU的工程化编译工具，用以实现工程化的管理，提高开发效率。 Make解释Makefile 中的指令（应该说是规则）。"><meta itemprop="datePublished" content="2022-07-16T22:13:26+08:00" />
+<meta itemprop="dateModified" content="2022-07-16T22:13:26+08:00" />
+<meta itemprop="wordCount" content="3401">
+<meta itemprop="keywords" content="makefile," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Makefile在go项目的实践"/>
+<meta name="twitter:description" content="Make介绍 make命令是GNU的工程化编译工具，用以实现工程化的管理，提高开发效率。 Make解释Makefile 中的指令（应该说是规则）。"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Makefile在go项目的实践</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2022-07-16 </span>
+        <div class="post-category">
+            <a href="/categories/golang/"> golang </a>
+            </div>
+          <span class="more-meta"> 约 3401 字 </span>
+          <span class="more-meta"> 预计阅读 7 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#make介绍">Make介绍</a></li>
+    <li><a href="#makefile文件">Makefile文件</a>
+      <ul>
+        <li><a href="#文件格式">文件格式</a>
+          <ul>
+            <li><a href="#target目标">target目标</a></li>
+            <li><a href="#prerequisites先决条件">prerequisites先决条件</a></li>
+            <li><a href="#commands命令">commands命令</a></li>
+          </ul>
+        </li>
+        <li><a href="#文件语法">文件语法</a>
+          <ul>
+            <li><a href="#注释">注释</a></li>
+            <li><a href="#回显">回显</a></li>
+            <li><a href="#通配符">通配符</a></li>
+            <li><a href="#模式匹配">模式匹配</a></li>
+            <li><a href="#变量和赋值符">变量和赋值符</a></li>
+            <li><a href="#内置变量">内置变量</a></li>
+            <li><a href="#判断和循环">判断和循环</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#makefile例子演示">Makefile例子演示</a>
+      <ul>
+        <li><a href="#1-执行多个目标">1. 执行多个目标</a></li>
+        <li><a href="#2-构建golang项目">2. 构建golang项目</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h1 id="make介绍">Make介绍</h1>
+<p><strong>make命令</strong>是GNU的工程化编译工具，用以实现工程化的管理，提高开发效率。</p>
+<p>Make解释<a href="https://so.csdn.net/so/search?q=Makefile&amp;spm=1001.2101.3001.7020">Makefile</a> 中的指令（应该说是规则）。在Makefile文件中描述了整个工程所有文件的编译顺序、编译规则。Makefile 有自己的书写格式、关键字、函数。像C 语言有自己的格式、关键字和函数一样。而且在Makefile 中可以使用系统shell所提供的任何命令来完成想要的工作。</p>
+<h1 id="makefile文件">Makefile文件</h1>
+<p>构建规则都写在Makefile文件里面，要学会如何Make命令，就必须学会如何编写Makefile文件。</p>
+<h2 id="文件格式">文件格式</h2>
+<p>Makefile文件由一系列规则（rules）构成。</p>
+<p>每条规则要说明构建的依赖条件，及怎么样去构建。那么格式如下，</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl"># rule
+</span></span><span class="line"><span class="cl">&lt;target&gt; : &lt;prerequisites&gt; 
+</span></span><span class="line"><span class="cl">[tab]  &lt;commands&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>target: 目标</p>
+<p>prerequisites： 先决条件，或者说依赖条件</p>
+<p>tab: 使用tab来缩进</p>
+<p>command: 要执行的命令（可以说是小型的shell代码块）</p>
+<h3 id="target目标">target目标</h3>
+<p>一个目标，可以是文件名，也可以是某个操作的名字（伪目标），这个名字由自己定义，用来指明要构建的对象。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nf">create</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    touch newfile
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>比如上面这条规则，伪目标为create，命令作用为创建一个文件。要想构建这个操作，调用<code>make create</code>(指定目标进行构建编译)即可。</p>
+<p><strong>但是如果目录下，存在一个文件名为create，那么构建命令就不会去执行。为了解决这个问题，当使用伪目标时，可以明确声明create是“伪目标“，告诉make跳过文件检查。</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nf">.PHONY</span><span class="o">:</span> <span class="n">clean</span>
+</span></span><span class="line"><span class="cl"><span class="nf">create</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    touch newfile
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果Make命令运行时没有指定目标，默认会执行Makefile文件的第一个目标。</p>
+<h3 id="prerequisites先决条件">prerequisites先决条件</h3>
+<p>先决条件，通常是文件名，多个名字用空格分隔。</p>
+<p>它定义了一个是否进行重新构建的判断标准： 如果有任何一个先决文件发生改变（时间戳更新），就要重新构建。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nf">result.txt</span><span class="o">:</span> <span class="n">source</span>.<span class="n">txt</span>
+</span></span><span class="line"><span class="cl">    cp source.txt result.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，构建 result.txt 的前置条件是 source.txt 。如果当前目录中，source.txt 已经存在，那么<code>make result.txt</code>可以正常运行，否则必须再写一条规则，来生成 source.txt 。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nf">source.txt</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> <span class="s2">&#34;this is the source&#34;</span> &gt; source.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，source.txt后面没有前置条件，就意味着它跟其他文件都无关，只要这个文件还不存在，每次调用<code>make source.txt</code>，它都会生成。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">make result.txt
+</span></span><span class="line"><span class="cl">make result.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面命令连续执行两次<code>make result.txt</code>。第一次执行会先新建 source.txt，然后再新建 result.txt。第二次执行，make发现 source.txt 没有变动（时间戳晚于 result.txt），就不会执行任何操作，result.txt 也不会重新生成。</p>
+<p>如果需要生成多个文件，往往采用下面的写法。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nf">source</span><span class="o">:</span> <span class="n">file</span>1 <span class="n">file</span>2 <span class="n">file</span>3
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面代码中，source 是一个伪目标，只有三个前置文件，没有任何对应的命令。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">make <span class="nb">source</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>执行<code>make source</code>命令后，就会一次性生成 file1，file2，file3 三个文件。这比下面的写法要方便很多。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">make file1
+</span></span><span class="line"><span class="cl">make file2
+</span></span><span class="line"><span class="cl">make file3
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>如果先决条件也是伪目标，即不是一个实实在在的、真实存在的文件，而是仅仅是一个目标的标识符。那么在当前目标执行前，就会先去先决条件对应的伪目标去递归执行。当前目标被指定make时，会先调用先决条件的目标，如果先决条件也具备这样的依赖时，也会如此递归调用下去</strong></p>
+<blockquote>
+<p>target: target1 target2</p>
+<p>​	echo &gt; &ldquo;this tartget&rdquo;</p>
+<p>target1:</p>
+<p>​	echo &gt; &ldquo;this is target1&rdquo;</p>
+<p>target2:</p>
+<p>​	echo &gt; &ldquo;this is target2&rdquo;</p>
+</blockquote>
+<h3 id="commands命令">commands命令</h3>
+<p>命令是构建目标时具体执行的指令，由一行或多行shell组成。每行命令之前必须有一个tab键缩进。如果想用其他键缩进，可以用内置变量.RECIPEPREFIX声明。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nv">.RECIPEPREFIX</span> <span class="o">=</span> &gt;
+</span></span><span class="line"><span class="cl"><span class="nf">hello</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl"><span class="err">&gt;</span> <span class="err">echo</span> <span class="err">Hello,</span> <span class="err">world</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>需要注意的是，每行shell在一个单独的bash进程中执行，多进程间没有继承关系。</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nf">var</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">export</span> <span class="nv">name</span><span class="o">=</span>wangpeng
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> <span class="s2">&#34;myname is </span><span class="nv">$name</span><span class="s2">&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>运行上面的构建 ，发现变量name是取不到的，因为两行shell在两个独立的bash中运行。</p>
+<p>最直接的方法就是将两行shell写到一行中，</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nf">var</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">export</span> <span class="nv">name</span><span class="o">=</span>wangpeng<span class="p">;</span> <span class="nb">echo</span> <span class="s2">&#34;myname is </span><span class="nv">$name</span><span class="s2">&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>第二种办法，在换行前加反斜杠\转义，</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nf">var</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">export</span> <span class="nv">name</span><span class="o">=</span>wangpeng <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="nb">echo</span> <span class="s2">&#34;myname is </span><span class="nv">$name</span><span class="s2">&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>还有第三种办法是使用<code>。ONESHELL</code>内置命令。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nf">.ONESHELL</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl"><span class="nf">var</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">export</span> <span class="nv">name</span><span class="o">=</span>wangpeng
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> <span class="s2">&#34;myname is </span><span class="nv">$name</span><span class="s2">&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="文件语法">文件语法</h2>
+<h3 id="注释">注释</h3>
+<p>行首井号（#）表示注释。</p>
+<h3 id="回显">回显</h3>
+<p>回显是指，在执行到每行命令前，将命令本身打印出来。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nf">test</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 这是测试</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>执行上面构建会输出</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">make <span class="nb">test</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 这是测试</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在命令的前面加上@，就可以关闭回声。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nf">test</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    @# 这是测试
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这下构建时就不会有任何输出。</p>
+<h3 id="通配符">通配符</h3>
+<p>Makefile 的通配符与 Bash 一致，主要有星号（<em>）、问号（？）.比如</em> .text 表示所有后缀名为text的文件。</p>
+<h3 id="模式匹配">模式匹配</h3>
+<p>Make命令允许对文件名，进行类似正则运算的匹配，主要用到的匹配符是%。比如，假定当前目录下有 f1.c 和 f2.c 两个源码文件，需要将它们编译为对应的对象文件。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nf">%.o</span><span class="o">:</span> %.<span class="n">c</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>等同于下面的写法。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nf">f1.o</span><span class="o">:</span> <span class="n">f</span>1.<span class="n">c</span>
+</span></span><span class="line"><span class="cl"><span class="nf">f2.o</span><span class="o">:</span> <span class="n">f</span>2.<span class="n">c</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用匹配符%，可以将大量同类型的文件，只用一条规则就完成构建。</p>
+<h3 id="变量和赋值符">变量和赋值符</h3>
+<p>Makefile 允许自定义变量。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nv">txt</span> <span class="o">=</span> Hello World
+</span></span><span class="line"><span class="cl"><span class="nf">test</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    @echo <span class="k">$(</span>txt<span class="k">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>调用shell中的变量，需要使用两个美元符号$$。</p>
+<p>Makefile一共提供了四个赋值运算符 （=、:=、?=、+=），它们的区别请看<a href="http://stackoverflow.com/questions/448910/makefile-variable-assignment">StackOverflow</a>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nv">VARIABLE</span> <span class="o">=</span> value
+</span></span><span class="line"><span class="cl"><span class="c"># 在执行时扩展，允许递归扩展。
+</span></span></span><span class="line"><span class="cl"><span class="c"></span>
+</span></span><span class="line"><span class="cl"><span class="nv">VARIABLE</span> <span class="o">:=</span> value
+</span></span><span class="line"><span class="cl"><span class="c"># 在定义时扩展。
+</span></span></span><span class="line"><span class="cl"><span class="c"></span>
+</span></span><span class="line"><span class="cl"><span class="nv">VARIABLE</span> <span class="o">?=</span> value
+</span></span><span class="line"><span class="cl"><span class="c"># 只有在该变量为空时才设置值。
+</span></span></span><span class="line"><span class="cl"><span class="c"></span>
+</span></span><span class="line"><span class="cl"><span class="nv">VARIABLE</span> <span class="o">+=</span> value
+</span></span><span class="line"><span class="cl"><span class="c"># 将值追加到变量的尾端。
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="内置变量">内置变量</h3>
+<p>Make命令提供一系列内置变量，比如，$(CC)指向当前使用的编译器，$(MAKE) 指向当前使用的Make工具。这主要是为了跨平台的兼容性，详细的内置变量清单见<a href="https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html">手册</a>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nf">output</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">$(</span>CC<span class="k">)</span> -o output input.c
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="判断和循环">判断和循环</h3>
+<p>Makefile使用 Bash 语法，完成判断和循环。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="err">ifeq</span> <span class="err">(</span><span class="k">$(</span><span class="nv">CC</span><span class="k">)</span><span class="err">,gcc)</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">libs</span><span class="o">=</span><span class="k">$(</span>libs_for_gcc<span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="err">else</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">libs</span><span class="o">=</span><span class="k">$(</span>normal_libs<span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="err">endif</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面代码判断当前编译器是否 gcc ，然后指定不同的库文件。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nv">LIST</span> <span class="o">=</span> one two three
+</span></span><span class="line"><span class="cl"><span class="nf">all</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> i in <span class="k">$(</span>LIST<span class="k">)</span><span class="p">;</span> <span class="k">do</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>        <span class="nb">echo</span> <span class="nv">$$</span>i<span class="p">;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="k">done</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 等同于
+</span></span></span><span class="line"><span class="cl"><span class="c"></span>
+</span></span><span class="line"><span class="cl"><span class="nf">all</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> i in one two three<span class="p">;</span> <span class="k">do</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>        <span class="nb">echo</span> <span class="nv">$i</span><span class="p">;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="k">done</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面代码的运行结果。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">one
+</span></span><span class="line"><span class="cl">two
+</span></span><span class="line"><span class="cl">three
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="makefile例子演示">Makefile例子演示</h1>
+<h2 id="1-执行多个目标">1. 执行多个目标</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nf">.PHONY</span><span class="o">:</span> <span class="n">cleanall</span> <span class="n">cleanobj</span> <span class="n">cleandiff</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">cleanall</span><span class="o">:</span> <span class="n">cleanobj</span> <span class="n">cleandiff</span>
+</span></span><span class="line"><span class="cl">        rm all
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">cleanobj</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">        rm *.o
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">cleandiff</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">        rm *.diff
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上面代码可以调用不同目标，删除不同后缀名的文件，也可以调用一个目标（cleanall），删除所有指定类型的文件。</p>
+<h2 id="2-构建golang项目">2. 构建golang项目</h2>
+<p>以下Makefile仅供参考，<a href="https://github.com/liuhaibin123456789/web-app/blob/master/Makefile">项目仓库</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="c"># 伪目标，如果未指定终极目标，将默认使用Makefile里的第一个目标，
+</span></span></span><span class="line"><span class="cl"><span class="c"># 即Makefile里最靠前的规则（本Makefile是all这个目标）
+</span></span></span><span class="line"><span class="cl"><span class="c"># 因此，当执行make时，会默认第一个目标为终极目标，所以all后面的依赖都会执行下去
+</span></span></span><span class="line"><span class="cl"><span class="c"># 因此，可以将all后面放置一些必须编译的默认选项，在只使用make时；当然也可以使用make指定终极目标进行构建
+</span></span></span><span class="line"><span class="cl"><span class="c"></span><span class="nf">.PHONY</span><span class="o">:</span> <span class="n">openssl</span> <span class="n">format</span> <span class="n">build</span> <span class="n">build_linux</span> <span class="n">build_win</span> <span class="n">clean</span> <span class="n">swag</span> \ 
+</span></span><span class="line"><span class="cl"><span class="err">docker-build</span> <span class="err">help</span> <span class="err">format</span> <span class="err">test</span> <span class="err">run</span>
+</span></span><span class="line"><span class="cl"><span class="nf">all</span><span class="o">:</span> <span class="n">openssl</span> <span class="n">format</span> <span class="n">build</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 声明编译项目的文件名
+</span></span></span><span class="line"><span class="cl"><span class="c"></span><span class="nv">BUILD_NAME</span><span class="o">=</span>web_app
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># swagger接口文档初始化
+</span></span></span><span class="line"><span class="cl"><span class="c"></span><span class="nf">swag</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">	@swag init
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 在./config目录，签发自建的tls证书
+</span></span></span><span class="line"><span class="cl"><span class="c"># 或者使用go标准库：go run $GOROOT/src/crypto/tls/generate_cert.go --host localhost
+</span></span></span><span class="line"><span class="cl"><span class="c"></span><span class="nf">openssl</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">	@openssl genrsa -out ./config/key.pem 2048<span class="p">;</span>openssl req -new -x509 -key ./config/key.pem -out ./config/cert.pem -days <span class="m">3650</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 使用Dockerfile对项目打包编译出镜像
+</span></span></span><span class="line"><span class="cl"><span class="c"></span><span class="nf">docker-build</span><span class="o">:</span> <span class="n">swag</span>
+</span></span><span class="line"><span class="cl">	@docker build -t <span class="si">${</span><span class="nv">BUILD_NAME</span><span class="si">}</span>:1.0
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 格式化项目
+</span></span></span><span class="line"><span class="cl"><span class="c"></span><span class="nf">format</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">	@go fmt ./
+</span></span><span class="line"><span class="cl">	@go vet ./
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 测试代码
+</span></span></span><span class="line"><span class="cl"><span class="c"></span><span class="nf">test</span><span class="o">:</span> <span class="n">swag</span>
+</span></span><span class="line"><span class="cl">	@go <span class="nb">test</span> -v <span class="c1">#回归测试</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 直接运行项目根目录下已经编译好的二进制文件
+</span></span></span><span class="line"><span class="cl"><span class="c"></span><span class="nf">run</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">	./<span class="si">${</span><span class="nv">BUILD_NAME</span><span class="si">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 默认编译
+</span></span></span><span class="line"><span class="cl"><span class="c"></span><span class="nf">build</span><span class="o">:</span> <span class="n">test</span>
+</span></span><span class="line"><span class="cl">	@go build -o <span class="si">${</span><span class="nv">BUILD_NAME</span><span class="si">}</span> <span class="si">${</span><span class="nv">SOURCE</span><span class="si">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 交叉编译--适应linux系统
+</span></span></span><span class="line"><span class="cl"><span class="c"></span><span class="nf">build_linux</span><span class="o">:</span> <span class="n">test</span>
+</span></span><span class="line"><span class="cl">	@CGO_ENABLED<span class="o">=</span><span class="m">0</span> <span class="nv">GOOS</span><span class="o">=</span>linux <span class="nv">GOARCH</span><span class="o">=</span>amd64 go build -o <span class="si">${</span><span class="nv">BUILD_NAME</span><span class="si">}</span> .
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 交叉编译--适应windows系统
+</span></span></span><span class="line"><span class="cl"><span class="c"></span><span class="nf">build_win</span><span class="o">:</span> <span class="n">test</span>
+</span></span><span class="line"><span class="cl">    @CGO_ENABLED<span class="o">=</span><span class="m">0</span> <span class="nv">GOOS</span><span class="o">=</span>windows <span class="nv">GOARCH</span><span class="o">=</span>amd64 go build -o <span class="si">${</span><span class="nv">BUILD_NAME</span><span class="si">}</span> .
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 清除编译文件
+</span></span></span><span class="line"><span class="cl"><span class="c"></span><span class="nf">clean</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">	@go clean
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c"># 帮助命令
+</span></span></span><span class="line"><span class="cl"><span class="c"></span><span class="nf">help</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">	@echo <span class="s2">&#34;make - 格式化 Go 代码、更新swagger文档、生成tls证书、测试代码、编译生成二进制文件&#34;</span>
+</span></span><span class="line"><span class="cl">	@echo <span class="s2">&#34;make docker-build - 构建本项目的Docker镜像&#34;</span>
+</span></span><span class="line"><span class="cl">	@echo <span class="s2">&#34;make build - 编译 Go 代码, 生成当前环境默认的二进制文件&#34;</span>
+</span></span><span class="line"><span class="cl">	@echo <span class="s2">&#34;make build_linux - 编译 Go 代码, 生成linux环境二进制文件&#34;</span>
+</span></span><span class="line"><span class="cl">	@echo <span class="s2">&#34;make build_win - 编译 Go 代码, 生成windows环境二进制文件&#34;</span>
+</span></span><span class="line"><span class="cl">	@echo <span class="s2">&#34;make run - 直接运行 Go 代码&#34;</span>
+</span></span><span class="line"><span class="cl">	@echo <span class="s2">&#34;make clean - 移除二进制文件和 vim swap files&#34;</span>
+</span></span><span class="line"><span class="cl">	@echo <span class="s2">&#34;make format - 运行 Go 工具 &#39;fmt&#39; and &#39;vet&#39;&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>另一个例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-makefile" data-lang="makefile"><span class="line"><span class="cl"><span class="nf">.PHONY</span><span class="o">:</span> <span class="n">all</span> <span class="n">build</span> <span class="n">clean</span> <span class="n">run</span> <span class="n">check</span> <span class="n">cover</span> <span class="n">lint</span> <span class="n">docker</span> <span class="n">help</span>
+</span></span><span class="line"><span class="cl"><span class="nv">BIN_FILE</span><span class="o">=</span>hello
+</span></span><span class="line"><span class="cl"><span class="nf">all</span><span class="o">:</span> <span class="n">check</span> <span class="n">build</span>
+</span></span><span class="line"><span class="cl"><span class="nf">build</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    @go build -o <span class="s2">&#34;</span><span class="si">${</span><span class="nv">BIN_FILE</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nf">clean</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    @go clean
+</span></span><span class="line"><span class="cl">    rm --force <span class="s2">&#34;xx.out&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nf">test</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    @go <span class="nb">test</span>
+</span></span><span class="line"><span class="cl"><span class="nf">check</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    @go fmt ./
+</span></span><span class="line"><span class="cl">    @go vet ./
+</span></span><span class="line"><span class="cl"><span class="nf">cover</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    @go <span class="nb">test</span> -coverprofile xx.out
+</span></span><span class="line"><span class="cl">    @go tool cover -html<span class="o">=</span>xx.out
+</span></span><span class="line"><span class="cl"><span class="nf">run</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    ./<span class="s2">&#34;</span><span class="si">${</span><span class="nv">BIN_FILE</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nf">lint</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    golangci-lint run --enable-all
+</span></span><span class="line"><span class="cl"><span class="nf">docker</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    @docker build -t leo/hello:latest .
+</span></span><span class="line"><span class="cl"><span class="nf">help</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    @echo <span class="s2">&#34;make 格式化go代码 并编译生成二进制文件&#34;</span>
+</span></span><span class="line"><span class="cl">    @echo <span class="s2">&#34;make build 编译go代码生成二进制文件&#34;</span>
+</span></span><span class="line"><span class="cl">    @echo <span class="s2">&#34;make clean 清理中间目标文件&#34;</span>
+</span></span><span class="line"><span class="cl">    @echo <span class="s2">&#34;make test 执行测试case&#34;</span>
+</span></span><span class="line"><span class="cl">    @echo <span class="s2">&#34;make check 格式化go代码&#34;</span>
+</span></span><span class="line"><span class="cl">    @echo <span class="s2">&#34;make cover 检查测试覆盖率&#34;</span>
+</span></span><span class="line"><span class="cl">    @echo <span class="s2">&#34;make run 直接运行程序&#34;</span>
+</span></span><span class="line"><span class="cl">    @echo <span class="s2">&#34;make lint 执行代码检查&#34;</span>
+</span></span><span class="line"><span class="cl">    @echo <span class="s2">&#34;make docker 构建docker镜像&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样就很方便地通过一个make命令完成对项目的构建。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2022-07-16
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/makefile/">makefile</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Flag包的在go项目的实践</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/go%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%BA%93flag%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/">
+            <span class="next-text nav-default">Go语言标准库flag基本使用</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2022-07-16 22:13:26 \u002b0800 CST',
+        title: 'Makefile在go项目的实践',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

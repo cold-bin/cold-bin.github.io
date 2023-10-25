@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>如何构建Go应用的Docker镜像 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="如何构建 Go 应用的 Docker 镜像 简介： 在部署 Go 应用时，我们通常会使用 Docker 镜像来部署，那么如何构建一个 Go 应用的 Docker 镜像呢？镜像构建过程中有没有什么最佳实践呢" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAgo%E5%BA%94%E7%94%A8%E7%9A%84docker%E9%95%9C%E5%83%8F/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="如何构建Go应用的Docker镜像" />
+<meta property="og:description" content="如何构建 Go 应用的 Docker 镜像 简介： 在部署 Go 应用时，我们通常会使用 Docker 镜像来部署，那么如何构建一个 Go 应用的 Docker 镜像呢？镜像构建过程中有没有什么最佳实践呢" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAgo%E5%BA%94%E7%94%A8%E7%9A%84docker%E9%95%9C%E5%83%8F/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-01-09T10:31:00+08:00" />
+<meta property="article:modified_time" content="2023-01-09T10:31:00+08:00" />
+<meta itemprop="name" content="如何构建Go应用的Docker镜像">
+<meta itemprop="description" content="如何构建 Go 应用的 Docker 镜像 简介： 在部署 Go 应用时，我们通常会使用 Docker 镜像来部署，那么如何构建一个 Go 应用的 Docker 镜像呢？镜像构建过程中有没有什么最佳实践呢"><meta itemprop="datePublished" content="2023-01-09T10:31:00+08:00" />
+<meta itemprop="dateModified" content="2023-01-09T10:31:00+08:00" />
+<meta itemprop="wordCount" content="4471">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="如何构建Go应用的Docker镜像"/>
+<meta name="twitter:description" content="如何构建 Go 应用的 Docker 镜像 简介： 在部署 Go 应用时，我们通常会使用 Docker 镜像来部署，那么如何构建一个 Go 应用的 Docker 镜像呢？镜像构建过程中有没有什么最佳实践呢"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">如何构建Go应用的Docker镜像</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-01-09 </span>
+        <div class="post-category">
+            <a href="/categories/golang/"> golang </a>
+            <a href="/categories/docker/"> docker </a>
+            </div>
+          <span class="more-meta"> 约 4471 字 </span>
+          <span class="more-meta"> 预计阅读 9 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#如何构建-go-应用的-docker-镜像">如何构建 Go 应用的 Docker 镜像</a>
+      <ul>
+        <li><a href="#创建一个简单的-go-应用">创建一个简单的 Go 应用</a>
+          <ul>
+            <li><a href="#方式一下载源码">方式一：下载源码</a></li>
+            <li><a href="#方式二从零编写-go-应用">方式二：从零编写 Go 应用</a></li>
+            <li><a href="#测试-go-应用">测试 Go 应用</a></li>
+          </ul>
+        </li>
+        <li><a href="#为-go-应用创建一个-dockerfile">为 Go 应用创建一个 Dockerfile</a>
+          <ul>
+            <li><a href="#从零创建-dockerfile">从零创建 Dockerfile</a></li>
+            <li><a href="#完整的-dockerfile">完整的 Dockerfile</a></li>
+          </ul>
+        </li>
+        <li><a href="#构建镜像">构建镜像</a>
+          <ul>
+            <li><a href="#构建镜像-1">构建镜像</a></li>
+            <li><a href="#为镜像设置标签">为镜像设置标签</a></li>
+          </ul>
+        </li>
+        <li><a href="#单元测试">单元测试</a></li>
+        <li><a href="#多阶段构建">多阶段构建</a>
+          <ul>
+            <li><a href="#多阶段构建-dockerfile">多阶段构建 Dockerfile</a></li>
+            <li><a href="#交叉编译">交叉编译</a></li>
+            <li><a href="#构建镜像-2">构建镜像</a></li>
+          </ul>
+        </li>
+        <li><a href="#运行-go-镜像">运行 Go 镜像</a></li>
+        <li><a href="#使用-makefile-简化构建流程">使用 Makefile 简化构建流程</a></li>
+        <li><a href="#总结">总结</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h1 id="如何构建-go-应用的-docker-镜像">如何构建 Go 应用的 Docker 镜像</h1>
+<p><strong>简介：</strong> 在部署 Go 应用时，我们通常会使用 Docker 镜像来部署，那么如何构建一个 Go 应用的 Docker 镜像呢？镜像构建过程中有没有什么最佳实践呢？</p>
+<p>在部署 Go 应用时，我们通常会使用 Docker 镜像来部署，那么如何构建一个 Go 应用的 Docker 镜像呢？镜像构建过程中有没有什么最佳实践呢？</p>
+<p>这正是本文想要讲解的内容。总的来说，本文会包含 Dockerfile 编写、镜像构建、多阶段构建、交叉编译以及使用 Makefile 简化构建流程等知识点。</p>
+<h2 id="创建一个简单的-go-应用">创建一个简单的 Go 应用</h2>
+<p>为了说明整个镜像构建流程，让我们先从一个简单的 Go REST 应用开始。</p>
+<p>该应用主要有以下功能：</p>
+<ul>
+<li>访问 <code>/</code>，返回  <code>Hello, Docker! &lt;3</code>；</li>
+<li>访问 <code>/ping</code> ，返回 JSON 字符串 <code>{&quot;Status&quot;:&quot;OK&quot;}</code>；</li>
+<li>可以通过环境变量设置 HTTP_PORT，默认值为8080。</li>
+</ul>
+<p>应用源码地址在 <a href="https://github.com/nodejh/docker-go-server-ping">https://github.com/nodejh/docker-go-server-ping</a> ，你可以直接下载使用，也可以按照下面的步骤从零开始编写代码。</p>
+<h3 id="方式一下载源码">方式一：下载源码</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ git clone git@github.com:nodejh/docker-go-server-ping.git
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>安装依赖模块：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ go mod download
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="方式二从零编写-go-应用">方式二：从零编写 Go 应用</h3>
+<p>新建一个 <code>docker-go-server-ping</code> 目录，然后初始化 Go 模块：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ mkdir docker-go-server-ping &amp;&amp; cd docker-go-server-ping
+</span></span><span class="line"><span class="cl">$ go mod init github.com/nodejh/docker-go-server-ping
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>安装 <a href="https://github.com/labstack/echo">Echo</a> 模块：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ go get github.com/labstack/echo/v4
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>接下来创建一个 <code>main.go</code> 文件，并实现一个简单的 Go 服务：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl"> <span class="s">&#34;net/http&#34;</span>
+</span></span><span class="line"><span class="cl"> <span class="s">&#34;os&#34;</span>
+</span></span><span class="line"><span class="cl"> <span class="s">&#34;github.com/labstack/echo/v4&#34;</span>
+</span></span><span class="line"><span class="cl"> <span class="s">&#34;github.com/labstack/echo/v4/middleware&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="nx">e</span> <span class="o">:=</span> <span class="nx">echo</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"> <span class="nx">e</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="nx">middleware</span><span class="p">.</span><span class="nf">Logger</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"> <span class="nx">e</span><span class="p">.</span><span class="nf">Use</span><span class="p">(</span><span class="nx">middleware</span><span class="p">.</span><span class="nf">Recover</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"> <span class="nx">e</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="nx">echo</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">HTML</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="s">&#34;Hello, Docker! &lt;3&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"> <span class="p">})</span>
+</span></span><span class="line"><span class="cl"> <span class="nx">e</span><span class="p">.</span><span class="nf">GET</span><span class="p">(</span><span class="s">&#34;/ping&#34;</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">c</span> <span class="nx">echo</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nf">JSON</span><span class="p">(</span><span class="nx">http</span><span class="p">.</span><span class="nx">StatusOK</span><span class="p">,</span> <span class="kd">struct</span><span class="p">{</span> <span class="nx">Status</span> <span class="kt">string</span> <span class="p">}{</span><span class="nx">Status</span><span class="p">:</span> <span class="s">&#34;OK&#34;</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl"> <span class="p">})</span>
+</span></span><span class="line"><span class="cl"> <span class="nx">httpPort</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Getenv</span><span class="p">(</span><span class="s">&#34;HTTP_PORT&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"> <span class="k">if</span> <span class="nx">httpPort</span> <span class="o">==</span> <span class="s">&#34;&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">httpPort</span> <span class="p">=</span> <span class="s">&#34;8080&#34;</span>
+</span></span><span class="line"><span class="cl"> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"> <span class="nx">e</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nf">Start</span><span class="p">(</span><span class="s">&#34;:&#34;</span> <span class="o">+</span> <span class="nx">httpPort</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>接下来可能需要执行 <code>go mod tidy</code> 来确保 <code>go.mod</code> 和源码中的模块一致：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ go mod tidy
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="测试-go-应用">测试 Go 应用</h3>
+<p>让我们启动我们的 Go 应用并确保它正常运行。进入项目目录并通过 <code>go run</code> 命令执行源码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ go run main.go 
+</span></span><span class="line"><span class="cl">   ____    __
+</span></span><span class="line"><span class="cl">  / __/___/ /  ___
+</span></span><span class="line"><span class="cl"> / _// __/ _ \/ _ \
+</span></span><span class="line"><span class="cl">/___/\__/_//_/\___/ v4.6.1
+</span></span><span class="line"><span class="cl">High performance, minimalist Go web framework
+</span></span><span class="line"><span class="cl">https://echo.labstack.com
+</span></span><span class="line"><span class="cl">____________________________________O/_______
+</span></span><span class="line"><span class="cl">                                    O\
+</span></span><span class="line"><span class="cl">⇨ http server started on [::]:8080
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>让我们对应用进行一个简单的测试，打开一个新的终端，使用 curl 命令或在浏览器打开 <code>http://localhost:8080/</code> 进行测试。以 <code>curl</code> 为例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ curl http://localhost:8080/
+</span></span><span class="line"><span class="cl">Hello, Docker! &lt;3
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到应用正常返回了，正如开头描述的那样。</p>
+<p>确定服务器正在运行并且可以访问后，我们就可以继续针对应用构建 Docker 镜像了。</p>
+<h2 id="为-go-应用创建一个-dockerfile">为 Go 应用创建一个 Dockerfile</h2>
+<p>Dockerfile 是 Docker 镜像的描述文件，是一个文本文件。当我们执行 <code>docker build</code> 构建镜像时，Docker 就会读取 Dockerfile 中的指令来创建 Docker 镜像。</p>
+<h3 id="从零创建-dockerfile">从零创建 Dockerfile</h3>
+<p>让我们先来看一下创建 Dockerfile 的详细过程。</p>
+<p>在项目根目录中创建一个名为 Dockerfile 的文件并在编辑器中打开。</p>
+<p>添加到 Dockerfile 的第一行是 <code># syntax</code> 解析器指令，这是一个可选项，表示 Docker 构建器在解析 Dockerfile 时使用什么语法。解析器指令必须在 Dockerfile 其他任何注释、空格或指令之前，并且应该是 Dockerfile 的第一行。建议使用 <code>docker/dockerfile:1</code> ，它始终指向版本 <code>1</code> 语法的最新版本。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># syntax=docker/dockerfile:1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>接下来在 Dockerfile 中再添加一行，告诉 Docker 我们的应用使用什么基础镜像：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># syntax=docker/dockerfile:1
+</span></span><span class="line"><span class="cl">FROM golang:1.16-alpine
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这里我们使用了 <a href="https://hub.docker.com/_/golang">Golang 官方镜像</a> 中的 <code>1.16-alpine</code> 版本作为基础镜像，alpine 是专门为容器设计的小型 Linux 发行版。使用基础镜像的好处是，基础镜像中内置了 Go 运行环境和工具，我们就不用自己再去安装了。</p>
+<p>为了更好地在镜像中管理我们的应用程序，让我们在镜像中创建一个工作目录，之后源码或编译产物都存放在该目录中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">WORKDIR /app
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>接下来我们就需要在镜像中编译 Go 应用，这样做是为了保证编译和最终运行的环境一致。</p>
+<p>通常我们编译 Go 应用的第一步是安装依赖，所以要先把 <code>go.mod</code> 和 <code>go.sum</code> 复制到镜像中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">COPY go.mod ./
+</span></span><span class="line"><span class="cl">COPY go.sum ./
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>COPY</code> 命令可以把文件复制到镜像中，这里的 <code>./</code> 对应的目录就是上一个命令 <code>WORKDIR</code> 指定的 <code>/app</code> 目录。</p>
+<p>然后通过 <code>RUN</code> 命令在镜像中执行 <code>go mod download</code> 安装依赖，这与我们在本机直接运行命令的作用完全相同，不同的是这次会将依赖安装在镜像中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">RUN go mod download
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此时我们已经有了一个基于 Go 1.16 的镜像，并安装了 Go 应用所需的依赖。下一步要做的就是把源码复制到镜像中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">RUN COPY *.go ./
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>该 COPY 命令使用通配符将本机当前目录（即 Dockerfile 所在目录）中后缀为 <code>.go</code> 的文件全部复制到镜像中。</p>
+<p>接下来我们就可以编译 Go 应用了，依然使用熟悉的 <code>RUN</code> 命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">RUN go build -o /docker-go-server-ping
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>该命令的结果就是产生一个名为 <code>docker-go-server-ping</code> 的二进制文件，并存放在镜像的系统根目录中。当然你也可以将二进制文件放在其他任何位置，根目录在这里没有特殊意义，只是它的路径较短且保持了可读性，使用起来更方便。</p>
+<p>现在，剩下要做的就是告诉 Docker 当我们用该镜像来启动容器时要执行什么命令，这时可以使用 CMD 命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">CMD [ &#34;/docker-go-server-ping&#34; ]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="完整的-dockerfile">完整的 Dockerfile</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># syntax=docker/dockerfile:1
+</span></span><span class="line"><span class="cl">FROM golang:1.16-alpine
+</span></span><span class="line"><span class="cl">WORKDIR /app
+</span></span><span class="line"><span class="cl">COPY go.mod ./
+</span></span><span class="line"><span class="cl">COPY go.sum ./
+</span></span><span class="line"><span class="cl">RUN go mod download
+</span></span><span class="line"><span class="cl">COPY *.go ./
+</span></span><span class="line"><span class="cl">RUN go build -o /docker-go-server-ping
+</span></span><span class="line"><span class="cl">EXPOSE 8080
+</span></span><span class="line"><span class="cl">CMD [ &#34;/docker-go-server-ping&#34; ]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="构建镜像">构建镜像</h2>
+<p>Dockerfile 编写完成后就可以使用 <code>docker build</code> 命令来构建镜像了。</p>
+<h3 id="构建镜像-1">构建镜像</h3>
+<p>让我们进入 Dockerfile 所在目录构建镜像，并通过可选的 <code>--tag</code> 给镜像定义一个方便阅读和识别的名字和标签，格式为 <code>&lt;镜像名称&gt;:&lt;标签&gt;</code>，默认是标签 latest：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-zed" data-lang="zed"><span class="line"><span class="cl"><span class="err">$</span><span class="w"> </span><span class="n">docker</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="o">--</span><span class="n">tag</span><span class="w"> </span><span class="n">docker</span><span class="o">-</span><span class="n">go</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">ping</span><span class="o">:</span><span class="n">latest</span><span class="w"> </span><span class="p">.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">[</span><span class="o">+</span><span class="p">]</span><span class="w"> </span><span class="n">Building</span><span class="w"> </span><span class="err">32</span><span class="p">.</span><span class="err">2</span><span class="n">s</span><span class="w"> </span><span class="p">(</span><span class="err">16</span><span class="o">/</span><span class="err">16</span><span class="p">)</span><span class="w"> </span><span class="n">FINISHED</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">internal</span><span class="p">]</span><span class="w"> </span><span class="n">load</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="kt">definition</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">Dockerfile</span><span class="w">                                                                             </span><span class="err">0</span><span class="p">.</span><span class="err">1</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">transferring</span><span class="w"> </span><span class="n">dockerfile</span><span class="o">:</span><span class="w"> </span><span class="err">37</span><span class="n">B</span><span class="w">                                                                                              </span><span class="err">0</span><span class="p">.</span><span class="err">0</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">internal</span><span class="p">]</span><span class="w"> </span><span class="n">load</span><span class="w"> </span><span class="p">.</span><span class="n">dockerignore</span><span class="w">                                                                                                </span><span class="err">0</span><span class="p">.</span><span class="err">0</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">transferring</span><span class="w"> </span><span class="n">context</span><span class="o">:</span><span class="w"> </span><span class="err">2</span><span class="n">B</span><span class="w">                                                                                                  </span><span class="err">0</span><span class="p">.</span><span class="err">0</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">resolve</span><span class="w"> </span><span class="n">image</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="n">for</span><span class="w"> </span><span class="n">docker</span><span class="p">.</span><span class="nn">io/docker/</span><span class="n">dockerfile</span><span class="o">:</span><span class="err">1</span><span class="w">                                                                      </span><span class="err">15</span><span class="p">.</span><span class="err">2</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">CACHED</span><span class="w"> </span><span class="n">docker</span><span class="o">-</span><span class="n">image</span><span class="o">:</span><span class="c1">//docker.io/docker/dockerfile:1@sha256:42399d4635eddd7a9b8a24be879d2f9a930d0ed040a61324cfdf59ef1357b3b2  0.0s
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">internal</span><span class="p">]</span><span class="w"> </span><span class="n">load</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="kt">definition</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">Dockerfile</span><span class="w">                                                                             </span><span class="err">0</span><span class="p">.</span><span class="err">0</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">internal</span><span class="p">]</span><span class="w"> </span><span class="n">load</span><span class="w"> </span><span class="p">.</span><span class="n">dockerignore</span><span class="w">                                                                                                </span><span class="err">0</span><span class="p">.</span><span class="err">0</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">internal</span><span class="p">]</span><span class="w"> </span><span class="n">load</span><span class="w"> </span><span class="n">metadata</span><span class="w"> </span><span class="n">for</span><span class="w"> </span><span class="n">docker</span><span class="p">.</span><span class="nn">io/library/</span><span class="n">golang</span><span class="o">:</span><span class="err">1</span><span class="p">.</span><span class="err">16</span><span class="o">-</span><span class="n">alpine</span><span class="w">                                                           </span><span class="err">15</span><span class="p">.</span><span class="err">6</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="err">1</span><span class="o">/</span><span class="err">7</span><span class="p">]</span><span class="w"> </span><span class="n">FROM</span><span class="w"> </span><span class="n">docker</span><span class="p">.</span><span class="nn">io/library/</span><span class="n">golang</span><span class="o">:</span><span class="err">1</span><span class="p">.</span><span class="err">16</span><span class="o">-</span><span class="n">alpine</span><span class="err">@</span><span class="n">sha256</span><span class="o">:</span><span class="err">45412</span><span class="n">fe3f5016509fc448b83faefc34e6f9e9bcc8ca1db1c54505d5528264e16</span><span class="w">      </span><span class="err">0</span><span class="p">.</span><span class="err">0</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">internal</span><span class="p">]</span><span class="w"> </span><span class="n">load</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="n">context</span><span class="w">                                                                                                </span><span class="err">0</span><span class="p">.</span><span class="err">1</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">transferring</span><span class="w"> </span><span class="n">context</span><span class="o">:</span><span class="w"> </span><span class="err">80</span><span class="n">B</span><span class="w">                                                                                                 </span><span class="err">0</span><span class="p">.</span><span class="err">0</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">CACHED</span><span class="w"> </span><span class="p">[</span><span class="err">2</span><span class="o">/</span><span class="err">7</span><span class="p">]</span><span class="w"> </span><span class="n">WORKDIR</span><span class="w"> </span><span class="o">/</span><span class="n">app</span><span class="w">                                                                                                    </span><span class="err">0</span><span class="p">.</span><span class="err">0</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">CACHED</span><span class="w"> </span><span class="p">[</span><span class="err">3</span><span class="o">/</span><span class="err">7</span><span class="p">]</span><span class="w"> </span><span class="n">COPY</span><span class="w"> </span><span class="n">go</span><span class="p">.</span><span class="n">mod</span><span class="w"> </span><span class="p">.</span><span class="o">/</span><span class="w">                                                                                                  </span><span class="err">0</span><span class="p">.</span><span class="err">0</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">CACHED</span><span class="w"> </span><span class="p">[</span><span class="err">4</span><span class="o">/</span><span class="err">7</span><span class="p">]</span><span class="w"> </span><span class="n">COPY</span><span class="w"> </span><span class="n">go</span><span class="p">.</span><span class="n">sum</span><span class="w"> </span><span class="p">.</span><span class="o">/</span><span class="w">                                                                                                  </span><span class="err">0</span><span class="p">.</span><span class="err">0</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">CACHED</span><span class="w"> </span><span class="p">[</span><span class="err">5</span><span class="o">/</span><span class="err">7</span><span class="p">]</span><span class="w"> </span><span class="n">RUN</span><span class="w"> </span><span class="n">go</span><span class="w"> </span><span class="n">mod</span><span class="w"> </span><span class="n">download</span><span class="w">                                                                                             </span><span class="err">0</span><span class="p">.</span><span class="err">0</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">CACHED</span><span class="w"> </span><span class="p">[</span><span class="err">6</span><span class="o">/</span><span class="err">7</span><span class="p">]</span><span class="w"> </span><span class="n">COPY</span><span class="w"> </span><span class="o">*</span><span class="p">.</span><span class="n">go</span><span class="w"> </span><span class="p">.</span><span class="o">/</span><span class="w">                                                                                                    </span><span class="err">0</span><span class="p">.</span><span class="err">0</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">CACHED</span><span class="w"> </span><span class="p">[</span><span class="err">7</span><span class="o">/</span><span class="err">7</span><span class="p">]</span><span class="w"> </span><span class="n">RUN</span><span class="w"> </span><span class="n">go</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="o">/</span><span class="n">docker</span><span class="o">-</span><span class="n">go</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">ping</span><span class="w">                                                                          </span><span class="err">0</span><span class="p">.</span><span class="err">0</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">exporting</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">image</span><span class="w">                                                                                                           </span><span class="err">0</span><span class="p">.</span><span class="err">1</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">exporting</span><span class="w"> </span><span class="n">layers</span><span class="w">                                                                                                          </span><span class="err">0</span><span class="p">.</span><span class="err">0</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">writing</span><span class="w"> </span><span class="n">image</span><span class="w"> </span><span class="n">sha256</span><span class="o">:</span><span class="err">17</span><span class="n">fa05342ccef20e73abc48210fff449cc49683ffd817ccc6aef35500cf91ae2</span><span class="w">                                     </span><span class="err">0</span><span class="p">.</span><span class="err">0</span><span class="n">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">naming</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">docker</span><span class="p">.</span><span class="nn">io/library/</span><span class="n">docker</span><span class="o">-</span><span class="n">go</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">ping</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>构建完成后可以通过 <code>docker image ls</code> （或 <code>docker images</code> 简写）来查看镜像列表：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ docker image ls
+</span></span><span class="line"><span class="cl">REPOSITORY                   TAG            IMAGE ID       CREATED         SIZE
+</span></span><span class="line"><span class="cl">docker-go-server-ping        latest         17fa05342cce   9 minutes ago   407MB
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="为镜像设置标签">为镜像设置标签</h3>
+<p>我们也可以通过 <code>docker image tag</code> 命令来为镜像设置新的标签，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ docker image tag docker-go-server-ping:latest docker-go-server-ping:v1.0.0
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这时通过 <code>docker image ls</code> 就可以看到 docker-go-server-ping 镜像的两个标签：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ docker image ls
+</span></span><span class="line"><span class="cl">REPOSITORY                   TAG            IMAGE ID       CREATED         SIZE
+</span></span><span class="line"><span class="cl">docker-go-server-ping        latest         17fa05342cce   12 minutes ago   407MB
+</span></span><span class="line"><span class="cl">docker-go-server-ping        v1.0.0         17fa05342cce   1 minutes ago   407MB
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们还可以通过 <code>docker image rm</code> （简写为 <code>docker rmi</code>）删除镜像：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ docker image rm docker-go-server-ping:v1.0.0
+</span></span><span class="line"><span class="cl">Untagged: docker-go-server-ping:v1.0.0
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这时再查看镜像列表，<code>v1.0.0</code> 版本的镜像已被删除，只剩下 <code>latest</code> 版本了：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ docker image ls
+</span></span><span class="line"><span class="cl">REPOSITORY                   TAG            IMAGE ID       CREATED         SIZE
+</span></span><span class="line"><span class="cl">docker-go-server-ping        latest         17fa05342cce   15 minutes ago   407MB
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="单元测试">单元测试</h2>
+<p>既然本文主要将 Go 的 Docker 镜像，这样就顺便简单说明如何使用 <a href="https://github.com/ory/dockertest/">dockertest</a> 对 Go 应用进行单元测试。</p>
+<p><a href="https://github.com/ory/dockertest/">dockertest</a> 可以在 Docker 容器中启动 Go 应用镜像并执行测试用例。</p>
+<p>相关测试用例可以参考 <a href="https://github.com/nodejh/docker-go-server-ping/blob/main/main_test.go">main_test.go</a> 。</p>
+<p>在 main_test.go 中我们使用了 <code>docker-go-server-ping:latest</code> 镜像来运行 Go 应用：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">resource, err := pool.Run(&#34;docker-go-server-ping&#34;, &#34;latest&#34;, []string{})
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>所以在执行 <code>go test</code> 之前，需要先构建 <code>docker-go-server-ping:latest</code> 镜像：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ docker build --tag docker-go-server-ping:latest .
+</span></span><span class="line"><span class="cl">...
+</span></span><span class="line"><span class="cl">$ go test -v ./
+</span></span><span class="line"><span class="cl">=== RUN   TestRespondsWithLove
+</span></span><span class="line"><span class="cl">body
+</span></span><span class="line"><span class="cl">Hello, Docker! &lt;3
+</span></span><span class="line"><span class="cl">--- PASS: TestRespondsWithLove (1.12s)
+</span></span><span class="line"><span class="cl">=== RUN   TestHealthCheck
+</span></span><span class="line"><span class="cl">    main_test.go:85: container not ready, waiting...
+</span></span><span class="line"><span class="cl">--- PASS: TestHealthCheck (1.66s)
+</span></span><span class="line"><span class="cl">PASS
+</span></span><span class="line"><span class="cl">ok      command-line-arguments  2.799s
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="多阶段构建">多阶段构建</h2>
+<p>可能你已经注意到了，docker-go-server-ping 镜像的大小有 407MB，这着实有点大，并且镜像中还有全套的 Go 工具、Go 应用的依赖等，但实际我们应用运行时不需要这些文件，只需要编译后的二进制文件。那么能不能减小镜像的体积呢？</p>
+<p>要减小镜像体积，我们可以使用多阶段构建。Docker 在 17.05 版本以后，新增了多阶段构建功能。多阶段构建实际上是允许一个 Dockerfile 中出现多个 FROM 指令。通常我们使用多阶段构建时，会先使用一个（或多个）镜像来构建一些中间制品，然后再将中间制品放入另一个最新且更小的镜像中，这个最新的镜像就只包含最终需要的构建制品。</p>
+<h3 id="多阶段构建-dockerfile">多阶段构建 Dockerfile</h3>
+<p>项目实例：https://github.com/liuhaibin123456789/last-homework-in-last-term.git</p>
+<p>我们先创建一个多阶段构建的 Dockerfile，名为 <code>Dockerfile.multistage</code>，文件名中的 <code>multistage</code> 没有特殊含义，只是为了和之前的 Dockerfile 作区分，下面是完整的 Dockerfile：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># syntax=docker/dockerfile:1
+</span></span><span class="line"><span class="cl">##
+</span></span><span class="line"><span class="cl">## Build
+</span></span><span class="line"><span class="cl">##
+</span></span><span class="line"><span class="cl">FROM golang:1.16-alpine AS build
+</span></span><span class="line"><span class="cl">WORKDIR /app
+</span></span><span class="line"><span class="cl">COPY go.mod ./
+</span></span><span class="line"><span class="cl">COPY go.sum ./
+</span></span><span class="line"><span class="cl">RUN go mod download
+</span></span><span class="line"><span class="cl">COPY *.go ./
+</span></span><span class="line"><span class="cl">RUN CGO_ENABLED=0 GOOS=linux go build -o /docker-go-server-ping
+</span></span><span class="line"><span class="cl">##
+</span></span><span class="line"><span class="cl">## Deploy
+</span></span><span class="line"><span class="cl">##
+</span></span><span class="line"><span class="cl">FROM scratch
+</span></span><span class="line"><span class="cl">WORKDIR /
+</span></span><span class="line"><span class="cl">COPY --from=build /docker-go-server-ping /docker-go-server-ping
+</span></span><span class="line"><span class="cl">EXPOSE 8080
+</span></span><span class="line"><span class="cl">ENTRYPOINT [&#34;/docker-go-server-ping&#34;]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在 <code>Dockerfile.multistage</code> 中使用了两次 FROM 指令，分别对应两个构建阶段。第一个阶段构建的 FROM 指令依然使用 <code>golang:1.16-alpine</code> 作为基础镜像，并将该阶段命名为 <code>build</code>。第二个构建阶段的 FROM 指令使用 <code>scratch</code> 作为基础镜像，告诉 Docker 接下来从一个全新的基础镜像开始构建，scratch 镜像是 Docker 项目预定义的最小的镜像。第二阶段构建主要是将上个阶段中编译好的二进制文件复制到新的镜像中。</p>
+<p>在 Go 应用中，多阶段构建非常常见，可以减小镜像的体积、节省大量的存储空间。</p>
+<p>在 <code>Dockerfile.multistage</code> 中需要额外关注的是 <code>RUN</code> 指令，这里使用到了交叉编译。</p>
+<h3 id="交叉编译">交叉编译</h3>
+<p>交叉编译是指在一个平台上生成另一个平台的可执行程序。</p>
+<p>在其他编程语言中进行交叉编译可能要借助第三方工具，但 Go 内置了交叉编译工具，使用起来非常方便，通常设置 CGO_ENABLED、GOOS 和 GOARCH 这几个环境变量就够了。</p>
+<h4 id="cgo_enabled">CGO_ENABLED</h4>
+<p>默认值是 <code>1</code>，即默认开启 cgo，允许在 Go 代码中调用 C 代码。</p>
+<ul>
+<li>当 <code>CGO_ENABLED=1</code> 进行编译时，会将文件中引用 libc 的库（比如常用的 net 包）以动态链接的方式生成目标文件；</li>
+<li>当 <code>CGO_ENABLED=0</code> 进行编译时，则会把在目标文件中未定义的符号（如外部函数）一起链接到可执行文件中。</li>
+</ul>
+<p>所以交叉编译时，我们需要将 CGO_ENABLED 设置为 0。</p>
+<p><strong>注意：编译go应用程序时，需将CGO_ENABLED设置为0，这样多阶段构建镜像时，如果在前一阶段编译成可执行文件时，如果指定该值为0，在下一阶段拉取的可执行文件，会因少了执行时必要的依赖而不能执行。同时，还应指定GOPROXY为七牛云地址，有些mod依赖国外下不了</strong></p>
+<h4 id="goos-和-goarch">GOOS 和 GOARCH</h4>
+<p>GOOS 是目标平台的操作系统，如 linux、windows，注意 macOS 的值是 darwin。默认是当前操作系统。</p>
+<p>GOARCH 是目标平台的 CPU 架构，如 amd64、arm、386 等。默认值是当前平台的 CPU 架构。</p>
+<p>Go 支持的所有操作系统和 CPU 架构可以查看 <a href="https://github.com/golang/go/blob/master/src/go/build/syslist.go">syslist.go</a> 。</p>
+<p>我们可以使用 <code>go env</code> 命令获取当前 GOOS 和 GOARCH 的值。例如我当前的操作系统是 macOS：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ go env GOOS GOARCH
+</span></span><span class="line"><span class="cl">darwin
+</span></span><span class="line"><span class="cl">amd64
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>所以在本文的多阶段构建 <code>Dockerfile.multistage</code> 中，构建命令是：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /docker-go-server-ping
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="构建镜像-2">构建镜像</h3>
+<p>由于我们现在有两个 Dockerfile，所以我们必须告诉 Docker 我们要使用新的 Dockerfile 进行构建。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ docker build -t docker-go-server-ping:multistage -f Dockerfile.multistage .
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>构建完成后，你会发现 docker-go-server-ping:multistage 只有不到 8MB，比 docker-go-server-ping:latest 小了几十倍。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ docker image ls
+</span></span><span class="line"><span class="cl">REPOSITORY                   TAG            IMAGE ID       CREATED         SIZE
+</span></span><span class="line"><span class="cl">docker-go-server-ping        latest         17fa05342cce   20 minutes ago   407MB
+</span></span><span class="line"><span class="cl">docker-go-server-ping        multistage     55fa4ded3360   1 minutes ago    7.93MB
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="运行-go-镜像">运行 Go 镜像</h2>
+<p>现在我们有了 Go 应用的镜像，接下来就可以运行 Go 镜像查看应用程序是否正常运行。</p>
+<p>要在 Docker 容器中运行镜像，我们可以使用 <code>docker run</code> 命令，参数是镜像名称：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ docker run -p 8080:8080 docker-go-server-ping:multistage
+</span></span><span class="line"><span class="cl">   ____    __
+</span></span><span class="line"><span class="cl">  / __/___/ /  ___
+</span></span><span class="line"><span class="cl"> / _// __/ _ \/ _ \
+</span></span><span class="line"><span class="cl">/___/\__/_//_/\___/ v4.6.1
+</span></span><span class="line"><span class="cl">High performance, minimalist Go web framework
+</span></span><span class="line"><span class="cl">https://echo.labstack.com
+</span></span><span class="line"><span class="cl">____________________________________O/_______
+</span></span><span class="line"><span class="cl">                                    O\
+</span></span><span class="line"><span class="cl">⇨ http server started on [::]:8080
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到 Go 应用成功启动了。</p>
+<p>让我们再打开一个新的终端，通过 curl 向 Go 服务器发起一个请求：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ curl http://localhost:8080
+</span></span><span class="line"><span class="cl">Hello, Docker! &lt;3
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="使用-makefile-简化构建流程">使用 Makefile 简化构建流程</h2>
+<p>在前面的步骤中，我们使用到了非常多的命令，维护起来非常麻烦，这时我们就可以使用 make 来简化构建流程。</p>
+<p>make 是一个自动化构建工具，会在根据当前目录下名为 Makefile（或 makefile）的文件来执行相应的构建任务。</p>
+<p>所以让我们先创建一个 Makefile 文件，内容如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">APP=docker-go-server-ping
+</span></span><span class="line"><span class="cl">all: clean test build-docker-multistage
+</span></span><span class="line"><span class="cl">test:
+</span></span><span class="line"><span class="cl"> go test -v ./
+</span></span><span class="line"><span class="cl">run: clean
+</span></span><span class="line"><span class="cl"> go build -o ${APP}
+</span></span><span class="line"><span class="cl"> ./${APP}
+</span></span><span class="line"><span class="cl">deps:
+</span></span><span class="line"><span class="cl"> go mod download
+</span></span><span class="line"><span class="cl">clean:
+</span></span><span class="line"><span class="cl"> go clean
+</span></span><span class="line"><span class="cl">build-docker:
+</span></span><span class="line"><span class="cl"> docker build -t ${APP}:latest -f Dockerfile .
+</span></span><span class="line"><span class="cl">build-docker-multistage:
+</span></span><span class="line"><span class="cl"> docker build -t ${APP}:multistage -f Dockerfile.multistage .
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>接下来就可以通过 <code>make</code> 命令进行测试或构建了。</p>
+<p>例如：</p>
+<ul>
+<li><code>make</code>：执行 <code>all</code> 中定义的命令</li>
+<li><code>make test</code>：执行单元测试</li>
+<li><code>make build-docker</code>：构建 Docker 镜像</li>
+<li><code>build-docker-multistage</code>：多阶段构建镜像，构建的镜像通常用于生产环境</li>
+</ul>
+<p>当然你也可以在 Makefile 中定义其他命令。</p>
+<h2 id="总结">总结</h2>
+<p>在本文中，我们首先开发了一个简单的 Go REST 服务应用，然后针对该应用详细讲解了如何构建 Docker 镜像。要构建镜像首先需要编写 Dockerfile，但基础的 Dockerfile 体积过大，所以我们又学习了如何通过多阶段构建减小镜像体积。在多阶段构建时，由于构建机和部署服务器可能存在操作系统和 CPU 架构的差异，又学习了如何通过交叉编译构建出可在其他平台直接使用的二进制文件。最后由于整个构建流程涉及命令比较多，真实 Go 项目可能构建流程会更复杂，所以学习了如何通过 Makefile 简化构建流程。</p>
+<p>最后感谢你的阅读，希望本文的内容能让你有所收获。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-01-09
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/post/mod%E5%92%8Cgopath%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Mod和gopath依赖管理</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E5%9F%BA%E4%BA%8Ego%E7%9A%84selenium%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/">
+            <span class="next-text nav-default">基于go的selenium使用详解</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-01-09 10:31:00 \u002b0800 CST',
+        title: '如何构建Go应用的Docker镜像',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>八股文 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/categories/%E5%85%AB%E8%82%A1%E6%96%87/</link>
+    <description>Recent content in 八股文 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Sat, 02 Sep 2023 11:27:02 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/%E5%85%AB%E8%82%A1%E6%96%87/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go设计模式之桥接模式</title>
+      <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Sat, 02 Sep 2023 11:27:02 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/</guid>
+      <description>桥接模式 一个类存在多个独立变化维度，我们通过组合的方式让多个维度可以独立进行扩展。桥接模式的目的是将抽象部分与实现部分解耦，使它们可以独立地</description>
+    </item>
+    
+    <item>
+      <title>Go设计模式之代理模式</title>
+      <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Fri, 01 Sep 2023 11:51:13 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</guid>
+      <description>代理模式 单例模式、工厂模式、建造者模式、原型模式、函数选项模式都是属于创建型模式，指导如何创建对象。 而结构型模式主要指导如何将对象或类组合在</description>
+    </item>
+    
+    <item>
+      <title>Go设计模式之原型模式</title>
+      <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Thu, 31 Aug 2023 16:40:50 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/</guid>
+      <description>原型模式 如果对象创建成本比较大（有些字段赋值可能需要rpc、网络、磁盘读取等），而且同一个类的对象差异不大（大部分字段都相同）。在这种情况下</description>
+    </item>
+    
+    <item>
+      <title>Go设计模式之函数选项模式</title>
+      <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%87%BD%E6%95%B0%E9%80%89%E9%A1%B9%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Wed, 30 Aug 2023 15:28:21 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%87%BD%E6%95%B0%E9%80%89%E9%A1%B9%E6%A8%A1%E5%BC%8F/</guid>
+      <description>来源于topgoer 函数选项模式 默认值 有时候一个函数会有很多参数，为了方便函数的使用，我们会给希望给一些参数设定默认值，调用时只需要传与默认</description>
+    </item>
+    
+    <item>
+      <title>Go设计模式之建造者模式</title>
+      <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Wed, 30 Aug 2023 14:24:59 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/</guid>
+      <description>建造者模式 与工厂模式不同，建造者模式只创建一种类型的复杂对象，可以通过设置可选参数，定制化地创建不同对象。 简而言之，创建参数复杂的对象 应用场</description>
+    </item>
+    
+    <item>
+      <title>Go语言设计模式之工厂模式</title>
+      <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Mon, 28 Aug 2023 17:01:59 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</guid>
+      <description>工厂模式 与单例模式不同，工厂模式根据传入参数不同，会创建出不同的但是相关联的对象，由给定参数来决定是哪一种对象。像一个工厂一样，传入什么，生</description>
+    </item>
+    
+    <item>
+      <title>Go语言设计模式之单例模式</title>
+      <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/</link>
+      <pubDate>Mon, 28 Aug 2023 15:45:16 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/</guid>
+      <description>单例模式 简而言之：一个类只允许创建一个对象或示例。 饿汉式 项目初始化的时候加载并初始化对象。创建过程线程安全，而且使得问题尽早暴露。 1 2 3 4 5</description>
+    </item>
+    
+    <item>
+      <title>Go设计模式之设计原则</title>
+      <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/</link>
+      <pubDate>Mon, 28 Aug 2023 08:35:47 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/</guid>
+      <description>设计原则 SOLID原则 SRP、OCP、LSP、ISP、DIP KISS原则 YAGNI原则 DRY原则 LOD原则 SRP 单一职责原则（Single Responsibility Pr</description>
+    </item>
+    
+    <item>
+      <title>Go设计模式之OOP</title>
+      <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8Boop/</link>
+      <pubDate>Sun, 27 Aug 2023 15:48:31 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8Boop/</guid>
+      <description>OOP OOP指的就是面向对象编程。有三大特性：封装、继承和多态 封装：通过对象访问控制权限实现，只对外暴露必要的方法修改对象，不能直接将对象全部暴</description>
+    </item>
+    
+    <item>
+      <title>八股系列|操作系统|文件系统</title>
+      <link>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</link>
+      <pubDate>Wed, 23 Aug 2023 21:35:11 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</guid>
+      <description>以下文章摘自小林coding 文件系统 不多 BB，直接上「硬菜」。 #文件系统的基本组成 文件系统是操作系统中负责管理持久数据的子系统，说简单点，就</description>
+    </item>
+    
+    <item>
+      <title>八股系列|操作系统|调度算法</title>
+      <link>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Wed, 23 Aug 2023 21:35:02 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/</guid>
+      <description>调度算法 进程调度 FIFO 先来先服务。每次从就绪队列里调度最先进入就绪队列的进程执行，执行完毕再调度下一个次先进入就绪队列的进程执行。 **缺点：**</description>
+    </item>
+    
+    <item>
+      <title>八股系列|操作系统|进程管理其一</title>
+      <link>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Wed, 23 Aug 2023 21:34:53 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/</guid>
+      <description>进程管理 并行和并发的区别？ 并行：多个进程或线程同一时刻运行在多个CPU上 并发：多个进程或线程同一时间段交替运行在单个CPU上 什么是进程？ 运行</description>
+    </item>
+    
+    <item>
+      <title>八股系列|操作系统|内存管理其二</title>
+      <link>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%85%B6%E4%BA%8C/</link>
+      <pubDate>Wed, 23 Aug 2023 21:34:46 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%85%B6%E4%BA%8C/</guid>
+      <description>来源于小林coding linux虚拟内存管理 4.6 深入理解 Linux 虚拟内存管理 这一篇会比较硬核，是比较全面的一篇 Linux 虚拟内存管理的文章，文章多达 3.5 万字 +</description>
+    </item>
+    
+    <item>
+      <title>八股系列|操作系统|内存管理篇一</title>
+      <link>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%85%B6%E4%B8%80/</link>
+      <pubDate>Wed, 23 Aug 2023 21:34:43 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%85%B6%E4%B8%80/</guid>
+      <description>内存管理 为什么要有虚拟内存？ 设想以下：如果我们在指定物理地址的内存上装载两个及以上的应用程序。这两个程序事先并没有协商，那么很容易出现一个程</description>
+    </item>
+    
+    <item>
+      <title>八股系列|操作系统|结构</title>
+      <link>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84/</link>
+      <pubDate>Wed, 23 Aug 2023 21:34:29 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84/</guid>
+      <description>系统结构 什么是内核与操作系统？ 内核属于操作系统，是操作系统最核心的部分，是用户和系统硬件的桥梁 操作系统是管理计算机系统资源的软件 内核具备什么</description>
+    </item>
+    
+    <item>
+      <title>八股系列|操作系统|硬件结构</title>
+      <link>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6%E7%BB%93%E6%9E%84/</link>
+      <pubDate>Mon, 14 Aug 2023 12:03:21 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6%E7%BB%93%E6%9E%84/</guid>
+      <description>这里记录一些不是很体系化，但是偶尔乍现的问题与其解 操作系统之硬件结构 CPU是如何执行程序的？ CPU是计算机的核心部件，包含控制器、运算器和寄</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>基于go的selenium使用详解 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="基于golang的selenium使用详解 什么是selenium？我理解成：selenium是一种程序员使用地、自动化地、可以通过代码来操控" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E5%9F%BA%E4%BA%8Ego%E7%9A%84selenium%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="基于go的selenium使用详解" />
+<meta property="og:description" content="基于golang的selenium使用详解 什么是selenium？我理解成：selenium是一种程序员使用地、自动化地、可以通过代码来操控" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E5%9F%BA%E4%BA%8Ego%E7%9A%84selenium%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-01-09T10:30:18+08:00" />
+<meta property="article:modified_time" content="2023-01-09T10:30:18+08:00" />
+<meta itemprop="name" content="基于go的selenium使用详解">
+<meta itemprop="description" content="基于golang的selenium使用详解 什么是selenium？我理解成：selenium是一种程序员使用地、自动化地、可以通过代码来操控"><meta itemprop="datePublished" content="2023-01-09T10:30:18+08:00" />
+<meta itemprop="dateModified" content="2023-01-09T10:30:18+08:00" />
+<meta itemprop="wordCount" content="2371">
+<meta itemprop="keywords" content="selenium,colly," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="基于go的selenium使用详解"/>
+<meta name="twitter:description" content="基于golang的selenium使用详解 什么是selenium？我理解成：selenium是一种程序员使用地、自动化地、可以通过代码来操控"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">基于go的selenium使用详解</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-01-09 </span>
+        <div class="post-category">
+            <a href="/categories/golang/"> golang </a>
+            <a href="/categories/%E7%88%AC%E8%99%AB/"> 爬虫 </a>
+            </div>
+          <span class="more-meta"> 约 2371 字 </span>
+          <span class="more-meta"> 预计阅读 5 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#基于golang的selenium使用详解">基于<code>golang</code>的<code>selenium</code>使用详解</a>
+      <ul>
+        <li><a href="#selenium使用"><code>selenium</code>使用</a></li>
+        <li><a href="#安装">安装</a></li>
+        <li><a href="#使用实例chorme为例">使用实例(<code>chorme</code>为例)</a></li>
+        <li><a href="#陷阱">陷阱</a></li>
+        <li><a href="#css选择器"><code>css</code>选择器</a></li>
+        <li><a href="#webelement接口"><code>webElement</code>接口</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h1 id="基于golang的selenium使用详解">基于<code>golang</code>的<code>selenium</code>使用详解</h1>
+<p>什么是<code>selenium</code>？我理解成：<code>selenium</code>是一种程序员使用地、自动化地、可以通过代码来操控指定浏览器的一种集成工具。在使用<code>go</code>语言<code>colly</code>框架爬取需要登录的网站时，遇到了问题，我必须输入并提交账号密码(<code>colly</code>这个还做不出来)，才能访问网站后面的资源。在网上百度了许久，于是看到了<code>selenium</code>可以做自动化地控制浏览器操作，于是乎便学习了基于<code>go</code>语言实现的<code>selenium</code>-&gt;<a href="https://github.com/tebeka/selenium.git">第三方框架:<code>tebeka/selenium</code></a>。刚开始学习地时候搜索大量教程，也去官网逛了一圈，觉得这些教程都不是很好，大多只是贴源码，没有更为详尽地解说，于是乎，自己便将自己的学习分享出来。</p>
+<h2 id="selenium使用"><code>selenium</code>使用</h2>
+<h2 id="安装">安装</h2>
+<p>目前我正在使用的一个依赖库是 <a href="https://link.juejin.cn?target=https%3A%2F%2Fgithub.com%2Ftebeka%2Fselenium"><code>tebeka/selenium</code></a>，功能较完整且处于维护中。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">go get -u github.com/tebeka/selenium
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>另外，我们需要对应不同类型的浏览器进行安装 <code>WebDriver</code>，<code>Google Chrome</code> 需要安装 <a href="https://link.juejin.cn?target=https%3A%2F%2Fchromedriver.chromium.org%2F"><code>ChromeDriver</code></a>，<code>Firefox</code> 则需要安装 <a href="https://link.juejin.cn?target=https%3A%2F%2Fgithub.com%2Fmozilla%2Fgeckodriver"><code>geckodriver</code></a>。</p>
+<h2 id="使用实例chorme为例">使用实例(<code>chorme</code>为例)</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;os&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;strings&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;github.com/tebeka/selenium&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">const</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">//指定对应浏览器的driver
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">chromeDriverPath</span> <span class="p">=</span> <span class="s">&#34;D:/selenium/chromedriver.exe&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">port</span>             <span class="p">=</span> <span class="mi">8080</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//ServiceOption 配置服务实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">opts</span> <span class="o">:=</span> <span class="p">[]</span><span class="nx">selenium</span><span class="p">.</span><span class="nx">ServiceOption</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">selenium</span><span class="p">.</span><span class="nf">Output</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stderr</span><span class="p">),</span> <span class="c1">// Output debug information to STDERR.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">//SetDebug 设置调试模式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">selenium</span><span class="p">.</span><span class="nf">SetDebug</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">//在后台启动一个ChromeDriver实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">service</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">selenium</span><span class="p">.</span><span class="nf">NewChromeDriverService</span><span class="p">(</span><span class="nx">chromeDriverPath</span><span class="p">,</span> <span class="nx">port</span><span class="p">,</span> <span class="nx">opts</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="c1">// panic is used only as an example and is not otherwise recommended.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">service</span><span class="p">.</span><span class="nf">Stop</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">//连接到本地运行的 WebDriver 实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">//这里的map键值只能为browserName，源码里需要获取这个键的值，来确定连接的是哪个浏览器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">caps</span> <span class="o">:=</span> <span class="nx">selenium</span><span class="p">.</span><span class="nx">Capabilities</span><span class="p">{</span><span class="s">&#34;browserName&#34;</span><span class="p">:</span> <span class="s">&#34;chrome&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">//NewRemote 创建新的远程客户端，这也将启动一个新会话。 urlPrefix 是 Selenium 服务器的 URL，必须以协议 (http, https, ...) 为前缀。为urlPrefix提供空字符串会导致使用 DefaultURLPrefix,默认访问4444端口，所以最好自定义，避免端口已经被抢占。后面的路由还是照旧DefaultURLPrefix写
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">wd</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">selenium</span><span class="p">.</span><span class="nf">NewRemote</span><span class="p">(</span><span class="nx">caps</span><span class="p">,</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;http://localhost:%d/wd/hub&#34;</span><span class="p">,</span> <span class="nx">port</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">wd</span><span class="p">.</span><span class="nf">Quit</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 导航到指定网站页面，浏览器默认get方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">wd</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;http://play.golang.org/?simple=1&#34;</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 此步操作为定位元素
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 在当前页面的 DOM 中准确找到一个元素，使用css选择器，使用id选择器选择文本框
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 值得注意的是，WebElement接口定义了几乎所有操作Web元素支持的方法，例如清除元素、移动鼠标、截图、鼠标点击、提交按钮等操作
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 此处对于浏览器的自动化操作可以应用于爬虫登录需要输入密码或者其他应用
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">elem</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">wd</span><span class="p">.</span><span class="nf">FindElement</span><span class="p">(</span><span class="nx">selenium</span><span class="p">.</span><span class="nx">ByCSSSelector</span><span class="p">,</span> <span class="s">&#34;#code&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 操作元素，删除文本框中已有的样板代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">elem</span><span class="p">.</span><span class="nf">Clear</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 在文本框中输入一些新代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">err</span> <span class="p">=</span> <span class="nx">elem</span><span class="p">.</span><span class="nf">SendKeys</span><span class="p">(</span><span class="s">`
+</span></span></span><span class="line"><span class="cl"><span class="s">        package main
+</span></span></span><span class="line"><span class="cl"><span class="s">        import &#34;fmt&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">        func main() {
+</span></span></span><span class="line"><span class="cl"><span class="s">            fmt.Println(&#34;Hello WebDriver!&#34;)
+</span></span></span><span class="line"><span class="cl"><span class="s">        }
+</span></span></span><span class="line"><span class="cl"><span class="s">    `</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// css选择器定位按钮控件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">btn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">wd</span><span class="p">.</span><span class="nf">FindElement</span><span class="p">(</span><span class="nx">selenium</span><span class="p">.</span><span class="nx">ByCSSSelector</span><span class="p">,</span> <span class="s">&#34;#run&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">btn</span><span class="p">.</span><span class="nf">Click</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 等待程序完成运行并获得输出
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">outputDiv</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">wd</span><span class="p">.</span><span class="nf">FindElement</span><span class="p">(</span><span class="nx">selenium</span><span class="p">.</span><span class="nx">ByCSSSelector</span><span class="p">,</span> <span class="s">&#34;#output&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">output</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">output</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">outputDiv</span><span class="p">.</span><span class="nf">Text</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">output</span> <span class="o">!=</span> <span class="s">&#34;Waiting for remote server...&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">break</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Millisecond</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s&#34;</span><span class="p">,</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Replace</span><span class="p">(</span><span class="nx">output</span><span class="p">,</span> <span class="s">&#34;\n\n&#34;</span><span class="p">,</span> <span class="s">&#34;\n&#34;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// Example Output:
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// Hello WebDriver!
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">//
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// Program exited.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用<a href="##css%E9%80%89%E6%8B%A9%E5%99%A8"><code>css</code>选择器</a>，需要熟悉其语法规则。达到定位的目的。之后就是使用<code>WebElement</code>对应的方法实现业务逻辑处理ok了。</p>
+<h2 id="陷阱">陷阱</h2>
+<p><strong>注意：在使用<code>css</code>选择器的同时一定不能使用右键检查查看源代码，这样的源代码是已经经过<code>js</code>渲染的的最终源代码;而查看网页源代码则是服务器发送到浏览器的原封不动的源代码，不包括页面动态渲染的内容。所以，使用<code>css</code>选择器应该使用查看网页源代码。</strong></p>
+<h2 id="css选择器"><code>css</code>选择器</h2>
+<table>
+<thead>
+<tr>
+<th><strong>选择器</strong></th>
+<th><strong>例子</strong></th>
+<th><strong>例子描述</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_class.asp">.<em>class</em></a></td>
+<td><code>.intro</code></td>
+<td>选择 <code>class=&quot;intro&quot;</code> 的所有元素。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_id.asp">#<em>id</em></a></td>
+<td><code>#firstname</code></td>
+<td>选择 <code>id=&quot;firstname&quot; </code>的所有元素。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_all.asp">*</a></td>
+<td><code>*</code></td>
+<td>选择所有元素。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_element.asp"><em>element</em></a></td>
+<td><code>p</code></td>
+<td>选择所有 <code>&lt;p&gt; </code>元素。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_element_comma.asp"><em>element</em>,<em>element</em></a></td>
+<td><code>div,p</code></td>
+<td>选择所有 <code>&lt;div&gt; </code>元素和所有 <code>&lt;p&gt;</code> 元素。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_element_element.asp"><em>element</em> <em>element</em></a></td>
+<td><code>div p</code></td>
+<td>选择<code>&lt;div&gt;</code>元素内部的所有<code>&lt;p&gt;</code>元素。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_element_gt.asp"><em>element</em>&gt;<em>element</em></a></td>
+<td><code>div&gt;p</code></td>
+<td>选择父元素为 <code>&lt;div&gt; </code>元素的所有 <code>&lt;p&gt;</code> 元素。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_element_plus.asp"><em>element</em>+<em>element</em></a></td>
+<td><code>div+p</code></td>
+<td>选择紧接在 <code>&lt;div&gt;</code> 元素之后的所有 <code>&lt;p&gt; </code>元素。</td>
+</tr>
+<tr>
+<td>[<a href="http://www.w3school.com.cn/cssref/selector_attribute.asp"><em>attribute</em>]</a></td>
+<td><code>[target]</code></td>
+<td>选择带有<code> target</code> 属性所有元素。</td>
+</tr>
+<tr>
+<td>[<a href="http://www.w3school.com.cn/cssref/selector_attribute_value.asp"><em>attribute</em>=<em>value</em>]</a></td>
+<td><code>[target=_blank]</code></td>
+<td>选择 <code>target=&quot;_blank&quot; </code>的所有元素。</td>
+</tr>
+<tr>
+<td>[<a href="http://www.w3school.com.cn/cssref/selector_attribute_value_contain.asp"><em>attribute</em>~=<em>value</em>]</a></td>
+<td><code>[title~=flower]</code></td>
+<td>选择<code>title</code>属性包含单词 <code>&quot;flower&quot; </code>的所有元素。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_gen_sibling.asp"><em>element1</em>~<em>element2</em></a></td>
+<td><code>p~ul</code></td>
+<td>选择前面有 <code>&lt;p&gt;</code> 元素的每个 <code>&lt;ul&gt;</code> 元素。</td>
+</tr>
+<tr>
+<td>[<a href="http://www.w3school.com.cn/cssref/selector_attr_begin.asp"><em>attribute</em>^=<em>value</em>]</a></td>
+<td><code>a[src^=&quot;https&quot;]</code></td>
+<td>选择其 <code>src</code> 属性值以 <code>&quot;https&quot; </code>开头的每个<code> &lt;a&gt;</code> 元素。</td>
+</tr>
+<tr>
+<td>[<a href="http://www.w3school.com.cn/cssref/selector_attr_end.asp"><em>attribute</em>$=<em>value</em>]</a></td>
+<td><code>a[src$=&quot;.pdf&quot;]</code></td>
+<td>选择其 <code>src </code>属性以<code> &quot;.pdf&quot;</code> 结尾的所有<code>&lt;a&gt;</code>元素。</td>
+</tr>
+<tr>
+<td>[<a href="http://www.w3school.com.cn/cssref/selector_attr_contain.asp"><em>attribute</em>*=<em>value</em>]</a></td>
+<td><code>a[src*=&quot;abc&quot;]</code></td>
+<td>选择其 <code>src</code> 属性中包含 <code>&quot;abc&quot; </code>子串的每个<code>&lt;a&gt;</code>元素。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_first-of-type.asp">:first-of-type</a></td>
+<td><code>p:first-of-type</code></td>
+<td>选择属于其父元素的首个 <code>&lt;p&gt;</code> 元素的每个 <code>&lt;p&gt; </code>元素。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_last-of-type.asp">:last-of-type</a></td>
+<td><code>p:last-of-type</code></td>
+<td>选择属于其父元素的最后 <code>&lt;p&gt; </code>元素的每个 <code>&lt;p&gt;</code> 元素。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_only-of-type.asp">:only-of-type</a></td>
+<td><code>p:only-of-type</code></td>
+<td>选择属于其父元素唯一的<code>&lt;p&gt;</code>元素的每个<code>&lt;p&gt;</code>元素。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_only-child.asp">:only-child</a></td>
+<td><code>p:only-child</code></td>
+<td>选择属于其父元素的唯一子元素的每个<code>&lt;p&gt;</code>元素。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_nth-child.asp">:nth-child(<em>n</em>)</a></td>
+<td><code>p:nth-child(2)</code></td>
+<td>选择属于其父元素的第二个子元素的每个 <code>&lt;p&gt; </code>元素。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_nth-last-child.asp">:nth-last-child(<em>n</em>)</a></td>
+<td><code>p:nth-last-child(2)</code></td>
+<td>同上，从最后一个子元素开始计数。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_nth-of-type.asp">:nth-of-type(<em>n</em>)</a></td>
+<td><code>p:nth-of-type(2)</code></td>
+<td>选择属于其父元素第二个 <code>&lt;p&gt; </code>元素的每个<code>&lt;p&gt;</code>元素。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_nth-last-of-type.asp">:nth-last-of-type(<em>n</em>)</a></td>
+<td><code>p:nth-last-of-type(</code></td>
+<td>同上，但是从最后一个子元素开始计数。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_last-child.asp">:last-child</a></td>
+<td><code>p:last-child</code></td>
+<td>选择属于其父元素最后一个子元素每个 <code>&lt;p&gt;</code> 元素。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_root.asp">:root</a></td>
+<td><code>:root</code></td>
+<td>选择文档的根元素。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_empty.asp">:empty</a></td>
+<td><code>p:empty</code></td>
+<td>选择没有子元素的每个 <code>&lt;p&gt; </code>元素（包括文本节点）。</td>
+</tr>
+<tr>
+<td><a href="http://www.w3school.com.cn/cssref/selector_not.asp">:not(<em>selector</em>)</a></td>
+<td><code>:not(p)</code></td>
+<td>选择非<code>&lt;p&gt;</code>元素的每个元素。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="webelement接口"><code>webElement</code>接口</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// WebElement defines method supported by web elements.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">WebElement</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Click clicks on the element.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">Click</span><span class="p">()</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// SendKeys types into the element.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">SendKeys</span><span class="p">(</span><span class="nx">keys</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Submit submits the button.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">Submit</span><span class="p">()</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Clear clears the element.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">Clear</span><span class="p">()</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// MoveTo moves the mouse to relative coordinates from center of element, If
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// the element is not visible, it will be scrolled into view.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">MoveTo</span><span class="p">(</span><span class="nx">xOffset</span><span class="p">,</span> <span class="nx">yOffset</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// FindElement finds a child element.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">FindElement</span><span class="p">(</span><span class="nx">by</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">WebElement</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// FindElement finds multiple children elements.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">FindElements</span><span class="p">(</span><span class="nx">by</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">string</span><span class="p">)</span> <span class="p">([]</span><span class="nx">WebElement</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// TagName returns the element&#39;s name.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">TagName</span><span class="p">()</span> <span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Text returns the text of the element.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">Text</span><span class="p">()</span> <span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// IsSelected returns true if element is selected.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">IsSelected</span><span class="p">()</span> <span class="p">(</span><span class="kt">bool</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// IsEnabled returns true if the element is enabled.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">IsEnabled</span><span class="p">()</span> <span class="p">(</span><span class="kt">bool</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// IsDisplayed returns true if the element is displayed.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">IsDisplayed</span><span class="p">()</span> <span class="p">(</span><span class="kt">bool</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// GetAttribute returns the named attribute of the element.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">GetAttribute</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Location returns the element&#39;s location.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">Location</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><span class="nx">Point</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// LocationInView returns the element&#39;s location once it has been scrolled
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// into view.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">LocationInView</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><span class="nx">Point</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Size returns the element&#39;s size.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">Size</span><span class="p">()</span> <span class="p">(</span><span class="o">*</span><span class="nx">Size</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// CSSProperty returns the value of the specified CSS property of the
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// element.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">CSSProperty</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Screenshot takes a screenshot of the attribute scroll&#39;ing if necessary.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">Screenshot</span><span class="p">(</span><span class="nx">scroll</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>源码如上，可见这个<code>webElement</code>封装了一些操作特定元素的一些方法，可以达到自动化操作浏览器的目的，如清除元素，填充元素。。。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-01-09
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/selenium/">selenium</a>
+          <a href="/tags/colly/">colly</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAgo%E5%BA%94%E7%94%A8%E7%9A%84docker%E9%95%9C%E5%83%8F/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">如何构建Go应用的Docker镜像</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/">
+            <span class="next-text nav-default">常见算法总结</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-01-09 10:30:18 \u002b0800 CST',
+        title: '基于go的selenium使用详解',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

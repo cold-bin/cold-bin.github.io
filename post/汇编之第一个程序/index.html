@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>汇编之第一个程序 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="汇编之第一个程序 一个源程序从写出到执行的过程 一个汇编语言程序从写出到最终执行的简要过程： 编写 -&amp;gt; 编译连接 -&amp;gt; 执行 对源程序进行编译连接： 使用汇编语" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="汇编之第一个程序" />
+<meta property="og:description" content="汇编之第一个程序 一个源程序从写出到执行的过程 一个汇编语言程序从写出到最终执行的简要过程： 编写 -&gt; 编译连接 -&gt; 执行 对源程序进行编译连接： 使用汇编语" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-12-06T17:43:13+08:00" />
+<meta property="article:modified_time" content="2022-12-06T17:43:13+08:00" />
+<meta itemprop="name" content="汇编之第一个程序">
+<meta itemprop="description" content="汇编之第一个程序 一个源程序从写出到执行的过程 一个汇编语言程序从写出到最终执行的简要过程： 编写 -&gt; 编译连接 -&gt; 执行 对源程序进行编译连接： 使用汇编语"><meta itemprop="datePublished" content="2022-12-06T17:43:13+08:00" />
+<meta itemprop="dateModified" content="2022-12-06T17:43:13+08:00" />
+<meta itemprop="wordCount" content="2725">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="汇编之第一个程序"/>
+<meta name="twitter:description" content="汇编之第一个程序 一个源程序从写出到执行的过程 一个汇编语言程序从写出到最终执行的简要过程： 编写 -&gt; 编译连接 -&gt; 执行 对源程序进行编译连接： 使用汇编语"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">汇编之第一个程序</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2022-12-06 </span>
+        <div class="post-category">
+            <a href="/categories/%E6%B1%87%E7%BC%96/"> 汇编 </a>
+            </div>
+          <span class="more-meta"> 约 2725 字 </span>
+          <span class="more-meta"> 预计阅读 6 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#汇编之第一个程序">汇编之第一个程序</a>
+      <ul>
+        <li><a href="#一个源程序从写出到执行的过程">一个源程序从写出到执行的过程</a></li>
+        <li><a href="#源程序的主要结构">源程序的主要结构</a></li>
+        <li><a href="#以简化的方式进行汇编和连接">以简化的方式进行汇编和连接</a></li>
+        <li><a href="#汇编和连接的作用">汇编和连接的作用</a></li>
+        <li><a href="#可执行文件中的程序装入内存并运行的原理">可执行文件中的程序装入内存并运行的原理</a></li>
+        <li><a href="#exe文件中的程序的加载过程">EXE文件中的程序的加载过程</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h1 id="汇编之第一个程序">汇编之第一个程序</h1>
+<h2 id="一个源程序从写出到执行的过程">一个源程序从写出到执行的过程</h2>
+<ol>
+<li>
+<p>一个<a href="https://so.csdn.net/so/search?q=%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80&amp;spm=1001.2101.3001.7020">汇编语言</a>程序从写出到最终执行的简要过程：
+编写 -&gt; 编译连接 -&gt; 执行</p>
+</li>
+<li>
+<p>对源程序进行编译连接：</p>
+<ol>
+<li>使用汇编语言编译程序（MASM.EXE）对源程序文件中的源程序进行编译，产生目标文件【.obj文件】</li>
+<li>再用连接程序（LINK.EXE）对目标文件进行连接，生成可在操作系统中直接运行的可执行文件【.EXE文件】</li>
+</ol>
+</li>
+<li>
+<p><a href="https://so.csdn.net/so/search?q=%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6&amp;spm=1001.2101.3001.7020">可执行文件</a>包含两部分内容：</p>
+<ol>
+<li>程序（从源程序的汇编指令翻译过来的机器码）和数据（源程序中定义的数据）；</li>
+<li>相关的描述信息（比如：程序有多大、要占多少内存空间等）；</li>
+</ol>
+</li>
+<li>
+<p>执行可执行文件中的程序：</p>
+<ol>
+<li>在操作系统（如：MSDOS）中，执行可执行文件中的程序；</li>
+<li>操作系统依照可执行文件中的描述信息，将可执行文件中的机器码和数据加载入内存，并进行相关的初始化（比如：设置 CS:IP 指向第一条要执行的指令），然后由 CPU 执行程序；</li>
+</ol>
+</li>
+</ol>
+<h2 id="源程序的主要结构">源程序的主要结构</h2>
+<p><img src="https://img-blog.csdnimg.cn/002516c2a04d4edd8bf2bf6aba71c06b.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_16,color_FFFFFF,t_70,g_se,x_16" alt="img">
+源程序由“ 汇编指令+伪指令+宏指令 ”组成：
+伪指令：编译器处理；
+汇编指令：编译为机器码；</p>
+<ol>
+<li>
+<p>伪指令：</p>
+<ol>
+<li>没有对应的机器码的指令，不能由 CPU 直接执行；</li>
+<li>伪指令是由编译器来执行的指令，编译器根据伪指令来进行相关的编译工作；</li>
+</ol>
+</li>
+<li>
+<p>segment 和 ends【定义一个段】</p>
+<ol>
+<li>
+<p>segment 和 ends 是一对成对使用的伪指令；</p>
+</li>
+<li>
+<p>编写汇编程序【<strong>必须</strong>】使用到的指令；</p>
+</li>
+<li>
+<p>segment 和 ends 的功能是定义一个段：</p>
+<ul>
+<li>segment：说明一个段开始；</li>
+<li>ends：说明一个段结束；</li>
+</ul>
+</li>
+<li>
+<p>一个段必须有一个名称来标识，使用格式为</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">段名 segment
+</span></span><span class="line"><span class="cl">段名 ends
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>一个汇编程序由多个段组成：
+这些段用来存放【代码，数据或当作栈空间】来使用，一个有意义的汇编程序至少要有一个段，这个段用来存放代码。</p>
+</li>
+</ol>
+</li>
+<li>
+<p>end【真正的没了】</p>
+<ol>
+<li>end 是一个汇编程序的结束标记；</li>
+<li>编译器在编译汇编程序的过程中，如果碰到了伪指令 end，就结束对源程序的编译；</li>
+<li>如果程序写完了，要在结尾处加上伪指令 end，否则，编译器无法知道程序在何处结束；</li>
+<li>【切记】不要把 end 和 ends 搞混了！
+<ul>
+<li>end：汇编程序的结束标记；</li>
+<li>ends：与 segment 成对出现，表示一个段结束；</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>
+<p>assume【寄存器和段的关联假设】</p>
+<ol>
+<li>它假设某一段寄存器和程序中的某一个用 segment…ends 定义的段相关联；</li>
+<li>通过 assume 说明这种关联，在需要的情况下，编译程序可以将段寄存器和某一具体的段相联系；</li>
+</ol>
+</li>
+<li>
+<p>程序和源程序</p>
+<ol>
+<li>我们将源程序文件中的所有内容称为【源程序】</li>
+<li>将源程序中最终由计算机执行处理的指令或数据称为【程序】</li>
+<li>程序最先以汇编指令的形式，存储在源程序中，然后经过编译、连接后转变为机器码，存储在可执行文件中；
+<img src="https://img-blog.csdnimg.cn/41c8c597636040c6a1fe0c71d075630f.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></li>
+</ol>
+</li>
+<li>
+<p>标号，标号与段名称有所区别：</p>
+<ol>
+<li>一个标号指代了一个地址，即是段名称，类似指针。</li>
+<li>段名称（codesg）放在 segment 的前面，作为一个段的名称，这个段的名称最终将被汇编、连接程序处理为一个段的段地址；</li>
+</ol>
+</li>
+</ol>
+<p>任务：编程运算 23；</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">assume</span> <span class="no">cs</span><span class="p">:</span><span class="no">abc</span>
+</span></span><span class="line"><span class="cl"><span class="nf">abc</span> <span class="no">segment</span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="nf">add</span> <span class="no">ax</span><span class="p">,</span><span class="no">ax</span>
+</span></span><span class="line"><span class="cl"><span class="nf">add</span> <span class="no">ax</span><span class="p">,</span><span class="no">ax</span>
+</span></span><span class="line"><span class="cl"><span class="nf">abc</span> <span class="no">ends</span>
+</span></span><span class="line"><span class="cl"><span class="nf">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol>
+<li>
+<p>DOS 中的程序运行：</p>
+<ol>
+<li>
+<p>DOS 是一个单任务操作系统：</p>
+<p>1） 一个程序 P2 在可执行文件中，则必须有一个正在运行的程序 P1，将 P2 从可执行文件中加载入内存后，将 CPU 的控制权交给 P2，P2 才能得以运行。P2 开始运行后，P1 暂停运行。</p>
+<p>2） 而当 P2 运行完毕后，应该将 CPU 的控制权交还给使它得以运行的程序 P1，此后，P1 继续运行。</p>
+</li>
+<li>
+<p>一个程序结束后，将 CPU 的控制权交还给是他得以运行的程序，称这个过程为：程序返回；</p>
+</li>
+</ol>
+</li>
+<li>
+<p>程序返回
+应该在程序的末尾添加返回的程序段。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">ax</span><span class="err">，</span><span class="mi">4</span><span class="no">c00H</span>
+</span></span><span class="line"><span class="cl"><span class="nf">int</span> <span class="mi">21</span><span class="no">H</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>【中断机制】是 DOS 最伟大的机制，Windows 系统上是【消息机制】，这两条指令所实现的功能就是程序返回；</p>
+</li>
+<li>
+<p>几个和结束相关的内容：</p>
+<ol>
+<li>
+<p>段结束：伪指令
+通知编译器一个段的结束【ends】</p>
+</li>
+<li>
+<p>程序结束：伪指令
+通知编译器程序的结束【end】</p>
+</li>
+<li>
+<p>程序返回：汇编指令</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">4</span><span class="no">c00H</span>
+</span></span><span class="line"><span class="cl"><span class="nf">int</span> <span class="mi">21</span><span class="no">H</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ol>
+</li>
+<li>
+<p>语法错误和逻辑错误：</p>
+<ol>
+<li>语法错误
+<ol>
+<li>程序在编译时被编译器发现的错误；</li>
+<li>容易发现；</li>
+</ol>
+</li>
+<li>逻辑错误
+<ol>
+<li>在编写时不会表现出来的错误、在运行时会发生的错误；</li>
+<li>不容易发现；</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="以简化的方式进行汇编和连接">以简化的方式进行汇编和连接</h2>
+<p>汇编使用的程序：<a href="https://so.csdn.net/so/search?q=masm&amp;spm=1001.2101.3001.7020">masm</a>.exe
+连接使用的程序：link.exe
+简化方式进行汇编和连接的程序：ml.exe</p>
+<p><a href="https://pan.baidu.com/s/14KdamaAjiWN9db3qVGSwbw">MASM下载链接</a>，提取码：gd2c；</p>
+<p>跟之前 <a href="https://blog.csdn.net/weixin_46263782/article/details/120327753">汇编（三）：DEBUG</a> 中提到的操作一样，修改配置文件，自动挂载 MASM 目录，可以输入 <code>dir</code> 进行验证；</p>
+<p><img src="https://img-blog.csdnimg.cn/87c08a13cbea42df9ab5d2f6340fe603.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_12,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<p>编写一个 Hello World 程序：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="na">.model</span> <span class="no">small</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="na">.data</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">strs</span> <span class="no">DB</span> <span class="err">&#39;</span><span class="no">hello</span> <span class="no">world</span><span class="err">&#39;</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="err">&#39;</span><span class="no">$</span><span class="err">&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="na">.code</span>
+</span></span><span class="line"><span class="cl"><span class="nl">start:</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="err">@</span><span class="no">data</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">ds</span><span class="p">,</span><span class="no">ax</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">dx</span><span class="p">,</span><span class="no">offset</span> <span class="no">strs</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">ah</span><span class="p">,</span><span class="mi">09</span><span class="no">h</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">int</span> <span class="mi">21</span><span class="no">h</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">ah</span><span class="p">,</span><span class="mi">4</span><span class="no">ch</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">int</span> <span class="mi">21</span><span class="no">h</span>
+</span></span><span class="line"><span class="cl"><span class="nf">end</span> <span class="no">start</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>先复制到 txt 文本中，然后将后缀改成 asm，使用 <code>masm 1.asm</code> 命令进行汇编；
+<img src="https://img-blog.csdnimg.cn/5ffd5caa99264ad4b5ce0e2898def156.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img">
+然后通过 <code>link 1.obj</code> 进行链接；</p>
+<p><img src="https://img-blog.csdnimg.cn/b2ab0c4a7bc143619e544fc019f88ac8.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img">
+最后执行所生成的 exe 文件；
+<img src="https://img-blog.csdnimg.cn/641596a480554e7ab433c2af5ee63471.png" alt="img"></p>
+<h2 id="汇编和连接的作用">汇编和连接的作用</h2>
+<p>连接的作用：</p>
+<ol>
+<li>当源程序很大时，可以将他们分成多个源程序文件夹编译，每个源程序编译成为目标文件后，再用连接程序将它们连接在一起，生成一个可执行文件；</li>
+<li>程序中调用了某个库文件中的子程序，需要将这个库文件和该程序生成的目标文件连接到一起，生成一个可执行文件；</li>
+<li>一个源程序编译后，得到了存有机器码的目标文件，目标文件中的有些内容还不能直接用来生成可执行文件，连接程序将这些内容处理为最终的可执行信息。所以在只有一个源程序文件，而又不需要调用某个库中的子程序的情况下，也必须用连接程序对目标文件进行处理，生成可执行文件；</li>
+</ol>
+<h2 id="可执行文件中的程序装入内存并运行的原理">可执行文件中的程序装入内存并运行的原理</h2>
+<ol>
+<li>
+<p>在 DOS 中，可执行文件中的程序 P1 若要运行，必须有一个正在运行的程序 P2，将 P1 从可执行文件中加载入内存，将 CP U的控制权交给P1，P1 才能得以运行；</p>
+</li>
+<li>
+<p>当 P1 运行完毕后，应该将 CPU 的控制权交还给使他得以运行的程序；</p>
+</li>
+<li>
+<p>操作系统的外壳：</p>
+<ol>
+<li>操作系统是由多个功能模块组成的庞大、复杂的软件系统，任何通用的操作系统，都需要提供一个称为 shell（外壳）的程序，用户（操作人员）使用这个程序来操作计算机系统工作；</li>
+<li>DOS 中有一个程序 command.com，这个程序在 DOS 中称为命令解释器，也就是 DOS 系统的 shell；</li>
+</ol>
+</li>
+<li>
+<p>执行可执行文件 1.exe 时，
+（1）什么程序将 CPU 的控制权交给了 1.exe？
+（2）将程序 1.exe 加载入内存后，如何使程序得以运行？
+（3）1.exe 程序运行结束后，返回到了哪里？</p>
+<ol>
+<li>在 DOS 中直接执行 1.exe 时，是正在运行的 cmd.exe 将 1.exe 中的程序加载入内存；</li>
+<li>cmd.exe 设置 CPU 的 CS:IP 指向程序的第一条指令（即，程序的入口），从而使程序得以运行；</li>
+<li>程序运行结束后，返回 cmd.exe 中，CPU 继续运行 cmd.exe；</li>
+</ol>
+</li>
+</ol>
+<p>汇编程序从写出到执行的过程：
+<img src="https://img-blog.csdnimg.cn/9a3441e44dcd4153a4b4399e7c250a36.png" alt="img"></p>
+<h2 id="exe文件中的程序的加载过程">EXE文件中的程序的加载过程</h2>
+<p><img src="https://img-blog.csdnimg.cn/ee7159059ecd41d390f23c1c2f516bc7.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<ul>
+<li>程序加载后，ds 中存放着程序所在内存区的段地址，这个内存区的偏移地址为 0 ，则程序所在的内存区的地址为：<code>ds:0</code>；</li>
+<li>这个内存区的前256个字节中存放的是 PSP，dos 用来和程序进行通信。</li>
+<li>从 256字节处向后的空间存放的是程序。</li>
+<li>所以，我们从 ds 中可以得到 PSP 的段地址 SA，PSP 的偏移地址为 0，则物理地址为 SA×16+0。</li>
+<li>因为 PSP 占256（100H）字节，所以程序的物理地址是：SA×16+0+256= SA×16+16×16=（SA+16）×16+0，可用段地址和偏移地址表示为：SA+10:0。</li>
+</ul>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2022-12-06
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E6%B1%87%E7%BC%96%E4%B9%8Bbx%E5%92%8Cloop%E6%8C%87%E4%BB%A4/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">汇编之BX和loop指令</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/">
+            <span class="next-text nav-default">汇编之寄存器</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2022-12-06 17:43:13 \u002b0800 CST',
+        title: '汇编之第一个程序',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

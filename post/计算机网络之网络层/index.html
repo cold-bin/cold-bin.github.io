@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>计算机网络之网络层 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="[toc] 4.1、网络层概述 简介 网络层的主要任务是实现网络互连，进而实现数据包在各网络之间的传输 这些异构型网络N1~N7如果只是需要各自内部通信，他" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="计算机网络之网络层" />
+<meta property="og:description" content="[toc] 4.1、网络层概述 简介 网络层的主要任务是实现网络互连，进而实现数据包在各网络之间的传输 这些异构型网络N1~N7如果只是需要各自内部通信，他" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-06-23T22:05:45+08:00" />
+<meta property="article:modified_time" content="2023-06-23T22:05:45+08:00" />
+<meta itemprop="name" content="计算机网络之网络层">
+<meta itemprop="description" content="[toc] 4.1、网络层概述 简介 网络层的主要任务是实现网络互连，进而实现数据包在各网络之间的传输 这些异构型网络N1~N7如果只是需要各自内部通信，他"><meta itemprop="datePublished" content="2023-06-23T22:05:45+08:00" />
+<meta itemprop="dateModified" content="2023-06-23T22:05:45+08:00" />
+<meta itemprop="wordCount" content="9027">
+<meta itemprop="keywords" content="ipv4,路由选择协议,icmp协议,vpn,nat," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="计算机网络之网络层"/>
+<meta name="twitter:description" content="[toc] 4.1、网络层概述 简介 网络层的主要任务是实现网络互连，进而实现数据包在各网络之间的传输 这些异构型网络N1~N7如果只是需要各自内部通信，他"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">计算机网络之网络层</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-06-23 </span>
+        <div class="post-category">
+            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"> 计算机网络 </a>
+            </div>
+          <span class="more-meta"> 约 9027 字 </span>
+          <span class="more-meta"> 预计阅读 19 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#41网络层概述">4.1、网络层概述</a>
+      <ul>
+        <li><a href="#简介">简介</a></li>
+        <li><a href="#总结">总结</a></li>
+      </ul>
+    </li>
+    <li><a href="#42网络层提供的两种服务">4.2、网络层提供的两种服务</a>
+      <ul>
+        <li><a href="#面向连接的虚电路服务">面向连接的虚电路服务</a></li>
+        <li><a href="#无连接的数据报服务">无连接的数据报服务</a></li>
+        <li><a href="#虚电路服务与数据报服务的对比">虚电路服务与数据报服务的对比</a></li>
+      </ul>
+    </li>
+    <li><a href="#43ipv4">4.3、IPv4</a>
+      <ul>
+        <li><a href="#概述">概述</a></li>
+        <li><a href="#分类编制的ipv4地址">分类编制的IPv4地址</a>
+          <ul>
+            <li><a href="#简介-1">简介</a></li>
+            <li><a href="#总结-1">总结</a></li>
+          </ul>
+        </li>
+        <li><a href="#划分子网的ipv4地址">划分子网的IPv4地址</a>
+          <ul>
+            <li><a href="#为什么要划分子网">为什么要划分子网</a></li>
+            <li><a href="#如何划分子网">如何划分子网</a></li>
+            <li><a href="#子网掩码">子网掩码</a></li>
+            <li><a href="#总结-2">总结</a></li>
+          </ul>
+        </li>
+        <li><a href="#无分类编址的ipv4地址">无分类编址的IPv4地址</a>
+          <ul>
+            <li><a href="#为什么使用无分类编址">为什么使用无分类编址</a></li>
+            <li><a href="#如何使用无分类编址">如何使用无分类编址</a></li>
+            <li><a href="#路由聚合构造超网">路由聚合（构造超网）</a></li>
+            <li><a href="#总结-3">总结</a></li>
+          </ul>
+        </li>
+        <li><a href="#ipv4地址的应用规划">IPv4地址的应用规划</a>
+          <ul>
+            <li><a href="#定长的子网掩码flsmfixed-length-subnet-mask">定长的子网掩码FLSM（Fixed Length Subnet Mask）</a></li>
+            <li><a href="#变长的子网掩码vlsmvariable-length-subnet-mask">变长的子网掩码VLSM（Variable Length Subnet Mask）</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#ipv6">IPv6</a></li>
+    <li><a href="#44ip数据报的发送和转发过程">4.4、IP数据报的发送和转发过程</a>
+      <ul>
+        <li>
+          <ul>
+            <li></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#45静态路由配置及其可能产生的路由环路问题">4.5、静态路由配置及其可能产生的路由环路问题</a>
+      <ul>
+        <li><a href="#概念">概念</a></li>
+        <li><a href="#多种情况举例">多种情况举例</a>
+          <ul>
+            <li><a href="#静态路由配置">静态路由配置</a></li>
+            <li><a href="#默认路由">默认路由</a></li>
+            <li><a href="#特定主机路由">特定主机路由</a></li>
+            <li><a href="#静态路由配置错误导致路由环路">静态路由配置错误导致路由环路</a></li>
+            <li><a href="#聚合了不存在的网络而导致路由环路">聚合了不存在的网络而导致路由环路</a></li>
+            <li><a href="#网络故障而导致路由环路">网络故障而导致路由环路</a></li>
+          </ul>
+        </li>
+        <li><a href="#总结-4">总结</a></li>
+      </ul>
+    </li>
+    <li><a href="#46路由选择协议">4.6、路由选择协议</a>
+      <ul>
+        <li><a href="#概述-1">概述</a>
+          <ul>
+            <li><a href="#自治系统-as">自治系统 AS</a></li>
+            <li><a href="#常见的路由选择协议">常见的路由选择协议</a></li>
+            <li><a href="#路由器的基本结构">路由器的基本结构</a></li>
+          </ul>
+        </li>
+        <li><a href="#路由信息协议rip">路由信息协议RIP</a>
+          <ul>
+            <li><a href="#距离向量">距离向量</a></li>
+            <li><a href="#rip的基本工作过程">RIP的基本工作过程</a></li>
+            <li><a href="#rip的路由条目的更新规则">RIP的路由条目的更新规则</a></li>
+            <li><a href="#rip存在坏消息传播得慢的问题">RIP存在“坏消息传播得慢”的问题</a></li>
+          </ul>
+        </li>
+        <li><a href="#开放最短路径优先ospf">开放最短路径优先OSPF</a>
+          <ul>
+            <li><a href="#概念-1">概念</a></li>
+            <li><a href="#问候hello分组">问候（Hello）分组</a></li>
+            <li><a href="#发送链路状态通告lsa">发送链路状态通告LSA</a></li>
+            <li><a href="#链路状态数据库同步">链路状态数据库同步</a></li>
+            <li><a href="#使用spf算法计算出各自路由器到达其他路由器的最短路径">使用SPF算法计算出各自路由器到达其他路由器的最短路径</a></li>
+            <li><a href="#ospf五种分组类型">OSPF五种分组类型</a></li>
+            <li><a href="#ospf的基本工作过程">OSPF的基本工作过程</a></li>
+            <li><a href="#ospf在多点接入网络中路由器邻居关系建立">OSPF在多点接入网络中路由器邻居关系建立</a></li>
+          </ul>
+        </li>
+        <li><a href="#边界网关协议bgp">边界网关协议BGP</a></li>
+        <li><a href="#直接封装ripospf和bgp报文的协议">直接封装RIP、OSPF和BGP报文的协议</a></li>
+      </ul>
+    </li>
+    <li><a href="#47ipv4数据报的首部格式">4.7、IPv4数据报的首部格式</a>
+      <ul>
+        <li><a href="#各字段的作用">各字段的作用</a></li>
+        <li><a href="#总结-5">总结</a></li>
+      </ul>
+    </li>
+    <li><a href="#ipv6数据报首部格式">IPv6数据报首部格式</a></li>
+    <li><a href="#48网际控制报文协议icmp">4.8、网际控制报文协议ICMP</a>
+      <ul>
+        <li><a href="#概念-2">概念</a>
+          <ul>
+            <li><a href="#icmp报文的分类">ICMP报文的分类</a></li>
+            <li><a href="#icmp报文的格式">ICMP报文的格式</a></li>
+          </ul>
+        </li>
+        <li><a href="#icmp差错报告报文">ICMP差错报告报文</a>
+          <ul>
+            <li><a href="#终点不可达">终点不可达</a></li>
+            <li><a href="#源点抑制">源点抑制</a></li>
+            <li><a href="#时间超过">时间超过</a></li>
+            <li><a href="#参数问题">参数问题</a></li>
+            <li><a href="#改变路由重定向">改变路由（重定向）</a></li>
+            <li><a href="#不应发送icmp差错报告报文情况">不应发送ICMP差错报告报文情况</a></li>
+          </ul>
+        </li>
+        <li><a href="#icmp应用举例">ICMP应用举例</a>
+          <ul>
+            <li><a href="#分组网间探测pingpacket-internet-groper">分组网间探测PING（Packet InterNet Groper）</a></li>
+            <li><a href="#跟踪路由traceroute">跟踪路由（traceroute）</a></li>
+          </ul>
+        </li>
+        <li><a href="#总结-6">总结</a></li>
+      </ul>
+    </li>
+    <li><a href="#49虚拟专用网vpn与网络地址转换nat">4.9、虚拟专用网VPN与网络地址转换NAT</a>
+      <ul>
+        <li><a href="#虚拟专用网vpnvirtual-private-network">虚拟专用网VPN（Virtual Private Network）</a></li>
+        <li><a href="#网络地址转换natnetwork-address-translation">网络地址转换NAT（Network Address Translation）</a></li>
+        <li><a href="#总结-7">总结</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <p>[toc]</p>
+<h1 id="41网络层概述">4.1、网络层概述</h1>
+<h2 id="简介">简介</h2>
+<ul>
+<li>网络层的主要任务是<strong>实现网络互连</strong>，进而<strong>实现数据包在各网络之间的传输</strong></li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231325466.png" alt="image-20201017134630948"></p>
+<blockquote>
+<p>这些异构型网络N1~N7如果只是需要各自内部通信，他们只要实现各自的物理层和数据链路层即可</p>
+<p>但是如果要将这些异构型网络互连起来，形成一个更大的互联网，就需要实现网络层设备路由器</p>
+<p>有时为了简单起见，可以不用画出这些网络，图中N1~N7，而将他们看做是一条链路即可</p>
+</blockquote>
+<ul>
+<li>
+<p>要实现网络层任务，需要解决以下主要问题：</p>
+<ul>
+<li>
+<p>网络层向运输层提供怎样的服务（“可靠传输”还是“不可靠传输”）</p>
+<p>在数据链路层那课讲过的可靠传输，详情可以看那边的笔记：网络层对以下的<strong>分组丢失</strong>、<strong>分组失序</strong>、<strong>分组重复</strong>的传输错误采取措施，使得接收方能正确接受发送方发送的数据，就是<strong>可靠传输</strong>，反之，如果什么措施也不采取，则是<strong>不可靠传输</strong></p>
+</li>
+<li>
+<p>网络层寻址问题</p>
+<p>如何对不同的主机或设备进行唯一的标识和寻址。</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231328707.png" alt="image-20201017135644630"></p>
+<ul>
+<li>路由选择问题</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231333451.png" alt="image-20201017135710478"></p>
+<blockquote>
+<p>路由器收到数据后，是依据什么来决定将数据包从自己的哪个接口转发出去？</p>
+<p><strong>依据数据包的目的地址和路由器中的路由表</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231333859.png" alt="image-20201017135914985"></p>
+<p>但在实际当中，路由器是怎样知道这些路由记录？</p>
+<ul>
+<li>由用户或网络管理员进行<strong>人工配置</strong>，这种方法只适用于规模较小且网络拓扑不改变的小型互联网</li>
+<li>另一种是实现各种路由选择协议，<strong>由路由器执行路由选择协议中所规定的路由选择算法，而自动得出路由表中的路由记录</strong>，这种方法更适合规模较大且网络拓扑经常改变的大型互联网</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231334215.png" alt="image-20201017142545630"></p>
+<blockquote>
+<p>补充</p>
+<ul>
+<li>网络层（网际层）除了 IP协议外，还有之前介绍过的地址解析协议ARP，还有网际控制报文协议ICMP，网际组管理协议IGMP</li>
+<li><strong>ARP协议应该不是网际层</strong>，而是属于网络接口层（相当于OSI七层参考模型中的数据链路层和物理层，而ARP协议属于数据链路层）</li>
+</ul>
+</blockquote>
+<h2 id="总结">总结</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231347506.png" alt="image-20201017140623851"></p>
+<hr>
+<h1 id="42网络层提供的两种服务">4.2、网络层提供的两种服务</h1>
+<ul>
+<li>在计算机网络领域，网络层应该向运输层提供怎样的服务（“<strong>面向连接</strong>”还是“<strong>无连接</strong>”）曾引起了长期的争论。</li>
+<li>争论焦点的实质就是：<strong>在计算机通信中，可靠交付应当由谁来负责</strong>？是<strong>网络</strong>还是<strong>端系统</strong>？</li>
+</ul>
+<h2 id="面向连接的虚电路服务">面向连接的虚电路服务</h2>
+<p><strong>一种观点：让网络负责可靠交付</strong></p>
+<ul>
+<li>这种观点认为，应借助于电信网的成功经验，让网络负责可靠交付，计算机网络应模仿电信网络，使用<strong>面向连接</strong>的通信方式。</li>
+<li>通信之前先建立<strong>虚电路</strong> (Virtual Circuit)，以保证双方通信所需的一切网络资源。</li>
+<li>如果再使用可靠传输的网络协议，就可使所发送的分组无差错按序到达终点，不丢失、不重复。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231350106.png" alt="image-20201017141425892"></p>
+<p><strong>发送方</strong> 发送给 <strong>接收方</strong> 的所有分组都沿着同一条虚电路传送</p>
+<blockquote>
+<ul>
+<li>
+<p>虚电路表示这只是一条逻辑上的连接，分组都沿着这条逻辑连接按照存储转发方式传送，而并不是真正建立了一条物理连接。</p>
+</li>
+<li>
+<p>请注意，电路交换的电话通信是先建立了一条真正的物理连接。</p>
+</li>
+<li>
+<p>因此分组交换的虚连接和电路交换的连接只是类似，但并不完全一样：</p>
+<p>虚电路则是一种建立逻辑通信通道的方式，通信双方在通信前需要建立一条虚电路，它会预留一定的资源，但<strong>这些资源在通信过程中并不一直被占用，而是根据实际通信需要进行动态分配</strong>。因此，虚电路的通信质量较电路交换略低，但资源利用率更高，且适应通信量变化较大的场景。</p>
+</li>
+</ul>
+</blockquote>
+<h2 id="无连接的数据报服务">无连接的数据报服务</h2>
+<p><strong>另一种观点：网络提供数据报服务</strong></p>
+<p>如果网络层提供可靠的传输服务，也即采用第一种观点（建立面向连接的虚电路服务），会导致线路被占用（尽管虚电路建立的逻辑电路连接，不一定一直占用线路资源，但还是存在占用情况），资源利用率下降。互联网的先驱者提出了一种崭新的网络设计思路。</p>
+<ul>
+<li>网络层向上只提供简单灵活的、<strong>无连接的</strong>、<strong>尽最大努力交付</strong>的<strong>数据报服务</strong>。</li>
+<li>网络在发送分组时不需要先建立连接。每一个分组（即 IP 数据报）独立发送，与其前后的分组无关（不进行编号）。</li>
+<li><strong>网络层不提供服务质量的承诺</strong>。即所传送的分组可能出错、丢失、重复和失序（不按序到达终点），当然也不保证分组传送的时限。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231407519.png" alt="image-20201017141851030"></p>
+<p><strong>发送方</strong> 发送给 <strong>接收方</strong> 的分组可能沿着不同路径传送</p>
+<blockquote>
+<p><strong>尽最大努力交付</strong></p>
+<ul>
+<li>如果主机（即端系统）中的进程之间的通信需要是可靠的，那么就由网络的<strong>主机中的运输层负责可靠交付（包括差错处理、流量控制等）</strong> 。</li>
+<li><strong>采用这种设计思路的好处是</strong>：网络的造价大大降低，运行方式灵活，能够适应多种应用。</li>
+<li>互联网能够发展到今日的规模，充分证明了当初采用这种设计思路的正确性。</li>
+</ul>
+</blockquote>
+<h2 id="虚电路服务与数据报服务的对比">虚电路服务与数据报服务的对比</h2>
+<table>
+<thead>
+<tr>
+<th><strong>对比的方面</strong></th>
+<th><strong>虚电路服务</strong></th>
+<th><strong>数据报服务</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>思路</em></td>
+<td>可靠通信应当由网络来保证</td>
+<td>可靠通信应当由用户主机（即端系统）来保证</td>
+</tr>
+<tr>
+<td><em>连接的建立</em></td>
+<td>必须有</td>
+<td>不需要</td>
+</tr>
+<tr>
+<td><em>终点地址</em></td>
+<td>仅在连接建立阶段使用，后续发送的每个分组使用短的虚电路号</td>
+<td>每个分组都有终点的完整地址</td>
+</tr>
+<tr>
+<td><em>分组的转发</em></td>
+<td>属于同一条虚电路的分组均按照同一路由进行转发</td>
+<td>每个分组可以选择不同的路由进行转发</td>
+</tr>
+<tr>
+<td><em>当结点出故障时</em></td>
+<td>所有含有故障结点的虚电路均不能工作，因为虚电路断掉了</td>
+<td>出故障的结点可能会丢失分组。可以选择其他节点继续转发路由</td>
+</tr>
+<tr>
+<td><em>分组的顺序</em></td>
+<td>总是按发送顺序到达终点</td>
+<td>到达终点时不一定按发送顺序</td>
+</tr>
+<tr>
+<td><em>端到端的差错处理和流量控制</em></td>
+<td>可以由网络负责，也可以由用户主机负责</td>
+<td>由用户主机负责，网络只是负责简单快捷的路由</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 id="43ipv4">4.3、IPv4</h1>
+<h2 id="概述">概述</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231420338.png" alt="image-20201017143206060"></p>
+<h2 id="分类编制的ipv4地址">分类编制的IPv4地址</h2>
+<h3 id="简介-1">简介</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231421348.png" alt="image-20201017144317166"></p>
+<ul>
+<li>每一类地址都由两个固定长度的字段组成，其中一个字段是<strong>网络号 net-id</strong>，它标志主机（或路由器）所连接到的网络，而另一个字段则是<strong>主机号 host-id</strong>，它标志该主机（或路由器）。</li>
+<li>主机号为全0的地址表示该子网的网络地址，不特指某个主机IP地址，而是指该子网的地址</li>
+<li>主机号为全1的地址和MAC地址为全1的地址一样都是属于广播地址，不能分配给主机或路由器</li>
+<li>主机号在它前面的网络号所指明的网络范围内必须是唯一的。</li>
+<li>由此可见，<strong>一个 IP 地址在整个互联网范围内是唯一的</strong>。</li>
+</ul>
+<p><strong>A类地址</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231436854.png" alt="image-20201017145210533"></p>
+<blockquote>
+<p>本地回环地址不仅仅只是<code>127.0.0.1</code>，是一个范围<code>127.0.0.1</code>到<code>127.255.255.254</code>。这些本地回环地址可以被视为是代表自身主机的某个永远不会宕掉的虚拟接口，常常用来测试本机的IP协议安装和网卡是否有问题。</p>
+<p>所以，如果需要对本机的某些资源进行访问，我们可以直接访问<code>127.0.0.1</code>到<code>127.255.255.254</code>中的任何一个地址都可以。</p>
+<p>如果本机是服务器，当然也可以通过公网IP进行外部访问，这样做虽然可以，但是多了互联网上的路由成本。</p>
+</blockquote>
+<p><strong>B类地址</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231446819.png" alt="image-20201017145508001"></p>
+<p><strong>C类地址</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231448883.png" alt="image-20201017150204774"></p>
+<p><strong>练习</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231454874.png" alt="image-20201017150543386"></p>
+<h3 id="总结-1">总结</h3>
+<p><strong>IP 地址的指派范围</strong></p>
+<p>实际上，<code>128.0</code>和<code>192.0.0</code>都可以指派了，这才是第一个可以指派的网络号</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231504248.png" alt="image-20201017152911541"></p>
+<p><strong>一般不使用的特殊的 IP 地址</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231505908.png" alt="image-20201017152959586"></p>
+<p><strong>IP 地址的一些重要特点</strong></p>
+<p>(1) <strong>IP 地址是一种分等级的地址结构</strong>。分两个等级的好处是：</p>
+<ul>
+<li><strong>第一</strong>，IP 地址管理机构在分配 IP 地址时只分配网络号，而剩下的主机号则由得到该网络号的单位自行分配。这样就方便了 IP 地址的管理。</li>
+<li><strong>第二</strong>，路由器仅根据目的主机所连接的网络号来转发分组（而不考虑目的主机号），这样就可以使路由表中的项目数大幅度减少，从而减小了路由表所占的存储空间。</li>
+</ul>
+<p>(2) <strong>实际上 IP 地址是标志一个主机（或路由器）和一条链路的接口</strong>。</p>
+<ul>
+<li>当一个主机同时连接到两个网络上时，该主机就必须同时具有两个相应的 IP 地址，其网络号 net-id 必须是不同的。这种主机称为<strong>多归属主机</strong> (multihomed host)。</li>
+<li>由于一个路由器至少应当连接到两个网络（这样它才能将 IP 数据报从一个网络转发到另一个网络），因此<strong>一个路由器至少应当有两个不同的 IP 地址</strong>。</li>
+</ul>
+<p>(3) <strong>用转发器或网桥连接起来的若干个局域网仍为一个网络</strong>，因此这些局域网都具有同样的网络号 net-id。</p>
+<p>(4) <strong>所有分配到网络号 net-id 的网络，无论是范围很小的局域网，还是可能覆盖很大地理范围的广域网，都是平等的。</strong></p>
+<h2 id="划分子网的ipv4地址">划分子网的IPv4地址</h2>
+<h3 id="为什么要划分子网">为什么要划分子网</h3>
+<p>在 ARPANET 的早期，IP 地址的设计确实不够合理：</p>
+<ul>
+<li>
+<p>IP 地址空间的利用率有时很低，而且划分的网络号可能支持的主机很多</p>
+<p>一个网络里的主机太多，就会导致广播的流量压力增大（ARP协议就需要使用广播）</p>
+</li>
+<li>
+<p>给每一个物理网络分配一个网络号会使路由表变得太大因而使网络性能变坏</p>
+<p>一个网络号能提供寻址的主机可能会很多，那么路由表就会较大</p>
+</li>
+<li>
+<p>两级的 IP 地址不够灵活。</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231519223.png" alt="image-20201017154645198"></p>
+<p>如果想要将原来的网络划分成三个独立的网路</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231520268.png" alt="image-20201017154852896"></p>
+<p>所以是否可以从主机号部分借用一部分作为子网号</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231522654.png" alt="image-20201017155026814"></p>
+<blockquote>
+<p>但是如果未在图中标记子网号部分，那么我们和计算机又如何知道分类地址中主机号有多少比特被用作子网号了呢？</p>
+<p>所以就有了划分子网的工具：<strong>子网掩码</strong></p>
+<ul>
+<li>从 1985 年起在 IP 地址中又增加了一个“<strong>子网号字段</strong>”，使两级的 IP 地址变成为<strong>三级的 IP 地址</strong>。</li>
+<li>这种做法叫做<strong>划分子网</strong> (subnetting) 。</li>
+<li>划分子网已成为互联网的正式标准协议。</li>
+</ul>
+</blockquote>
+<h3 id="如何划分子网">如何划分子网</h3>
+<p>基本思路</p>
+<ul>
+<li>划分子网纯属一个<strong>单位内部的事情</strong>。单位对外仍然表现为没有划分子网的网络。</li>
+<li>从主机号<strong>借用</strong>若干个位作为<strong>子网号</strong> subnet-id，而主机号 host-id 也就相应减少了若干个位。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231623066.png" alt="image-20201017155930011"></p>
+<ul>
+<li>凡是从其他网络发送给本单位某个主机的 IP 数据报，仍然是根据 IP 数据报的<strong>目的网络号</strong> net-id，先找到连接在本单位网络上的路由器。</li>
+<li>然后<strong>此路由器</strong>在收到 IP 数据报后，再按<strong>目的网络号</strong> net-id 和<strong>子网号</strong> subnet-id 找到目的子网。</li>
+<li>最后就将 IP 数据报直接交付目的主机。</li>
+</ul>
+<p>划分为三个子网后对外仍是一个网络</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231624439.png" alt="image-20201017160116239"></p>
+<blockquote>
+<ul>
+<li><strong>优点</strong>
+<ol>
+<li>划分子网时，减少了 IP 地址的浪费</li>
+<li>减少广播域</li>
+<li>控制流量</li>
+<li>优化路由</li>
+<li>提高安全性</li>
+<li>使网络的组织更加灵活</li>
+<li>更便于维护和管理</li>
+</ol>
+</li>
+<li><strong>划分子网纯属一个单位内部的事情，对外部网络透明</strong>，对外仍然表现为没有划分子网的一个网络。</li>
+</ul>
+</blockquote>
+<h3 id="子网掩码">子网掩码</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231625472.png" alt="image-20201017160252066"></p>
+<blockquote>
+<p><strong>(IP 地址) AND (子网掩码) = 网络地址</strong> 重要，下面很多相关知识都会用到</p>
+</blockquote>
+<h4 id="举例">举例</h4>
+<p>例子1</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231627478.png" alt="image-20201017161651058"></p>
+<p>例子2</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231631094.png" alt="image-20201017161719339"></p>
+<p><strong>默认子网掩码</strong></p>
+<p>可以看得出：使用默认子网掩码时，也就是说没有划分子网。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231632441.png" alt="image-20201017162807076"></p>
+<h3 id="总结-2">总结</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231636223.png" alt="image-20201017162938612"></p>
+<blockquote>
+<ul>
+<li>子网掩码是一个网络或一个子网的重要属性。</li>
+<li>路由器在和相邻路由器交换路由信息时，必须把自己所在网络（或子网）的子网掩码告诉相邻路由器。</li>
+<li>路由器的路由表中的每一个项目，除了要给出目的网络地址外，还必须同时给出该网络的子网掩码。</li>
+<li>若一个路由器连接在两个子网上，就拥有两个网络地址和两个子网掩码。</li>
+</ul>
+</blockquote>
+<h2 id="无分类编址的ipv4地址">无分类编址的IPv4地址</h2>
+<h3 id="为什么使用无分类编址">为什么使用无分类编址</h3>
+<p><strong>无分类域间路由选择 CIDR</strong> (Classless Inter-Domain Routing)。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231640879.png" alt="image-20201017164031532"></p>
+<blockquote>
+<p><strong>CIDR 最主要的特点</strong></p>
+<ul>
+<li>CIDR使用各种长度的“网络前缀”(network-prefix)来代替分类地址中的网络号和子网号。</li>
+<li>IP 地址从三级编址（使用子网掩码）又回到了两级编址。</li>
+</ul>
+</blockquote>
+<h3 id="如何使用无分类编址">如何使用无分类编址</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231640792.png" alt="image-20201017165037268"></p>
+<h4 id="举例-1">举例</h4>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231644926.png" alt="image-20201017165113442"></p>
+<h3 id="路由聚合构造超网">路由聚合（构造超网）</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231652167.png" alt="image-20201017165615915"></p>
+<h3 id="总结-3">总结</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306231657576.png" alt="image-20201017170552495"></p>
+<h2 id="ipv4地址的应用规划">IPv4地址的应用规划</h2>
+<p>给定一个IPv4地址块，如何将其划分成几个更小的地址块，并将这些地址块分配给互联网中不同网络，进而可以给各网络中的主机和路由器接口分配IPv4地址</p>
+<h3 id="定长的子网掩码flsmfixed-length-subnet-mask">定长的子网掩码FLSM（Fixed Length Subnet Mask）</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306232038445.png" alt="image-20201018143550103"></p>
+<p><strong>划分子网的IPv4就是定长的子网掩码</strong></p>
+<p>举例</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306232044135.png" alt="image-20201018140809079"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306232050667.png" alt="image-20201018140916631"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306232051855.png" alt="image-20201018141132446"></p>
+<blockquote>
+<p>通过上面步骤分析，就可以从子网1~8中任选5个分配给左图中的N1~N5</p>
+<p>采用定长的子网掩码划分，只能划分出2^n^个子网，其中n是从主机号部分借用的用来作为子网号的比特数量，每个子网所分配的IP地址数量相同</p>
+<p>但是也因为每个子网所分配的IP地址数量相同，不够灵活，容易造成IP地址的浪费</p>
+</blockquote>
+<h3 id="变长的子网掩码vlsmvariable-length-subnet-mask">变长的子网掩码VLSM（Variable Length Subnet Mask）</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306232053097.png" alt="image-20201018143632352"></p>
+<p><strong>无分类编址的IPv4就是变长的子网掩码</strong></p>
+<p>举例</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306232054773.png" alt="image-20201018142333145"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306232054612.png" alt="image-20201018143344440"></p>
+<hr>
+<h1 id="ipv6">IPv6</h1>
+<h1 id="44ip数据报的发送和转发过程">4.4、IP数据报的发送和转发过程</h1>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306232100552.png" alt="image-20201018144335297"></p>
+<h4 id="举例-2">举例</h4>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306232103964.png" alt="image-20201018151314019"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306232103797.png" alt="image-20201018150151171"></p>
+<p>源主机如何知道目的主机是否与自己在同一个网络中，是直接交付，还是间接交付？</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306232110790.png" alt="image-20201018150223497"></p>
+<blockquote>
+<p>可以通过目的IP地址和目的地址的子网掩码进行逻辑与运算得到目的网络地址</p>
+<ul>
+<li>如果目的网络地址和源网络地址 相同，就是在同一个网络中，属于直接交付</li>
+<li>如果目的网络地址和源网络地址 不相同，就不在同一个网络中，属于间接交付，传输给主机所在网络的默认网关（路由器——下图会讲解）,由默认网关帮忙转发</li>
+</ul>
+</blockquote>
+<p>主机C如何知道路由器R的存在？</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306232118196.png" alt="image-20201018145501063"></p>
+<blockquote>
+<p>用户为了让本网络中的主机能和其他网络中的主机进行通信，就必须给其指定本网络的一个路由器的接口，由该路由器帮忙进行转发，<strong>所指定的路由器</strong>，也被称为<strong>默认网关</strong></p>
+<p>例如：路由器的接口0的IP地址192.168.0.126做为左边网络的默认网关</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306232125079.png" alt="image-20201018150029179"></p>
+<blockquote>
+<p>主机A会将该IP数据报传输给自己的默认网关，也就是图中所示的路由器接口0</p>
+</blockquote>
+<p>路由器收到IP数据报后如何转发？</p>
+<ul>
+<li>检查IP数据报首部是否出错：
+<ul>
+<li>若出错，则直接丢弃该IP数据报并通告源主机</li>
+<li>若没有出错，则进行转发</li>
+</ul>
+</li>
+<li>根据IP数据报的目的地址在路由表中查找匹配的条目：
+<ul>
+<li>若找到匹配的条目，则转发给条目中指示的下一跳（也就是找到从路由器的哪个接口出去）</li>
+<li>若找不到，则丢弃该数据报并通告源主机</li>
+</ul>
+</li>
+</ul>
+<p>假设IP数据报首部没有出错，路由器取出IP数据报首部各地址字段的值</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306232128895.png" alt="image-20201018151108989"></p>
+<p>接下来路由器对该IP数据报进行查表转发</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306232128726.png" alt="image-20201018151528027"></p>
+<blockquote>
+<p>逐条检查路由条目，将目的地址与路由条目中的地址掩码进行逻辑与运算得到目的网络地址，然后与路由条目中的目的网络进行比较，如果相同，则这条路由条目就是匹配的路由条目，按照它的下一条指示，图中所示的也就是接口1转发该IP数据报</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306232130230.png" alt="image-20201018151956275"></p>
+<p>路由器是隔离广播域的</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306232133767.png" alt="image-20201018152040610"></p>
+<hr>
+<h1 id="45静态路由配置及其可能产生的路由环路问题">4.5、静态路由配置及其可能产生的路由环路问题</h1>
+<h2 id="概念">概念</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082010631.png" alt="image-20201018155702081"></p>
+<h2 id="多种情况举例">多种情况举例</h2>
+<h3 id="静态路由配置">静态路由配置</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082011960.png" alt="image-20201018160349375"></p>
+<h3 id="默认路由">默认路由</h3>
+<p>IPv4地址<code>0.0.0.0/0</code>在路由器中的目的网络指的就是所有网络。默认路由可以被所有网络匹配，但路由匹配有优先级，默认路由是优先级最低的</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082011608.png" alt="image-20201018160906284"></p>
+<h3 id="特定主机路由">特定主机路由</h3>
+<p>有时候，我们可以给路由器添加针对某个主机的特定主机路由条目，一般用于网络管理人员对网络的管理和测试</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082026978.png" alt="image-20201018161440257"></p>
+<blockquote>
+<p>多条路由可选，匹配路由最具体的</p>
+</blockquote>
+<h3 id="静态路由配置错误导致路由环路">静态路由配置错误导致路由环路</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082029525.png" alt="image-20201018161542579"></p>
+<p>假设将R2的路由表中第三条目录配置错了下一跳。这导致R2和R3之间产生了路由环路</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082036350.png" alt="image-20201018162041966"></p>
+<h3 id="聚合了不存在的网络而导致路由环路">聚合了不存在的网络而导致路由环路</h3>
+<h4 id="正常情况">正常情况</h4>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082053067.png" alt="image-20201018162333671"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082056468.png" alt="image-20201018162759562"></p>
+<h4 id="错误情况">错误情况</h4>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082057261.png" alt="image-20201018163323343"></p>
+<h4 id="解决方法">解决方法</h4>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082101376.png" alt="image-20201018163933715"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082101672.png" alt="image-20201018164453398"></p>
+<blockquote>
+<p>黑洞路由的下一跳为null0，这是路由器内部的虚拟接口，IP数据报进入它后就被丢弃</p>
+</blockquote>
+<h3 id="网络故障而导致路由环路">网络故障而导致路由环路</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082105800.png" alt="image-20201018164811811"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101623184.png" alt="image-20201018164913684"></p>
+<h4 id="解决方法-1">解决方法</h4>
+<p>添加故障的网络为黑洞路由</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101623330.png" alt="image-20201018165122023"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101623533.png" alt="image-20201018165153517"></p>
+<p>假设。一段时间后故障网络恢复了</p>
+<p>R1又自动地得出了其接口0的直连网络的路由条目</p>
+<p>针对该网络的黑洞网络会自动失效</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101623498.png" alt="image-20201018165328319"></p>
+<p>如果又故障</p>
+<p>则生效该网络的黑洞网络</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101623768.png" alt="image-20201018165521938"></p>
+<h2 id="总结-4">总结</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101624545.png" alt="image-20201018165709294"></p>
+<hr>
+<h1 id="46路由选择协议">4.6、路由选择协议</h1>
+<h2 id="概述-1">概述</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082110233.png" alt="image-20201019134827343"></p>
+<p><strong>因特网所采用的路由选择协议的主要特点</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082111189.png" alt="image-20201019134946971"></p>
+<p><strong>因特网采用分层次的路由选择协议</strong></p>
+<h3 id="自治系统-as">自治系统 AS</h3>
+<ul>
+<li>在单一的技术管理下的一组路由器，而这些路由器使用一种 AS 内部的路由选择协议和共同的度量以确定分组在该 AS 内的路由；</li>
+<li>同时还使用一种 AS 之间的路由选择协议用以确定分组在 AS 之间的路由。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082111797.png" alt="image-20201019135122326"></p>
+<blockquote>
+<p>自治系统之间的路由选择简称为<strong>域间路由选择</strong>，自治系统内部的路由选择简称为<strong>域内路由选择</strong></p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082112838.png" alt="image-20201019135328925"></p>
+<blockquote>
+<p>域间路由选择使用外部网关协议EGP这个类别的路由选择协议</p>
+<p>域内路由选择使用内部网关协议IGP这个类别的路由选择协议</p>
+<p><strong>网关协议</strong>的名称可称为<strong>路由协议</strong></p>
+</blockquote>
+<h3 id="常见的路由选择协议">常见的路由选择协议</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082112233.png" alt="image-20201019140009740"></p>
+<h3 id="路由器的基本结构">路由器的基本结构</h3>
+<p>路由器是一种具有多个输入输出端口的专用计算机，其任务是转发分组</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082112553.png" alt="image-20201019140234652"></p>
+<p>路由器结构可划分为两大部分：</p>
+<h4 id="分组转发部分">分组转发部分</h4>
+<p>由三部分构成：交换</p>
+<ul>
+<li>
+<p>交换结构</p>
+</li>
+<li>
+<p>一组输入端口：</p>
+<p>1、信号从某个输入端口进入路由器</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082119486.png" alt="image-20201019141149194" style="zoom:50%;" />
+<p>2、物理层将信号转换成比特流，送交数据链路层处理</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082119983.png" alt="image-20201019141210774" style="zoom: 50%;" />
+<p>3、数据链路层识别从比特流中识别出帧，去掉帧头和帧尾后，送交网络层处理</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082119630.png" alt="image-20201019141242246" style="zoom:50%;" />
+<p>4、如果送交网络层的分组是普通待转发的数据分组</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082120526.png" alt="image-20201019141305650" style="zoom:50%;" />
+<p>5、则根据分组首部中的目的地址进行查表转发</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082121798.png" alt="image-20201019141327380" style="zoom:50%;" />
+<p>6、若找不到匹配的转发条目，则丢弃该分组；否则，按照匹配条目中所指示的端口进行转发</p>
+</li>
+<li>
+<p>一组输出端口</p>
+<p>1、网络层更新数据分组首部中某些字段的值，例如将数据分组的生存时间减1，然后送交数据链路层进行封装</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101623585.png" alt="image-20201019141745375" style="zoom:50%;" />
+<p>2、数据链路层将数据分组封装成帧，交给物理层处理</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101624956.png" alt="image-20201019141838032" style="zoom:50%;" />
+<p>3、物理层将帧看成比特流将其变换成相应的电信号进行发送</p>
+</li>
+</ul>
+<blockquote>
+<p>路由器的各端口还会有输入缓冲区和输出缓冲区</p>
+<ul>
+<li>
+<p>输入缓冲区用来暂存新进入路由器但还来不及处理的分组</p>
+</li>
+<li>
+<p>输出缓冲区用来暂存已经处理完毕但还来不及发送的分组</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082122791.png" alt="image-20201019143040253"></p>
+<p>路由器的端口一般都具有输入和输出功能，这些实例分出了输入端口和输出端口是更好演示路由基本工作过程</p>
+</blockquote>
+<h4 id="路由选择部分">路由选择部分</h4>
+<ul>
+<li>
+<p>路由选择部分的核心构件是路由选择处理机，它的任务是根据所使用的路由选择协议周期性地与其他路由器进行路由信息的交互，来更新路由表</p>
+<p>，如果送交给输入端口的网络层的分组是路由器之间交换路由信息的路由报文，则把这种分组送交给路由选择处理机</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082124270.png" alt="image-20201019142228360" style="zoom:50%;" />
+<p>路由选择处理机根据分组的内容来更新自己的<strong>路由表</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082126710.png" alt="image-20201019142415055"></p>
+<p>路由选择处理机还会周期性地给其他路由器发送自己所知道的路由信息</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082126432.png" alt="image-20201019142924889"></p>
+</li>
+</ul>
+<h2 id="路由信息协议rip">路由信息协议RIP</h2>
+<h3 id="距离向量">距离向量</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082127039.png" alt="image-20201019144915687"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091125077.png" alt="image-20201019145247606"></p>
+<h3 id="rip的基本工作过程">RIP的基本工作过程</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091126751.png" alt="image-20201019145510947"></p>
+<h3 id="rip的路由条目的更新规则">RIP的路由条目的更新规则</h3>
+<h4 id="举例1">举例1</h4>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091131204.png" alt="image-20201019145627339"></p>
+<blockquote>
+<p>路由器C的表 到达各目的网络的下一条都记为问号，可以理解为路由器D并不需要关心路由器C的这些内容</p>
+<p>假设路由器C的RIP更新报文发送周期到了，则路由器C将自己路由表中的相关路由信息封装到RIP更新报文中发送给路由器D</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091138727.png" alt="image-20201019150120900"></p>
+<blockquote>
+<p>路由器C能到达这些网络，说明路由器C的相邻路由器也能到达，只是比路由器C的距离大1，于是根据距离的对比，路由器D更新自己的路由表</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091142442.png" alt="image-20201019150412666"></p>
+<h4 id="举例2">举例2</h4>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091143207.png" alt="image-20201019150525711"></p>
+<h3 id="rip存在坏消息传播得慢的问题">RIP存在“坏消息传播得慢”的问题</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091144863.png" alt="image-20201019151041492"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091146130.png" alt="image-20201019151135255"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091345162.png" alt="image-20201019151332767"></p>
+<h4 id="解决方法-2">解决方法</h4>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091350214.png" alt="image-20201019151639181"></p>
+<blockquote>
+<p>但是，这些方法也不能完全解决“坏消息传播得慢”的问题，这是距离向量的本质决定</p>
+</blockquote>
+<p><strong>总结</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091357581.png" alt="image-20201019152526098"></p>
+<blockquote>
+<p>RIP 协议的优缺点</p>
+<p>优点：</p>
+<ol>
+<li>实现简单，开销较小。</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>
+<p>RIP 限制了网络的规模，它能使用的最大距离为 15（16 表示不可达）。</p>
+</li>
+<li>
+<p>路由器之间交换的路由信息是路由器中的完整路由表，因而随着网络规模的扩大，开销也就增加。</p>
+</li>
+<li>
+<p>“坏消息传播得慢”，使更新过程的收敛时间过长。</p>
+</li>
+</ol>
+</blockquote>
+<h2 id="开放最短路径优先ospf">开放最短路径优先OSPF</h2>
+<p><strong>开放最短路径优先 OSPF (Open Shortest Path First)</strong></p>
+<blockquote>
+<p>注意：OSPF 只是一个协议的名字，它并不表示其他的路由选择协议不是“最短路径优先”。</p>
+</blockquote>
+<h3 id="概念-1">概念</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091356052.png" alt="image-20201019161841695"></p>
+<h3 id="问候hello分组">问候（Hello）分组</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091405040.png" alt="image-20201019161653875"></p>
+<blockquote>
+<p>IP数据报首部中协议号字段的取值应为89，来表明IP数据报的数据载荷为OSPF分组.</p>
+</blockquote>
+<h3 id="发送链路状态通告lsa">发送链路状态通告LSA</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091410072.png" alt="image-20201019162341151"></p>
+<blockquote>
+<p>洪泛法有点类似于广播，就是从一个接口进来，从其他剩余所有接口出去</p>
+</blockquote>
+<h3 id="链路状态数据库同步">链路状态数据库同步</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091412226.png" alt="image-20201019162933483"></p>
+<h3 id="使用spf算法计算出各自路由器到达其他路由器的最短路径">使用SPF算法计算出各自路由器到达其他路由器的最短路径</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091417515.png" alt="image-20201019163148068"></p>
+<h3 id="ospf五种分组类型">OSPF五种分组类型</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091419479.png" alt="image-20201019163250129"></p>
+<h3 id="ospf的基本工作过程">OSPF的基本工作过程</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091423591.png" alt="image-20201019163746254"></p>
+<h3 id="ospf在多点接入网络中路由器邻居关系建立">OSPF在多点接入网络中路由器邻居关系建立</h3>
+<p>如果不采用其他机制，将会产生大量的多播分组</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091427910.png" alt="image-20201019164657606"></p>
+<blockquote>
+<p>若DR出现问题，则由BDR顶替DR</p>
+</blockquote>
+<p><strong>为了使OSPF能够用于规模很大的网络，OSPF把一个自治系统再划分为若干个更小的范围，叫做区域（Area）</strong></p>
+<ul>
+<li>
+<p>在该自治系统内，所有路由器都使用OSPF协议，OSPF将该自治系统再划分成4个更小的区域</p>
+</li>
+<li>
+<p>每个区域都有一个32比特的区域标识符</p>
+</li>
+<li>
+<p>主干区域的区域标识符必须为0，主干区域用于连通其他区域</p>
+</li>
+<li>
+<p>其他区域的区域标识符不能为0且不相同</p>
+</li>
+<li>
+<p>每个区域一般不应包含路由器超过200个</p>
+</li>
+<li>
+<p>划分区域的好处就是，利用洪泛法交换链路状态信息局限于每一个区域而不是自治系统，这样减少整个网络上的通信量</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091429141.png" alt="image-20201019170100568"></p>
+<p><strong>总结</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091439280.png" alt="image-20201019170217622"></p>
+<h2 id="边界网关协议bgp">边界网关协议BGP</h2>
+<p>BGP（Border Gateway Protocol） 是<strong>不同自治系统的路由器之间</strong>交换路由信息的协议</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091442314.png" alt="image-20201019191438399"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091442164.png" alt="image-20201019191718506"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091442471.png" alt="image-20201019191836397"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091443499.png" alt="image-20201019192031087"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091443430.png" alt="image-20201019192059962"></p>
+<p><strong>总结</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091443719.png" alt="image-20201019192840368"></p>
+<h2 id="直接封装ripospf和bgp报文的协议">直接封装RIP、OSPF和BGP报文的协议</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307082127134.png" alt="image-20201019192800829"></p>
+<hr>
+<h1 id="47ipv4数据报的首部格式">4.7、IPv4数据报的首部格式</h1>
+<blockquote>
+<p>下面只是说了IPv4的首部格式，数据载荷就是上层交付的数据</p>
+</blockquote>
+<h2 id="各字段的作用">各字段的作用</h2>
+<ul>
+<li>一个 IP 数据报由<strong>首部</strong>和<strong>数据</strong>两部分组成。</li>
+<li><strong>首部的前一部分是固定长度，共 20 字节，是所有 IP 数据报必须具有的。</strong></li>
+<li>在首部的固定部分的后面是一些可选部分，其长度是可变的。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091623822.png" alt="image-20201019205931748"></p>
+<p>图中的每一行都由32个比特（也就是4个字节）构成，每个小格子称为字段或者域，每个字段或某些字段的组合用来表达IP协议的相关功能</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091626004.png" alt="image-20201019211719880"></p>
+<blockquote>
+<p><strong>IP数据报的首部长度一定是4字节的整数倍</strong></p>
+<p>因为首部中的可选字段的长度从1个字节到40个字节不等，那么，当20字节的固定部分加上1到40个字节长度不等的可变部分，<strong>会造成首部长度不是4字节整数倍时，就用取值为全0的填充字段填充相应个字节</strong>，以确保IP数据报的首部长度是4字节的整数倍</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091631591.png" alt="image-20201019212617006"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091637661.png" alt="image-20201019220435415"></p>
+<p><strong>对IPv4数据报进行分片</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091643228.png" alt="image-20201019221021157"></p>
+<p>现在假定分片2的IP数据报经过某个网络时还需要进行分片</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091649447.png" alt="image-20201019221246870"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091649004.png" alt="image-20201019222512112"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091655549.png" alt="image-20201019222552444"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091656817.png" alt="image-20201019222729797"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091658124.png" alt="image-20201019223101434"></p>
+<h2 id="总结-5">总结</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307091659595.png" alt="image-20201019225141559"></p>
+<hr>
+<h1 id="ipv6数据报首部格式">IPv6数据报首部格式</h1>
+<h1 id="48网际控制报文协议icmp">4.8、网际控制报文协议ICMP</h1>
+<h2 id="概念-2">概念</h2>
+<p>架构IP网络时需要特别注意两点：</p>
+<ul>
+<li>确认网络是否正常工作</li>
+<li>遇到异常时进行问题诊断</li>
+</ul>
+<p>而ICMP就是解决这些问题的协议，ICMP的主要功能包括：</p>
+<ul>
+<li>确认IP包是否成功送达目标地址</li>
+<li>通知在发送过程当中IP包被废弃的具体原因</li>
+<li>改善网络设置等</li>
+</ul>
+<p>有了这些功能以后，就可以获得网络是否正常，设置是否有误以及设备有何异常等信息，从而便于进行网络上的问题诊断</p>
+<h3 id="icmp报文的分类">ICMP报文的分类</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101132686.png" alt="image-20201019232539898"></p>
+<h3 id="icmp报文的格式">ICMP报文的格式</h3>
+<p>ICMP 不是高层协议（看起来好像是高层协议，因为 ICMP 报文是装在 IP 数据报中，作为其中的数据部分），而是 IP 层的协议</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101135836.png" alt="image-20201020001035813"></p>
+<h2 id="icmp差错报告报文">ICMP差错报告报文</h2>
+<h3 id="终点不可达">终点不可达</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101138334.png" alt="image-20201019230838587"></p>
+<h3 id="源点抑制">源点抑制</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101141636.png" alt="image-20201019231022291"></p>
+<h3 id="时间超过">时间超过</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101141488.png" alt="image-20201019231230798"></p>
+<h3 id="参数问题">参数问题</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101145845.png" alt="image-20201019231355471"></p>
+<h3 id="改变路由重定向">改变路由（重定向）</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101148701.png" alt="image-20201019231553990"></p>
+<h3 id="不应发送icmp差错报告报文情况">不应发送ICMP差错报告报文情况</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101151249.png" alt="image-20201019231733673"></p>
+<h2 id="icmp应用举例">ICMP应用举例</h2>
+<h3 id="分组网间探测pingpacket-internet-groper">分组网间探测PING（Packet InterNet Groper）</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101151682.png" alt="image-20201019233817921"></p>
+<h3 id="跟踪路由traceroute">跟踪路由（traceroute）</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101153611.png" alt="image-20201019234123026"></p>
+<h4 id="tracert命令的实现原理"><code>tracert</code>命令的实现原理</h4>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101159337.png" alt="image-20201019234718107"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101200864.png" alt="image-20201019234741268"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101204376.png" alt="image-20201019234758693"></p>
+<h2 id="总结-6">总结</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101204301.png" alt="image-20201019234909146"></p>
+<hr>
+<h1 id="49虚拟专用网vpn与网络地址转换nat">4.9、虚拟专用网VPN与网络地址转换NAT</h1>
+<h2 id="虚拟专用网vpnvirtual-private-network">虚拟专用网VPN（Virtual Private Network）</h2>
+<ul>
+<li>由于 <strong>IP 地址的紧缺</strong>，一个机构能够申请到的IP地址数往往远小于本机构所拥有的主机数。</li>
+<li>考虑到<strong>互联网并不很安全</strong>，一个机构内也并不需要把所有的主机接入到外部的互联网。</li>
+<li>假定在一个机构内部的计算机通信也是采用 TCP/IP 协议，那么从原则上讲，对于这些仅在<strong>机构内部使用</strong>的计算机就可以由本机构<strong>自行分配其 IP 地址</strong>。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101556493.png" alt="image-20201019235534728"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101559021.png" alt="image-20201019235631474"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101600406.png" alt="image-20201019235718010"></p>
+<blockquote>
+<p>上图是因特网数字分配机构IANA官网查看IPv4地址空间中特殊地址的分配方案</p>
+<p>用粉红色标出来的地址就是无需申请的、可自由分配的专用地址或称私有地址</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101601523.png" alt="image-20201020000136443"></p>
+<blockquote>
+<p>私有地址只能用于一个机构的内部通信，而不能用于和因特网上的主机通信</p>
+<p>私有地址只能用作本地地址而不能用作全球地址</p>
+<p>因特网中所有路由器对目的地址是私有地址的IP数据报一律不进行转发</p>
+<p><strong>本地地址与全球地址</strong></p>
+<ul>
+<li><strong>本地地址</strong>——仅在机构内部使用的 IP 地址，可以由本机构自行分配，而不需要向互联网的管理机构申请。</li>
+<li><strong>全球地址</strong>——全球唯一的 IP 地址，必须向互联网的管理机构申请。</li>
+<li><strong>问题</strong>：在内部使用的本地地址就有可能和互联网中某个 IP 地址重合，这样就会出现地址的二义性问题。</li>
+</ul>
+</blockquote>
+<p>所以部门A和部门B至少需要一个 路由器具有合法的全球IP地址，这样各自的专用网才能利用公用的因特网进行通信</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101603303.png" alt="image-20201020000618797"></p>
+<p>部门A向部门B发送数据流程</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101604444.png" alt="image-20201020001107425"></p>
+<blockquote>
+<p>两个专用网内的主机间发送的数据报是通过了公用的因特网，但在效果上就好像是在本机构的专用网上传送一样</p>
+<p>数据报在因特网中可能要经过多个网络和路由器，但从逻辑上看，R1和R2之间好像是一条直通的点对点链路</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101605956.png" alt="image-20201020001528569"></p>
+<p>因此也被称为IP隧道技术</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101606460.png" alt="image-20201020001935801"></p>
+<h2 id="网络地址转换natnetwork-address-translation">网络地址转换NAT（Network Address Translation）</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101607018.png" alt="image-20201020002020607"></p>
+<p>举例</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101624909.png" alt="image-20201020002439942"></p>
+<blockquote>
+<p>使用私有地址的主机，如何才能与因特网上使用全球IP地址的主机进行通信？</p>
+<p>这需要在专用网络连接到因特网的路由器上安装NAT软件</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101610414.png" alt="image-20201020002734192"></p>
+<blockquote>
+<p>装有NAT软件的路由器叫做NAT路由器。它至少有一个有效的外部全球IP地址</p>
+<p>这样，所有使用私有地址的主机在和外界通信时，都要在NAT路由器上将其私有地址转换为全球IP地址</p>
+</blockquote>
+<p>假设，使用私有地址的主机要给因特网上使用全球IP地址的另一台主机发送IP数据报</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101612030.png" alt="image-20201020003238729"></p>
+<p>因特网上的这台主机给源主机发回数据报</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101612399.png" alt="image-20201020003411024"></p>
+<p>当专用网中的这两台使用私有地址的主机都要给因特网使用全球地址的另一台主机发送数据报时，在NAT路由器的NAT转换表中就会产生两条记录，分别记录两个私有地址与全球地址的对应关系</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101615334.png" alt="image-20201020003658349"></p>
+<p>这种基本转换存在一个问题</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101615768.png" alt="image-20201020003733863"></p>
+<p>解决方法</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101615038.png" alt="image-20201020003840584"></p>
+<blockquote>
+<p>我们现在用的很多家用路由器都是这种NART路由器</p>
+</blockquote>
+<p>内网主机与外网主机的通信，是否能由外网主机首先发起？</p>
+<blockquote>
+<p>否定</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101618510.png" alt="image-20201020004159360"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101621226.png" alt="image-20201020004312942"></p>
+<h2 id="总结-7">总结</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202307101621199.png" alt="image-20201020004447021"></p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-06-23
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/ipv4/">ipv4</a>
+          <a href="/tags/%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E5%8D%8F%E8%AE%AE/">路由选择协议</a>
+          <a href="/tags/icmp%E5%8D%8F%E8%AE%AE/">icmp协议</a>
+          <a href="/tags/vpn/">vpn</a>
+          <a href="/tags/nat/">nat</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E8%BF%90%E8%BE%93%E5%B1%82/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">计算机网络之运输层</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/">
+            <span class="next-text nav-default">计算机网络之数据链路层</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-06-23 22:05:45 \u002b0800 CST',
+        title: '计算机网络之网络层',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

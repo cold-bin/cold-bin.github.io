@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>分布式系统 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/</link>
+    <description>Recent content in 分布式系统 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Thu, 10 Aug 2023 16:32:37 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Mit6.824之lab1</title>
+      <link>https://cold-bin.github.io/post/mit6.824%E4%B9%8Blab1/</link>
+      <pubDate>Thu, 10 Aug 2023 16:32:37 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/mit6.824%E4%B9%8Blab1/</guid>
+      <description>lab1——实现简易版的mapreduce框架 论文回顾 mapreduce架构 严格来讲，MapReduce是一种分布式计算模型，用于解决大于1</description>
+    </item>
+    
+    <item>
+      <title>Redis高级篇之分布式缓存</title>
+      <link>https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/</link>
+      <pubDate>Sun, 15 Jan 2023 17:26:41 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/</guid>
+      <description>[toc] 基于Redis集群解决单机Redis存在的问题 单机的Redis存在四大问题： 分布式缓存 1.Redis持久化 Redis有两种持久化方案： RD</description>
+    </item>
+    
+    <item>
+      <title>分布式锁</title>
+      <link>https://cold-bin.github.io/post/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/</link>
+      <pubDate>Thu, 12 Jan 2023 11:54:12 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/</guid>
+      <description>分布式锁 以下文章来自转载，并做了一些必要的补充和改进 什么是锁？ 在单进程的系统中，当存在多个线程可以同时改变某个变量（可变共享变量）时，就需要</description>
+    </item>
+    
+    <item>
+      <title>微服务架构项目开发要点</title>
+      <link>https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E8%A6%81%E7%82%B9/</link>
+      <pubDate>Sat, 27 Aug 2022 15:15:46 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E8%A6%81%E7%82%B9/</guid>
+      <description>微服务架构项目开发要点 随着系统用户逐日增长，原来的单机架构集群部署的方式，虽然能够顶得住流量顶峰地倾泄，但是，系统越来越复杂。集群方式部署的</description>
+    </item>
+    
+    <item>
+      <title>RPC与微服务</title>
+      <link>https://cold-bin.github.io/post/rpc%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/</link>
+      <pubDate>Sun, 21 Aug 2022 13:52:34 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/rpc%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/</guid>
+      <description>RPC与微服务 一、RPC 1. 什么是RPC RPC(即：Remote Procedure Call) 远程过程调用，简单地理解是一个节点请求另一个节点提供的服务。当然这两个节点</description>
+    </item>
+    
+    <item>
+      <title>微服务一些概念</title>
+      <link>https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/</link>
+      <pubDate>Fri, 19 Aug 2022 10:13:32 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/</guid>
+      <description>微服务概念 微服务的粒度小，服务之间耦合度低，由于每个微服务都由独立的小团队负责，因此它敏捷性更高，分布式服务最后都会向微服务架构演化，这是一</description>
+    </item>
+    
+    <item>
+      <title>集中式与分布式</title>
+      <link>https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/</link>
+      <pubDate>Thu, 07 Jul 2022 17:55:34 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/</guid>
+      <description>[toc] 集中式与分布式 集中式系统架构 集中式是指由一台或多台主计算机组成的中心节点，数据集中存储于这个中心节点中，并且整个系统的所有业务单元都集中部</description>
+    </item>
+    
+  </channel>
+</rss>

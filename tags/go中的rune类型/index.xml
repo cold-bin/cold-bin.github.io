@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>go中的rune类型 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/</link>
+    <description>Recent content in go中的rune类型 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Wed, 10 Aug 2022 14:23:15 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>详解Go中的rune类型</title>
+      <link>https://cold-bin.github.io/post/%E8%AF%A6%E8%A7%A3go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/</link>
+      <pubDate>Wed, 10 Aug 2022 14:23:15 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E8%AF%A6%E8%A7%A3go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/</guid>
+      <description>Unicode编码和utf-8编码的关系 需要注意的是，Unicode 只是一个符号集，它只规定了符号的二进制代码，却没有规定这个二进制代码应该</description>
+    </item>
+    
+  </channel>
+</rss>

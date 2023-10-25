@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>colly on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/colly/</link>
+    <description>Recent content in colly on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Mon, 09 Jan 2023 10:30:18 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/colly/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>基于go的selenium使用详解</title>
+      <link>https://cold-bin.github.io/post/%E5%9F%BA%E4%BA%8Ego%E7%9A%84selenium%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/</link>
+      <pubDate>Mon, 09 Jan 2023 10:30:18 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E5%9F%BA%E4%BA%8Ego%E7%9A%84selenium%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/</guid>
+      <description>基于golang的selenium使用详解 什么是selenium？我理解成：selenium是一种程序员使用地、自动化地、可以通过代码来操控</description>
+    </item>
+    
+  </channel>
+</rss>

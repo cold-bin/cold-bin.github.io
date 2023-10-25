@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>汇编 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/</link>
+    <description>Recent content in 汇编 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Wed, 01 Feb 2023 20:43:35 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/%E6%B1%87%E7%BC%96/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>汇编之总结</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Wed, 01 Feb 2023 20:43:35 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%80%BB%E7%BB%93/</guid>
+      <description>指令系统总结 我们对8086CPU的指令系统进行一下总结。读者若要详细了解8086指令系统中的各个指令的用，可以查看有关的指令手册。 8086C</description>
+    </item>
+    
+    <item>
+      <title>汇编之外中断</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%A4%96%E4%B8%AD%E6%96%AD/</link>
+      <pubDate>Sun, 29 Jan 2023 20:59:35 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%A4%96%E4%B8%AD%E6%96%AD/</guid>
+      <description>外中断 1、外中断 CPU在计算机系统中，除了能够执行指令，进行运算以外，还应该能够对外部设备进行控制，接收它们的输入，向它们进行输出（I/O能</description>
+    </item>
+    
+    <item>
+      <title>汇编之端口</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AB%AF%E5%8F%A3/</link>
+      <pubDate>Sat, 28 Jan 2023 20:59:37 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AB%AF%E5%8F%A3/</guid>
+      <description>[toc] 端口 在PC机系统中，和CPU通过总线相连的芯片除各种存储器外，还有以下3种芯片。 各种接口卡（比如，网卡、显卡）上的接口芯片，它们控制接口卡</description>
+    </item>
+    
+    <item>
+      <title>汇编之内中断</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%86%85%E4%B8%AD%E6%96%AD/</link>
+      <pubDate>Tue, 24 Jan 2023 21:58:30 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%86%85%E4%B8%AD%E6%96%AD/</guid>
+      <description>内中断 1、内中断的产生 任何一个通用的CPU，都具备一种能力，可以在执行完当前正在执行的指令之后，检测到从CPU外部发送过来的或内部产生的一种</description>
+    </item>
+    
+    <item>
+      <title>汇编之标志寄存器</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A0%87%E5%BF%97%E5%AF%84%E5%AD%98%E5%99%A8/</link>
+      <pubDate>Tue, 17 Jan 2023 21:08:13 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A0%87%E5%BF%97%E5%AF%84%E5%AD%98%E5%99%A8/</guid>
+      <description>标志寄存器 1、标志寄存器 CPU内部的寄存器中，有一种特殊的寄存器（对于不同的处理机，个数和结构都可能不同）具有以下3种作用。 （1）用来存储相</description>
+    </item>
+    
+    <item>
+      <title>汇编之call和ret指令</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8Bcall%E5%92%8Cret%E6%8C%87%E4%BB%A4/</link>
+      <pubDate>Sat, 14 Jan 2023 22:59:42 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8Bcall%E5%92%8Cret%E6%8C%87%E4%BB%A4/</guid>
+      <description>call和ret指令 call和ret指令都是转移指令，它们都修改IP，或同时修改CS和IP。 1、ret 和 retf ret指令用栈中的数据，修改IP的</description>
+    </item>
+    
+    <item>
+      <title>汇编之转移指令原理</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E8%BD%AC%E7%A7%BB%E6%8C%87%E4%BB%A4%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Fri, 13 Jan 2023 21:29:13 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E8%BD%AC%E7%A7%BB%E6%8C%87%E4%BB%A4%E5%8E%9F%E7%90%86/</guid>
+      <description>转移指令的原理 可以修改IP，或同时修改CS和IP的指令统称为转移指令。概括地讲，转移指令就是可以控制CPU执行内存中某处代码的指令。 8086</description>
+    </item>
+    
+    <item>
+      <title>汇编之数据处理问题</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Tue, 10 Jan 2023 20:04:55 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E9%97%AE%E9%A2%98/</guid>
+      <description>div指令、dd、dup、mul指令 div是除法指令 除数：有8位和16位两种，在一个寄存器或内存单元中。 被除数：默认放在AX或DX和AX中，</description>
+    </item>
+    
+    <item>
+      <title>汇编之其他定位地址方法</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%85%B6%E4%BB%96%E5%AE%9A%E4%BD%8D%E5%9C%B0%E5%9D%80%E6%96%B9%E6%B3%95/</link>
+      <pubDate>Mon, 09 Jan 2023 21:39:32 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%85%B6%E4%BB%96%E5%AE%9A%E4%BD%8D%E5%9C%B0%E5%9D%80%E6%96%B9%E6%B3%95/</guid>
+      <description>[toc] 更灵活的定位内存地址的方法 1、and 和 or and指令：逻辑与指令，按位进行与运算。 1 2 mov al, 01100011B and al, 00111011B 执行后：al=00100011B即都为1才</description>
+    </item>
+    
+    <item>
+      <title>包含多个段的程序</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/</link>
+      <pubDate>Sat, 07 Jan 2023 20:37:19 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/</guid>
+      <description>[toc] 多个段程序 程序中对段名的引用，将被编译器处理为一个表示段地址的数值。 1 2 3 mov ax, data mov ds, ax mov bx, ds:[6] 在代码段中使用数据 1 2 3 4 5 6 7 8 9 10 11 12 13 14</description>
+    </item>
+    
+    <item>
+      <title>汇编之BX和loop指令</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8Bbx%E5%92%8Cloop%E6%8C%87%E4%BB%A4/</link>
+      <pubDate>Fri, 09 Dec 2022 21:58:07 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8Bbx%E5%92%8Cloop%E6%8C%87%E4%BB%A4/</guid>
+      <description>[bx] 1、[bx]是什么呢？ 和[0]类似，[0]表示内存单元，它的偏移地址是0； 2、内存单元的描述 我们要完整地描述一个内存单元，需要两种信息： （</description>
+    </item>
+    
+    <item>
+      <title>汇编之第一个程序</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/</link>
+      <pubDate>Tue, 06 Dec 2022 17:43:13 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/</guid>
+      <description>汇编之第一个程序 一个源程序从写出到执行的过程 一个汇编语言程序从写出到最终执行的简要过程： 编写 -&amp;gt; 编译连接 -&amp;gt; 执行 对源程序进行编译连接： 使用汇编语</description>
+    </item>
+    
+    <item>
+      <title>汇编之寄存器</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/</link>
+      <pubDate>Wed, 30 Nov 2022 11:01:12 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/</guid>
+      <description>寄存器 概述 一个典型的CPU主要由运算器，控制器，寄存器等器件构成，它们靠内部总线相连（内部总线实现CPU内部各机器件间的联系，外部总线实现C</description>
+    </item>
+    
+    <item>
+      <title>汇编之概述</title>
+      <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/</link>
+      <pubDate>Tue, 29 Nov 2022 15:43:09 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/</guid>
+      <description>汇编基础术语 什么是汇编语言？汇编语言就是直接工作硬件之上的编程语言。 机器语言 机器语言就是机器指令的集合。电子计算机的机器指令是一串二进制数字</description>
+    </item>
+    
+  </channel>
+</rss>

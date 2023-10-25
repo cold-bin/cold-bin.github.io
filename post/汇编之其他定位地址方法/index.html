@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>汇编之其他定位地址方法 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="[toc] 更灵活的定位内存地址的方法 1、and 和 or and指令：逻辑与指令，按位进行与运算。 1 2 mov al, 01100011B and al, 00111011B 执行后：al=00100011B即都为1才" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%85%B6%E4%BB%96%E5%AE%9A%E4%BD%8D%E5%9C%B0%E5%9D%80%E6%96%B9%E6%B3%95/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="汇编之其他定位地址方法" />
+<meta property="og:description" content="[toc] 更灵活的定位内存地址的方法 1、and 和 or and指令：逻辑与指令，按位进行与运算。 1 2 mov al, 01100011B and al, 00111011B 执行后：al=00100011B即都为1才" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%85%B6%E4%BB%96%E5%AE%9A%E4%BD%8D%E5%9C%B0%E5%9D%80%E6%96%B9%E6%B3%95/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-01-09T21:39:32+08:00" />
+<meta property="article:modified_time" content="2023-01-09T21:39:32+08:00" />
+<meta itemprop="name" content="汇编之其他定位地址方法">
+<meta itemprop="description" content="[toc] 更灵活的定位内存地址的方法 1、and 和 or and指令：逻辑与指令，按位进行与运算。 1 2 mov al, 01100011B and al, 00111011B 执行后：al=00100011B即都为1才"><meta itemprop="datePublished" content="2023-01-09T21:39:32+08:00" />
+<meta itemprop="dateModified" content="2023-01-09T21:39:32+08:00" />
+<meta itemprop="wordCount" content="2400">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="汇编之其他定位地址方法"/>
+<meta name="twitter:description" content="[toc] 更灵活的定位内存地址的方法 1、and 和 or and指令：逻辑与指令，按位进行与运算。 1 2 mov al, 01100011B and al, 00111011B 执行后：al=00100011B即都为1才"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">汇编之其他定位地址方法</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-01-09 </span>
+        <div class="post-category">
+            <a href="/categories/%E6%B1%87%E7%BC%96/"> 汇编 </a>
+            </div>
+          <span class="more-meta"> 约 2400 字 </span>
+          <span class="more-meta"> 预计阅读 5 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#更灵活的定位内存地址的方法">更灵活的定位内存地址的方法</a>
+      <ul>
+        <li><a href="#1and-和-or">1、and 和 or</a></li>
+        <li><a href="#2bxidata">2、[bx+idata]</a></li>
+        <li><a href="#3si-di-与-寻址方式的灵活应用">3、SI 、DI 与 寻址方式的灵活应用</a></li>
+        <li><a href="#4总结">4、总结</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <p>[toc]</p>
+<h1 id="更灵活的定位内存地址的方法">更灵活的定位内存地址的方法</h1>
+<hr>
+<h2 id="1and-和-or">1、and 和 or</h2>
+<p>and指令：逻辑与指令，按位进行与运算。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="mi">01100011</span><span class="no">B</span>
+</span></span><span class="line"><span class="cl"><span class="nf">and</span> <span class="no">al</span><span class="p">,</span> <span class="mi">00111011</span><span class="no">B</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>执行后：<code>al=00100011B</code>即都为1才为1</p>
+<p>or指令：逻辑或指令，按位进行或运算。</p>
+<p><code>mov al, 01100011B</code>
+<code>or al, 00111011B</code>
+执行后：<code>al=01111011B</code> 即只要有一个为1就为1</p>
+<p><strong>关于ASCII码</strong>
+世界上有很多编码方案，有一种方案叫做ASCII编码，是在计算机系统中通常被采用的。简单地说，所谓编码方案，就是一套规则，它约定了用什么样的信息来表示现实对象。比如说，在ASCII编码方案中，用61H表示“a”，62H表示“b”。一种规则需要人们遵守才有意义。</p>
+<p>在文本编辑过程中，我们按一下键盘的a键，就会在屏幕上看到“a”。我们按下键盘的a键，这个按键的信息被送入计算机，计算机用ASCII码的规则对其进行编码，将其转化为61H存储在内存的指定空间中；文本编辑软件从内存中取出61H，将其送到显卡上的显存中；工作在文本模式下的显卡，用ASCII码的规则解释显存中的内容，
+61H被当作字符“a”，显卡驱动显示器，将字符“a”的图像画在屏幕上。我们可以看到，显卡在处理文本信息的时候，是按照ASCII码的规则进行的。这也就是说，如果我们要想在显示器上看到“a”，就要给显卡提供“a”的ASCIⅡ码，61H。如何提供？当然是写入显存中。</p>
+<p><strong>以字符形式给出的数据</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">assume</span> <span class="no">cs</span><span class="p">:</span><span class="no">code</span><span class="p">,</span><span class="no">ds</span><span class="p">:</span><span class="no">data</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="no">data</span> <span class="no">segment</span> 
+</span></span><span class="line"><span class="cl">	<span class="no">db</span> <span class="err">&#39;</span><span class="no">unIx</span><span class="err">&#39;</span>   <span class="c1">;相当于“db 75H，6EH，49H，58H”
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">db</span> <span class="err">&#39;</span><span class="no">foRK</span><span class="err">&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nf">data</span> <span class="no">ends</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="no">code</span> <span class="no">segment</span>
+</span></span><span class="line"><span class="cl"><span class="nl">start:</span>	<span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="err">&#39;</span><span class="no">a</span><span class="err">&#39;</span>  <span class="c1">;相当于“mov al, 61H”，“a”的ASCI码为61H；
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nf">mov</span> <span class="no">b1</span><span class="p">,</span> <span class="err">&#39;</span><span class="no">b</span><span class="err">&#39;</span>
+</span></span><span class="line"><span class="cl">		
+</span></span><span class="line"><span class="cl">		<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">4</span><span class="no">c00h</span> 
+</span></span><span class="line"><span class="cl">		<span class="no">int</span> <span class="mi">21</span><span class="no">h</span> 
+</span></span><span class="line"><span class="cl"><span class="no">code</span> <span class="no">ends</span>
+</span></span><span class="line"><span class="cl"><span class="nf">end</span> <span class="no">start</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>大小写转换的问题</strong>
+<img src="https://img-blog.csdnimg.cn/20190321194022547.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5NjU0MTI3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述">
+小写字母的ASCII码值比大写字母的ASCII码值大20H</p>
+<p>大写字母ASCII码的第5位为0，小写字母的第5位为1(其他一致)</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">assume</span> <span class="no">cs</span><span class="p">:</span><span class="no">codesg</span><span class="p">,</span><span class="no">ds</span><span class="p">:</span><span class="no">datasg</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="no">datasg</span> <span class="no">segment</span> 
+</span></span><span class="line"><span class="cl">	<span class="no">db</span> <span class="err">&#39;</span><span class="no">BaSiC</span><span class="err">&#39;</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">db</span> <span class="err">&#39;</span><span class="no">iNfOrMaTion</span><span class="err">&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nf">datasg</span> <span class="no">end</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">codesg</span> <span class="no">segment</span> 
+</span></span><span class="line"><span class="cl">	<span class="no">start</span><span class="p">:</span>	<span class="no">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="no">datasg</span> 
+</span></span><span class="line"><span class="cl">			<span class="no">mov</span> <span class="no">ds</span><span class="p">,</span> <span class="no">ax</span>	<span class="c1">;设置ds 指向 datasg段
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		
+</span></span><span class="line"><span class="cl">			<span class="nf">mov</span> <span class="no">bx</span><span class="p">,</span> <span class="mi">0</span>	<span class="c1">;设置（bx）=0，ds:bx指向’BaSic’的第一个字母
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			
+</span></span><span class="line"><span class="cl">			<span class="nf">mov</span> <span class="no">cx</span><span class="p">,</span> <span class="mi">5</span>     	 <span class="c1">;设置循环次数5，因为’Basic&#39;有5个字母
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nl">s:</span>		<span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="p">[</span><span class="no">bx</span><span class="p">]</span>     <span class="c1">;将ASCII码从ds:bx所指向的单元中取出
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nf">and</span> <span class="no">al</span><span class="p">,</span> <span class="mi">11011111</span><span class="no">B</span><span class="c1">;将al中的ASCII码的第5位置为0，变为大写字母
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nf">mov</span> <span class="p">[</span><span class="no">bx</span><span class="p">],</span> <span class="no">al</span>	 <span class="c1">;将转变后的ASCII码写回原单元
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nf">inc</span> <span class="no">bx</span>		     <span class="c1">;（bx）加1，ds:bx指向下一个字母
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nf">loop</span> <span class="no">s</span> 
+</span></span><span class="line"><span class="cl">			
+</span></span><span class="line"><span class="cl">			<span class="no">mov</span> <span class="no">bx</span><span class="p">,</span> <span class="mi">5</span>	<span class="c1">;设置（bx）=5，ds:bx指向，iNfOrMaTion&#39;的第一个字母
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			
+</span></span><span class="line"><span class="cl">			<span class="nf">mov</span> <span class="no">cx</span><span class="p">,</span> <span class="mi">11</span>	<span class="c1">;设置循环次数11，因为‘iNfOrMaTion&#39;有11个字母
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nl">s0:</span>		<span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="p">[</span><span class="no">bx</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">			<span class="nf">or</span> <span class="no">al</span><span class="p">,</span> <span class="mi">00100000</span><span class="no">B</span><span class="c1">;将a1中的ASCII码的第5位置为1，变为小写字母
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nf">mov</span> <span class="p">[</span><span class="no">bx</span><span class="p">],</span> <span class="no">al</span> 
+</span></span><span class="line"><span class="cl">			<span class="no">inc</span> <span class="no">bx</span>
+</span></span><span class="line"><span class="cl">			<span class="nf">loop</span> <span class="no">s0</span>
+</span></span><span class="line"><span class="cl">			
+</span></span><span class="line"><span class="cl">			<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">4</span><span class="no">c00h</span> 
+</span></span><span class="line"><span class="cl">			<span class="no">int</span> <span class="mi">21</span><span class="no">h</span> 
+</span></span><span class="line"><span class="cl"><span class="no">codesg</span> <span class="no">ends</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="2bxidata">2、[bx+idata]</h2>
+<p>[bx+idata]表示一个内存单元, 例如：<code>mov ax, [bx+200]</code>
+该指令也可以写成如下格式：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="p">[</span><span class="mi">200</span><span class="err">+</span><span class="no">bx</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">200</span><span class="p">[</span><span class="no">bx</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="p">[</span><span class="no">bx</span><span class="p">].</span><span class="mi">200</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>用[bx+idata]的方式进行数组的处理</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">assume</span> <span class="no">cs</span><span class="p">:</span><span class="no">codesg</span><span class="p">,</span><span class="no">ds</span><span class="p">:</span><span class="no">datasg</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="no">datasg</span> <span class="no">segment</span> 
+</span></span><span class="line"><span class="cl">	<span class="no">db</span> <span class="err">&#39;</span><span class="no">BaSiC</span><span class="err">&#39;</span><span class="c1">;转为大写
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">db</span> <span class="err">&#39;</span><span class="no">MinIx</span><span class="err">&#39;</span><span class="c1">;转为小写
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">datasg</span> <span class="no">ends</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">codesg</span> <span class="no">segment</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">start:</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="no">datasg</span> 
+</span></span><span class="line"><span class="cl">		<span class="no">mov</span> <span class="no">ds</span><span class="p">,</span> <span class="no">ax</span> 
+</span></span><span class="line"><span class="cl">		<span class="no">mov</span> <span class="no">bx</span><span class="p">,</span> <span class="mi">0</span>  <span class="c1">;初始ds:bx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	
+</span></span><span class="line"><span class="cl">		<span class="nf">mov</span> <span class="no">cx</span><span class="p">,</span> <span class="mi">5</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">s:</span>	<span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="mi">0</span><span class="p">[</span><span class="no">bx</span><span class="p">]</span>  
+</span></span><span class="line"><span class="cl">		<span class="no">and</span> <span class="no">al</span><span class="p">,</span> <span class="mi">11011111</span><span class="no">b</span> <span class="c1">;转为大写字母
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nf">mov</span> <span class="mi">0</span><span class="p">[</span><span class="no">bx</span><span class="p">],</span> <span class="no">al</span> <span class="c1">;写回
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="mi">5</span><span class="p">[</span><span class="no">bx</span><span class="p">]</span>  <span class="c1">;[5 + bx]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nf">or</span> <span class="no">al</span><span class="p">,</span> <span class="mi">00100000</span><span class="no">b</span> <span class="c1">;转为小写字母
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nf">mov</span> <span class="mi">5</span><span class="p">[</span><span class="no">bx</span><span class="p">],</span> <span class="no">al</span> 
+</span></span><span class="line"><span class="cl">		<span class="no">inc</span> <span class="no">bx</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">loop</span> <span class="no">s</span>
+</span></span><span class="line"><span class="cl">		
+</span></span><span class="line"><span class="cl">		<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">4</span><span class="no">c00h</span> 
+</span></span><span class="line"><span class="cl">		<span class="no">int</span> <span class="mi">21</span><span class="no">h</span>
+</span></span><span class="line"><span class="cl"><span class="nf">codesg</span> <span class="no">ends</span>
+</span></span><span class="line"><span class="cl"><span class="nf">end</span> <span class="no">start</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>C语言描述</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">a</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&#34;BaSic&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="kt">char</span> <span class="n">b</span><span class="p">[]</span> <span class="o">=</span> <span class="s">&#34;MinIX&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	<span class="k">do</span>
+</span></span><span class="line"><span class="cl">	<span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0xDF</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">|</span> <span class="mh">0x20</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="n">i</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span> <span class="k">while</span><span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"> <span class="p">}</span> 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="3si-di-与-寻址方式的灵活应用">3、SI 、DI 与 寻址方式的灵活应用</h2>
+<p><strong>1、si 、di</strong></p>
+<p>si和di是8086CPU中和bx功能相近的寄存器，si和di不能够分成两个8位寄存器来使用。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">assume</span> <span class="no">cs</span><span class="p">:</span> <span class="no">codesg</span><span class="p">,</span> <span class="no">ds</span><span class="p">:</span> <span class="no">datasg</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="no">datasg</span> <span class="no">segment</span> 
+</span></span><span class="line"><span class="cl">	<span class="no">db</span> <span class="err">&#39;</span><span class="no">welcome</span> <span class="no">to</span> <span class="no">masm</span><span class="p">!</span><span class="err">&#39;</span><span class="c1">;用si和di实现将字符串‘welcome to masm！&#34;复制到它后面的数据区中。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">db</span> <span class="err">&#39;</span><span class="no">................</span><span class="err">&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nf">datasg</span> <span class="no">ends</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">codesg</span> <span class="no">segment</span> 
+</span></span><span class="line"><span class="cl">	<span class="no">start</span><span class="p">:</span>	<span class="no">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="no">datasg</span> 
+</span></span><span class="line"><span class="cl">			<span class="no">mov</span> <span class="no">ds</span><span class="p">,</span> <span class="no">ax</span> 
+</span></span><span class="line"><span class="cl">			<span class="no">mov</span> <span class="no">si</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">			
+</span></span><span class="line"><span class="cl">			<span class="nf">mov</span> <span class="no">cx</span><span class="p">,</span> <span class="mi">8</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">s:</span>		<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">0</span><span class="p">[</span><span class="no">si</span><span class="p">]</span> <span class="c1">;[0 + si]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nf">mov</span> <span class="mi">16</span><span class="p">[</span><span class="no">si</span><span class="p">],</span> <span class="no">ax</span> <span class="c1">;[16 + si] 使用[bx +idata]方式代替di，使程序更简洁
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nf">add</span> <span class="no">si</span><span class="p">,</span> <span class="mi">2</span> 
+</span></span><span class="line"><span class="cl">			<span class="no">loop</span> <span class="no">s</span> 
+</span></span><span class="line"><span class="cl">			
+</span></span><span class="line"><span class="cl">			<span class="no">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">4</span><span class="no">c00h</span> 
+</span></span><span class="line"><span class="cl">			<span class="no">int</span> <span class="mi">21</span><span class="no">h</span> 
+</span></span><span class="line"><span class="cl"><span class="no">codesg</span> <span class="no">ends</span> 
+</span></span><span class="line"><span class="cl"><span class="no">end</span> <span class="no">start</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>2、[bx + si] 和 [bx + di]</strong></p>
+<p>[bx+si]和[bx+di]的含义相似</p>
+<p>[bx+si]表示一个内存单元，它的偏移地址为（bx）+（si）</p>
+<p>指令<code>mov ax, [bx + si]</code>的含义：将一个内存单元字数据的内容送入ax，段地址在ds中</p>
+<p>该指令也可以写成如下格式：<code>mov ax, [bx][si]</code></p>
+<p><strong>3、[bx+si+idata]和[bx+di+idata]</strong>
+[bx+si+idata]表示一个内存单元，它的偏移地址为（bx）+（si）+idata</p>
+<p>指令<code>mov ax，[bx+si+idata]</code>的含义：将一个内存单元字数据的内容送入ax，段地址在ds中</p>
+<p><strong>4、不同的寻址方式的灵活应用</strong>
+<code>[idata]</code>用一个常量来表示地址，可用于直接定位一个内存单元；
+<code>[bx]</code>用一个变量来表示内存地址，可用于间接定位一个内存单元；
+<code>[bx+idata]</code>用一个变量和常量表示地址，可在一个起始地址的基础上用变量间接定位一个内存单元；
+<code>[bx+si]</code>用两个变量表示地址；
+<code>[bx+si+idata]</code>用两个变量和一个常量表示地址。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="c1">;将datasg段中每个单词改为大写字母
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">assume</span> <span class="no">cs</span><span class="p">:</span><span class="no">codesg</span><span class="p">,</span><span class="no">ds</span><span class="p">:</span><span class="no">datasg</span><span class="p">,</span><span class="no">ss</span><span class="p">:</span><span class="no">stacksg</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="no">datasg</span> <span class="no">segment</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">db</span> <span class="err">&#39;</span><span class="no">ibm</span>            <span class="err">&#39;</span> <span class="c1">;16
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">db</span> <span class="err">&#39;</span><span class="no">dec</span>            <span class="err">&#39;</span> 
+</span></span><span class="line"><span class="cl">	<span class="no">db</span> <span class="err">&#39;</span><span class="no">dos</span>            <span class="err">&#39;</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">db</span> <span class="err">&#39;</span><span class="no">vax</span>            <span class="err">&#39;</span>  <span class="c1">;看成二维数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">datasg</span> <span class="no">ends</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="no">stacksg</span> <span class="no">segment</span> <span class="c1">;定义一个段，用来做栈段，容量为16个字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">dw</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="nf">stacksg</span> <span class="no">ends</span> 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="no">codesg</span> <span class="no">segment</span> 
+</span></span><span class="line"><span class="cl">	<span class="no">start</span><span class="p">:</span>	<span class="no">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="no">stacksg</span> 
+</span></span><span class="line"><span class="cl">			<span class="no">mov</span> <span class="no">ss</span><span class="p">,</span> <span class="no">ax</span>
+</span></span><span class="line"><span class="cl">			<span class="nf">mov</span> <span class="no">sp</span><span class="p">,</span> <span class="mi">16</span> 
+</span></span><span class="line"><span class="cl">			<span class="no">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="no">datasg</span> 
+</span></span><span class="line"><span class="cl">			<span class="no">mov</span> <span class="no">ds</span><span class="p">,</span> <span class="no">ax</span> 
+</span></span><span class="line"><span class="cl">			<span class="no">mov</span> <span class="no">bx</span><span class="p">,</span> <span class="mi">0</span> <span class="c1">;初始ds:bx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			
+</span></span><span class="line"><span class="cl">			<span class="c1">;cx为默认循环计数器，二重循环只有一个计数器，所以外层循环先保存cx值，再恢复，我们采用栈保存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nf">mov</span> <span class="no">cx</span><span class="p">,</span> <span class="mi">4</span>
+</span></span><span class="line"><span class="cl">	<span class="nl">s0:</span>		<span class="nf">push</span> <span class="no">cx</span>	<span class="c1">;将外层循环的cx值入栈
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nf">mov</span> <span class="no">si</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">			<span class="nf">mov</span> <span class="no">cx</span><span class="p">,</span> <span class="mi">3</span>	<span class="c1">;cx设置为内层循环的次数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nl">s:</span>		<span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="p">[</span><span class="no">bx</span><span class="err">+</span><span class="no">si</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">			<span class="nf">and</span> <span class="no">al</span><span class="p">,</span> <span class="mi">11011111</span><span class="no">b</span> <span class="c1">;每个字符转为大写字母
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nf">mov</span> <span class="p">[</span><span class="no">bx</span><span class="err">+</span><span class="no">si</span><span class="p">],</span> <span class="no">al</span> 
+</span></span><span class="line"><span class="cl">			<span class="no">inc</span> <span class="no">si</span>
+</span></span><span class="line"><span class="cl">			<span class="nf">loop</span> <span class="no">s</span> 
+</span></span><span class="line"><span class="cl">			
+</span></span><span class="line"><span class="cl">			<span class="no">add</span> <span class="no">bx</span><span class="p">,</span> <span class="mi">16</span> <span class="c1">;下一行
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nf">pop</span> <span class="no">cx</span>	<span class="c1">;恢复cx值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nf">loop</span> <span class="no">s0</span> <span class="c1">;外层循环的loop指令将cx中的计数值减1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			
+</span></span><span class="line"><span class="cl">			<span class="nf">mov</span> <span class="no">ax</span><span class="err">，</span><span class="mi">4</span><span class="no">c00H</span> 
+</span></span><span class="line"><span class="cl">			<span class="no">int</span> <span class="mi">21</span><span class="no">H</span> 
+</span></span><span class="line"><span class="cl"><span class="no">codesg</span> <span class="no">ends</span>
+</span></span><span class="line"><span class="cl"><span class="nf">end</span> <span class="no">start</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="4总结">4、总结</h2>
+<ul>
+<li>本章介绍了一些地址定位的方式</li>
+<li>对于数据暂存最好不要使用寄存器，因为寄存器资源有限。应该使用栈作为数据暂存的选择</li>
+</ul>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-01-09
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/post/docker%E5%9F%BA%E7%A1%80/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Docker基础</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/redis%E5%BA%94%E7%94%A8/">
+            <span class="next-text nav-default">Redis应用</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-01-09 21:39:32 \u002b0800 CST',
+        title: '汇编之其他定位地址方法',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

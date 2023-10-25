@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>rdb与aof持久化 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/rdb%E4%B8%8Eaof%E6%8C%81%E4%B9%85%E5%8C%96/</link>
+    <description>Recent content in rdb与aof持久化 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Sun, 15 Jan 2023 17:26:41 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/rdb%E4%B8%8Eaof%E6%8C%81%E4%B9%85%E5%8C%96/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis高级篇之分布式缓存</title>
+      <link>https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/</link>
+      <pubDate>Sun, 15 Jan 2023 17:26:41 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/</guid>
+      <description>[toc] 基于Redis集群解决单机Redis存在的问题 单机的Redis存在四大问题： 分布式缓存 1.Redis持久化 Redis有两种持久化方案： RD</description>
+    </item>
+    
+  </channel>
+</rss>

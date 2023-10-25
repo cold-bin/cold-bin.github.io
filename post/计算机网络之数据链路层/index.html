@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>计算机网络之数据链路层 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="[toc] 3.1、数据链路层概述 概述 链路与数据链路 链路是从一个结点到相邻结点的一段物理线路，数据链路则是在链路的基础上增加了一些必要的硬件（如网络适" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="计算机网络之数据链路层" />
+<meta property="og:description" content="[toc] 3.1、数据链路层概述 概述 链路与数据链路 链路是从一个结点到相邻结点的一段物理线路，数据链路则是在链路的基础上增加了一些必要的硬件（如网络适" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-06-08T15:17:49+08:00" />
+<meta property="article:modified_time" content="2023-06-08T15:17:49+08:00" />
+<meta itemprop="name" content="计算机网络之数据链路层">
+<meta itemprop="description" content="[toc] 3.1、数据链路层概述 概述 链路与数据链路 链路是从一个结点到相邻结点的一段物理线路，数据链路则是在链路的基础上增加了一些必要的硬件（如网络适"><meta itemprop="datePublished" content="2023-06-08T15:17:49+08:00" />
+<meta itemprop="dateModified" content="2023-06-08T15:17:49+08:00" />
+<meta itemprop="wordCount" content="14564">
+<meta itemprop="keywords" content="ppp协议,以太网协议,arp协议,虚拟局域网vlan,可靠传输协议," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="计算机网络之数据链路层"/>
+<meta name="twitter:description" content="[toc] 3.1、数据链路层概述 概述 链路与数据链路 链路是从一个结点到相邻结点的一段物理线路，数据链路则是在链路的基础上增加了一些必要的硬件（如网络适"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">计算机网络之数据链路层</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-06-08 </span>
+        <div class="post-category">
+            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"> 计算机网络 </a>
+            </div>
+          <span class="more-meta"> 约 14564 字 </span>
+          <span class="more-meta"> 预计阅读 30 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#31数据链路层概述">3.1、数据链路层概述</a>
+      <ul>
+        <li><a href="#概述">概述</a>
+          <ul>
+            <li><a href="#链路与数据链路">链路与数据链路</a></li>
+            <li><a href="#数据链路层使用的信道">数据链路层使用的信道</a></li>
+          </ul>
+        </li>
+        <li><a href="#三个重要问题">三个重要问题</a>
+          <ul>
+            <li><a href="#封装成帧">封装成帧</a></li>
+            <li><a href="#差错控制">差错控制</a></li>
+            <li><a href="#透明传输">透明传输</a></li>
+            <li><a href="#数据碰撞">数据碰撞</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#32封装成帧">3.2、封装成帧</a>
+      <ul>
+        <li><a href="#介绍">介绍</a></li>
+        <li><a href="#透明传输-1">透明传输</a></li>
+        <li><a href="#总结">总结</a></li>
+      </ul>
+    </li>
+    <li><a href="#33差错检测">3.3、差错检测</a>
+      <ul>
+        <li><a href="#介绍-1">介绍</a></li>
+        <li><a href="#奇偶校验">奇偶校验</a></li>
+        <li><a href="#循环冗余校验crccyclic-redundancy-check">循环冗余校验CRC(Cyclic Redundancy Check)</a></li>
+      </ul>
+    </li>
+    <li><a href="#34可靠传输">3.4、可靠传输</a>
+      <ul>
+        <li><a href="#基本概念">基本概念</a></li>
+        <li><a href="#三种可靠协议">三种可靠协议</a></li>
+        <li><a href="#停止-等待协议">停止-等待协议</a>
+          <ul>
+            <li><a href="#定义">定义</a></li>
+            <li><a href="#停止-等待协议可能遇到的问题">停止-等待协议可能遇到的问题</a></li>
+            <li><a href="#停止-等待协议的信道利用率">停止-等待协议的信道利用率</a></li>
+          </ul>
+        </li>
+        <li><a href="#回退n帧协议gbn">回退N帧协议GBN</a>
+          <ul>
+            <li><a href="#为什么用回退n帧协议">为什么用回退N帧协议</a></li>
+            <li><a href="#无差错情况流程">无差错情况流程</a></li>
+            <li><a href="#累计确认">累计确认</a></li>
+            <li><a href="#有差错情况">有差错情况</a></li>
+          </ul>
+        </li>
+        <li><a href="#选择重传协议sr">选择重传协议SR</a></li>
+      </ul>
+    </li>
+    <li><a href="#35点对点协议ppp">3.5、点对点协议PPP</a>
+      <ul>
+        <li><a href="#帧格式">帧格式</a></li>
+        <li><a href="#透明传输-2">透明传输</a></li>
+        <li><a href="#差错检测">差错检测</a></li>
+        <li><a href="#工作状态">工作状态</a></li>
+      </ul>
+    </li>
+    <li><a href="#36媒体接入控制介质访问控制广播信道">3.6、媒体接入控制（介质访问控制）——广播信道</a>
+      <ul>
+        <li><a href="#基本概念-1">基本概念</a></li>
+        <li><a href="#静态划分信道">静态划分信道</a></li>
+        <li><a href="#动态接入控制">动态接入控制</a></li>
+        <li><a href="#随机接入csmacd协议">随机接入（CSMA/CD协议）</a>
+          <ul>
+            <li><a href="#基本概念-2">基本概念</a></li>
+            <li><a href="#多址接入ma">多址接入MA</a></li>
+            <li><a href="#载波监听cs">载波监听CS</a></li>
+            <li><a href="#碰撞检测cd">碰撞检测CD</a></li>
+            <li><a href="#csmacd-协议工作流程">CSMA/CD 协议工作流程</a></li>
+            <li><a href="#csmacd-协议工作争用期碰撞窗口">CSMA/CD 协议工作——争用期（碰撞窗口）</a></li>
+            <li><a href="#csmacd-协议工作最小帧长">CSMA/CD 协议工作——最小帧长</a></li>
+            <li><a href="#csmacd-协议工作最大帧长">CSMA/CD 协议工作——最大帧长</a></li>
+            <li><a href="#csmacd-协议工作截断二进制指数退避算法">CSMA/CD 协议工作——截断二进制指数退避算法</a></li>
+            <li><a href="#csmacd-协议工作信道利用率">CSMA/CD 协议工作——信道利用率</a></li>
+            <li><a href="#csmacd-协议工作帧接收流程">CSMA/CD 协议工作——帧接收流程</a></li>
+            <li><a href="#csmacd-协议的重要特性">CSMA/CD 协议的重要特性</a></li>
+          </ul>
+        </li>
+        <li><a href="#随机接入csmaca协议">随机接入（CSMA/CA协议）</a>
+          <ul>
+            <li><a href="#为什么无线局域网要使用csmaca协议">为什么无线局域网要使用CSMA/CA协议</a></li>
+            <li><a href="#帧间间隔ifsinter-frame-space">帧间间隔IFS（Inter Frame Space）</a></li>
+            <li><a href="#csmaca协议的工作原理">CSMA/CA协议的工作原理</a></li>
+            <li><a href="#csmaca协议的退避算法">CSMA/CA协议的退避算法</a></li>
+            <li><a href="#csmaca协议的信道预约和虚拟载波监听">CSMA/CA协议的信道预约和虚拟载波监听</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#37mac地址ip地址以及arp协议">3.7、MAC地址、IP地址以及ARP协议</a>
+      <ul>
+        <li><a href="#mac地址">MAC地址</a>
+          <ul>
+            <li><a href="#广播信道的数据链路层必须使用地址mac">广播信道的数据链路层必须使用地址（MAC）</a></li>
+            <li><a href="#ieee-802局域网的mac地址格式">IEEE 802局域网的MAC地址格式</a></li>
+            <li><a href="#ieee-802局域网的mac地址发送顺序">IEEE 802局域网的MAC地址发送顺序</a></li>
+            <li><a href="#单播mac地址举例">单播MAC地址举例</a></li>
+            <li><a href="#广播mac地址举例">广播MAC地址举例</a></li>
+            <li><a href="#多播mac地址举例">多播MAC地址举例</a></li>
+          </ul>
+        </li>
+        <li><a href="#ip地址">IP地址</a>
+          <ul>
+            <li><a href="#基本概念-3">基本概念</a></li>
+            <li><a href="#从网络体系结构看ip地址与mac地址">从网络体系结构看IP地址与MAC地址</a></li>
+            <li><a href="#数据包转发过程中ip地址与mac地址的变化情况">数据包转发过程中IP地址与MAC地址的变化情况</a></li>
+          </ul>
+        </li>
+        <li><a href="#arp协议">ARP协议</a>
+          <ul>
+            <li><a href="#流程">流程</a></li>
+            <li><a href="#总结-1">总结</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#38集线器与交换机的区别">3.8、集线器与交换机的区别</a>
+      <ul>
+        <li><a href="#集线器-在物理层扩展以太网">集线器-在物理层扩展以太网</a>
+          <ul>
+            <li><a href="#概念">概念</a></li>
+            <li><a href="#集线器hub在物理层扩展以太网">集线器HUB在物理层扩展以太网</a></li>
+          </ul>
+        </li>
+        <li><a href="#以太网交换机和网桥-在数据链路层扩展以太网">以太网交换机和网桥-在数据链路层扩展以太网</a>
+          <ul>
+            <li><a href="#概念-1">概念</a></li>
+            <li><a href="#集线器hub与交换机switch区别"><strong>集线器HUB与交换机SWITCH区别</strong></a></li>
+          </ul>
+        </li>
+        <li><a href="#总结-2">总结</a></li>
+      </ul>
+    </li>
+    <li><a href="#39以太网交换机自学习和转发帧的流程">3.9、以太网交换机自学习和转发帧的流程</a>
+      <ul>
+        <li><a href="#概念-2">概念</a></li>
+        <li><a href="#自学习和转发帧的例子">自学习和转发帧的例子</a></li>
+        <li><a href="#总结-3">总结</a></li>
+      </ul>
+    </li>
+    <li><a href="#310以太网交换机的生成树协议stp">3.10、以太网交换机的生成树协议STP</a>
+      <ul>
+        <li><a href="#如何提高以太网的可靠性">如何提高以太网的可靠性</a></li>
+        <li><a href="#生成树协议stp">生成树协议STP</a>
+          <ul>
+            <li><a href="#stp中根桥根端口指定端口的选举规则">STP中根桥，根端口，指定端口的选举规则</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#311虚拟局域网vlan">3.11、虚拟局域网VLAN</a>
+      <ul>
+        <li><a href="#lan与vlan">LAN与VLAN</a></li>
+        <li><a href="#为什么要虚拟局域网vlan">为什么要虚拟局域网VLAN</a></li>
+        <li><a href="#概念-3">概念</a></li>
+        <li><a href="#虚拟局域网vlan的实现机制">虚拟局域网VLAN的实现机制</a></li>
+        <li><a href="#总结-4">总结</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <p>[toc]</p>
+<h1 id="31数据链路层概述">3.1、数据链路层概述</h1>
+<h2 id="概述">概述</h2>
+<h3 id="链路与数据链路">链路与数据链路</h3>
+<p><strong>链路</strong>是从一个结点到相邻结点的一段物理线路，<strong>数据链路</strong>则是在链路的基础上增加了一些必要的硬件（如网络适配器）和软件（如协议的实现）。</p>
+<p>网络中的主机、路由器等都必须实现数据链路层</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306081933063.png" alt="image-20201011102531462"></p>
+<p>局域网中的主机、交换机等都必须实现数据链路层</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306081933111.png" alt="image-20201014004326549"></p>
+<p>从层次上来看数据的流动：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306081937718.png" alt="image-20201011102618878"></p>
+<p>仅从数据链路层观察帧的流动：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306081937016.png" alt="image-20201011102653161"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306081937655.png" alt="image-20201011102733584"></p>
+<blockquote>
+<p>主机H1 到主机H2 所经过的网络可以是多种不同类型的</p>
+<p>注意：不同的链路层可能采用不同的数据链路层协议</p>
+</blockquote>
+<h3 id="数据链路层使用的信道">数据链路层使用的信道</h3>
+<p>数据链路层属于计算机网路的低层。<strong>数据链路层使用的信道主要有以下两种类型：</strong></p>
+<ul>
+<li>点对点信道</li>
+<li>广播信道</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306081937405.png" alt="image-20201014004459744"></p>
+<blockquote>
+<p><strong>局域网属于数据链路层</strong></p>
+<p>局域网虽然是个网络。但我们并不把局域网放在网络层中讨论。这是因为在网络层要讨论的是多个网络互连的问题，是讨论分组怎么从一个网络，通过路由器，转发到另一个网络。</p>
+<p>而在同一个局域网中，分组怎么从一台主机传送到另一台主机，但并不经过路由器转发。从整个互联网来看，<strong>局域网仍属于数据链路层</strong>的范围</p>
+</blockquote>
+<h2 id="三个重要问题">三个重要问题</h2>
+<p>数据链路层传送的协议数据单元是<strong>帧</strong></p>
+<h3 id="封装成帧">封装成帧</h3>
+<ul>
+<li><strong>封装成帧</strong> (framing) 就是在一段数据的前后分别添加首部和尾部，然后就构成了一个帧。</li>
+<li>首部和尾部的一个重要作用就是进行<strong>帧定界</strong>。</li>
+<li>数据链路层采用的点对点信道的PPP协议封装的<strong>PPP帧</strong>和采用以太网协议的<strong>MAC帧</strong></li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151606198.png" alt="image-20201011110851301"></p>
+<blockquote>
+<p>当发送端出问题，帧没有发送完毕，那么发送端只能重发此帧；此时接收端接收到不完整的帧，会丢弃这个帧。</p>
+</blockquote>
+<h3 id="差错控制">差错控制</h3>
+<p>在传输过程中可能会产生<strong>比特差错</strong>：1 可能会变成 0， 而 0 也可能变成 1。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306081937521.png" alt="image-20201011103917512"></p>
+<blockquote>
+<p>为了保证数据传输的可靠性，在计算机网络传输数据时，必须采用各种差错检测措施。</p>
+<ul>
+<li>
+<p><a href="https://blog.csdn.net/TL18382950497/article/details/113794438">循环冗余检验CRC</a></p>
+<p>缺点：可能会检测不出错误，从而导致纠错能力不足</p>
+</li>
+</ul>
+</blockquote>
+<h3 id="透明传输">透明传输</h3>
+<p>帧定界符：可以选用ASCII码表中的<code>SOH(0x01)</code>作为帧开始定界符，<code>EOT(0x04)</code>为帧结束定界符。</p>
+<p>如果数据部分出现“EOT”或“SOH”时，那么会使得数据部分拆分出帧，使得帧的解析出现问题，所以要进行字节填充。</p>
+<p>具体方法：发送端的数据链路层在数据中出现控制字符“EOT”、“SOH”以及“ESC”，则在前面插入一个转义字符“ESC”的编码。接收端的数据链路层在收到删除这个插入的转义字符。这样用字节填充法解决透明传输的问题。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306081955145.png" alt="img"></p>
+<blockquote>
+<p>以上三个问题都是使用<strong>点对点信道的数据链路层</strong>来举例的</p>
+</blockquote>
+<p><strong>如果使用广播信道的数据链路层除了包含上面三个问题外，还有一些问题要解决</strong></p>
+<p>如图所示，主机A，B，C，D，E通过一根总线进行互连，主机A要给主机C发送数据，代表帧的信号会通过总线传输到总线上的其他各主机，那么主机B，D，E如何知道所收到的帧不是发送给她们的，主机C如何知道发送的帧是发送给自己的</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306081937468.png" alt="image-20201011105824466"></p>
+<p>可以用编址（地址）的来解决，将帧的目的地址添加在帧中一起传输</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306081937445.png" alt="image-20201011110017415"></p>
+<h3 id="数据碰撞">数据碰撞</h3>
+<p>除了上面三个问题，还有数据碰撞问题</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151623958.png" alt="image-20201011110129994"></p>
+<blockquote>
+<p>随着技术的发展，交换技术的成熟，在 有线（局域网）领域 使用<strong>点对点链路</strong>和<strong>链路层交换机</strong>的<strong>交换式局域网</strong>取代了<del>共享式局域网</del>；在无线局域网中仍然使用的是共享信道技术</p>
+</blockquote>
+<hr>
+<h1 id="32封装成帧">3.2、封装成帧</h1>
+<h2 id="介绍">介绍</h2>
+<p>封装成帧是指数据链路层给上层交付的协议数据单元添加帧头和帧尾使之成为帧</p>
+<ul>
+<li><strong>帧头和帧尾中包含有重要的控制信息</strong></li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151625221.png" alt="image-20201011110851301"></p>
+<p>发送方的数据链路层将上层交付下来的协议数据单元封装成帧后，还要通过物理层，将构成帧的各比特，转换成电信号交给传输媒体，那么接收方的数据链路层如何从物理层交付的比特流中提取出一个个的帧？</p>
+<p>答：需要帧头和帧尾来做<strong>帧定界</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151626906.png" alt="image-20201011111334052"></p>
+<p>但并不是每一种数据链路层协议的帧都包含有帧定界标志，例如下面例子</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151630512.png" alt="image-20201011111729324"></p>
+<blockquote>
+<p>前导码</p>
+<ul>
+<li>前同步码：作用是使接收方的时钟同步</li>
+<li>帧开始定界符：表明其后面紧跟着的就是MAC帧</li>
+</ul>
+</blockquote>
+<p>另外以太网还规定了帧间间隔为96比特时间，因此，MAC帧不需要帧结束定界符，只需要检测当前比特是否</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151649949.png" alt="image-20201011112450187"></p>
+<h2 id="透明传输-1">透明传输</h2>
+<blockquote>
+<p><strong>透明</strong></p>
+<p>指某一个实际存在的事物看起来却好像不存在一样。</p>
+</blockquote>
+<p>透明传输是指<strong>数据链路层对上层交付的传输数据没有任何限制</strong>，好像数据链路层不存在一样</p>
+<p>帧界定标志也就是个特定数据值，如果在上层交付的协议数据单元中，恰好也包含这个特定数值，接收方就不能正确接收</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151650288.png" alt="image-20201011113207944"></p>
+<blockquote>
+<p>所以数据链路层应该对上层交付的数据有限制，其内容不能包含帧定界符的值</p>
+</blockquote>
+<p><strong>解决透明传输问题</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222250287.png" alt="image-20201011113804721"></p>
+<ul>
+<li><strong>解决方法</strong>：面向字节的物理链路使用<strong>字节填充</strong> (byte stuffing) 或<strong>字符填充</strong> (character stuffing)，面向比特的物理链路使用<strong>比特填充</strong>的方法实现透明传输</li>
+<li>发送端的数据链路层在数据中出现控制字符“SOH”或“EOT”的前面<strong>插入一个转义字符“ESC”</strong>(其十六进制编码是1B)。</li>
+<li>接收端的数据链路层在将数据送往网络层之前删除插入的转义字符。</li>
+<li>如果转义字符也出现在数据当中，那么应在转义字符前面插入一个转义字符 ESC。当接收端收到连续的两个转义字符时，就删除其中前面的一个。</li>
+</ul>
+<p><strong>帧的数据部分长度</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151653058.png" alt="image-20201011115008209"></p>
+<h2 id="总结">总结</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151700362.png" alt="image-20201011115049672"></p>
+<hr>
+<h1 id="33差错检测">3.3、差错检测</h1>
+<h2 id="介绍-1">介绍</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151700479.png" alt="image-20201011133757804"></p>
+<h2 id="奇偶校验">奇偶校验</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151700552.png" alt="image-20201011234428217"></p>
+<p>奇偶检验法只能检测出奇数个错误，不能检测出所有的错误</p>
+<h2 id="循环冗余校验crccyclic-redundancy-check">循环冗余校验CRC(Cyclic Redundancy Check)</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151700553.png" alt="image-20201011234605045"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151704343.png" alt="image-20201011234701845"></p>
+<p><strong>例题</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151718326.png" alt="image-20201011235128869"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151719494.png" alt="image-20201011235325022"></p>
+<p><strong>总结</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151722312.png" alt="image-20201011235726437"></p>
+<blockquote>
+<p>循环冗余校验 CRC 是一种检错方法，而帧校验序列 FCS 是添加在数据后面的冗余码</p>
+</blockquote>
+<hr>
+<h1 id="34可靠传输">3.4、可靠传输</h1>
+<h2 id="基本概念">基本概念</h2>
+<p><strong>下面是比特差错</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222127935.png" alt="image-20201012153605893"></p>
+<p><strong>其他传输差错</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222127207.png" alt="image-20201012153811724"></p>
+<ul>
+<li>分组丢失</li>
+</ul>
+<p>路由器输入队列快满了，主动丢弃收到的分组</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222127664.png" alt="image-20201012154910921"></p>
+<ul>
+<li>分组失序</li>
+</ul>
+<p>数据并未按照发送顺序依次到达接收端</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222127134.png" alt="image-20201012155300937"></p>
+<ul>
+<li>分组重复</li>
+</ul>
+<p>由于某些原因，有些分组在网络中滞留了，没有及时到达接收端，这可能会造成发送端对该分组的重发，重发的分组到达接收端，但一段时间后，滞留在网络的分组也到达了接收端，这就造成<strong>分组重复</strong>的传输差错</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222128014.png" alt="image-20201012160026362"></p>
+<h2 id="三种可靠协议">三种可靠协议</h2>
+<p>一般情况下，有线链路的不由数据链路层提供可靠传输，而交由上层解决可靠传输问题；但是无线链路的误码率较高，需要数据链路层提供可靠传输服务。有三种可靠协议实现：</p>
+<ul>
+<li>停止-等待协议SW</li>
+<li>回退N帧协议GBN</li>
+<li>选择重传协议SR</li>
+</ul>
+<blockquote>
+<p>这三种可靠传输实现机制的基本原理并不仅限于数据链路层，可以应用到计算机网络体系结构的各层协议中</p>
+</blockquote>
+<h2 id="停止-等待协议">停止-等待协议</h2>
+<h3 id="定义">定义</h3>
+<p>停止等待协议中，发送方每发送一个分组都必须<code>等待</code>接收方的<code>确认分组ACK（Acknowled Character）</code>才能发送下一个分组，如果是<code>否认分组NAK（Negative Acknowledge)</code>则重传上次发送的分组</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222131365.png" alt="image-20201012162009780" style="zoom:67%;" />
+<h3 id="停止-等待协议可能遇到的问题">停止-等待协议可能遇到的问题</h3>
+<p><strong>超时重传</strong></p>
+<p>如果发送方分组<code>丢失</code>，那么接收方就不会发送<code>ACK</code>，此时发送方就会一直等待<code>ACK</code>而不能发送数据。为了避免这种情况，发送方主动设置一个<code>时钟</code>，如果分组发出后超过了一定的时间没有收到<code>ACK</code>就自动<code>重发</code>分组，这称为<code>超时重传</code>，超时时间一般设置为略大于一个分组<code>往返</code>的时间</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222131393.png" alt="image-20201012162112151" style="zoom:67%;" />
+<p><strong>确认丢失</strong></p>
+<p>接收方的<code>确认（否认）分组</code>也是可能<code>丢失</code>的，假设发送方发送了分组并且被接收方接收，接收方的确认分组在传输过程中丢失，那么发送方因为没收到确认分组就会触发超时重传把相同的分组再发送一遍，此时接收方会收到一个重复的分组</p>
+<p>为了避免<code>分组重复</code>，发送方需要给每个分组<code>编号</code>，因为发送方每次只发送一个分组就停下来等待，所以发送方只需使用<code>一个比特</code>进行编号就能使分组区分开来</p>
+<p>当接收方检查编号发现是重复的分组时就知道上个分组的确认分组丢失了，此时接收方只需<code>丢弃</code>收到的分组并发送<code>ACK</code>即可，发送方收到<code>ACK</code>后也不会再重发分组了</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222131980.png" alt="image-20201012162348428" style="zoom:67%;" />
+<blockquote>
+<p>既然数据分组需要编号，确认分组是否需要编号？</p>
+<p>要。如下图所示</p>
+</blockquote>
+<p><strong>确认迟到</strong></p>
+<p>接收方的<code>ACK</code>也有可能迟到，发送方发送<code>分组0</code>后因为<code>ACK</code>迟到触发超时重传再次发送<code>分组0</code>，再次发送<code>分组0</code>后收到了<code>迟到的ACK</code>然后发送方发送<code>分组1</code>。假设接收方先收到重传的<code>分组0</code>然后发送<code>ACK</code>再收到<code>分组1</code>，但是发送方收到重传的<code>分组0</code>的<code>ACK</code>时有可能误认为是<code>分组1</code>的<code>ACK</code>。为了避免上述情况，<code>ACK</code>也需要编号以便发送方确认，同样的<code>ACK</code>编号也只需要<code>一个比特</code></p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222131634.png" alt="image-20201012162815885" style="zoom:67%;" />
+<blockquote>
+<p>注意，图中最下面那个数据分组与之前序号为0的那个数据分组不是同一个数据分组</p>
+</blockquote>
+<p><strong>注意事项</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222132289.png" alt="image-20201012164008780"></p>
+<h3 id="停止-等待协议的信道利用率">停止-等待协议的信道利用率</h3>
+<p>假设收发双方之间是一条直通的信道</p>
+<ul>
+<li><strong>TD</strong>：是发送方发送数据分组所耗费的发送时延</li>
+<li><strong>RTT</strong>：是收发双方之间的往返时间</li>
+<li><strong>TA</strong>：是接收方发送确认分组所耗费的发送时延</li>
+</ul>
+<p>TA一般都远小于TD，可以忽略，当RTT远大于TD时，<strong>信道利用率会非常低</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222138917.png" alt="image-20201012164924635"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222140573.png" alt="image-20201012181005719"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222140450.png" alt="image-20201012181047665"></p>
+<blockquote>
+<p>像停止-等待协议这样通过确认和重传机制实现的可靠传输协议，常称为自动请求重传协议ARQ(<strong>A</strong>utomatic <strong>R</strong>epeat re<strong>Q</strong>uest)，意思是重传的请求是自动进行，因为不需要接收方显式地请求，发送方重传某个发送的分组</p>
+</blockquote>
+<p>由以上的种种情况分析，发送方每发送一个分组都需要等待接收方的回应再做下一步，因此停止等待协议<code>信道利用率</code>很低，大多数时间都用来等待了</p>
+<h2 id="回退n帧协议gbn">回退N帧协议GBN</h2>
+<h3 id="为什么用回退n帧协议">为什么用回退N帧协议</h3>
+<p>在相同的时间内，使用停止-等待协议的发送方只能发送一个数据分组，而采用流水线传输的发送方，可以发送多个数据分组</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222154665.png" alt="image-20201012190027828"></p>
+<p>回退N帧协议在流水线传输的基础上，利用发送窗口来限制发送方可连续发送数据分组的个数</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222155360.png" alt="image-20201012190632086"></p>
+<h3 id="无差错情况流程">无差错情况流程</h3>
+<p>发送方将序号落在发送窗口内的0~4号数据分组，依次连续发送出去</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222159471.png" alt="image-20201012191936466"></p>
+<p>他们经过互联网传输正确到达接收方，就是没有乱序和误码，接收方按序接收它们，每接收一个，接收窗口就向前滑动一个位置，并给发送方发送针对所接收分组的确认分组，在通过互联网的传输正确到达了发送方</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222200873.png" alt="image-20201012192932035"></p>
+<p>发送方每接收一个确认分组，发送窗口就向前滑动一个位置，这样就有新的序号落入发送窗口，发送方可以将收到确认的数据分组从缓存中删除了，而接收方可以择机将已接收的数据分组交付上层处理</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222202417.png" alt="image-20201012193212419"></p>
+<h3 id="累计确认">累计确认</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222202194.png" alt="image-20201012194304696"></p>
+<blockquote>
+<p>累计确认</p>
+<p>优点:</p>
+<ul>
+<li>即使确认分组丢失，发送方也可能不必重传</li>
+<li>减小接收方的开销</li>
+<li>减小对网络资源的占用</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>不能向发送方及时反映出接收方已经正确接收的数据分组信息</li>
+</ul>
+</blockquote>
+<h3 id="有差错情况">有差错情况</h3>
+<p>例如</p>
+<p>在传输数据分组时，5号数据分组出现误码，接收方通过数据分组中的检错码发现了错误</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222216988.png" alt="image-20201012195440780"></p>
+<p>于是丢弃该分组，而后续到达的这剩下四个分组与接收窗口的序号不匹配</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222216987.png" alt="image-20201012195629368"></p>
+<p>接收同样也不能接收它们，将它们丢弃，并对之前按序接收的最后一个数据分组进行确认，发送ACK4，<strong>每丢弃一个数据分组，就发送一个ACK4</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222219529.png" alt="image-20201012195836902"></p>
+<p>当收到重复的ACK4时，就知道之前所发送的数据分组出现了差错，于是可以不等超时计时器超时就立刻开始重传，具体收到几个重复确认就立刻重传，根据具体实现决定</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222220574.png" alt="image-20201012200120166"></p>
+<p>如果收到这4个重复的确认并不会触发发送立刻重传，一段时间后。超时计时器超时，也会将发送窗口内以发送过的这些数据分组全部重传</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222221192.png" alt="image-20201012200454557"></p>
+<p>若WT超过取值范围，例如WT=8，会出现什么情况？</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222221828.png" alt="image-20201012201109774"></p>
+<p><strong>习题</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222222277.png" alt="image-20201012202419107"></p>
+<p><strong>总结</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222249247.png" alt="image-20201012202222138"></p>
+<ul>
+<li>回退N帧协议在流水线传输的基础上利用发送窗口来限制发送方连续发送数据分组的数量，是一种连续ARQ协议</li>
+<li>在协议的工作过程中发送窗口和接收窗口不断向前滑动，因此这类协议又称为滑动窗口协议</li>
+<li>由于回退N帧协议的特性，当通信线路质量不好时，其信道利用率并不比停止-等待协议高</li>
+</ul>
+<h2 id="选择重传协议sr">选择重传协议SR</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222226295.png" alt="image-20201012203638722"></p>
+<p><a href="https://www.bilibili.com/video/BV1c4411d7jb?p=27">具体流程请看视频</a></p>
+<p><strong>习题</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222243598.png" alt="image-20201012205250996"></p>
+<p><strong>总结</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222243087.png" alt="image-20201012204742870"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151724746.png" alt="image-20201012205133924"></p>
+<hr>
+<h1 id="35点对点协议ppp">3.5、点对点协议PPP</h1>
+<ul>
+<li>点对点协议PPP（Point-to-Point Protocol）是目前使用最广泛的点对点数据链路层协议</li>
+<li>PPP协议是因特网工程任务组IEIF在1992年制定的。经过1993年和1994年的修订，现在的PPP协议已成为因特网的正式标准[RFC1661，RFC1662]</li>
+<li>数据链路层使用的一种协议，它的特点是：
+<ul>
+<li>简单；</li>
+<li>只检测差错，而不是纠正差错（因为在差错检验时，选用的是CRC差错检验技术，CRC差错检验技术并没有纠错能力）</li>
+<li>不使用序号，也不进行流量控制；</li>
+<li>可同时支持多种网络层协议，例如ip、ipx等协议</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151724161.png" alt="image-20201012210844629"></p>
+<ul>
+<li>PPPoE 是为宽带上网的主机使用的链路层协议</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151726199.png" alt="image-20201012211423528"></p>
+<h2 id="帧格式">帧格式</h2>
+<p>必须规定特殊的字符作为帧定界符</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151726246.png" alt="image-20201012211826281"></p>
+<h2 id="透明传输-2">透明传输</h2>
+<p>必须保证数据传输的透明性</p>
+<p>实现透明传输的方法</p>
+<ul>
+<li>面向字节的异步链路：字节填充法（插入“转义字符”）</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151728461.png" alt="image-20201012212148803"></p>
+<ul>
+<li>面向比特的同步链路：比特填充法（插入“比特0”）</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151730796.png" alt="image-20201012212255550"></p>
+<h2 id="差错检测">差错检测</h2>
+<p>能够对接收端收到的帧进行检测，并立即丢弃有差错的帧。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151730435.png" alt="image-20201012212558654"></p>
+<h2 id="工作状态">工作状态</h2>
+<ul>
+<li>当用户拨号接入 ISP 时，路由器的调制解调器对拨号做出确认，并建立一条物理连接。</li>
+<li>PC 机向路由器发送一系列的 LCP 分组（封装成多个 PPP 帧）。</li>
+<li>这些分组及其响应选择一些 PPP 参数，并进行网络层配置，NCP 给新接入的 PC 机分配一个临时的 IP 地址，使 PC 机成为因特网上的一个主机。</li>
+<li>通信完毕时，NCP 释放网络层连接，收回原来分配出去的 IP 地址。接着，LCP 释放数据链路层连接。最后释放的是物理层的连接。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151732694.png" alt="image-20201012213021860"></p>
+<blockquote>
+<p>可见，PPP 协议已不是纯粹的数据链路层的协议，它还包含了物理层和网络层的内容。</p>
+</blockquote>
+<hr>
+<h1 id="36媒体接入控制介质访问控制广播信道">3.6、媒体接入控制（介质访问控制）——广播信道</h1>
+<p>媒体接入控制（介质访问控制）使用一对多的广播通信方式</p>
+<blockquote>
+<p>Medium Access Control翻译成媒体接入控制，有些翻译成介质访问控制</p>
+</blockquote>
+<p><strong>局域网的数据链路层</strong></p>
+<ul>
+<li>局域网最主要的<strong>特点</strong>是：
+<ul>
+<li>网络为一个单位所拥有；</li>
+<li>地理范围和站点数目均有限。</li>
+</ul>
+</li>
+<li>局域网具有如下<strong>主要优点</strong>：
+<ul>
+<li>具有广播功能，从一个站点可很方便地访问全网。局域网上的主机可共享连接在局域网上的各种硬件和软件资源。</li>
+<li>便于系统的扩展和逐渐地演变，各设备的位置可灵活调整和改变。</li>
+<li>提高了系统的可靠性、可用性和残存性。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151737305.png" alt="image-20201013201521915"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151737756.png" alt="image-20201013201533445"></p>
+<p>数据链路层的两个子层:</p>
+<p>为了使数据链路层能更好地适应多种局域网标准，IEEE 802 委员会就将局域网的数据链路层拆成两个子层：</p>
+<ol>
+<li><strong>逻辑链路控制</strong> LLC (Logical Link Control)子层；</li>
+<li><strong>媒体接入控制</strong> MAC (Medium Access Control)子层。</li>
+</ol>
+<p>与接入到传输媒体有关的内容都放在 MAC子层，而 LLC 子层则与传输媒体无关。不管采用何种协议的局域网，对 LLC 子层来说都是透明的。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151739679.png" alt="image-20201013201133903"></p>
+<h2 id="基本概念-1">基本概念</h2>
+<p>为什么要媒体接入控制（介质访问控制）？</p>
+<p><strong>共享信道带来的问题</strong></p>
+<p>若多个设备在共享信道上同时发送数据，则会造成彼此干扰，导致发送失败。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151739128.png" alt="image-20201013152007335"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151740324.png" alt="image-20201013152453425"></p>
+<blockquote>
+<p>随着技术的发展，交换技术的成熟和成本的降低，具有更高性能的使用点对点链路和链路层交换机的交换式局域网在有线领域已完全取代了共享式局域网，但由于无线信道的广播天性，无线局域网仍然使用的是共享媒体技术</p>
+</blockquote>
+<h2 id="静态划分信道">静态划分信道</h2>
+<p><strong>信道复用</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151741039.png" alt="image-20201013153642544"></p>
+<p><strong>频分复用FDM (Frequency Division Multiplexing)</strong></p>
+<ul>
+<li>
+<p>将整个带宽分为多份，用户在分配到一定的频带后，在通信过程中自始至终都占用这个频带。</p>
+</li>
+<li>
+<p><strong>频分复用</strong>的所有用户在同样的时间<strong>占用不同的带宽资源</strong>（请注意，这里的“带宽”是频率带宽而不是数据的发送速率）。</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151741713.png" alt="image-20201013153947668"></p>
+<p><strong>时分复用TDM (Time Division Multiplexing)</strong></p>
+<ul>
+<li>时分复用则是将时间划分为一段段等长的时分复用帧（TDM帧）。每一个时分复用的用户在每一个 TDM 帧中占用固定序号的时隙。</li>
+<li>每一个用户所占用的时隙是<strong>周期性地出现</strong>（其周期就是TDM帧的长度）的。</li>
+<li>TDM 信号也称为<strong>等时</strong> (isochronous) 信号。</li>
+<li>时分复用的所有用户在不同的时间占用同样的频带宽度。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151741055.png" alt="image-20201013154142540"></p>
+<p><strong>波分复用 WDM(Wavelength Division Multiplexing)</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151741142.png" alt="image-20201013202218132"></p>
+<blockquote>
+<p>波分复用就是光的频分复用，使用一根光纤来同时传输多个光载波信号</p>
+<p>光信号传输一段距离后悔衰减，所以要用 掺铒光纤放大器 放大光信号</p>
+</blockquote>
+<p><strong>码分复用 CDM  (Code Division Multiplexing)</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151741040.png" alt="image-20201013203126625"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151742686.png" alt="image-20201013203324709"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151742604.png" alt="image-20201013203459640"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151742988.png" alt="image-20201013203819578"></p>
+<h2 id="动态接入控制">动态接入控制</h2>
+<p><strong>受控接入</strong></p>
+<p>受控接入在局域网中使用得较少，本书不再讨论</p>
+<p><strong>随机接入</strong></p>
+<p>重点</p>
+<h2 id="随机接入csmacd协议">随机接入（CSMA/CD协议）</h2>
+<p>总线局域网使用协议：CSMA/CD媒体接入控制协议</p>
+<blockquote>
+<p>CSMA/CD协议曾经用于各种总线结构以太网和双绞线以太网的早起版本中。</p>
+<p>现在的以太网基于交换机和全双工连接，不会有碰撞，因此没有必要使用CSMA/CD协议</p>
+</blockquote>
+<h3 id="基本概念-2">基本概念</h3>
+<p>最初的以太网是将许多计算机都连接到一根总线上。易于实现广播通信。当初认为这样的连接方法既简单又可靠，因为总线上没有有源器件。</p>
+<blockquote>
+<p>以太网（Ethernet）是一种计算机局域网技术。IEEE组织的IEEE 802.3标准制定了以太网（Ethernet）的技术标准</p>
+<p>以太网采用无连接的工作方式，对发送的数据帧不进行编号，也不要求对方发回确认。目的站收到有差错帧就把它丢弃，其他什么也不做。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151743594.png" alt="image-20201013211620687"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151743815.png" alt="image-20201013213102777"></p>
+<h3 id="多址接入ma">多址接入MA</h3>
+<p>表示许多主机以多点接入的方式连接在一根总线上。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151743470.png" alt="image-20201013215400688"></p>
+<h3 id="载波监听cs">载波监听CS</h3>
+<p>是指每一个站在发送数据之前先要检测一下总线上是否有其他计算机在发送数据，如果有，则暂时不要发送数据，以免发生碰撞。以太网的mac帧每隔96比特时间就会传输一个帧，所以，监听的时候只需要监听96比特时间就知道当前信道是否空闲了。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151744725.png" alt="image-20201013215530979"></p>
+<p>总线上并没有什么“载波”。因此， <strong>“载波监听”就是用电子技术检测总线上有没有其他计算机发送的数据信号。</strong></p>
+<h3 id="碰撞检测cd">碰撞检测CD</h3>
+<ul>
+<li>“碰撞检测”就是计算机边发送数据边检测信道上的信号电压大小。</li>
+<li>当几个站同时在总线上发送数据时，总线上的信号电压摆动值将会增大（互相叠加）。</li>
+<li>当一个站检测到的信号电压摆动值超过一定的门限值时，就认为总线上至少有两个站同时在发送数据，表明产生了碰撞。</li>
+<li>所谓“碰撞”就是发生了冲突。因此“碰撞检测”也称为“冲突检测”。</li>
+<li>在发生碰撞时，总线上传输的信号产生了严重的失真，无法从中恢复出有用的信息来。</li>
+<li>每一个正在发送数据的站，一旦发现总线上出现了碰撞，就要立即停止发送，免得继续浪费网络资源，然后等待一段随机时间后再次发送。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151748967.png" alt="image-20201013221240514"></p>
+<blockquote>
+<p>为什么要进行碰撞检测？ 因为信号传播时延对载波监听产生了影响</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151751980.png" alt="image-20201013221834942"></p>
+<p>A 需要单程传播时延的 2 倍的时间，才能检测到与 B 的发送产生了冲突</p>
+</blockquote>
+<h3 id="csmacd-协议工作流程">CSMA/CD 协议工作流程</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151751242.png" alt="image-20201013221705893"></p>
+<h3 id="csmacd-协议工作争用期碰撞窗口">CSMA/CD 协议工作——争用期（碰撞窗口）</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306151752218.png" alt="image-20201013223235305"></p>
+<h3 id="csmacd-协议工作最小帧长">CSMA/CD 协议工作——最小帧长</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306152034048.png" alt="image-20201013224051932"></p>
+<h3 id="csmacd-协议工作最大帧长">CSMA/CD 协议工作——最大帧长</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306152036151.png" alt="image-20201013225400777"></p>
+<h3 id="csmacd-协议工作截断二进制指数退避算法">CSMA/CD 协议工作——截断二进制指数退避算法</h3>
+<p>该算法可以用来解决以太网数据发送和传输过程中，站点间的碰撞问题。该算法是在发生碰撞过后确定随机等待时间的时候起作用。随着重传次数增加，那么，再次等待的随机时间就会更长。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306152037006.png" alt="image-20201013230717856"></p>
+<h3 id="csmacd-协议工作信道利用率">CSMA/CD 协议工作——信道利用率</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306152037671.png" alt="image-20201013231430295"></p>
+<blockquote>
+<p>在理想情况下，以太网上的各个站点数据发送与传输不发生冲突，那么计算信道利用率时，就不用考虑争用期了。</p>
+</blockquote>
+<h3 id="csmacd-协议工作帧接收流程">CSMA/CD 协议工作——帧接收流程</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306152040533.png" alt="image-20201013231703302"></p>
+<h3 id="csmacd-协议的重要特性">CSMA/CD 协议的重要特性</h3>
+<ul>
+<li>使用 CSMA/CD 协议的以太网不能进行全双工通信而<strong>只能进行双向交替通信（半双工通信）。</strong></li>
+<li>每个站在发送数据之后的一小段时间内，存在着遭遇碰撞的可能性。</li>
+<li>这种<strong>发送的不确定性</strong>使整个以太网的平均通信量远小于以太网的最高数据率。</li>
+</ul>
+<blockquote>
+<p>CSMA/CD协议曾经用于各种总线结构以太网和双绞线以太网的早起版本中。</p>
+<p>现在的以太网基于交换机和全双工连接，不会有碰撞，因此没有必要使用CSMA/CS协议</p>
+</blockquote>
+<h2 id="随机接入csmaca协议">随机接入（CSMA/CA协议）</h2>
+<p>无线局域网使用的协议：CSMA/CA</p>
+<h3 id="为什么无线局域网要使用csmaca协议">为什么无线局域网要使用CSMA/CA协议</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306152043311.png" alt="image-20201014192811760"></p>
+<h3 id="帧间间隔ifsinter-frame-space">帧间间隔IFS（Inter Frame Space）</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306152051793.png" alt="image-20201014200149717"></p>
+<h3 id="csmaca协议的工作原理">CSMA/CA协议的工作原理</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306152056262.png" alt="image-20201014200833233"></p>
+<blockquote>
+<p><strong>源站为什么在检测到信道空闲后还要再等待一段时间DIFS？</strong></p>
+<ul>
+<li>考虑到可能有其他的站有高优先级的帧要发送。若有，就要让高优先级帧先发送</li>
+</ul>
+<p><strong>目的站为什么正确接收数据帧后还要等待一段时间SIFS才能发送ACK帧？</strong></p>
+<ul>
+<li>SIFS是最短的帧间间隔，用来分隔开属于一次对话的各帧，在这段时间内，一个站点应当能够从发送方式切换到接收方式，以便做好接受ACK帧或其他帧的准备。</li>
+</ul>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306152117268.png" alt="image-20201014201511741"></p>
+<blockquote>
+<p><strong>信道由忙转为空闲且经过DIFS时间后，其他站还要退避一段随机时间才能使用信道？</strong></p>
+<p>防止多个站点同时发送数据而产生碰撞</p>
+</blockquote>
+<p><strong>使用退避算法的时机</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306152119784.png" alt="image-20201014201927680"></p>
+<h3 id="csmaca协议的退避算法">CSMA/CA协议的退避算法</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306152120468.png" alt="image-20201014202213766"></p>
+<p><strong>退避算法的示例</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306152121805.png" alt="image-20201014202819851"></p>
+<p>当A正在发送数据时，B, C和D都有数据要发送(用向上的箭头表示)。由于这三个站都检测到信道忙，因此都要执行退避算法，各自随机退避一段时间再发送数据。802. I 1标准规定，退避时间必须是整数倍的时隙时间。前面己经讲过，第i次退避是在时隙{0, 1, &hellip;, 2^2^+i}中随机地选择一个。这样做是为了使不同站点选择相同退避时间的概率减少。因此，第1次退避(i=1)要推迟发送的时间是在时隙{0, 1,…，7}中(共8个时隙)随机选择一个，而第2次退避是在时隙{0, 1,…，15}中(共16个时隙)随机选择一个。当时隙编号达到255时(这对应于第6次退避)就不再增加了。这半决定退避时间的变量，称为退避变量。</p>
+<p>退避时间选定后，就相当于设置了一个<strong>退避计时器</strong>(backoff timer)。站点每经历一个时隙的时间就检测一次信道。这可能发生两种情况:</p>
+<ul>
+<li>若检测到信道空闲，退避计时器就继续倒计时;</li>
+<li>若检测到信道忙，就冻结退避计时器的剩余时间，重新等待信道变为空闲并再经过时间DIFS后，从剩余时间开始继续倒计时。如果退避计时器的时间减小到零时，就开始发送整个数据帧。</li>
+</ul>
+<p>C的退避计时器最先减到零，于是C立即把整个数据帧发送出去。请注意，A发送完数据后信道就变为空闲。C的退避计时器一直在倒计时。当C在发送数据的过程中，B和D检测到信道忙，就冻结各自的退避计时器的数值，重新期待信道变为空闲。正在这时E也想发送数据。由于E检测到信道忙，因此E就执行退避算法和设置退避计时器。</p>
+<p>当C发送完数据并经过了时间DIFS后，B和D的退避计时器又从各自的剩余时间开始倒计时。现在争用信道的除B和D外，还有E、D的退避计时器最先减到零，于是D得到了发送权。在D发送数据时，B和E都冻结其退避计时器。</p>
+<p>以后E的退避计时器比B先减少到零。当E发送数据时，B再次冻结其退避计时器。等到E发送完数据并经过时间DIFS后，B的退避计时器才继续工作，一直到把最后剩余的时间用完，然后就发送数据。</p>
+<p>冻结退避计时器剩余时间的做法是为了使协议对所有站点更加公平。</p>
+<h3 id="csmaca协议的信道预约和虚拟载波监听">CSMA/CA协议的信道预约和虚拟载波监听</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306152123222.png" alt="image-20201014203119710"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306152126682.png" alt="image-20201014203506878"></p>
+<p><strong>虚拟载波监听机制能减少隐蔽站带来的碰撞问题的示例</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306152127702.png" alt="image-20201014203859033"></p>
+<hr>
+<h1 id="37mac地址ip地址以及arp协议">3.7、MAC地址、IP地址以及ARP协议</h1>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162103735.png" alt="image-20201014222831663"></p>
+<h2 id="mac地址">MAC地址</h2>
+<blockquote>
+<ul>
+<li>使用点对点信道的数据链路层不需要使用地址</li>
+<li>使用广播信道的数据链路层必须使用地址来区分各主机</li>
+</ul>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221744576.png" alt="image-20201014223659993"></p>
+<h3 id="广播信道的数据链路层必须使用地址mac">广播信道的数据链路层必须使用地址（MAC）</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221745609.png" alt="image-20201014224732019"></p>
+<blockquote>
+<p><strong>MAC地址又称为硬件地址或物理地址</strong>。请注意：不要被 “物理” 二字误导认为物理地址属于物理层范畴，物理地址属于数据链路层范畴</p>
+</blockquote>
+<h3 id="ieee-802局域网的mac地址格式">IEEE 802局域网的MAC地址格式</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221752304.png" alt="image-20201014225358570"></p>
+<blockquote>
+<p><strong>组织唯一标识符OUI</strong></p>
+<ul>
+<li>生产网络设备的厂商，需要向IEEE的注册管理机构申请一个或多个OUI</li>
+</ul>
+<p><strong>网络接口标识符</strong></p>
+<ul>
+<li>由获得OUI的厂商自行随意分配</li>
+</ul>
+<p><strong>EUI-48</strong></p>
+<ul>
+<li>48是这个MAC地址的位数</li>
+</ul>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221755962.png" alt="image-20201014230248959"></p>
+<blockquote>
+<p>对于使用EUI-48空间的应用程序，IEEE的目标寿命为100年（直到2080年），但是鼓励采用EUI-64作为替代</p>
+</blockquote>
+<p><strong>关于无效的 MAC 帧</strong></p>
+<ul>
+<li>数据字段的长度与长度字段的值不一致；</li>
+<li>帧的长度不是整数个字节；</li>
+<li>用收到的帧检验序列 FCS 查出有差错；</li>
+<li>数据字段的长度不在 46 ~ 1500 字节之间。局域网中，MAC帧会根据以太网协议进行传输，所以最少需要64个字节，然后减去非数据字段字节数得到46</li>
+<li>有效的 MAC 帧长度为 64 ~ 1518 字节之间。</li>
+</ul>
+<blockquote>
+<p>对于检查出的无效 MAC 帧就简单地丢弃。以太网不负责重传丢弃的帧。</p>
+</blockquote>
+<h3 id="ieee-802局域网的mac地址发送顺序">IEEE 802局域网的MAC地址发送顺序</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221802931.png" alt="image-20201014230625182"></p>
+<h3 id="单播mac地址举例">单播MAC地址举例</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221809241.png" alt="image-20201014230822305"></p>
+<blockquote>
+<p>主机B给主机C发送<strong>单播帧</strong>，主机B首先要构建该<strong>单播帧</strong>，<strong>在帧首部中的目的地址字段填入主机C的MAC地址</strong>，源地址字段填入自己的MAC地址，再加上帧首部的其他字段、数据载荷以及帧尾部，就构成了该<strong>单播帧</strong></p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221809027.png" alt="image-20201014231244655"></p>
+<blockquote>
+<p>主机B将该<strong>单播帧</strong>发送出去，主机A和C都会收到该<strong>单播帧</strong></p>
+<p>主机A的网卡发现该<strong>单播帧</strong>的目的MAC地址与自己的MAC地址不匹配，丢弃该帧</p>
+<p>主机C的网卡发现该<strong>单播帧</strong>的目的MAC地址与自己的MAC地址匹配，接受该帧</p>
+<p>并将该帧交给其上层处理</p>
+</blockquote>
+<h3 id="广播mac地址举例">广播MAC地址举例</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221812272.png" alt="image-20201014231754669"></p>
+<blockquote>
+<p>假设主机B要发送一个<strong>广播帧</strong>，主机B首先要构建该<strong>广播帧</strong>，<strong>在帧首部中的目的地址字段填入广播地址</strong>，也就是十六进制的全F，源地址字段填入自己的MAC地址，再加上帧首部中的其他字段、数据载荷以及帧尾部，就构成了该<strong>广播帧</strong></p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221814181.png" alt="image-20201014232132424"></p>
+<blockquote>
+<p>主机B讲该<strong>广播帧</strong>发送出去，主机A和C都会收到该<strong>广播帧</strong>，<strong>发现该帧首部中的目的地址字段的内容是广播地址</strong>，就知道该帧是<strong>广播帧</strong>，主机A和主机C都接受该帧，并将该帧交给上层处理</p>
+</blockquote>
+<h3 id="多播mac地址举例">多播MAC地址举例</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221817698.png" alt="image-20201014232714791"></p>
+<blockquote>
+<p>假设主机A要发送<strong>多播帧</strong>给该<strong>多播地址</strong>。将该<strong>多播地址</strong>的左起第一个字节写成8个比特，第一个字节的最低比特位是1，这就表明该地址是<strong>多播地址</strong>。</p>
+<p>快速判断地址是不是<strong>多播地址</strong>，就是上图所示箭头所指的第十六进制数不能整除2（1,3,5,7,9,B,D,F），则该地址是<strong>多播地址</strong>。理解：最低位为1表明一定是个奇数。</p>
+<p>假设主机B，C和D支持多播，各用户给自己的主机配置多播组列表<strong>如下所示</strong></p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221822460.png" alt="image-20201015001243584"></p>
+<blockquote>
+<p>主机B属于两个多播组，主机C也属于两个多播组，而主机D不属于任何多播组</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221824708.png" alt="image-20201015001535528"></p>
+<blockquote>
+<p>主机A首先要构建该<strong>多播帧</strong>，<strong>在帧首部中的目的地址字段填入该多播地址</strong>，源地址点填入自己的MAC地址，再加上帧首部中的其他字段、数据载荷以及帧尾部，就构成了该<strong>多播帧</strong></p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221827858.png" alt="image-20201015002054876"></p>
+<blockquote>
+<p>主机A将该<strong>多播帧</strong>发送出去，主机B、C、D都会收到该<strong>多播帧</strong></p>
+<p><strong>主机B和C发现该多播帧的目的MAC地址在自己的多播组列表中</strong>，主机B和C都会接受该帧</p>
+<p>主机D发现该<strong>多播帧</strong>的目的MAC地址不在自己的多播组列表中，则丢弃该<strong>多播帧</strong></p>
+</blockquote>
+<blockquote>
+<p>给主机配置多播组列表进行私有应用时，不得使用公有的标准多播地址</p>
+</blockquote>
+<h2 id="ip地址">IP地址</h2>
+<p>IP地址属于网络层的范畴，不属于数据链路层的范畴</p>
+<p>下面内容讲的是IP地址的使用，详细的IP地址内容在网络层中介绍</p>
+<h3 id="基本概念-3">基本概念</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221826072.png" alt="image-20201015104441580"></p>
+<h3 id="从网络体系结构看ip地址与mac地址">从网络体系结构看IP地址与MAC地址</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222051302.png" alt="image-20201015104913755"></p>
+<h3 id="数据包转发过程中ip地址与mac地址的变化情况">数据包转发过程中IP地址与MAC地址的变化情况</h3>
+<p>图上各主机和路由器各接口的IP地址和MAC地址用简单的标识符来表示</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222054628.png" alt="image-20201015105455043"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222058872.png" alt="image-20210103212224961"></p>
+<blockquote>
+<p>如何从IP地址找出其对应的MAC地址？</p>
+<p>ARP协议</p>
+</blockquote>
+<h2 id="arp协议">ARP协议</h2>
+<p>如何从IP地址找出其对应的MAC地址？</p>
+<p>ARP（地址解析协议）</p>
+<h3 id="流程">流程</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222101947.png" alt="image-20201015113826197"></p>
+<p>ARP高速缓存表</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222102138.png" alt="image-20201015114052206"></p>
+<blockquote>
+<p>当主机B要给主机C发送数据包时，会首先在自己的ARP高速缓存表中查找主机C的IP地址所对应的MAC地址，但未找到，因此，主机B需要发送ARP请求报文，来获取主机C的MAC地址</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222104645.png" alt="image-20201015114444263"></p>
+<blockquote>
+<p>ARP请求报文有具体的格式，上图的只是简单描述</p>
+<p>ARP请求报文被封装在MAC帧中发送，目的地址为广播地址</p>
+<p>主机B发送封装有ARP请求报文的广播帧，总线上的其他主机都能收到该广播帧</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222105533.png" alt="image-20201015114811501"></p>
+<blockquote>
+<p>收到ARP请求报文的主机A和主机C会把ARP请求报文交给上层的ARP进程</p>
+<p>主机A发现所询问的IP地址不是自己的IP地址，因此不用理会</p>
+<p>主机C的发现所询问的IP地址是自己的IP地址，需要进行相应</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222107342.png" alt="image-20201015115212170"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222109908.png" alt="image-20201015115236673"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222109811.png" alt="image-20201015115252972"></p>
+<p>动态与静态的区别</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222109254.png" alt="image-20201015115831543"></p>
+<p><strong>ARP协议只能在一段链路或一个网络上使用，而不能跨网络使用</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222110499.png" alt="image-20201015120108028"></p>
+<blockquote>
+<p>ARP协议的使用是逐段链路进行的</p>
+</blockquote>
+<h3 id="总结-1">总结</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222110237.png" alt="image-20201015120707150"></p>
+<blockquote>
+<p>ARP表中的IP地址与MAC地址的对应关系记录，是<strong>会定期自动删除的</strong>，<strong>因为IP地址与MAC地址的对应关系不是永久性的</strong></p>
+</blockquote>
+<hr>
+<h1 id="38集线器与交换机的区别">3.8、集线器与交换机的区别</h1>
+<h2 id="集线器-在物理层扩展以太网">集线器-在物理层扩展以太网</h2>
+<h3 id="概念">概念</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222250819.png" alt="image-20201015144628691"></p>
+<blockquote>
+<ul>
+<li>传统以太网最初是使用粗同轴电缆，后来演进到使用比较便宜的细同轴电缆，最后发展为使用更便宜和更灵活的双绞线。</li>
+<li>采用双绞线的以太网采用星形拓扑，在星形的中心则增加了一种可靠性非常高的设备，叫做<strong>集线器</strong> (hub)。</li>
+<li><strong>集线器</strong>是也可以看做多口中继器，每个端口都可以成为一个中继器，中继器是对减弱的信号进行放大和发送的设备</li>
+<li><strong>集线器</strong>的以太网在逻辑上仍是个总线网，需要使用CSMA/CD协议来协调各主机争用总线，只能工作在半双工模式，收发帧不能同时进行</li>
+</ul>
+</blockquote>
+<h3 id="集线器hub在物理层扩展以太网">集线器HUB在物理层扩展以太网</h3>
+<p><strong>使用集线器扩展</strong>：将多个以太网段连成更大的、多级星形结构的以太网</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222250339.png" alt="image-20201015145732275"></p>
+<blockquote>
+<ul>
+<li>
+<p><strong>优点</strong></p>
+<ol>
+<li>使原来属于不同碰撞域的以太网上的计算机能够进行跨碰撞域的通信。</li>
+<li>扩大了以太网覆盖的地理范围。</li>
+</ol>
+</li>
+<li>
+<p><strong>缺点</strong></p>
+<ol>
+<li>
+<p>碰撞域增大了，但总的吞吐量并未提高，反而降低。</p>
+<p>假设两个主机进行数据交换，那么在整个扩展以太网下的所有主机都会收到数据，所以那么其他主机发送数据或传输数据就会发生冲突。显然，这个冲突的可能性反而提高了</p>
+</li>
+<li>
+<p>如果不同的碰撞域使用不同的数据率，那么就不能用集线器将它们互连起来。</p>
+</li>
+</ol>
+</li>
+</ul>
+</blockquote>
+<p><strong>碰撞域</strong></p>
+<ul>
+<li>
+<p><strong>碰撞域（collision domain）<strong>又称为</strong>冲突域</strong>，是指网络中一个站点发出的帧会与其他站点发出的帧产生碰撞或冲突的那部分网络。</p>
+<p>例如：几个主机接到一个集线器上，形成星型拓扑结构，那么一个主机给另外一个主机进行数据交换时，其他主机都能收到数据，因此，其他主机不能发送再发送数据了，否则就会冲突。</p>
+<p>所以，这也是集线器的最大问题，容易导致“广播风暴”。</p>
+</li>
+<li>
+<p>碰撞域越大，发生碰撞的概率越高。</p>
+</li>
+</ul>
+<p>为了解决集线器组装时，冲突越来越大的问题，后面又出现了网桥和交换机来对以太网进行扩展的技术</p>
+<h2 id="以太网交换机和网桥-在数据链路层扩展以太网">以太网交换机和网桥-在数据链路层扩展以太网</h2>
+<h3 id="概念-1">概念</h3>
+<ul>
+<li>扩展以太网更常用的方法是在数据链路层进行。</li>
+<li>早期使用<strong>网桥</strong>，现在使用<strong>以太网交换机</strong>。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222250366.png" alt="image-20201015150620067"></p>
+<blockquote>
+<p><strong>网桥</strong></p>
+<ul>
+<li>网桥工作在数据链路层。</li>
+<li>它根据 MAC 帧的目的地址对收到的帧进行转发和过滤。</li>
+<li>当网桥收到一个帧时，并不是向所有的接口转发此帧，而是先检查此帧的目的MAC 地址，然后再确定将该帧转发到哪一个接口，或把它丢弃。</li>
+</ul>
+<p><strong>交换机</strong></p>
+<ul>
+<li>1990 年问世的交换式集线器 (switching hub) 可明显地提高以太网的性能。</li>
+<li>交换式集线器常称为<strong>以太网交换机</strong> (switch) 或<strong>第二层交换机</strong> (L2 switch)，强调这种交换机工作在数据链路层。</li>
+<li>以太网交换机实质上就是一个<strong>多接口的网桥</strong></li>
+</ul>
+<p>网桥和交换机用户<strong>分割冲突域</strong>，就是网桥和交换机可以较少<strong>被逼的广播(hub导致的)</strong>，但<strong>不能分割广播域</strong>。不严格地说，交换机可以看作网桥的高度集成。</p>
+</blockquote>
+<h3 id="集线器hub与交换机switch区别"><strong>集线器HUB与交换机SWITCH区别</strong></h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222251295.png" alt="image-20201015152232158"></p>
+<blockquote>
+<p>使用集线器互连而成的共享总线式以太网上的某个主机，要给另一个主机发送单播帧，该单播帧会通过共享总线传输到总线上的其他各个主机</p>
+<p>使用交换机互连而成的交换式以太网上的某个主机，要给另一个主机发送单播帧，该单播帧进入交换机后，交换机会将该单播帧转发给目的主机，而不是网络中的其他各个主机</p>
+<p>这个例子的前提条件是忽略ARP过程，并假设交换机的帧交换表已经学习或配置好了</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222251525.png" alt="image-20201015152858146"></p>
+<blockquote>
+<p><strong>以太网交换机的交换方式</strong></p>
+<ul>
+<li>存储转发方式
+<ul>
+<li>把整个数据帧<strong>先缓存</strong>后再进行处理。</li>
+</ul>
+</li>
+<li>直通 (cut-through) 方式
+<ul>
+<li>接收数据帧的同时就<strong>立即按数据帧的目的 MAC 地址决定该帧的转发接口</strong>，因而提高了帧的转发速度。</li>
+<li><strong>缺点</strong>是它不检查差错就直接将帧转发出去，因此有可能也将一些无效帧转发给其他的站。</li>
+</ul>
+</li>
+</ul>
+<p>这个例子的前提条件是忽略ARP过程，并假设交换机的帧交换表已经学习或配置好了</p>
+</blockquote>
+<p><strong>对比集线器和交换机</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222251947.png" alt="image-20201015153907268"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222251613.png" alt="image-20201015154523036"></p>
+<blockquote>
+<p>多台主机同时给另一台主机发送单播帧</p>
+<p>集线器以太网：会产生碰撞，遭遇碰撞的帧会传播到总线上的各主机</p>
+<p>交换机以太网：会将它们缓存起来，然后逐个转发给目的主机，不会产生碰撞</p>
+<p><strong>这个例子的前提条件是忽略ARP过程，并假设交换机的帧交换表已经学习或配置好了</strong></p>
+</blockquote>
+<p><strong>集线器扩展以太网和交换机扩展以太网区别</strong></p>
+<p><strong>单播</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222251589.png" alt="image-20201015155408692"></p>
+<p><strong>广播</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222251669.png" alt="image-20201015155440402"></p>
+<p><strong>多个单播</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222251534.png" alt="image-20201015155526386"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222251276.png" alt="image-20201015155706698"></p>
+<p>广播域（broadcast domain）：指这样一部分网络，其中任何一台设备发出的广播通信都能被该部分网络中的所有其他设备所接收。</p>
+<h2 id="总结-2">总结</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222250004.png" alt="image-20201015160146482"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306222252247.png" alt="image-20201015160526999"></p>
+<blockquote>
+<p>工作在数据链路层的以太网交换机，其性能远远超过工作在物理层的集线器，而且价格并不贵，这就使得集线器逐渐被市场淘汰</p>
+</blockquote>
+<hr>
+<h1 id="39以太网交换机自学习和转发帧的流程">3.9、以太网交换机自学习和转发帧的流程</h1>
+<h2 id="概念-2">概念</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162306893.png" alt="image-20201015161015165"></p>
+<h2 id="自学习和转发帧的例子">自学习和转发帧的例子</h2>
+<p>以下例子假设各主机知道网络中其他各主机的MAC地址（无需进行ARP）</p>
+<p><strong>A -&gt; B</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162308688.png" alt="image-20201015161458528"></p>
+<blockquote>
+<ol>
+<li>A 先向 B 发送一帧。该帧从接口 1 进入到交换机</li>
+<li>交换机收到帧后，先查找（图中左边）交换表。没有查到应从哪个接口转发这个帧给 B</li>
+<li>交换机把这个帧的源地址 A 和接口 1 写入（图中左边）交换表中</li>
+<li>交换机向除接口 1 以外的所有的接口广播这个帧</li>
+<li>接口 4到接口 2，先查找（图中右边）交换表。没有查到应从哪个接口转发这个帧给 B</li>
+<li>交换机把这个帧的源地址 A 和接口 2 写入（图中右边）交换表中</li>
+<li>除B主机之外与该帧的目的地址不相符，将丢弃该帧</li>
+<li>主机B发现是给自己的帧，接受该帧</li>
+</ol>
+<p>可以看到在这个过程中，没有找到目标MAC地址对应的接口时，就将源MAC地址和源主机接接口号记录在表中，之后再将帧进行广播，如果目的MAC地址与源主机相通，则可以将帧接收到。故此，<strong>这个过程学习到了源主机MAC地址和接口</strong>。</p>
+</blockquote>
+<p><strong>B -&gt; A</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306192230725.png" alt="image-20201015162310922"></p>
+<blockquote>
+<ol>
+<li>B 向 A 发送一帧。该帧从接口 3 进入到交换机</li>
+<li>交换机收到帧后，先查找（图中左边）交换表。发现（图中左边）交换表中的 MAC 地址有 A，表明要发送给A的帧应从接口1转发出去。于是就把这个帧传送到接口 1 转发给 A。</li>
+<li>主机 A 发现目的地址是它，就接受该帧</li>
+<li>交换机把这个帧的源地址 B 和接口 3 写入（图中左边）交换表中</li>
+</ol>
+<p>如果交换机的帧交换表中含有目的主机MAC地址对应的接口号，那么就<strong>不需要进行广播了，直接就将帧传给指定接口。当然，源主机MAC和接口地址没有再帧交换表时，也应该学习到。</strong></p>
+</blockquote>
+<p><strong>E -&gt; A</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221727168.png" alt="image-20201015162622462"></p>
+<blockquote>
+<ol>
+<li>E 向 A发送一帧</li>
+<li>交换机收到帧后，先查找（图中右边）交换表。发现（图中右边）交换表中的 MAC 地址有 A，表明要发送给A的帧应从接口2转发出去。于是就把这个帧传送到接口 2 转发给 接口 4。</li>
+<li>交换机把这个帧的源地址 E 和接口 3 写入（图中右边）交换表中</li>
+<li>接口 4 到 左边的交换机，先查找（图中左边）交换表。发现（图中左边）交换表中的 MAC 地址有 A，表明要发送给A的帧应从接口1转发出去。于是就把这个帧传送到接口 1 转发给 A。</li>
+<li>交换机把这个帧的源地址 E 和接口 4 写入（图中左边）交换表中</li>
+<li>主机 A 发现目的地址是它，就接受该帧</li>
+</ol>
+<p>这个过程主要是在帧的传播过程中，学习到接口和目的源主机MAC地址的关系。</p>
+</blockquote>
+<p><strong>G -&gt; A</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221732704.png" alt="image-20201015163157140"></p>
+<blockquote>
+<p>主机 A、主机 G、交换机 1的接口 1就共享同一条总线（相当于总线式网络，可以想象成用集线器连接了）</p>
+<ol>
+<li>主机 G 发送给 主机 A 一个帧</li>
+<li>主机 A 和 交换机接口 1都能接收到</li>
+<li>主机 A 的网卡收到后，根据帧的目的MAC地址A，就知道是发送给自己的帧，就接受该帧</li>
+<li>交换机 1收到该帧后，首先进行登记工作</li>
+<li>然后交换机 1对该帧进行转发，该帧的MAC地址是A，在（图中左边）交换表查找MAC 地址有 A</li>
+<li>MAC 地址为 A的接口号是1，但是该帧正是从接口 1 进入交换机的，交换机不会再从该接口 1 将帧转发出去，因为这是没有必要，于是丢弃该帧</li>
+</ol>
+</blockquote>
+<p>随着网络中各主机都发送了帧后，网络中的各交换机就可以学习到各主机的MAC地址，以及它们与自己各接口的对应关系</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221733484.png" alt="image-20201015164210543"></p>
+<blockquote>
+<p>考虑到可能有时要在交换机的接口更换主机，或者主机要更换其网络适配器，这就需要更改交换表中的项目。为此，在交换表中每个项目都设有一定的<strong>有效时间</strong>。<strong>过期的项目就自动被删除</strong>。</p>
+<p><strong>以太网交换机的这种自学习方法使得以太网交换机能够即插即用，不必人工进行配置，因此非常方便。</strong></p>
+</blockquote>
+<h2 id="总结-3">总结</h2>
+<p><strong>交换机自学习和转发帧的步骤归纳</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221735583.png" alt="image-20201015170656500"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306221739642.png" alt="image-20201015170739679"></p>
+<hr>
+<h1 id="310以太网交换机的生成树协议stp">3.10、以太网交换机的生成树协议STP</h1>
+<h2 id="如何提高以太网的可靠性">如何提高以太网的可靠性</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162108660.png" alt="image-20201015171453001"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162108822.png" alt="image-20201015171515481"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162112915.png" alt="image-20201015171900775"></p>
+<h2 id="生成树协议stp">生成树协议STP</h2>
+<p>为什么要用STP协议？</p>
+<p>为了解决第二层网络环路问题而又要保证网络的稳定和健壮性，引入了链路动态管理的策略。</p>
+<ul>
+<li>首先通过阻塞某些链路避免环路的产生（避免环路）</li>
+<li>再次当正常工作的链路由于故障断开时，阻塞的链路立刻激活，迅速取代故障链路的位置，保证网络的正常运行。</li>
+</ul>
+<blockquote>
+<p>IEEE 802.1D 标准制定了一个<strong>生成树协议 STP</strong>  (Spanning Tree Protocol)。</p>
+<p>其<strong>要点</strong>是：<strong>不改变</strong>网络的实际拓扑，但在逻辑上则切断某些链路，使得从一台主机到所有其他主机的路径是<strong>无环路的树状结构</strong>，从而消除了兜圈子现象。</p>
+</blockquote>
+<h3 id="stp中根桥根端口指定端口的选举规则">STP中根桥，根端口，指定端口的选举规则</h3>
+<p><a href="https://developer.aliyun.com/article/911748">https://developer.aliyun.com/article/911748</a></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162122285.png" alt="image-20201015202257756"></p>
+<hr>
+<h1 id="311虚拟局域网vlan">3.11、虚拟局域网VLAN</h1>
+<h2 id="lan与vlan">LAN与VLAN</h2>
+<ul>
+<li>
+<p>LAN 表示 Local Area Network，本地局域网。
+一个 LAN 表示一个<a href="https://so.csdn.net/so/search?q=%E5%B9%BF%E6%92%AD%E5%9F%9F&amp;spm=1001.2101.3001.7020">广播域</a>，含义是：LAN 中的所有成员都会收到任意一个成员发出的广播包。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162208471.png" alt="img" style="zoom: 33%;" />
+<p>上图为最基本的LAN布局。如果设备间想要通讯，必须要获取到对方的MAC地址。</p>
+<blockquote>
+<p>举例：A 发信息给 C，A 并不知道 C 的 MAC 地址。此时通过 <a href="https://so.csdn.net/so/search?q=ARP&amp;spm=1001.2101.3001.7020">ARP</a> 协议（Address Resolution Protocol；地址解析协议；）获取 C 的 MAC 地址，A 先要广播一个包含目标 IP 地址的 ARP 请求到链接在集线器上的所有设备上，C 接受到广播后返回 MAC 地址给 A，其他设备则丢弃信息。至此已经建立设备间通信的准备条件。</p>
+</blockquote>
+</li>
+<li>
+<p>虚拟局域网（VLAN）是在局域网（LAN）的逻辑上划分成多个广播域，每一个广播域就是一个 VLAN。</p>
+<p>下图为交换机划分虚拟局域网。交换机把一个广播域划分成了3个广播域，物理上这些设备在一个交换机上，但是逻辑上已经分别划分到三个交换机上，所以会有三个局域网（虚拟局域网），三个广播域。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162211703.png" alt="img" style="zoom: 50%;" />
+</li>
+</ul>
+<h2 id="为什么要虚拟局域网vlan">为什么要虚拟局域网VLAN</h2>
+<p><strong>广播风暴</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162212206.png" alt="image-20201015202859124"></p>
+<p><strong>分割广播域的方法</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162215227.png" alt="image-20201015203113654"></p>
+<blockquote>
+<p>为了分割广播域，所以虚拟局域网VLAN技术应运而生</p>
+</blockquote>
+<h2 id="概念-3">概念</h2>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162216404.png" alt="image-20201015203559548" style="zoom:50%;" />
+<blockquote>
+<ul>
+<li>利用以太网交换机可以很方便地实现虚拟局域网 VLAN (Virtual LAN)。</li>
+<li>IEEE 802.1Q 对虚拟局域网 VLAN 的<strong>定义</strong>：
+<strong>虚拟局域网 VLAN</strong> 是由一些局域网网段构成的<strong>与物理位置无关的逻辑组</strong>，而这些网段具有某些共同的需求。每一个 VLAN 的帧都有一个明确的标识符，指明发送这个帧的计算机是属于哪一个 VLAN。</li>
+<li>同一个VLAN内部可以广播通信，不同VLAN不可以广播通信</li>
+<li><strong>虚拟局域网其实只是局域网给用户提供的一种服务，而并不是一种新型局域网。</strong></li>
+<li>由于虚拟局域网是用户和网络资源的逻辑组合，因此可按照需要将有关设备和资源非常方便地重新组合，使用户从不同的服务器或数据库中存取所需的资源。</li>
+</ul>
+</blockquote>
+<h2 id="虚拟局域网vlan的实现机制">虚拟局域网VLAN的实现机制</h2>
+<p>虚拟局域网VLAN技术是在交换机上实现的，需要交换机能够实现以下功能</p>
+<ul>
+<li>能够处理带有VLAN标记的帧——IEEE 802.1 Q帧</li>
+<li>交换机的各端口可以支持不同的端口类型，不同端口类型的端口对帧的处理方式有所不同</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162218030.png" alt="image-20201015204639599"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162218152.png" alt="image-20201015204749141"></p>
+<p><strong>Access端口</strong></p>
+<p>交换机与用户计算机之间的互连</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162218735.png" alt="image-20201015205311757"></p>
+<blockquote>
+<p>同一个VLAN内部可以广播通信，不同VLAN不可以广播通信。</p>
+<p>简单来说就是：VLAN相较于LAN的实现上，就是在广播以太网MAC帧的时候，再在这个帧上添加一个4字节的VLAN标记，指明只有满足<code>PVID==VID</code>条件才能将广播的以太网MAC帧发送到相同VLAN的交换机的access类型端口连着的主机；其他不满足<code>PVID==VID</code>的条件的主机也就是不在一个VLAN下，自然就不能接收到帧。</p>
+</blockquote>
+<p><strong>Truck端口</strong></p>
+<p>交换机之间 或 交换机与路由器之间的互连</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162218102.png" alt="image-20201015205947636"></p>
+<p><strong>小例题</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162243141.png" alt="image-20201015210417695"></p>
+<p><strong>华为交换机私有的Hybrid端口类型</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162243269.png" alt="image-20201015211031361"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162243128.png" alt="image-20201015211349531"></p>
+<h2 id="总结-4">总结</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202306162244671.png" alt="image-20201015211512622"></p>
+<blockquote>
+<p><strong>虚拟局域网优点</strong></p>
+<p>虚拟局域网（VLAN）技术具有以下主要优点：</p>
+<ol>
+<li>改善了性能</li>
+<li>简化了管理</li>
+<li>降低了成本</li>
+<li>改善了安全性</li>
+</ol>
+</blockquote>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-06-08
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/ppp%E5%8D%8F%E8%AE%AE/">ppp协议</a>
+          <a href="/tags/%E4%BB%A5%E5%A4%AA%E7%BD%91%E5%8D%8F%E8%AE%AE/">以太网协议</a>
+          <a href="/tags/arp%E5%8D%8F%E8%AE%AE/">arp协议</a>
+          <a href="/tags/%E8%99%9A%E6%8B%9F%E5%B1%80%E5%9F%9F%E7%BD%91vlan/">虚拟局域网vlan</a>
+          <a href="/tags/%E5%8F%AF%E9%9D%A0%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE/">可靠传输协议</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">计算机网络之网络层</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E7%89%A9%E7%90%86%E5%B1%82/">
+            <span class="next-text nav-default">计算机网络之物理层</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-06-08 15:17:49 \u002b0800 CST',
+        title: '计算机网络之数据链路层',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

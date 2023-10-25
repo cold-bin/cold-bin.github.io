@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>缓存系统 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/categories/%E7%BC%93%E5%AD%98%E7%B3%BB%E7%BB%9F/</link>
+    <description>Recent content in 缓存系统 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Wed, 31 May 2023 22:53:14 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/%E7%BC%93%E5%AD%98%E7%B3%BB%E7%BB%9F/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>缓存淘汰策略</title>
+      <link>https://cold-bin.github.io/post/%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5/</link>
+      <pubDate>Wed, 31 May 2023 22:53:14 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5/</guid>
+      <description>[toc] 缓存淘汰 背景 不论是进程内缓存，还是分布式缓存，都无法避免这样一个问题：当我们需要缓存的数据大于物理内存时，那么就需要通过操作系统虚拟内存管</description>
+    </item>
+    
+  </channel>
+</rss>

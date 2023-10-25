@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>子查询 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/%E5%AD%90%E6%9F%A5%E8%AF%A2/</link>
+    <description>Recent content in 子查询 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Wed, 24 Aug 2022 15:37:22 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/%E5%AD%90%E6%9F%A5%E8%AF%A2/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL基础篇</title>
+      <link>https://cold-bin.github.io/post/mysql%E5%9F%BA%E7%A1%80%E7%AF%87/</link>
+      <pubDate>Wed, 24 Aug 2022 15:37:22 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/mysql%E5%9F%BA%E7%A1%80%E7%AF%87/</guid>
+      <description>[toc] 导入表的问题 导入数据时外键约束问题 数据导入指令： 1 source d:\xxx.sql 通过FOREIGN_KEY_CHECKS解决，用法如下： 1 2 set FOREIGN_KEY_CHECKS=0; #在导入前设置为不检</description>
+    </item>
+    
+  </channel>
+</rss>

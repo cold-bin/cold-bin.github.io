@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Go的结构体内存对齐 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="一. 什么是内存对齐, 为啥要内存对齐？ 在解释什么是内存对齐之前，我们需要先了解一下CPU和内存数据交互的过程。CPU和内存是通过总线进行数据交" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="Go的结构体内存对齐" />
+<meta property="og:description" content="一. 什么是内存对齐, 为啥要内存对齐？ 在解释什么是内存对齐之前，我们需要先了解一下CPU和内存数据交互的过程。CPU和内存是通过总线进行数据交" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-07-17T15:26:09+08:00" />
+<meta property="article:modified_time" content="2022-07-17T15:26:09+08:00" />
+<meta itemprop="name" content="Go的结构体内存对齐">
+<meta itemprop="description" content="一. 什么是内存对齐, 为啥要内存对齐？ 在解释什么是内存对齐之前，我们需要先了解一下CPU和内存数据交互的过程。CPU和内存是通过总线进行数据交"><meta itemprop="datePublished" content="2022-07-17T15:26:09+08:00" />
+<meta itemprop="dateModified" content="2022-07-17T15:26:09+08:00" />
+<meta itemprop="wordCount" content="2851">
+<meta itemprop="keywords" content="go内存对齐," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go的结构体内存对齐"/>
+<meta name="twitter:description" content="一. 什么是内存对齐, 为啥要内存对齐？ 在解释什么是内存对齐之前，我们需要先了解一下CPU和内存数据交互的过程。CPU和内存是通过总线进行数据交"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go的结构体内存对齐</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2022-07-17 </span>
+        <div class="post-category">
+            <a href="/categories/golang/"> golang </a>
+            </div>
+          <span class="more-meta"> 约 2851 字 </span>
+          <span class="more-meta"> 预计阅读 6 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#一-什么是内存对齐-为啥要内存对齐">一. 什么是内存对齐, 为啥要内存对齐？</a>
+          <ul>
+            <li><a href="#1-机器字长">(1) 机器字长</a></li>
+            <li><a href="#2-地址总线">(2) 地址总线</a></li>
+            <li><a href="#3-数据总线">(3) 数据总线</a></li>
+          </ul>
+        </li>
+        <li><a href="#二-内存对齐的规则是什么">二. 内存对齐的规则是什么?</a>
+          <ul>
+            <li><a href="#1-基本类型对齐">(1) 基本类型对齐</a></li>
+            <li><a href="#2-结构体类型对齐">(2) 结构体类型对齐</a></li>
+            <li><a href="#3-测试验证">(3) 测试验证</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h2 id="一-什么是内存对齐-为啥要内存对齐">一. 什么是内存对齐, 为啥要内存对齐？</h2>
+<p><strong>在解释什么是内存对齐之前，我们需要先了解一下CPU和内存数据交互的过程。CPU和内存是通过总线进行数据交互的。其中地址总线用来传递CPU需要的数据地址，内存将数据通过数据总线传递给CPU， 或者CPU将数据通过数据总线回传给内存。</strong></p>
+<p><img src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207171716860.png" alt="img"></p>
+<p>首先我们需要知道以下概念：</p>
+<h3 id="1-机器字长">(1) 机器字长</h3>
+<p>在计算机领域，对于某种特定的计算机设计而言，<strong>字</strong>（word）是用于表示其自然的数据单位的术语，是用来表示一次性处理事务的固定长度。一个字的位数，即<strong>字长</strong>。</p>
+<h3 id="2-地址总线">(2) 地址总线</h3>
+<p>专门用来传送地址的，由于地址只能从CPU传向外部存储器或I／O端口，所以地址总线总是单向的。地址总线的位数决定了CPU可直接寻址的内存空间大小，比如8位微型机的地址总线为16位，则其最大可寻址空间为2^16＝64KB，16位微型机的地址总线为20位，其可寻址空间为2^20＝1MB。</p>
+<h3 id="3-数据总线">(3) 数据总线</h3>
+<p>是CPU与内存或其他器件之间的数据传送的通道。每条传输线一次只能传输1位二进制数据, 数据总线每次可以传输的字节总数就称为机器字长或者数据总线的宽度。 它决定了CPU和外界的数据传送速度。我们现在日常使用的基本上是32位(每次可以传输4字节)或者64位(每次可以传输8字节)机器字长的机器。</p>
+<p><strong>由于数据是通过总线进行传输，若数据未经一定规则的对齐，CPU的访址操作与总线的传输操作将会异常的复杂，所以编译器在程序编译期间会对各种类型的数据按照一定的规则进行对齐, 对齐过程会按一定规则对内存的数据段进行的字节填充， 这就是字节对齐</strong>。</p>
+<p><em><strong>例如</strong></em>: 现在要存储变量A（int32）和B（int64）那么不做任何字节对齐优化的情况下，内存布局是这样的</p>
+<p><img src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207171716650.png" alt="img"></p>
+<p>字节对齐优化后是这样子的：</p>
+<p><img src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207171717858.png" alt="img"></p>
+<p>一看感觉字节对齐后浪费了内存， 但是当我们去读取内存中的数据给CPU时，64位的机器（一次可以原子读取8字节）在内存对齐和不对齐的情况下A变量都只需要原子读取一次就行， 但是对齐后B变量的读取只需一次， 而不对齐的情况下，B需要读取2次，且需要额外的处理牺牲性能来保证2次读取的原子性。所以本质上，内存填充是一种以空间换时间， 通过额外的内存填充来提高内存读取的效率的手段。</p>
+<p><strong>总的来说，内存对齐主要解决以下两个问题</strong>：</p>
+<p>【1】跨平台问题：如果数据不对齐，那么在64位字长机器存储的数据可能在32位字长的机器可能就无法正常的读取。</p>
+<p>【2】性能问题：如果不对齐，那么每个数据要通过多少次总线传输是未知的，如果每次都要处理这些复杂的情况，那么数据的读/写性能将会收到很大的影响。之所以有些CPU支持访问任意地址，是因为处理器在后面多做了很多额外处理。</p>
+<h2 id="二-内存对齐的规则是什么">二. 内存对齐的规则是什么?</h2>
+<p>内存对齐主要是为了保证数据的原子读取， 因此内存对齐的最大边界只可能为当前机器的字长。当然如果每种类型都使用最大的对齐边界，那么对内存将是一种浪费，实际上我们只要保证同一个数据不要分开在多次总线事务中便可。</p>
+<p>Go在其官方文档 <a href="https://golang.org/ref/spec#Size_and_alignment_guarantees">Size and alignment guarantees - Golang spec</a> 就描述了其在内存对齐方面的细节。</p>
+<p>Go也提供了<code>unsafe.Alignof(x)</code>来返回一个类型的对齐值，并且作出了如下约定：</p>
+<ul>
+<li>对于任意类型的变量 x ，<code>unsafe.Alignof(x)</code> 至少为 1。</li>
+<li>对于 struct 结构体类型的变量 x，计算 x 每一个字段 f 的 <code>unsafe.Alignof(x.f)</code>，<code>unsafe.Alignof(x)</code> 等于其中的最大值。</li>
+<li>对于 array 数组类型的变量 x，<code>unsafe.Alignof(x)</code> 等于构成数组的元素类型的对齐倍数。</li>
+<li>没有任何字段的空 struct{} 和没有任何元素的 array 占据的内存空间大小为 0，不同的大小为 0 的变量可能指向同一块地址。</li>
+</ul>
+<p>总结来说，分为<strong>基本类型对齐</strong>和<strong>结构体类型对齐</strong></p>
+<h3 id="1-基本类型对齐">(1) 基本类型对齐</h3>
+<p>go语言的基本类型的内存对齐是按照基本类型的大小和机器字长中最小值进行对齐</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">数据类型</th>
+<th style="text-align:left">类型大小（32/64位）</th>
+<th style="text-align:left">最大对齐边界（32位）</th>
+<th style="text-align:left">最大对齐边界（64位）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">int8/uint8/byte</td>
+<td style="text-align:left">1字节</td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">1</td>
+</tr>
+<tr>
+<td style="text-align:left">int16/uint16</td>
+<td style="text-align:left">2字节</td>
+<td style="text-align:left">2</td>
+<td style="text-align:left">2</td>
+</tr>
+<tr>
+<td style="text-align:left">int32/uint32/rune/float32/complex32</td>
+<td style="text-align:left">4字节</td>
+<td style="text-align:left">4</td>
+<td style="text-align:left">4</td>
+</tr>
+<tr>
+<td style="text-align:left">int64/uint64/float64/complex64</td>
+<td style="text-align:left">8字节</td>
+<td style="text-align:left">4</td>
+<td style="text-align:left">8</td>
+</tr>
+<tr>
+<td style="text-align:left">string</td>
+<td style="text-align:left">8字节/16字节</td>
+<td style="text-align:left">4</td>
+<td style="text-align:left">8</td>
+</tr>
+<tr>
+<td style="text-align:left">slice</td>
+<td style="text-align:left">12字节/24字节</td>
+<td style="text-align:left">4</td>
+<td style="text-align:left">8</td>
+</tr>
+</tbody>
+</table>
+<p>我们可以在自己的机器上编码测试了一下（我的机器是64位的 Mac OS X）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">service</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;testing&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;unsafe&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">TestAlign</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">byteTest</span> <span class="kt">byte</span> <span class="p">=</span> <span class="sc">&#39;a&#39;</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">int8Test</span> <span class="kt">int8</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">int16Test</span> <span class="kt">int16</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">int32Test</span> <span class="kt">int32</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">int64Test</span> <span class="kt">int64</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">uint8Test</span> <span class="kt">uint8</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">uint16Test</span> <span class="kt">uint16</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">uint32Test</span> <span class="kt">uint32</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">uint64Test</span> <span class="kt">uint64</span> <span class="p">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">float32Test</span> <span class="kt">float32</span> <span class="p">=</span> <span class="mf">0.0</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">float64Test</span> <span class="kt">float64</span> <span class="p">=</span> <span class="mf">0.0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nb">println</span><span class="p">(</span><span class="s">&#34;byte max align size  =&gt;&#34;</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Alignof</span><span class="p">(</span><span class="nx">byteTest</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">println</span><span class="p">(</span><span class="s">&#34;int8/uint8 max align size  =&gt;&#34;</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Alignof</span><span class="p">(</span><span class="nx">int8Test</span><span class="p">),</span> <span class="s">&#34;/&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Alignof</span><span class="p">(</span><span class="nx">uint8Test</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">println</span><span class="p">(</span><span class="s">&#34;int16/uint16 max align size =&gt;&#34;</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Alignof</span><span class="p">(</span><span class="nx">int16Test</span><span class="p">),</span> <span class="s">&#34;/&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Alignof</span><span class="p">(</span><span class="nx">uint16Test</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">println</span><span class="p">(</span><span class="s">&#34;int32/uint32/float32 max align size =&gt;&#34;</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Alignof</span><span class="p">(</span><span class="nx">int32Test</span><span class="p">),</span> <span class="s">&#34;/&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Alignof</span><span class="p">(</span><span class="nx">uint32Test</span><span class="p">),</span> <span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Alignof</span><span class="p">(</span><span class="nx">float32Test</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">println</span><span class="p">(</span><span class="s">&#34;int64/uint64/float64 max align size =&gt;&#34;</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Alignof</span><span class="p">(</span><span class="nx">int64Test</span><span class="p">),</span> <span class="s">&#34;/&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Alignof</span><span class="p">(</span><span class="nx">uint64Test</span><span class="p">),</span> <span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Alignof</span><span class="p">(</span><span class="nx">float64Test</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">s</span> <span class="kt">string</span> <span class="p">=</span> <span class="s">&#34;343240000000000&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">println</span><span class="p">(</span><span class="s">&#34;string max align size =&gt;&#34;</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Alignof</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">sliceTest</span> <span class="p">[]</span><span class="kt">string</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">println</span><span class="p">(</span><span class="s">&#34;slice&#39;s size/max align size =&gt;&#34;</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Alignof</span><span class="p">(</span><span class="nx">sliceTest</span><span class="p">),</span> <span class="s">&#34;/&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Sizeof</span><span class="p">(</span><span class="nx">sliceTest</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">structTest</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">println</span><span class="p">(</span><span class="s">&#34;struct{}&#39;s size / max align size =&gt;&#34;</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Alignof</span><span class="p">(</span><span class="nx">structTest</span><span class="p">),</span> <span class="s">&#34;/&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Sizeof</span><span class="p">(</span><span class="nx">structTest</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>复制</p>
+<p>运行结果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">byte max align size  =&gt; 1
+</span></span><span class="line"><span class="cl">int8/uint8 max align size  =&gt; 1 / 1
+</span></span><span class="line"><span class="cl">int16/uint16 max align size =&gt; 2 / 2
+</span></span><span class="line"><span class="cl">int32/uint32/float32 max align size =&gt; 4 / 4 / 4
+</span></span><span class="line"><span class="cl">int64/uint64/float64 max align size =&gt; 8 / 8 / 8
+</span></span><span class="line"><span class="cl">string max align size =&gt; 8
+</span></span><span class="line"><span class="cl">slice&#39;s size/max align size =&gt; 8 / 24
+</span></span><span class="line"><span class="cl">struct{}&#39;s size / max align size =&gt; 1 / 0
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>复制</p>
+<h3 id="2-结构体类型对齐">(2) 结构体类型对齐</h3>
+<p>go语言的结构体的对齐是先对结构体的每个字段进行对齐，然后对总体的大小按照最大对齐边界的整数倍进行对齐。有一个特殊的情况就是，如果空结构体嵌套到一个结构体尾部，那么这个结构体也是要额外对齐的，因为如果有指针指向该字段, 返回的地址将在结构体之外，如果此指针一直存活不释放对应的内存，就会有内存泄露的问题。</p>
+<p>下面通过一些列的例子来说明一下结构体对齐的规则，需要额外说明的是结构体内的字段位置其实都是通过计算到结构体首地址的偏移量来确定的，对所有的字段来说，首地址就是结构体内索引值为0的地址。</p>
+<blockquote>
+<p><strong>案例一</strong></p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">TestStruct1</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">a</span> <span class="kt">int8</span>      <span class="c1">//  1 字节====&gt; max align 1 字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">b</span> <span class="kt">int32</span>    <span class="c1">//  4 字节====&gt; max align 4 字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">c</span> <span class="p">[]</span><span class="kt">string</span> <span class="c1">// 24 字节====&gt; max align 8 字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>复制</p>
+<p>TestStruct1在编译期就会进行字节对齐的优化。优化后各个变量的相对位置如下图(以64位字长下环境为例)：</p>
+<p><img src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207171716168.png" alt="img">image.png</p>
+<p>TestStruct1 内存占用大小分析：最大对齐边界为8，总体字节数 = 1 + （align 3） + 4 + 24 = 32,  由于32刚好是8的倍数，所以末尾无需额外填充，最后这个结构体的大小为32字节。</p>
+<blockquote>
+<p><strong>案例二</strong></p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">TestStruct2</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">a</span> <span class="p">[]</span><span class="kt">string</span>     <span class="c1">// 24 字节====&gt; max align 8 字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">b</span> <span class="kt">int64</span>       <span class="c1">//   8 字节====&gt; max align 8 字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">c</span> <span class="kt">int32</span>       <span class="c1">//   4 字节====&gt; max align 4 字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>复制</p>
+<p><img src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207171716011.png" alt="img">image.png</p>
+<p>TestStruct2 内存占用大小分析：最大对齐边界为8字节，总体字节数 = 24（a） + 8（b） + 4（c） + 4（填充） = 40,  由于40刚好是8的倍数，所以c字段填充完后无需额外填充了。</p>
+<blockquote>
+<p><strong>案例三</strong></p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">TestStruct3</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">a</span> <span class="kt">int8</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">b</span> <span class="kt">int64</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">c</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>复制</p>
+<p><img src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207171717300.png" alt="img">image.png</p>
+<p>TestStruct3 内存占用大小分析：最大对齐边界为8字节，总体字节数 = 1（a）+ 7(填充) + 8（b） + 8（c填充）=24,  空结构体理论上不占字节，但是如果在另一个结构体尾部则需要进行额外字节对齐 。</p>
+<blockquote>
+<p><strong>案例四</strong></p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">TestStruct4</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">a</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	 <span class="nx">b</span> <span class="kt">int8</span>
+</span></span><span class="line"><span class="cl">	 <span class="nx">c</span> <span class="kt">int32</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>复制</p>
+<p><img src="https://raw.githubusercontent.com/liuhaibin123456789/img-for-cold-bin-blog/master/img/202207171717726.png" alt="img">image.png</p>
+<p>TestStruct4 内存占用大小分析：最大对齐边界为4字节，总体字节数 = 0(a)+ 1（b）+ 7(填充) + 4（c) = 8。</p>
+<hr>
+<h3 id="3-测试验证">(3) 测试验证</h3>
+<p>执行以下代码（环境是64位机器字长的）就可以看到我们之前案例中分析的结果。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">TestAlignStruct</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">testStruct1</span> <span class="nx">TestStruct1</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">println</span><span class="p">(</span><span class="s">&#34;size of testStruct1:&#34;</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Sizeof</span><span class="p">(</span><span class="nx">testStruct1</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">testStruct2</span> <span class="nx">TestStruct2</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">println</span><span class="p">(</span><span class="s">&#34;size of testStruct2:&#34;</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Sizeof</span><span class="p">(</span><span class="nx">testStruct2</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">testStruct3</span> <span class="nx">TestStruct3</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">println</span><span class="p">(</span><span class="s">&#34;size of testStruct4 / testStruct4&#39;s a size:&#34;</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Sizeof</span><span class="p">(</span><span class="nx">testStruct3</span><span class="p">),</span> <span class="s">&#34;/&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Sizeof</span><span class="p">(</span><span class="nx">testStruct3</span><span class="p">.</span><span class="nx">c</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">testStruct4</span> <span class="nx">TestStruct4</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">println</span><span class="p">(</span><span class="s">&#34;size of testStruct4 / testStruct4&#39;s a size:&#34;</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Sizeof</span><span class="p">(</span><span class="nx">testStruct4</span><span class="p">),</span> <span class="s">&#34;/&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Sizeof</span><span class="p">(</span><span class="nx">testStruct4</span><span class="p">.</span><span class="nx">a</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>输出为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">=== RUN   TestAlignStruct
+</span></span><span class="line"><span class="cl">size of testStruct1: 32
+</span></span><span class="line"><span class="cl">size of testStruct2: 40
+</span></span><span class="line"><span class="cl">size of testStruct4 / testStruct4&#39;s a size: 24 / 0
+</span></span><span class="line"><span class="cl">size of testStruct4 / testStruct4&#39;s a size: 8 / 0
+</span></span><span class="line"><span class="cl">--- PASS: TestAlignStruct (0.00s)
+</span></span><span class="line"><span class="cl">PASS
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2022-07-17
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/go%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/">go内存对齐</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E8%AF%A6%E8%A7%A3go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">详解Go中的rune类型</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/">
+            <span class="next-text nav-default">Flag包的在go项目的实践</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2022-07-17 15:26:09 \u002b0800 CST',
+        title: 'Go的结构体内存对齐',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

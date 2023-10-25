@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>汇编之端口 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="[toc] 端口 在PC机系统中，和CPU通过总线相连的芯片除各种存储器外，还有以下3种芯片。 各种接口卡（比如，网卡、显卡）上的接口芯片，它们控制接口卡" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AB%AF%E5%8F%A3/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="汇编之端口" />
+<meta property="og:description" content="[toc] 端口 在PC机系统中，和CPU通过总线相连的芯片除各种存储器外，还有以下3种芯片。 各种接口卡（比如，网卡、显卡）上的接口芯片，它们控制接口卡" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AB%AF%E5%8F%A3/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-01-28T20:59:37+08:00" />
+<meta property="article:modified_time" content="2023-01-28T20:59:37+08:00" />
+<meta itemprop="name" content="汇编之端口">
+<meta itemprop="description" content="[toc] 端口 在PC机系统中，和CPU通过总线相连的芯片除各种存储器外，还有以下3种芯片。 各种接口卡（比如，网卡、显卡）上的接口芯片，它们控制接口卡"><meta itemprop="datePublished" content="2023-01-28T20:59:37+08:00" />
+<meta itemprop="dateModified" content="2023-01-28T20:59:37+08:00" />
+<meta itemprop="wordCount" content="2019">
+<meta itemprop="keywords" content="汇编里的端口," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="汇编之端口"/>
+<meta name="twitter:description" content="[toc] 端口 在PC机系统中，和CPU通过总线相连的芯片除各种存储器外，还有以下3种芯片。 各种接口卡（比如，网卡、显卡）上的接口芯片，它们控制接口卡"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">汇编之端口</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-01-28 </span>
+        <div class="post-category">
+            <a href="/categories/%E6%B1%87%E7%BC%96/"> 汇编 </a>
+            </div>
+          <span class="more-meta"> 约 2019 字 </span>
+          <span class="more-meta"> 预计阅读 5 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#端口">端口</a>
+      <ul>
+        <li><a href="#1端口的读写">1、端口的读写</a></li>
+        <li><a href="#2cmos-ram芯片">2、CMOS RAM芯片</a></li>
+        <li><a href="#3shl和shr指令">3、shl和shr指令</a></li>
+        <li><a href="#4总结">4、总结</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <p>[toc]</p>
+<h1 id="端口">端口</h1>
+<p>在PC机系统中，和CPU通过总线相连的芯片除各种存储器外，还有以下3种芯片。</p>
+<ul>
+<li>各种接口卡（比如，网卡、显卡）上的接口芯片，它们控制接口卡进行工作；</li>
+<li>主板上的接口芯片，CPU通过它们对部分外设进行访问；</li>
+<li>其他芯片，用来存储相关的系统信息，或进行相关的输入输出处理。</li>
+</ul>
+<p>在这些芯片中，都有一组可以由CPU读写的寄存器。这些寄存器，它们在物理上可能处于不同的芯片中，
+但是它们在以下两点上相同。</p>
+<ul>
+<li>都和CPU的总线相连，这种连接是通过它们所在的芯片进行的；</li>
+<li>CPU对它们（芯片上的寄存器）进行读或写的时候都通过控制线向它们所在的芯片发出端口读写命令。</li>
+</ul>
+<p>从CPU的角度，将这些寄存器都当作端口，对它们进行统一编址，从而建立了一个统一的端口地址空间。
+每一个端口在地址空间中都有一个地址。在访问端口的时候，CPU通过端口地址来定位端口。因为端口所在的芯片和CPU通过总线相连，</p>
+<p>CPU可以直接读写以下3个地方的数据。</p>
+<ul>
+<li>CPU内部的寄存器</li>
+<li>内存单元</li>
+<li>端口</li>
+</ul>
+<h2 id="1端口的读写">1、端口的读写</h2>
+<p>端口地址和内存地址一样，通过地址总线来传送。在PC系统中，CPU最多可以定位64KB个不同的端口。则端口地址的范围为<code>0-65535</code>。</p>
+<p>端口的读写指令只有两条：<code>in</code>和<code>out</code>，分别用于从端口读取数据和往端口写入数据。</p>
+<p>在in和out指令中，只能使用ax或al来存放从端口中读入的数据或要发送到端口中的数据。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="c1">;对0~255以内的端口进行读写时：
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">in</span> <span class="no">al</span><span class="p">,</span> <span class="mi">20</span><span class="no">h</span>  <span class="c1">;从20h端口读入一个字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">out</span> <span class="mi">20</span><span class="no">h</span><span class="p">,</span> <span class="no">al</span>  <span class="c1">;往20h端口写入一个字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">;对256~65535的端口进行读写时，端口号放在dx中：
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">mov</span> <span class="no">dx</span><span class="p">,</span> <span class="mi">3</span><span class="no">f8h</span>  <span class="c1">;将端口号3f8h送入dx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">in</span> <span class="no">al</span><span class="p">,</span> <span class="no">dx</span>  <span class="c1">;从3f8h端口读入一个字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">out</span> <span class="no">dx</span><span class="p">,</span> <span class="no">al</span> <span class="c1">;向3f8h端口写入一个字节
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="2cmos-ram芯片">2、CMOS RAM芯片</h2>
+<p>PC机中，有一个CMOS RAM芯片，一般简称为CMOS。此芯片的特征如下</p>
+<ul>
+<li>包含一个实时钟和一个有128个存储单元的RAM存储器</li>
+<li>该芯片靠电池供电。关机后内部的实时钟正常工作，RAM中的信息不丢失</li>
+<li>128个字节的RAM中，内部实时钟占用<code>0~0dh</code>单元来保存时间信息，其余大部分单元用于保存系统配置信息，供系统启动时BIOS程序读取。BIOS也提供了相关的程序，使我们可以在开机的时候配置CMOS RAM中的系统信息。</li>
+<li>该芯片内部有两个端口，端口地址为70h和71h。CPU通过这两个端口来读写CMOS RAM</li>
+<li>70h为地址端口，存放要访问的CMOS RAM单元的地址；71h为数据端口，存放从选定的CMOS RAM单元中读取的数据，或要写入到其中的数据。
+可见，CPU对CMOS RAM的读写分两步进行，比如，读CMOS RAM的2号单元：
+①将2送入端口70h；
+②从端口71h读出2号单元的内容。</li>
+</ul>
+<p><strong>CMOS RAM中存储的时间信息</strong></p>
+<p>在CMOS RAM中，存放着当前的时间：年、月、日、时、分、秒。长度都为1个字节，
+存放单元为：</p>
+<table>
+<thead>
+<tr>
+<th>9</th>
+<th>8</th>
+<th>7</th>
+<th>6</th>
+<th>5</th>
+<th>4</th>
+<th>3</th>
+<th>2</th>
+<th>1</th>
+<th>0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>年</td>
+<td>月</td>
+<td>日</td>
+<td></td>
+<td></td>
+<td>时</td>
+<td></td>
+<td>分</td>
+<td></td>
+<td>秒</td>
+</tr>
+</tbody>
+</table>
+<p>BCD码是以4位二进制数表示十进制数码的编码方法 4 == 0100B</p>
+<p>一个字节可表示两个BCD码。则CMOS RAM存储时间信息的单元中，存储了用两个BCD码表示的两位十进制数，高4位的BCD码表示十位，低4位的BCD码表示个位。比如，00010100b表示14。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="c1">;编程，在屏幕中间显示当前的月份。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">assume</span> <span class="no">cs</span><span class="p">:</span><span class="no">code</span>
+</span></span><span class="line"><span class="cl"><span class="nf">code</span> <span class="no">segment</span> 
+</span></span><span class="line"><span class="cl"><span class="no">start</span><span class="p">:</span>	<span class="no">mov</span> <span class="no">al</span><span class="err">，</span><span class="mi">8</span> <span class="c1">;从CMOS RAM的8号单元读出当前月份的BCD码。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nf">out</span> <span class="mi">70</span><span class="no">h</span><span class="err">，</span><span class="no">al</span> 
+</span></span><span class="line"><span class="cl">		<span class="no">in</span> <span class="no">al</span><span class="p">,</span> <span class="mi">71</span><span class="no">h</span> <span class="c1">;从数据端口71h中取得指定单元中的数据：
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		
+</span></span><span class="line"><span class="cl">		<span class="nf">mov</span> <span class="no">ah</span><span class="p">,</span> <span class="no">al</span> <span class="c1">;al中为从CMOS RAM的8号单元中读出的数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nf">mov</span> <span class="no">cl</span><span class="p">,</span> <span class="mi">4</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">shr</span> <span class="no">ah</span><span class="p">,</span> <span class="no">cl</span> <span class="c1">;ah中为月份的十位数码值,左移四位空出四位
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nf">and</span> <span class="no">al</span><span class="p">,</span> <span class="mi">00001111</span><span class="no">b</span> <span class="c1">;al中为月份的个位数码值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		
+</span></span><span class="line"><span class="cl">		<span class="nf">add</span> <span class="no">ah</span><span class="p">,</span> <span class="mi">30</span><span class="no">h</span> <span class="c1">;BCD码值+30h=十进制数对应的ASCII
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nf">add</span> <span class="no">al</span><span class="p">,</span> <span class="mi">30</span><span class="no">h</span> 
+</span></span><span class="line"><span class="cl">		
+</span></span><span class="line"><span class="cl">		<span class="no">mov</span> <span class="no">bx</span><span class="p">,</span> <span class="mi">0</span><span class="no">b800h</span> 
+</span></span><span class="line"><span class="cl">		<span class="no">mov</span> <span class="no">es</span><span class="p">,</span> <span class="no">bx</span> 
+</span></span><span class="line"><span class="cl">		<span class="no">mov</span> <span class="no">byte</span> <span class="no">ptr</span> <span class="no">es</span><span class="p">:[</span><span class="mi">160</span><span class="p">*</span><span class="mi">12</span><span class="err">+</span><span class="mi">40</span><span class="p">*</span><span class="mi">2</span><span class="p">],</span> <span class="no">ah</span> <span class="c1">;显示月份的十位数码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nf">mov</span> <span class="no">byte</span> <span class="no">ptr</span> <span class="no">es</span><span class="p">:[</span><span class="mi">160</span><span class="p">*</span><span class="mi">12</span><span class="err">+</span><span class="mi">40</span><span class="p">*</span><span class="mi">2</span><span class="err">+</span><span class="mi">2</span><span class="p">],</span> <span class="no">al</span> <span class="c1">;接着显示月份的个位数码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		
+</span></span><span class="line"><span class="cl">		<span class="nf">mov</span> <span class="no">ax</span><span class="err">，</span><span class="mi">4</span><span class="no">c00h</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">int</span> <span class="mi">21</span><span class="no">h</span>
+</span></span><span class="line"><span class="cl"><span class="nf">code</span> <span class="no">ends</span>
+</span></span><span class="line"><span class="cl"><span class="nf">end</span> <span class="no">start</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="3shl和shr指令">3、shl和shr指令</h2>
+<p>shl和shr是逻辑移位指令</p>
+<p>shl是逻辑左移指令，它的功能为：</p>
+<ol>
+<li>将一个寄存器或内存单元中的数据向左移位；</li>
+<li>将最后移出的一位写入CF中；</li>
+<li>最低位用0补充。</li>
+</ol>
+<p>shr是逻辑右移指令，同理</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="mi">01001000</span><span class="no">b</span> 
+</span></span><span class="line"><span class="cl"><span class="no">shl</span> <span class="no">al</span><span class="p">,</span> <span class="mi">1</span> <span class="c1">;将a1中的数据左移一位执行后（al）=10010000b，CF=0。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="mi">01010001</span><span class="no">b</span> 
+</span></span><span class="line"><span class="cl"><span class="no">mov</span> <span class="no">cl</span><span class="p">,</span> <span class="mi">3</span> <span class="c1">;如果移动位数大于1时，必须将移动位数放在cl中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">shl</span> <span class="no">al</span><span class="p">,</span> <span class="no">c1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="mi">10000001</span><span class="no">b</span> 
+</span></span><span class="line"><span class="cl"><span class="no">shr</span> <span class="no">al</span><span class="p">,</span> <span class="mi">1</span>  <span class="c1">;将al中的数据右移一位执行后（al）=01000000b，CF=1。
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>将X逻辑左移一位，相当于执行X=X*2
+将X逻辑右移一位，相当于执行X=X/2</p>
+<h2 id="4总结">4、总结</h2>
+<blockquote>
+<ul>
+<li>
+<p>什么是端口？</p>
+<p>CPU通过总线连着很多芯片（网卡、显卡、某些外设）。CPU和这些芯片“沟通”的渠道就是端口。例如使用cmos ram芯片时，CPU通过地址总线将地址信息传输到这个芯片接收地址信号的端口上，这样就可以指定芯片内部的CPU指令的操作对象地址，之后，数据则会通过芯片的另一个端口进行读或写。</p>
+</li>
+<li>
+<p>对端口的读写实际上就是遵照“先传地址，再操作数据”的原则，本质上就是对和CPU相联的芯片里面的寄存器进行读写。</p>
+</li>
+</ul>
+</blockquote>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-01-28
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E6%B1%87%E7%BC%96%E9%87%8C%E7%9A%84%E7%AB%AF%E5%8F%A3/">汇编里的端口</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%A4%96%E4%B8%AD%E6%96%AD/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">汇编之外中断</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">
+            <span class="next-text nav-default">Redis高级篇之最佳实践</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-01-28 20:59:37 \u002b0800 CST',
+        title: '汇编之端口',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

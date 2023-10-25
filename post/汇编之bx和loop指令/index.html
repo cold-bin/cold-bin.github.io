@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>汇编之BX和loop指令 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="[bx] 1、[bx]是什么呢？ 和[0]类似，[0]表示内存单元，它的偏移地址是0； 2、内存单元的描述 我们要完整地描述一个内存单元，需要两种信息： （" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8Bbx%E5%92%8Cloop%E6%8C%87%E4%BB%A4/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="汇编之BX和loop指令" />
+<meta property="og:description" content="[bx] 1、[bx]是什么呢？ 和[0]类似，[0]表示内存单元，它的偏移地址是0； 2、内存单元的描述 我们要完整地描述一个内存单元，需要两种信息： （" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8Bbx%E5%92%8Cloop%E6%8C%87%E4%BB%A4/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-12-09T21:58:07+08:00" />
+<meta property="article:modified_time" content="2022-12-09T21:58:07+08:00" />
+<meta itemprop="name" content="汇编之BX和loop指令">
+<meta itemprop="description" content="[bx] 1、[bx]是什么呢？ 和[0]类似，[0]表示内存单元，它的偏移地址是0； 2、内存单元的描述 我们要完整地描述一个内存单元，需要两种信息： （"><meta itemprop="datePublished" content="2022-12-09T21:58:07+08:00" />
+<meta itemprop="dateModified" content="2022-12-09T21:58:07+08:00" />
+<meta itemprop="wordCount" content="2865">
+<meta itemprop="keywords" content="汇编循环结构," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="汇编之BX和loop指令"/>
+<meta name="twitter:description" content="[bx] 1、[bx]是什么呢？ 和[0]类似，[0]表示内存单元，它的偏移地址是0； 2、内存单元的描述 我们要完整地描述一个内存单元，需要两种信息： （"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">汇编之BX和loop指令</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2022-12-09 </span>
+        <div class="post-category">
+            <a href="/categories/%E6%B1%87%E7%BC%96/"> 汇编 </a>
+            </div>
+          <span class="more-meta"> 约 2865 字 </span>
+          <span class="more-meta"> 预计阅读 6 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#bx">[bx]</a></li>
+        <li><a href="#loop指令">Loop指令</a></li>
+        <li><a href="#debug-和汇编编译器-masm-对指令的不同处理">Debug 和汇编编译器 Masm 对指令的不同处理</a></li>
+        <li><a href="#loop-和-bx-的联合应用">loop 和 [bx] 的联合应用</a></li>
+        <li><a href="#段前缀">段前缀</a></li>
+        <li><a href="#一段安全的空间">一段安全的空间</a></li>
+        <li><a href="#段前缀的使用">段前缀的使用</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h2 id="bx">[bx]</h2>
+<p>1、[bx]是什么呢？</p>
+<p>和[0]类似，[0]表示<a href="https://so.csdn.net/so/search?q=%E5%86%85%E5%AD%98&amp;spm=1001.2101.3001.7020">内存</a>单元，它的偏移地址是0；</p>
+<p>2、内存单元的描述</p>
+<p>我们要完整地描述一个内存单元，需要两种信息：
+（1）内存单元的地址；
+（2）内存单元的长度（类型）；</p>
+<p>用[0]表示一个内存单元时，0表示单元的偏移地址，段地址默认在 ds 中，单元的长度（类型）可以由具体指令中的其他操作对象（比如说<a href="https://so.csdn.net/so/search?q=%E5%AF%84%E5%AD%98%E5%99%A8&amp;spm=1001.2101.3001.7020">寄存器</a>）指出；</p>
+<p>[bx]同样也表示一个内存单元，它的偏移地址在bx中，比如下面的指令：</p>
+<ul>
+<li>mov ax,[bx]</li>
+<li>mov al,[bx]</li>
+</ul>
+<p>3、 描述性符号“()”</p>
+<p>为了描述上的简洁，以后将使用一个描述性的符号 “() ”来表示一个寄存器或一个内存单元中的内容。比如：</p>
+<p>（1）ax 中的内容为0010H，我们可以这样来描述：<code>(ax)=0010H</code>；
+（2）2000:1000 处的内容为0010H，我们可以这样来描述：<code>(21000H)=0010H</code>；
+（3）对于 <code>mov ax,[2]</code> 的功能，我们可以这样来描述：<code>(ax)=((ds)*16+2)</code>；
+（4）对于 <code>mov [2],ax</code> 的功能，我们可以这样来描述：<code>((ds)*16+2)=(ax)</code>；
+（5）对于 <code>add ax,2</code> 的功能，我们可以这样来描述：<code>(ax)=(ax)+2</code>；
+（6）对于 <code>add ax,bx</code> 的功能，我们可以这样来描述：<code>(ax)=(ax)+(bx)</code>；
+（7）对于 <code>push ax</code> 的功能，我们可以这样来描述：<code>(sp) = (sp)-2 ((ss)*16＋(sp))=(ax)</code>
+（8）对于 <code>pop ax</code> 的功能，我们可以这样来描述：<code>(ax)=((ss)*16+(sp)) (sp)=(sp)+2</code></p>
+<p>4、约定符号 idata 表示常量</p>
+<p>我们在 Debug 中写过类似的指令：<code>mov ax,[0]</code>，表示将 <code>ds:0</code> 处的数据送入 ax 中。指令中，在“[…]”里用一个常量0表示内存单元的偏移地址。以后，我们用 <code>idata</code> 表示常量。</p>
+<p>例如：</p>
+<ul>
+<li><code>mov ax,[idata]</code> 就代表 <code>mov ax,[1]</code>、<code>mov ax,[2]</code>、<code>mov ax,[3]</code> 等；</li>
+<li><code>mov bx,idata</code>就代表 <code>mov bx,1</code>、<code>mov bx,2</code>、<code>mov bx,3</code> 等；</li>
+<li><code>mov ds,idata</code>就代表 <code>mov ds,1</code>、<code>mov ds,2</code> 等；</li>
+</ul>
+<p>我们之前的用法都是非法指令；</p>
+<p>5、[bx]</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="p">[</span><span class="no">bx</span><span class="p">],</span><span class="no">ax</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>功能：bx 中存放的数据作为一个偏移地址 EA，段地址 SA 默认在 ds 中，将 ax 中的数据送入内存 SA:EA 处，即：<code>(ds*16 +(bx)) = (ax)</code>；</p>
+<p>问题：程序和内存中的情况如下图所示，写出程序执行后，21000H~21007H 单元中的内容。
+<img src="https://img-blog.csdnimg.cn/07c78c66e7594fdbbffc174d1b0fcebe.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAaWQxMHQu,size_20,color_FFFFFF,t_70,g_se,x_16" alt="img"></p>
+<p>（1）先看一下程序的前三条指令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">2000</span><span class="no">H</span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">ds</span><span class="p">,</span><span class="no">ax</span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">bx</span><span class="p">,</span><span class="mi">1000</span><span class="no">H</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这三条指令执行后，<code>ds=2000H,bx=1000H</code>；</p>
+<p>（2）再看第四条指令：<code>mov ax,[bx]</code>，</p>
+<ul>
+<li>指令执行前：
+<ul>
+<li><code>ds=2000H</code>，<code>bx=1000H</code>，则 <code>mov ax,[bx]</code> 将把内存2000:1000处的字型数据送入 ax 中；</li>
+</ul>
+</li>
+<li>指令执行后:
+<ul>
+<li><code>ax=00beH</code>；</li>
+</ul>
+</li>
+</ul>
+<p>（3）再看第五六两条指令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">inc</span> <span class="no">bx</span>
+</span></span><span class="line"><span class="cl"><span class="nf">inc</span> <span class="no">bx</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>指令执行前：
+<ul>
+<li><code>bx=1000H</code>；</li>
+</ul>
+</li>
+<li>指令执行后:
+<ul>
+<li><code>bx=0002H</code>；</li>
+</ul>
+</li>
+</ul>
+<p>（4）再看第七条指令：<code>mov [bx],ax</code>，</p>
+<ul>
+<li>指令执行前：
+<ul>
+<li><code>ds=2000H</code>，<code>bx=1002H</code>，则 <code>mov [bx],ax</code> 将把 ax 中的数据送入内存2000:1002处；</li>
+</ul>
+</li>
+<li>指令执行后:
+<ul>
+<li>2000:1002单元的内容为<code>BE</code>，2000:1003单元的内容为<code>00</code>；</li>
+</ul>
+</li>
+</ul>
+<p>之后的操作类似，最终结果：
+<img src="https://img-blog.csdnimg.cn/a22a7d5d910d4ba189e30eb6d710bd99.png" alt="img"></p>
+<h2 id="loop指令">Loop指令</h2>
+<p>这个指令和循环有关；</p>
+<p>1、指令的格式是：loop 标号，CPU 执行 loop 指令的时候，要进行两步操作：</p>
+<ul>
+<li><code>(cx)=(cx)-1</code>;</li>
+<li>判断 cx 中的值，若不为零，则转至标号处执行；程序若为零，则向下执行。</li>
+</ul>
+<p>2、通常，loop 指令实现循环，cx 中存放循环的次数；</p>
+<p>问题：编程计算212；</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"> <span class="nf">assume</span> <span class="no">cs</span><span class="p">:</span><span class="no">code</span>
+</span></span><span class="line"><span class="cl"><span class="nf">code</span> <span class="no">segment</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">2</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">cx</span><span class="p">,</span><span class="mi">11</span>
+</span></span><span class="line"><span class="cl"><span class="nl">s:</span>  <span class="nf">add</span> <span class="no">ax</span><span class="p">,</span><span class="no">ax</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">loop</span> <span class="no">s</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">4</span><span class="no">c00h</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">int</span> <span class="mi">21</span><span class="no">h</span>
+</span></span><span class="line"><span class="cl"><span class="nf">code</span> <span class="no">ends</span>
+</span></span><span class="line"><span class="cl"><span class="nf">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>分析：</p>
+<p>（1）标号：在汇编语言中，标号代表一个地址，此程序中有一个标号 s 。它实际上标识了一个地址，这个地址处有一条指令：<code>add ax,ax</code>；</p>
+<p>（2）<code>loop s</code>：CPU 执行 <code>loop s</code> 的时候，要进行两步操作：</p>
+<ul>
+<li><code>(cx)=(cx)-1</code>；</li>
+<li>判断 cx 中的值，不为0则转至标号 s 所标识的地址处执行(这里的指令是 <code>add ax,ax</code>)，如果为0则执行下一条指令(下一条指令是 <code>mov ax,4c00h</code>)；</li>
+</ul>
+<p>总结：</p>
+<p>（1）在 cx 中存放循环次数；
+（2）loop 指令中的标号所标识地址要在前面；
+（3）要循环执行的程序段，要写在标号和 loop 指令的中间；</p>
+<p>用 cx 和 loop 指令相配合实现循环功能的程序框架如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mov cx,循环次数
+</span></span><span class="line"><span class="cl">s:
+</span></span><span class="line"><span class="cl">循环执行的程序段
+</span></span><span class="line"><span class="cl">loop s
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>3、在 Debug 中跟踪供 loop 指令实现的循环程序</p>
+<p>注意：在汇编程序中，数据不能以字母开头，如果要输入像 FFFFH 这样的数，则要在前面添加一个0；</p>
+<p>在 debug 程序中引入 G 命令和 P 命令：</p>
+<ol>
+<li>
+<p>G命令</p>
+<ul>
+<li>G命令如果后面不带参数，则一直执行程序，直到程序结束；</li>
+<li>G命令后面如果带参数，则执行到 ip 为那个参数地址停止；</li>
+</ul>
+</li>
+<li>
+<p>P命令</p>
+<ul>
+<li>T命令相当于单步进入（step into）；</li>
+<li>P命令相当于单步通过（step over）；</li>
+</ul>
+</li>
+</ol>
+<h2 id="debug-和汇编编译器-masm-对指令的不同处理">Debug 和汇编编译器 Masm 对指令的不同处理</h2>
+<p>1、在 debug 中，可以直接用指令 <code>mov ax,[0]</code> 将偏移地址为0号单元的内容赋值给 ax；</p>
+<p>2、但通过 masm 编译器，<code>mov ax,[0]</code> 会被编译成 <code>mov ax,0</code>；</p>
+<ul>
+<li>
+<p>要写成这样才能实现：<code>mov ax,ds:[0]</code>；</p>
+</li>
+<li>
+<p>也可以写成这样：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-ASM" data-lang="ASM"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">bx</span><span class="p">,</span><span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">ax</span><span class="p">,[</span><span class="no">bx</span><span class="p">]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>或者</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mov ax,ds:[bx]
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+<h2 id="loop-和-bx-的联合应用">loop 和 [bx] 的联合应用</h2>
+<p>计算 ffff:0~ffff:b 单元中的数据的和，结果存储在 dx 中：</p>
+<p>1、注意两个问题：</p>
+<ul>
+<li>12个8位数据加载一起，最后的结果可能会超出8位（越界），故要用16位寄存器存放结果；</li>
+<li>将一个8位的数据加入到16位寄存器中，类型不匹配，8位的数据不能与16位相加；</li>
+</ul>
+<p>2、【解决办法】</p>
+<ul>
+<li>把原来8位的数据，先通过通用寄存器 ax，将它们转化成16位的；</li>
+</ul>
+<p>3、代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">assume</span> <span class="no">cs</span><span class="p">:</span><span class="no">codesg</span>
+</span></span><span class="line"><span class="cl"><span class="nf">codesg</span> <span class="no">segment</span>
+</span></span><span class="line"><span class="cl"><span class="nl">start:</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">;指定数据段
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">0</span><span class="no">ffffh</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">ds</span><span class="p">,</span><span class="no">ax</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">;初始化
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">dx</span><span class="p">,</span><span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">bx</span><span class="p">,</span><span class="mi">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">;指定循环次数 12次
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">mov</span> <span class="no">cx</span><span class="p">,</span><span class="mi">0</span><span class="no">ch</span>
+</span></span><span class="line"><span class="cl"><span class="nl">circ:</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">;把8位数据存入al中,即ax中存放的是[bx]转化之后的16位数据，前8位都是0
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">mov</span> <span class="no">al</span><span class="p">,[</span><span class="no">bx</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">;进行累加
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">add</span> <span class="no">dx</span><span class="p">,</span><span class="no">ax</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">;bx自增，变化内存的偏移地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">inc</span> <span class="no">bx</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">loop</span> <span class="no">circ</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">;程序返回
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">4</span><span class="no">c00h</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">int</span> <span class="mi">21</span><span class="no">H</span>
+</span></span><span class="line"><span class="cl"><span class="nf">codesg</span> <span class="no">ends</span>
+</span></span><span class="line"><span class="cl"><span class="nf">end</span> <span class="no">start</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="段前缀">段前缀</h2>
+<ol>
+<li>
+<p>指令 <code>mov ax,[bx]</code> 中，内存单元的偏移地址由 bx 给出，而段地址默认在 ds 中；</p>
+</li>
+<li>
+<p>我们可以在访问内存单元的指令中，显式地给出内存单元的段地址所在的段寄存器，比如 <code>mov ax,ds:[0]</code>，<code>mov ax,ds:[bx]</code> 这里的 ds 就叫做【段前缀】；</p>
+</li>
+</ol>
+<h2 id="一段安全的空间">一段安全的空间</h2>
+<ol>
+<li>
+<p>8086模式中，随意向一段内存空间写入内容是很危险的，因为这段空间中可能存放着【重要的系统数据或代码】；</p>
+</li>
+<li>
+<p>在一般的 PC 机中，DOS 方式下，DOS 和其他合法的程序一般都不会使用【0:200~0:2FF】的256个字节的空间。所以，我们使用这段空间是安全的；</p>
+</li>
+</ol>
+<h2 id="段前缀的使用">段前缀的使用</h2>
+<p>将内存 ffff:0~ffff:b 段元中的数据拷贝到 0:200~0:20b 单元中；</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">assume</span> <span class="no">cs</span><span class="p">:</span><span class="no">code</span>
+</span></span><span class="line"><span class="cl"><span class="nf">code</span> <span class="no">segment</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">bx</span><span class="p">,</span><span class="mi">0</span>            <span class="c1">; (bx)=0，偏移地址从0开始
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">mov</span> <span class="no">cx</span><span class="p">,</span><span class="mi">12</span>           <span class="c1">; (cx)=12，循环12次
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nl">s:</span>  <span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="no">offffh</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">ds</span><span class="p">,</span><span class="no">ax</span>           <span class="c1">; (ds)=0ffffh
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">mov</span> <span class="no">dl</span><span class="p">,[</span><span class="no">bx</span><span class="p">]</span>         <span class="c1">; (dl)= ((ds)*16+(bx))，将ffff:bx中的数据送入dl
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">0020</span><span class="no">h</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">ds</span><span class="p">,</span><span class="no">ax</span>           <span class="c1">; (ds)=0020h
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">mov</span> <span class="p">[</span><span class="no">bx</span><span class="p">],</span><span class="no">dl</span>         <span class="c1">; ((ds)*16+(bx))=(dl)，将中dl的数据送入0020:bx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="nf">inc</span> <span class="no">bx</span>              <span class="c1">; (bx)=(bx)+1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">loop</span> <span class="no">s</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">4</span><span class="no">c00h</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">int</span> <span class="mi">21</span><span class="no">h</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">code</span> <span class="no">ends</span>
+</span></span><span class="line"><span class="cl"><span class="nf">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>由于上述效率不高，因此进行如下优化：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">assume</span> <span class="no">cs</span><span class="p">:</span><span class="no">code</span>
+</span></span><span class="line"><span class="cl"><span class="nf">code</span> <span class="no">segment</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="no">offffh</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">ds</span><span class="p">,</span><span class="no">ax</span>           <span class="c1">; (ds)=0ffffh
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">0020</span><span class="no">h</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">es</span><span class="p">,</span><span class="no">ax</span>           <span class="c1">; (es)=0020h
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">bx</span><span class="p">,</span><span class="mi">0</span>            <span class="c1">; (bx)=0，此时ds:bx指向ffff:0，es:bx指向0020:0
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">mov</span> <span class="no">cx</span><span class="p">,</span><span class="mi">12</span>           <span class="c1">; (cx)=12，循环12次
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nl">s:</span>  <span class="nf">mov</span> <span class="no">dl</span><span class="p">,[</span><span class="no">bx</span><span class="p">]</span>         <span class="c1">; (dl)= ((ds)*16+(bx))，将ffff:bx中的数据送入dl
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">mov</span> <span class="no">es</span><span class="p">:[</span><span class="no">bx</span><span class="p">],</span><span class="no">dl</span>      <span class="c1">; ((es)*16+(bx))=(dl)，将中dl的数据送入0020:bx
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">inc</span> <span class="no">bx</span>              <span class="c1">; (bx)=(bx)+1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nf">loop</span> <span class="no">s</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">4</span><span class="no">c00h</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">int</span> <span class="mi">21</span><span class="no">h</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">code</span> <span class="no">ends</span>
+</span></span><span class="line"><span class="cl"><span class="nf">end</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2022-12-09
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E6%B1%87%E7%BC%96%E5%BE%AA%E7%8E%AF%E7%BB%93%E6%9E%84/">汇编循环结构</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">包含多个段的程序</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/">
+            <span class="next-text nav-default">汇编之第一个程序</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2022-12-09 21:58:07 \u002b0800 CST',
+        title: '汇编之BX和loop指令',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

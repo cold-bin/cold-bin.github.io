@@ -1,0 +1,3725 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Shell编程初识和Linux及其常用命令 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="Linux 概述 什么是Linux？ Linux 是一套免费使用和自由传播的类 Unix 操作系统，是一个基于 POSIX 和 Unix 的多用户、多任务、支持多线程和多CPU的操作系统。 它能运行" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/shell%E7%BC%96%E7%A8%8B%E5%88%9D%E8%AF%86%E5%92%8Clinux%E5%8F%8A%E5%85%B6%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="Shell编程初识和Linux及其常用命令" />
+<meta property="og:description" content="Linux 概述 什么是Linux？ Linux 是一套免费使用和自由传播的类 Unix 操作系统，是一个基于 POSIX 和 Unix 的多用户、多任务、支持多线程和多CPU的操作系统。 它能运行" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/shell%E7%BC%96%E7%A8%8B%E5%88%9D%E8%AF%86%E5%92%8Clinux%E5%8F%8A%E5%85%B6%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-01-10T19:47:57+08:00" />
+<meta property="article:modified_time" content="2023-01-10T19:47:57+08:00" />
+<meta itemprop="name" content="Shell编程初识和Linux及其常用命令">
+<meta itemprop="description" content="Linux 概述 什么是Linux？ Linux 是一套免费使用和自由传播的类 Unix 操作系统，是一个基于 POSIX 和 Unix 的多用户、多任务、支持多线程和多CPU的操作系统。 它能运行"><meta itemprop="datePublished" content="2023-01-10T19:47:57+08:00" />
+<meta itemprop="dateModified" content="2023-01-10T19:47:57+08:00" />
+<meta itemprop="wordCount" content="27418">
+<meta itemprop="keywords" content="linux常用命令," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Shell编程初识和Linux及其常用命令"/>
+<meta name="twitter:description" content="Linux 概述 什么是Linux？ Linux 是一套免费使用和自由传播的类 Unix 操作系统，是一个基于 POSIX 和 Unix 的多用户、多任务、支持多线程和多CPU的操作系统。 它能运行"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Shell编程初识和Linux及其常用命令</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-01-10 </span>
+        <div class="post-category">
+            <a href="/categories/linux/"> linux </a>
+            <a href="/categories/shell/"> shell </a>
+            </div>
+          <span class="more-meta"> 约 27418 字 </span>
+          <span class="more-meta"> 预计阅读 55 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#linux-概述"><strong>Linux 概述</strong></a>
+          <ul>
+            <li><a href="#什么是linux">什么是Linux？</a></li>
+            <li><a href="#unix和linux有什么区别">Unix和Linux有什么区别？</a></li>
+            <li><a href="#什么是-linux-内核">什么是 Linux 内核？</a></li>
+            <li><a href="#linux的基本组件是什么">Linux的基本组件是什么？</a></li>
+            <li><a href="#linux-的体系结构">Linux 的体系结构</a></li>
+            <li><a href="#bash和dos之间的基本区别是什么">BASH和DOS之间的基本区别是什么？</a></li>
+            <li><a href="#linux-开机启动过程">Linux 开机启动过程？</a></li>
+            <li><a href="#linux系统缺省的运行级别">Linux系统缺省的运行级别？</a></li>
+            <li><a href="#linux-使用的进程间通信方式">Linux 使用的进程间通信方式？</a></li>
+            <li><a href="#linux-有哪些系统日志文件">Linux 有哪些系统日志文件？</a></li>
+            <li><a href="#linux-系统安装多个桌面环境有帮助吗">Linux 系统安装多个桌面环境有帮助吗？</a></li>
+            <li><a href="#什么是交换空间">什么是交换空间？</a></li>
+            <li><a href="#什么是root帐户">什么是root帐户?</a></li>
+            <li><a href="#什么是lilo">什么是LILO？</a></li>
+            <li><a href="#什么是bash">什么是BASH？</a></li>
+            <li><a href="#什么是cli">什么是CLI？</a></li>
+            <li><a href="#什么是gui">什么是GUI？</a></li>
+          </ul>
+        </li>
+        <li><a href="#磁盘目录文件">磁盘、目录、文件</a>
+          <ul>
+            <li><a href="#简单-linux-文件系统">简单 Linux 文件系统？</a></li>
+            <li><a href="#linux-的目录结构是怎样的">Linux 的目录结构是怎样的？</a></li>
+            <li><a href="#什么是-inode-">什么是 inode ？</a></li>
+            <li><a href="#简述-linux-文件系统通过-i-节点把文件的逻辑结构和物理结构转换的工作过程">简述 Linux 文件系统通过 i 节点把文件的逻辑结构和物理结构转换的工作过程？</a></li>
+            <li><a href="#什么是硬链接和软链接">什么是硬链接和软链接？</a></li>
+            <li><a href="#raid-是什么">RAID 是什么?</a></li>
+          </ul>
+        </li>
+        <li><a href="#安全">安全</a></li>
+        <li><a href="#什么叫-cc-攻击什么叫-ddos-攻击">什么叫 CC 攻击？什么叫 DDOS 攻击？</a>
+          <ul>
+            <li><a href="#怎么预防-cc-攻击和-ddos-攻击">怎么预防 CC 攻击和 DDOS 攻击？</a></li>
+          </ul>
+        </li>
+        <li><a href="#什么是网站数据库注入">什么是网站数据库注入？</a>
+          <ul>
+            <li><a href="#如何过滤与预防">如何过滤与预防？</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell">Shell</a></li>
+        <li><a href="#shell-脚本是什么">Shell 脚本是什么？</a>
+          <ul>
+            <li><a href="#什么是默认登录-shell-">什么是默认登录 Shell ？</a></li>
+            <li><a href="#在-shell-脚本中如何写入注释">在 Shell 脚本中，如何写入注释？</a></li>
+          </ul>
+        </li>
+        <li><a href="#语法级">语法级</a>
+          <ul>
+            <li><a href="#可以在-shell-脚本中使用哪些类型的变量">可以在 Shell 脚本中使用哪些类型的变量？</a></li>
+            <li><a href="#shell脚本中--标记的用途是什么">Shell脚本中 $? 标记的用途是什么？</a></li>
+            <li><a href="#bourne-shellbash-中有哪些特殊的变量">Bourne Shell(bash) 中有哪些特殊的变量？</a></li>
+            <li><a href="#如何取消变量或取消变量赋值">如何取消变量或取消变量赋值？</a></li>
+          </ul>
+        </li>
+        <li><a href="#shell-脚本中-if-语法如何嵌套">Shell 脚本中 if 语法如何嵌套?</a></li>
+        <li><a href="#在-shell-脚本中如何比较两个数字">在 Shell 脚本中如何比较两个数字？</a></li>
+        <li><a href="#shell-脚本中-case-语句的语法">Shell 脚本中 case 语句的语法?</a></li>
+        <li><a href="#shell-脚本中-for-循环语法">Shell 脚本中 for 循环语法？</a></li>
+        <li><a href="#shell-脚本中-while-循环语法">Shell 脚本中 while 循环语法？</a></li>
+        <li><a href="#do-while-语句的基本格式">do-while 语句的基本格式？</a></li>
+        <li><a href="#shell-脚本中-break-命令的作用">Shell 脚本中 break 命令的作用？</a></li>
+        <li><a href="#shell-脚本中-continue-命令的作用">Shell 脚本中 continue 命令的作用？</a></li>
+        <li><a href="#如何使脚本可执行">如何使脚本可执行?</a></li>
+        <li><a href="#binbash-的作用">#!/bin/bash 的作用？</a></li>
+        <li><a href="#如何调试-shell脚本">如何调试 Shell脚本？</a></li>
+        <li><a href="#如何将标准输出和错误输出同时重定向到同一位置">如何将标准输出和错误输出同时重定向到同一位置?</a></li>
+        <li><a href="#在-shell-脚本中如何测试文件">在 Shell 脚本中，如何测试文件？</a></li>
+        <li><a href="#在-shell-脚本如何定义函数呢">在 Shell 脚本如何定义函数呢？</a></li>
+        <li><a href="#如何让-shell-就脚本得到来自终端的输入">如何让 Shell 就脚本得到来自终端的输入?</a></li>
+        <li><a href="#如何执行算术运算">如何执行算术运算？</a></li>
+        <li><a href="#编程题">编程题</a></li>
+        <li><a href="#实战">实战</a></li>
+        <li><a href="#如何选择-linux-操作系统版本">如何选择 Linux 操作系统版本?</a></li>
+        <li><a href="#如何规划一台-linux-主机步骤是怎样">如何规划一台 Linux 主机，步骤是怎样？</a></li>
+        <li><a href="#请问当用户反馈网站访问慢你会如何处理">请问当用户反馈网站访问慢，你会如何处理？</a>
+          <ul>
+            <li><a href="#有哪些方面的因素会导致网站网站访问慢">有哪些方面的因素会导致网站网站访问慢？</a></li>
+            <li><a href="#针对网站访问慢怎么去排查">针对网站访问慢，怎么去排查？</a></li>
+            <li><a href="#怎么去解决">怎么去解决？</a></li>
+          </ul>
+        </li>
+        <li><a href="#linux-性能调优都有哪几种方法">Linux 性能调优都有哪几种方法？</a></li>
+        <li><a href="#环境变量的设置与修改">环境变量的设置与修改</a>
+          <ul>
+            <li><a href="#变量">变量</a></li>
+            <li><a href="#环境变量">环境变量</a></li>
+            <li><a href="#环境变量永久生效方案">环境变量永久生效方案</a></li>
+            <li><a href="#变量修改">变量修改</a></li>
+            <li><a href="#变量删除">变量删除</a></li>
+          </ul>
+        </li>
+        <li><a href="#文件管理命令">文件管理命令</a>
+          <ul>
+            <li><a href="#file命令">file命令</a></li>
+            <li><a href="#cat-命令">cat 命令</a></li>
+            <li><a href="#chmod-命令">chmod 命令</a></li>
+            <li><a href="#chown-命令">chown 命令</a></li>
+            <li><a href="#cp-命令">cp 命令</a></li>
+            <li><a href="#find-命令">find 命令</a></li>
+            <li><a href="#head-命令">head 命令</a></li>
+            <li><a href="#less-命令">less 命令</a></li>
+            <li><a href="#ln-命令">ln 命令</a></li>
+            <li><a href="#locate-命令">locate 命令</a></li>
+            <li><a href="#more-命令">more 命令</a></li>
+            <li><a href="#mv-命令">mv 命令</a></li>
+            <li><a href="#rename命令">rename命令</a></li>
+            <li><a href="#rm-命令">rm 命令</a></li>
+            <li><a href="#tail-命令">tail 命令</a></li>
+            <li><a href="#touch-命令">touch 命令</a></li>
+            <li><a href="#vim-命令">vim 命令</a></li>
+            <li><a href="#whereis-命令">whereis 命令</a></li>
+            <li><a href="#which-命令">which 命令</a></li>
+          </ul>
+        </li>
+        <li><a href="#文档编辑命令">文档编辑命令</a>
+          <ul>
+            <li><a href="#grep-命令">grep 命令</a></li>
+            <li><a href="#wc-命令">wc 命令</a></li>
+          </ul>
+        </li>
+        <li><a href="#磁盘管理命令">磁盘管理命令</a>
+          <ul>
+            <li></li>
+            <li><a href="#df-命令">df 命令</a></li>
+            <li><a href="#实例-19">实例：</a></li>
+            <li><a href="#du-命令">du 命令</a></li>
+            <li><a href="#ls命令">ls命令</a></li>
+            <li><a href="#mkdir-命令">mkdir 命令</a></li>
+            <li><a href="#rmdir-命令">rmdir 命令</a></li>
+          </ul>
+        </li>
+        <li><a href="#网络通讯命令">网络通讯命令</a>
+          <ul>
+            <li><a href="#ifconfig-命令">ifconfig 命令</a></li>
+            <li><a href="#iptables-命令">iptables 命令</a></li>
+            <li><a href="#netstat-命令">netstat 命令</a></li>
+            <li><a href="#ping-命令">ping 命令</a></li>
+            <li><a href="#telnet-命令">telnet 命令</a></li>
+          </ul>
+        </li>
+        <li><a href="#系统管理命令">系统管理命令</a>
+          <ul>
+            <li><a href="#date-命令">date 命令</a></li>
+            <li><a href="#free-命令">free 命令</a></li>
+            <li><a href="#实例-28">实例：</a></li>
+            <li><a href="#kill-命令">kill 命令</a></li>
+            <li><a href="#ps-命令">ps 命令</a></li>
+            <li><a href="#rpm-命令">rpm 命令</a></li>
+            <li><a href="#top-命令">top 命令</a></li>
+            <li><a href="#yum-命令">yum 命令</a></li>
+          </ul>
+        </li>
+        <li><a href="#备份压缩命令">备份压缩命令</a>
+          <ul>
+            <li><a href="#bzip2-命令">bzip2 命令</a></li>
+            <li><a href="#gzip-命令">gzip 命令</a></li>
+            <li><a href="#tar-命令">tar 命令</a></li>
+            <li><a href="#unzip-命令">unzip 命令</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h2 id="linux-概述"><strong>Linux 概述</strong></h2>
+<h3 id="什么是linux">什么是Linux？</h3>
+<p>Linux 是一套免费使用和自由传播的类 Unix 操作系统，是一个基于 POSIX 和 Unix 的多用户、多任务、支持多线程和多CPU的操作系统。</p>
+<p>它能运行主要的 Unix工具软件、应用程序和网络协议。它支持 32 位和 64 位硬件。Linux 继承了 Unix 以网络为核心的设计思想，是一个性能稳定的多用户网络操作系统。</p>
+<h3 id="unix和linux有什么区别">Unix和Linux有什么区别？</h3>
+<p>Linux 和 Unix 都是功能强大的操作系统，都是应用广泛的服务器操作系统，有很多相似之处，甚至有一部分人错误地认为 Unix 和 Linux 操作系统是一样的，然而，事实并非如此，以下是两者的区别。</p>
+<h4 id="开源性">开源性</h4>
+<p>Linux 是一款开源操作系统，不需要付费，即可使用；Unix 是一款对源码实行知识产权保护的传统商业软件，使用需要付费授权使用。</p>
+<h4 id="跨平台性">跨平台性</h4>
+<p>Linux 操作系统具有良好的跨平台性能，可运行在多种硬件平台上；Unix 操作系统跨平台性能较弱，大多需与硬件配套使用。</p>
+<h4 id="可视化界面">可视化界面</h4>
+<p>Linux除了进行命令行操作，还有窗体管理系统；Unix只是命令行下的系统。</p>
+<h4 id="硬件环境">硬件环境</h4>
+<p>Linux 操作系统对硬件的要求较低，安装方法更易掌握；Unix 对硬件要求比较苛刻，按照难度较大。</p>
+<h4 id="用户群体">用户群体</h4>
+<p>Linux 的用户群体很广泛，个人和企业均可使用；Unix 的用户群体比较窄，多是安全性要求高的大型企业使用，如银行、电信部门等，或者 Unix 硬件厂商使用，如 Sun 等。</p>
+<p>相比于 Unix 操作系统，Linux 操作系统更受广大计算机爱好者的喜爱，主要原因是 Linux操作系统具有 Unix 操作系统的全部功能，并且能够在普通 PC 计算机上实现全部的 Unix 特性，开源免费的特性，更容易普及使用！</p>
+<h3 id="什么是-linux-内核">什么是 Linux 内核？</h3>
+<p>Linux 系统的核心是内核。内核控制着计算机系统上的所有硬件和软件，在必要时分配硬件，并根据需要执行软件。</p>
+<p>系统内存管理 应用程序管理 硬件设备管理 文件系统管理</p>
+<h3 id="linux的基本组件是什么">Linux的基本组件是什么？</h3>
+<p>就像任何其他典型的操作系统一样，Linux 拥有所有这些组件：</p>
+<p>内核，shell 和 GUI，系统实用程序和应用程序。Linux 比其他操作系统更具优势的是每个方面都附带其他功能，所有代码都可以免费下载。</p>
+<h3 id="linux-的体系结构">Linux 的体系结构</h3>
+<p>从大的方面讲，Linux 体系结构可以分为两块：</p>
+<ul>
+<li>用户空间(User Space)：用户空间又包括用户的应用程序(User Applications)、C 库(C Library)</li>
+<li>内核空间(Kernel Space)：内核空间又包括系统调用接口(System Call Interface)、内核(Kernel)、平台架构相关的代码(Architecture-Dependent Kernel Code)</li>
+</ul>
+<h4 id="为什么-linux-体系结构要分为用户空间和内核空间的原因">为什么 Linux 体系结构要分为用户空间和内核空间的原因？</h4>
+<p>1、现代 CPU 实现了不同的工作模式，不同模式下 CPU 可以执行的指令和访问的寄存器不同。</p>
+<p>2、Linux 从 CPU 的角度出发，为了保护内核的安全，把系统分成了两部分。</p>
+<p>用户空间和内核空间是程序执行的两种不同的状态，我们可以通过两种方式完成用户空间到内核空间的转移：1）系统调用；2）硬件中断。</p>
+<h3 id="bash和dos之间的基本区别是什么">BASH和DOS之间的基本区别是什么？</h3>
+<p>BASH和DOS控制台之间的主要区别在于3个方面：</p>
+<ul>
+<li>BASH命令区分大小写，而DOS命令则不区分;</li>
+<li>在BASH下，/ character是目录分隔符，\作为转义字符。在DOS下，/用作命令参数分隔符，\是目录分隔符</li>
+<li>DOS遵循命名文件中的约定，即8个字符的文件名后跟一个点，扩展名为3个字符。BASH没有遵循这样的惯例。</li>
+</ul>
+<h3 id="linux-开机启动过程">Linux 开机启动过程？</h3>
+<blockquote>
+<p>了解即可。</p>
+</blockquote>
+<ol>
+<li>主机加电自检，加载 BIOS 硬件信息。</li>
+<li>读取 MBR 的引导文件(GRUB、LILO)。</li>
+<li>引导 Linux 内核。</li>
+<li>运行第一个进程 init (进程号永远为 1 )。</li>
+<li>进入相应的运行级别。</li>
+<li>运行终端，输入用户名和密码。</li>
+</ol>
+<h3 id="linux系统缺省的运行级别">Linux系统缺省的运行级别？</h3>
+<ul>
+<li>关机。</li>
+<li>单机用户模式。</li>
+<li>字符界面的多用户模式(不支持网络)。</li>
+<li>字符界面的多用户模式。</li>
+<li>未分配使用。</li>
+<li>图形界面的多用户模式。</li>
+<li>重启。</li>
+</ul>
+<h3 id="linux-使用的进程间通信方式">Linux 使用的进程间通信方式？</h3>
+<blockquote>
+<p>了解即可，不需要太深入。</p>
+</blockquote>
+<ol>
+<li>管道(pipe)、流管道(s_pipe)、有名管道(FIFO)。</li>
+<li>信号(signal) 。</li>
+<li>消息队列。</li>
+<li>共享内存。</li>
+<li>信号量。</li>
+<li>套接字(socket) 。</li>
+</ol>
+<h3 id="linux-有哪些系统日志文件">Linux 有哪些系统日志文件？</h3>
+<p>比较重要的是 /var/log/messages 日志文件。</p>
+<p>该日志文件是许多进程日志文件的汇总，从该文件可以看出任何入侵企图或成功的入侵。</p>
+<p>另外，如果胖友的系统里有 ELK 日志集中收集，它也会被收集进去。</p>
+<h3 id="linux-系统安装多个桌面环境有帮助吗">Linux 系统安装多个桌面环境有帮助吗？</h3>
+<p>通常，一个桌面环境，如 KDE 或 Gnome，足以在没有问题的情况下运行。尽管系统允许从一个环境切换到另一个环境，但这对用户来说都是优先考虑的问题。</p>
+<p>有些程序在一个环境中工作而在另一个环境中无法工作，因此它也可以被视为选择使用哪个环境的一个因素。</p>
+<h3 id="什么是交换空间">什么是交换空间？</h3>
+<p>交换空间是Linux使用的一定空间，用于临时保存一些并发运行的程序。当RAM没有足够的内存来容纳正在执行的所有程序时，就会发生这种情况。</p>
+<h3 id="什么是root帐户">什么是root帐户?</h3>
+<p>root 帐户就像一个系统管理员帐户，允许你完全控制系统。你可以在此处创建和维护用户帐户，为每个帐户分配不同的权限。每次安装 Linux 时都是默认帐户。</p>
+<h3 id="什么是lilo">什么是LILO？</h3>
+<p>LILO 是 Linux 的引导加载程序。它主要用于将 Linux 操作系统加载到主内存中，以便它可以开始运行。</p>
+<h3 id="什么是bash">什么是BASH？</h3>
+<p>BASH 是 Bourne Again SHell 的缩写。它由 Steve Bourne 编写，作为原始 Bourne Shell（由/bin /sh表示）的替代品。它结合了原始版本的 Bourne Shell 的所有功能，以及其他功能，使其更容易使用。从那以后，它已被改编为运行 Linux 的大多数系统的默认 shell。</p>
+<h3 id="什么是cli">什么是CLI？</h3>
+<p>命令行界面（英语：<strong>command-line interface</strong>，缩写：CLI）是在图形用户界面得到普及之前使用最为广泛的用户界面，它通常不支持鼠标，用户通过键盘输入指令，计算机接收到指令后，予以执行。也有人称之为字符用户界面（CUI）。</p>
+<p>通常认为，命令行界面（CLI）没有图形用户界面（GUI）那么方便用户操作。因为，命令行界面的软件通常需要用户记忆操作的命令，但是，由于其本身的特点，命令行界面要较图形用户界面节约计算机系统的资源。在熟记命令的前提下，使用命令行界面往往要较使用图形用户界面的操作速度要快。所以，图形用户界面的操作系统中，都保留着可选的命令行界面。</p>
+<h3 id="什么是gui">什么是GUI？</h3>
+<p>图形用户界面（Graphical User Interface，简称 GUI，又称图形用户接口）是指采用图形方式显示的计算机操作用户界面。</p>
+<p>图形用户界面是一种人与计算机通信的界面显示格式，允许用户使用鼠标等输入设备操纵屏幕上的图标或菜单选项，以选择命令、调用文件、启动程序或执行其它一些日常任务。与通过键盘输入文本或字符命令来完成例行任务的字符界面相比，图形用户界面有许多优点。</p>
+<p>开源的优势是什么？开源允许你将软件（包括源代码）免费分发给任何感兴趣的人。然后，人们可以添加功能，甚至可以调试和更正源代码中的错误。它们甚至可以让它运行得更好，然后再次自由地重新分配这些增强的源代码。这最终使社区中的每个人受益。</p>
+<p>GNU项目的重要性是什么？这种所谓的自由软件运动具有多种优势，例如可以自由地运行程序以及根据你的需要自由学习和修改程序。它还允许你将软件副本重新分发给其他人，以及自由改进软件并将其发布给公众。</p>
+<h2 id="磁盘目录文件">磁盘、目录、文件</h2>
+<h3 id="简单-linux-文件系统">简单 Linux 文件系统？</h3>
+<p>在 Linux 操作系统中，所有被操作系统管理的资源，例如网络接口卡、磁盘驱动器、打印机、输入输出设备、普通文件或是目录都被看作是一个文件。</p>
+<p>也就是说在 Linux 系统中有一个重要的概念<strong>一切都是文件</strong>。其实这是 Unix 哲学的一个体现，而 Linux 是重写 Unix 而来，所以这个概念也就传承了下来。在 Unix 系统中，把一切资源都看作是文件，包括硬件设备。UNIX系统把每个硬件都看成是一个文件，通常称为设备文件，这样用户就可以用读写文件的方式实现对硬件的访问。</p>
+<p>Linux 支持 5 种文件类型，如下图所示：</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/lH7qcFOtBkhWAvIa4c7YHXAsib0eia8c3d3qn6ibMdYr4HlEZfwXzLukibrgT3D699JWPRMBJtnPVZDEXQhprtUNAA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<h3 id="linux-的目录结构是怎样的">Linux 的目录结构是怎样的？</h3>
+<blockquote>
+<p>这个问题，一般不会问。更多是实际使用时，需要知道。</p>
+</blockquote>
+<p>Linux 文件系统的结构层次鲜明，就像一棵倒立的树，最顶层是其根目录：</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/lH7qcFOtBkhWAvIa4c7YHXAsib0eia8c3dsDmCV1Aak4gtgpAp90DvLDNlCeibKkkN8icGlyvWKPDYicTGLvbFabs2Q/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<p>常见目录说明：</p>
+<ul>
+<li><strong>/bin</strong>：存放二进制可执行文件(ls,cat,mkdir等)，常用命令一般都在这里；</li>
+<li><strong>/etc</strong>：存放系统管理和配置文件；</li>
+<li><strong>/home</strong>：存放所有用户文件的根目录，是用户主目录的基点，比如用户user的主目录就是/home/user，可以用~user表示；</li>
+<li><strong>/usr</strong>：用于存放系统应用程序；</li>
+<li><strong>/opt</strong>：额外安装的可选应用程序包所放置的位置。一般情况下，我们可以把tomcat等都安装到这里；</li>
+<li><strong>/proc</strong>：虚拟文件系统目录，是系统内存的映射。可直接访问这个目录来获取系统信息；</li>
+<li><strong>/root</strong>：超级用户（系统管理员）的主目录（特权阶级o）；</li>
+<li><strong>/sbin</strong>: 存放二进制可执行文件，只有root才能访问。这里存放的是系统管理员使用的系统级别的管理命令和程序。如ifconfig等；</li>
+<li><strong>/dev</strong>：用于存放设备文件；</li>
+<li><strong>/mnt</strong>：系统管理员安装临时文件系统的安装点，系统提供这个目录是让用户临时挂载其他的文件系统；</li>
+<li><strong>/boot</strong>：存放用于系统引导时使用的各种文件；</li>
+<li><strong>/lib</strong>：存放着和系统运行相关的库文件 ；</li>
+<li><strong>/tmp</strong>：用于存放各种临时文件，是公用的临时文件存储点；</li>
+<li><strong>/var</strong>：用于存放运行时需要改变数据的文件，也是某些大文件的溢出区，比方说各种服务的日志文件（系统启动日志等。）等；</li>
+<li><strong>/lost+found</strong>：这个目录平时是空的，系统非正常关机而留下“无家可归”的文件（windows下叫什么.chk）就在这里。</li>
+</ul>
+<h3 id="什么是-inode-">什么是 inode ？</h3>
+<blockquote>
+<p>一般来说，面试不会问 inode 。但是 inode 是一个重要概念，是理解 Unix/Linux 文件系统和硬盘储存的基础。</p>
+</blockquote>
+<p>理解inode，要从文件储存说起。</p>
+<p>文件储存在硬盘上，硬盘的最小存储单位叫做&quot;扇区&quot;（Sector）。每个扇区储存512字节（相当于0.5KB）。</p>
+<p>操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个&quot;块&quot;（block）。这种由多个扇区组成的&quot;块&quot;，是文件存取的最小单位。&ldquo;块&quot;的大小，最常见的是4KB，即连续八个 sector组成一个 block。</p>
+<p>文件数据都储存在&quot;块&quot;中，那么很显然，我们还必须找到一个地方储存文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种储存文件元信息的区域就叫做inode，中文译名为&quot;索引节点&rdquo;。</p>
+<p>每一个文件都有对应的inode，里面包含了与该文件有关的一些信息。</p>
+<h3 id="简述-linux-文件系统通过-i-节点把文件的逻辑结构和物理结构转换的工作过程">简述 Linux 文件系统通过 i 节点把文件的逻辑结构和物理结构转换的工作过程？</h3>
+<p>如果看的一脸懵逼，也没关系。一般来说，面试官不太会问这个题目。</p>
+<p>Linux 通过 inode 节点表将文件的逻辑结构和物理结构进行转换。</p>
+<p>inode 节点是一个 64 字节长的表，表中包含了文件的相关信息，其中有文件的大小、文件所有者、文件的存取许可方式以及文件的类型等重要信息。在 inode 节点表中最重要的内容是磁盘地址表。在磁盘地址表中有 13 个块号，文件将以块号在磁盘地址表中出现的顺序依次读取相应的块。</p>
+<p>Linux 文件系统通过把 inode 节点和文件名进行连接，当需要读取该文件时，文件系统在当前目录表中查找该文件名对应的项，由此得到该文件相对应的 inode 节点号，通过该 inode 节点的磁盘地址表把分散存放的文件物理块连接成文件的逻辑结构。</p>
+<h3 id="什么是硬链接和软链接">什么是硬链接和软链接？</h3>
+<h4 id="1硬链接">1）硬链接</h4>
+<p>由于 Linux 下的文件是通过索引节点(inode)来识别文件，硬链接可以认为是一个指针，指向文件索引节点的指针，系统并不为它重新分配 inode 。每添加一个一个硬链接，文件的链接数就加 1 。</p>
+<p>不足：1）不可以在不同文件系统的文件间建立链接；2）只有超级用户才可以为目录创建硬链接。</p>
+<h4 id="2软链接">2）软链接</h4>
+<p>软链接克服了硬链接的不足，没有任何文件系统的限制，任何用户可以创建指向目录的符号链接。因而现在更为广泛使用，它具有更大的灵活性，甚至可以跨越不同机器、不同网络对文件进行链接。</p>
+<p>不足：因为链接文件包含有原文件的路径信息，所以当原文件从一个目录下移到其他目录中，再访问链接文件，系统就找不到了，而硬链接就没有这个缺陷，你想怎么移就怎么移；还有它要系统分配额外的空间用于建立新的索引节点和保存原文件的路径。实际场景下，基本是使用软链接。总结区别如下：</p>
+<p>硬链接不可以跨分区，软件链可以跨分区。硬链接指向一个 inode 节点，而软链接则是创建一个新的 inode 节点。删除硬链接文件，不会删除原文件，删除软链接文件，会把原文件删除。</p>
+<h3 id="raid-是什么">RAID 是什么?</h3>
+<p>RAID 全称为独立磁盘冗余阵列(Redundant Array of Independent Disks)，基本思想就是把多个相对便宜的硬盘组合起来，成为一个硬盘阵列组，使性能达到甚至超过一个价格昂贵、 容量巨大的硬盘。RAID 通常被用在服务器电脑上，使用完全相同的硬盘组成一个逻辑扇区，因此操作系统只会把它当做一个硬盘。</p>
+<p>RAID 分为不同的等级，各个不同的等级均在数据可靠性及读写性能上做了不同的权衡。在实际应用中，可以依据自己的实际需求选择不同的 RAID 方案。</p>
+<p>当然，因为很多公司都使用云服务，大家很难接触到 RAID 这个概念，更多的可能是普通云盘、SSD 云盘酱紫的概念。</p>
+<h2 id="安全">安全</h2>
+<p>一台 Linux 系统初始化环境后需要做一些什么安全工作？</p>
+<p>1、添加普通用户登陆，禁止 root 用户登陆，更改 SSH 端口号。</p>
+<blockquote>
+<p>修改 SSH 端口不一定绝对哈。当然，如果要暴露在外网，建议改下。l</p>
+</blockquote>
+<p>2、服务器使用密钥登陆，禁止密码登陆。</p>
+<p>3、开启防火墙，关闭 SElinux ，根据业务需求设置相应的防火墙规则。</p>
+<p>4、装 fail2ban 这种防止 SSH 暴力破击的软件。</p>
+<p>5、设置只允许公司办公网出口 IP 能登陆服务器(看公司实际需要)</p>
+<blockquote>
+<p>也可以安装 VPN 等软件，只允许连接 VPN 到服务器上。</p>
+</blockquote>
+<p>6、修改历史命令记录的条数为 10 条。</p>
+<p>7、只允许有需要的服务器可以访问外网，其它全部禁止。</p>
+<p>8、做好软件层面的防护。</p>
+<p>8.1 设置 nginx_waf 模块防止 SQL 注入。</p>
+<p>8.2 把 Web 服务使用 www 用户启动，更改网站目录的所有者和所属组为 www 。</p>
+<h2 id="什么叫-cc-攻击什么叫-ddos-攻击">什么叫 CC 攻击？什么叫 DDOS 攻击？</h2>
+<p>CC 攻击，主要是用来攻击页面的，模拟多个用户不停的对你的页面进行访问，从而使你的系统资源消耗殆尽。</p>
+<p>DDOS 攻击，中文名叫分布式拒绝服务攻击，指借助服务器技术将多个计算机联合起来作为攻击平台，来对一个或多个目标发动 DDOS 攻击。</p>
+<blockquote>
+<p>攻击，即是通过大量合法的请求占用大量网络资源，以达到瘫痪网络的目的。</p>
+</blockquote>
+<h3 id="怎么预防-cc-攻击和-ddos-攻击">怎么预防 CC 攻击和 DDOS 攻击？</h3>
+<p>防 CC、DDOS 攻击，这些只能是用硬件防火墙做流量清洗，将攻击流量引入黑洞。</p>
+<p>流量清洗这一块，主要是买 ISP 服务商的防攻击的服务就可以，机房一般有空余流量，我们一般是买服务，毕竟攻击不会是持续长时间。</p>
+<h2 id="什么是网站数据库注入">什么是网站数据库注入？</h2>
+<ul>
+<li>由于程序员的水平及经验参差不齐，大部分程序员在编写代码的时候，没有对用户输入数据的合法性进行判断。</li>
+<li>应用程序存在安全隐患。用户可以提交一段数据库查询代码，根据程序返回的结果，获得某些他想得知的数据，这就是所谓的 SQL 注入。</li>
+<li>SQL注入，是从正常的 WWW 端口访问，而且表面看起来跟一般的 Web 页面访问没什么区别，如果管理员没查看日志的习惯，可能被入侵很长时间都不会发觉。</li>
+</ul>
+<h3 id="如何过滤与预防">如何过滤与预防？</h3>
+<p>数据库网页端注入这种，可以考虑使用 nginx_waf 做过滤与预防。</p>
+<h2 id="shell">Shell</h2>
+<blockquote>
+<p>本小节为选读。我也不太会写 Shell 脚本，都是写的时候，在网络上拼拼凑凑。。。</p>
+</blockquote>
+<h2 id="shell-脚本是什么">Shell 脚本是什么？</h2>
+<p>一个 Shell 脚本是一个文本文件，包含一个或多个命令。作为系统管理员，我们经常需要使用多个命令来完成一项任务，我们可以添加这些所有命令在一个文本文件(Shell 脚本)来完成这些日常工作任务。</p>
+<h3 id="什么是默认登录-shell-">什么是默认登录 Shell ？</h3>
+<p>在 Linux 操作系统，<code>&quot;/bin/bash&quot;</code> 是默认登录 Shell，是在创建用户时分配的。</p>
+<p>使用 chsh 命令可以改变默认的 Shell 。示例如下所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">## chsh &lt;用户名&gt; -s &lt;新shell&gt;
+</span></span><span class="line"><span class="cl">## chsh ThinkWon -s /bin/sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="在-shell-脚本中如何写入注释">在 Shell 脚本中，如何写入注释？</h3>
+<p>注释可以用来描述一个脚本可以做什么和它是如何工作的。每一行注释以 # 开头。例子如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="c1">## This is a command</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> “I am logged in as <span class="nv">$USER</span>”
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="语法级">语法级</h2>
+<h3 id="可以在-shell-脚本中使用哪些类型的变量">可以在 Shell 脚本中使用哪些类型的变量？</h3>
+<p>在 Shell 脚本，我们可以使用两种类型的变量：</p>
+<ul>
+<li>系统定义变量</li>
+</ul>
+<blockquote>
+<p>系统变量是由系统系统自己创建的。这些变量通常由大写字母组成，可以通过 set 命令查看。</p>
+</blockquote>
+<ul>
+<li>用户定义变量</li>
+</ul>
+<blockquote>
+<p>用户变量由系统用户来生成和定义，变量的值可以通过命令 &ldquo;echo $&lt;变量名&gt;&rdquo; 查看。</p>
+</blockquote>
+<h3 id="shell脚本中--标记的用途是什么">Shell脚本中 $? 标记的用途是什么？</h3>
+<p>在写一个 Shell 脚本时，如果你想要检查前一命令是否执行成功，在 if 条件中使用 $? 可以来检查前一命令的结束状态。</p>
+<p>如果结束状态是 0 ，说明前一个命令执行成功。例如：如果结束状态不是0，说明命令执行失败。例如：</p>
+<h3 id="bourne-shellbash-中有哪些特殊的变量">Bourne Shell(bash) 中有哪些特殊的变量？</h3>
+<p>下面的表列出了 Bourne Shell 为命令行设置的特殊变量。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">内建变量    解释
+</span></span><span class="line"><span class="cl">$0    命令行中的脚本名字
+</span></span><span class="line"><span class="cl">$1    第一个命令行参数
+</span></span><span class="line"><span class="cl">$2    第二个命令行参数
+</span></span><span class="line"><span class="cl">…..    …….
+</span></span><span class="line"><span class="cl">$9    第九个命令行参数
+</span></span><span class="line"><span class="cl">$##    命令行参数的数量
+</span></span><span class="line"><span class="cl">$*    所有命令行参数，以空格隔开
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="如何取消变量或取消变量赋值">如何取消变量或取消变量赋值？</h3>
+<p>unset 命令用于取消变量或取消变量赋值。语法如下所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">## unset &lt;变量名&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="shell-脚本中-if-语法如何嵌套">Shell 脚本中 if 语法如何嵌套?</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">if [ 条件 ]
+</span></span><span class="line"><span class="cl">then
+</span></span><span class="line"><span class="cl">命令1
+</span></span><span class="line"><span class="cl">命令2
+</span></span><span class="line"><span class="cl">…..
+</span></span><span class="line"><span class="cl">else
+</span></span><span class="line"><span class="cl">if [ 条件 ]
+</span></span><span class="line"><span class="cl">then
+</span></span><span class="line"><span class="cl">命令1
+</span></span><span class="line"><span class="cl">命令2
+</span></span><span class="line"><span class="cl">….
+</span></span><span class="line"><span class="cl">else
+</span></span><span class="line"><span class="cl">命令1
+</span></span><span class="line"><span class="cl">命令2
+</span></span><span class="line"><span class="cl">…..
+</span></span><span class="line"><span class="cl">fi
+</span></span><span class="line"><span class="cl">fi
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="在-shell-脚本中如何比较两个数字">在 Shell 脚本中如何比较两个数字？</h2>
+<p>在 <code>if-then</code> 中使用测试命令（ <code>-gt</code> 等）来比较两个数字。例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="nv">x</span><span class="o">=</span><span class="m">10</span>
+</span></span><span class="line"><span class="cl"><span class="nv">y</span><span class="o">=</span><span class="m">20</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="o">[</span> <span class="nv">$x</span> -gt <span class="nv">$y</span> <span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="k">then</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> “x is greater than y”
+</span></span><span class="line"><span class="cl"><span class="k">else</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> “y is greater than x”
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="shell-脚本中-case-语句的语法">Shell 脚本中 case 语句的语法?</h2>
+<p>基础语法如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">case 变量 in
+</span></span><span class="line"><span class="cl">值1)
+</span></span><span class="line"><span class="cl">命令1
+</span></span><span class="line"><span class="cl">命令2
+</span></span><span class="line"><span class="cl">…..
+</span></span><span class="line"><span class="cl">最后命令
+</span></span><span class="line"><span class="cl">!!
+</span></span><span class="line"><span class="cl">值2)
+</span></span><span class="line"><span class="cl">命令1
+</span></span><span class="line"><span class="cl">命令2
+</span></span><span class="line"><span class="cl">……
+</span></span><span class="line"><span class="cl">最后命令
+</span></span><span class="line"><span class="cl">;;
+</span></span><span class="line"><span class="cl">esac
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="shell-脚本中-for-循环语法">Shell 脚本中 for 循环语法？</h2>
+<p>基础语法如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">for 变量 in 循环列表
+</span></span><span class="line"><span class="cl">do
+</span></span><span class="line"><span class="cl">命令1
+</span></span><span class="line"><span class="cl">命令2
+</span></span><span class="line"><span class="cl">….
+</span></span><span class="line"><span class="cl">最后命令
+</span></span><span class="line"><span class="cl">done
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="shell-脚本中-while-循环语法">Shell 脚本中 while 循环语法？</h2>
+<p>如同 <code>for</code> 循环，<code>while</code> 循环只要条件成立就重复它的命令块。不同于 <code>for</code> 循环，<code>while</code> 循环会不断迭代，直到它的条件不为真。</p>
+<p>基础语法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">while [ 条件 ]
+</span></span><span class="line"><span class="cl">do
+</span></span><span class="line"><span class="cl">命令…
+</span></span><span class="line"><span class="cl">done
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="do-while-语句的基本格式">do-while 语句的基本格式？</h2>
+<p>do-while 语句类似于 while 语句，但检查条件语句之前先执行命令（LCTT 译注：意即至少执行一次。）。下面是用 do-while 语句的语法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">do
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">命令
+</span></span><span class="line"><span class="cl">} while (条件)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="shell-脚本中-break-命令的作用">Shell 脚本中 break 命令的作用？</h2>
+<p>break 命令一个简单的用途是退出执行中的循环。我们可以在 while 和 until 循环中使用 break 命令跳出循环。</p>
+<h2 id="shell-脚本中-continue-命令的作用">Shell 脚本中 continue 命令的作用？</h2>
+<p>continue 命令不同于 break 命令，它只跳出当前循环的迭代，而不是整个循环。continue 命令很多时候是很有用的，例如错误发生，但我们依然希望继续执行大循环的时候。</p>
+<h2 id="如何使脚本可执行">如何使脚本可执行?</h2>
+<p>使用 chmod 命令来使脚本可执行。例子如下：<code>chmod a+x myscript.sh</code> 。</p>
+<h2 id="binbash-的作用">#!/bin/bash 的作用？</h2>
+<p><code>#!/bin/bash</code> 是 <code>Shell</code> 脚本的第一行，称为释伴（shebang）行。</p>
+<p>这里 # 符号叫做 hash ，而 ! 叫做 bang。它的意思是命令通过 <code>/bin/bash</code> 来执行。</p>
+<h2 id="如何调试-shell脚本">如何调试 Shell脚本？</h2>
+<ul>
+<li>使用 <code>-x</code> 数（<code>sh -x myscript.sh</code>）可以调试 Shell脚本。</li>
+<li>另一个种方法是使用 -nv 参数(<code>sh -nv myscript.sh</code>)。</li>
+</ul>
+<h2 id="如何将标准输出和错误输出同时重定向到同一位置">如何将标准输出和错误输出同时重定向到同一位置?</h2>
+<ul>
+<li>方法一：2&gt;&amp;1 (如## ls /usr/share/doc &gt; out.txt 2&gt;&amp;1 ) 。</li>
+<li>方法二：&amp;&gt; (如## ls /usr/share/doc &amp;&gt; out.txt ) 。</li>
+</ul>
+<h2 id="在-shell-脚本中如何测试文件">在 Shell 脚本中，如何测试文件？</h2>
+<p>test 命令可以用来测试文件。基础用法如下表格：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Test         用法
+</span></span><span class="line"><span class="cl">-d 文件名    如果文件存在并且是目录，返回true
+</span></span><span class="line"><span class="cl">-e 文件名    如果文件存在，返回true
+</span></span><span class="line"><span class="cl">-f 文件名    如果文件存在并且是普通文件，返回true
+</span></span><span class="line"><span class="cl">-r 文件名    如果文件存在并可读，返回true
+</span></span><span class="line"><span class="cl">-s 文件名    如果文件存在并且不为空，返回true
+</span></span><span class="line"><span class="cl">-w 文件名    如果文件存在并可写，返回true
+</span></span><span class="line"><span class="cl">-x 文件名    如果文件存在并可执行，返回true
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="在-shell-脚本如何定义函数呢">在 Shell 脚本如何定义函数呢？</h2>
+<p>函数是拥有名字的代码块。当我们定义代码块，我们就可以在我们的脚本调用函数名字，该块就会被执行。示例如下所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ diskusage () { df -h ; }
+</span></span><span class="line"><span class="cl">译注：下面是我给的shell函数语法，原文没有
+</span></span><span class="line"><span class="cl">[ function ] 函数名 [()]
+</span></span><span class="line"><span class="cl">{
+</span></span><span class="line"><span class="cl">命令;
+</span></span><span class="line"><span class="cl">[return int;]
+</span></span><span class="line"><span class="cl">}
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="如何让-shell-就脚本得到来自终端的输入">如何让 Shell 就脚本得到来自终端的输入?</h2>
+<p>read 命令可以读取来自终端（使用键盘）的数据。read 命令得到用户的输入并置于你给出的变量中。例子如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## vi /tmp/test.sh</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#!/bin/bash</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> ‘Please enter your name’
+</span></span><span class="line"><span class="cl"><span class="nb">read</span> name
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> “My Name is <span class="nv">$name</span>”
+</span></span><span class="line"><span class="cl"><span class="c1">## ./test.sh</span>
+</span></span><span class="line"><span class="cl">Please enter your name
+</span></span><span class="line"><span class="cl">ThinkWon
+</span></span><span class="line"><span class="cl">My Name is ThinkWon
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="如何执行算术运算">如何执行算术运算？</h2>
+<p>有两种方法来执行算术运算：</p>
+<ol>
+<li>使用 expr 命令：## expr 5 + 2 。</li>
+<li>用一个美元符号和方括号（表达式）：[16 + 4] ; test=$[16 + 4] 。</li>
+</ol>
+<h2 id="编程题">编程题</h2>
+<blockquote>
+<p>1.判断一文件是不是字符设备文件，如果是将其拷贝到 /dev 目录下？</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="nb">read</span> -p <span class="s2">&#34;Input file name: &#34;</span> FILENAME
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="o">[</span> -c <span class="s2">&#34;</span><span class="nv">$FILENAME</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span><span class="k">then</span>
+</span></span><span class="line"><span class="cl">  cp <span class="nv">$FILENAME</span> /dev
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>2.添加一个新组为 class1 ，然后添加属于这个组的 30 个用户，用户名的形式为 stdxx ，其中 xx 从 01 到 30 ？</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>groupadd class1
+</span></span><span class="line"><span class="cl"><span class="k">for</span><span class="o">((</span><span class="nv">i</span><span class="o">=</span>1<span class="p">;</span>i&lt;31<span class="p">;</span>i++<span class="o">))</span>
+</span></span><span class="line"><span class="cl"><span class="k">do</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">[</span> <span class="nv">$i</span> -le <span class="m">10</span> <span class="o">]</span><span class="p">;</span><span class="k">then</span>
+</span></span><span class="line"><span class="cl">                useradd -g class1 std0<span class="nv">$i</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span>
+</span></span><span class="line"><span class="cl">                useradd -g class1 std<span class="nv">$i</span>
+</span></span><span class="line"><span class="cl">        <span class="k">fi</span>
+</span></span><span class="line"><span class="cl"><span class="k">done</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>3.编写 Shell 程序，实现自动删除 50 个账号的功能，账号名为stud1 至 stud50 ？</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="k">for</span><span class="o">((</span><span class="nv">i</span><span class="o">=</span>1<span class="p">;</span>i&lt;51<span class="p">;</span>i++<span class="o">))</span>
+</span></span><span class="line"><span class="cl"><span class="k">do</span>
+</span></span><span class="line"><span class="cl">                userdel -r stud<span class="nv">$i</span>
+</span></span><span class="line"><span class="cl"><span class="k">done</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>4.写一个 sed 命令，修改 /tmp/input.txt 文件的内容？要求：</p>
+</blockquote>
+<ul>
+<li>删除所有空行。</li>
+<li>一行中，如果包含 “11111”，则在 “11111” 前面插入 “AAA”，在 “11111” 后面插入 “BBB” 。比如：将内容为 0000111112222 的一行改为 0000AAA11111BBB2222 。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@~]## cat -n /tmp/input.txt
+</span></span><span class="line"><span class="cl">     1  000011111222
+</span></span><span class="line"><span class="cl">     2
+</span></span><span class="line"><span class="cl">     3  000011111222222
+</span></span><span class="line"><span class="cl">     4  11111000000222
+</span></span><span class="line"><span class="cl">     5
+</span></span><span class="line"><span class="cl">     6
+</span></span><span class="line"><span class="cl">     7  111111111111122222222222
+</span></span><span class="line"><span class="cl">     8  2211111111
+</span></span><span class="line"><span class="cl">     9  112222222
+</span></span><span class="line"><span class="cl">    10  1122
+</span></span><span class="line"><span class="cl">    11
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">## 删除所有空行命令
+</span></span><span class="line"><span class="cl">[root@~]## sed &#39;/^$/d&#39; /tmp/input.txt
+</span></span><span class="line"><span class="cl">000011111222
+</span></span><span class="line"><span class="cl">000011111222222
+</span></span><span class="line"><span class="cl">11111000000222
+</span></span><span class="line"><span class="cl">111111111111122222222222
+</span></span><span class="line"><span class="cl">2211111111
+</span></span><span class="line"><span class="cl">112222222
+</span></span><span class="line"><span class="cl">1122
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">## 插入指定的字符
+</span></span><span class="line"><span class="cl">[root@~]## sed &#39;s#\(11111\)#AAA\1BBB#g&#39; /tmp/input.txt
+</span></span><span class="line"><span class="cl">0000AAA11111BBB222
+</span></span><span class="line"><span class="cl">0000AAA11111BBB222222
+</span></span><span class="line"><span class="cl">AAA11111BBB000000222
+</span></span><span class="line"><span class="cl">AAA11111BBBAAA11111BBB11122222222222
+</span></span><span class="line"><span class="cl">22AAA11111BBB111
+</span></span><span class="line"><span class="cl">112222222
+</span></span><span class="line"><span class="cl">1122
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="实战">实战</h2>
+<h2 id="如何选择-linux-操作系统版本">如何选择 Linux 操作系统版本?</h2>
+<p>一般来讲，桌面用户首选 Ubuntu ；服务器首选 RHEL 或 CentOS ，两者中首选 CentOS 。</p>
+<p>根据具体要求：</p>
+<ul>
+<li>安全性要求较高，则选择 Debian 或者 FreeBSD 。</li>
+<li>需要使用数据库高级服务和电子邮件网络应用的用户可以选择 SUSE 。</li>
+<li>想要新技术新功能可以选择 Feddora ，Feddora 是 RHEL 和 CentOS 的一个测试版和预发布版本。</li>
+<li>【重点】根据现有状况，绝大多数互联网公司选择 CentOS 。现在比较常用的是 6 系列，现在市场占有大概一半左右。另外的原因是 CentOS 更侧重服务器领域，并且无版权约束。</li>
+</ul>
+<blockquote>
+<p>CentOS 7 系列，也慢慢使用的会比较多了。</p>
+</blockquote>
+<h2 id="如何规划一台-linux-主机步骤是怎样">如何规划一台 Linux 主机，步骤是怎样？</h2>
+<ol>
+<li>确定机器是做什么用的，比如是做 WEB 、DB、还是游戏服务器。</li>
+</ol>
+<blockquote>
+<p>不同的用途，机器的配置会有所不同。</p>
+</blockquote>
+<ol>
+<li>确定好之后，就要定系统需要怎么安装，默认安装哪些系统、分区怎么做。</li>
+<li>需要优化系统的哪些参数，需要创建哪些用户等等的。</li>
+</ol>
+<h2 id="请问当用户反馈网站访问慢你会如何处理">请问当用户反馈网站访问慢，你会如何处理？</h2>
+<h3 id="有哪些方面的因素会导致网站网站访问慢">有哪些方面的因素会导致网站网站访问慢？</h3>
+<ol>
+<li>服务器出口带宽不够用</li>
+</ol>
+<ul>
+<li>本身服务器购买的出口带宽比较小。一旦并发量大的话，就会造成分给每个用户的出口带宽就小，访问速度自然就会慢。</li>
+<li>跨运营商网络导致带宽缩减。例如，公司网站放在电信的网络上，那么客户这边对接是长城宽带或联通，这也可能导致带宽的缩减。</li>
+</ul>
+<ol>
+<li>服务器负载过大，导致响应不过来</li>
+</ol>
+<p>可以从两个方面入手分析：</p>
+<ul>
+<li>分析系统负载，使用 w 命令或者 uptime 命令查看系统负载。如果负载很高，则使用 top 命令查看 CPU ，MEM 等占用情况，要么是 CPU 繁忙，要么是内存不够。</li>
+<li>如果这二者都正常，再去使用 sar 命令分析网卡流量，分析是不是遭到了攻击。一旦分析出问题的原因，采取对应的措施解决，如决定要不要杀死一些进程，或者禁止一些访问等。</li>
+</ul>
+<ol>
+<li>数据库瓶颈</li>
+</ol>
+<p>如果慢查询比较多。那么就要开发人员或 DBA 协助进行 SQL 语句的优化。如果数据库响应慢，考虑可以加一个数据库缓存，如 Redis 等。然后，也可以搭建 MySQL 主从，一台 MySQL 服务器负责写，其他几台从数据库负责读。</p>
+<ol>
+<li>网站开发代码没有优化好</li>
+</ol>
+<p>例如 SQL 语句没有优化，导致数据库读写相当耗时。</p>
+<h3 id="针对网站访问慢怎么去排查">针对网站访问慢，怎么去排查？</h3>
+<ol>
+<li>首先要确定是用户端还是服务端的问题。当接到用户反馈访问慢，那边自己立即访问网站看看，如果自己这边访问快，基本断定是用户端问题，就需要耐心跟客户解释，协助客户解决问题。</li>
+</ol>
+<blockquote>
+<p>不要上来就看服务端的问题。一定要从源头开始，逐步逐步往下。</p>
+</blockquote>
+<ol>
+<li>如果访问也慢，那么可以利用浏览器的调试功能，看看加载那一项数据消耗时间过多，是图片加载慢，还是某些数据加载慢。</li>
+<li>针对服务器负载情况。查看服务器硬件(网络、CPU、内存)的消耗情况。如果是购买的云主机，比如阿里云，可以登录阿里云平台提供各方面的监控，比如 CPU、内存、带宽的使用情况。</li>
+<li>如果发现硬件资源消耗都不高，那么就需要通过查日志，比如看看 MySQL慢查询的日志，看看是不是某条 SQL 语句查询慢，导致网站访问慢。</li>
+</ol>
+<h3 id="怎么去解决">怎么去解决？</h3>
+<ol>
+<li>如果是出口带宽问题，那么久申请加大出口带宽。</li>
+<li>如果慢查询比较多，那么就要开发人员或 DBA 协助进行 SQL 语句的优化。</li>
+<li>如果数据库响应慢，考虑可以加一个数据库缓存，如 Redis 等等。然后也可以搭建MySQL 主从，一台 MySQL 服务器负责写，其他几台从数据库负责读。</li>
+<li>申请购买 CDN 服务，加载用户的访问。</li>
+<li>如果访问还比较慢，那就需要从整体架构上进行优化咯。做到专角色专用，多台服务器提供同一个服务。</li>
+</ol>
+<h2 id="linux-性能调优都有哪几种方法">Linux 性能调优都有哪几种方法？</h2>
+<ol>
+<li>Disabling daemons (关闭 daemons)。</li>
+<li>Shutting down the GUI (关闭 GUI)。</li>
+<li>Changing kernel parameters (改变内核参数)。</li>
+<li>Kernel parameters (内核参数)。</li>
+<li>Tuning the processor subsystem (处理器子系统调优)。</li>
+<li>Tuning the memory subsystem (内存子系统调优)。</li>
+<li>Tuning the file system (文件系统子系统调优)。</li>
+<li>Tuning the network subsystem（网络子系统调优)。</li>
+</ol>
+<h2 id="环境变量的设置与修改">环境变量的设置与修改</h2>
+<h3 id="变量">变量</h3>
+<p>要解释环境变量，得先明白变量是什么，准确的说应该是 Shell 变量，所谓变量就是计算机中用于记录一个值（不一定是数值，也可以是字符或字符串）的符号，而这些符号将用于不同的运算处理中。通常变量与值是一对一的关系，可以通过表达式读取它的值并赋值给其它变量，也可以直接指定数值赋值给任意变量。为了便于运算和处理，大部分的编程语言会区分变量的类型，用于分别记录数值、字符或者字符串等等数据类型。Shell 中的变量也基本如此，有不同类型（但不用专门指定类型名），可以参与运算，有作用域限定。</p>
+<blockquote>
+<p>变量的作用域即变量的有效范围（比如一个函数中、一个源文件中或者全局范围），在该范围内只能有一个同名变量。一旦离开则该变量无效，如同不存在这个变量一般。</p>
+</blockquote>
+<p>在 Shell 中如何创建一个变量，如何给变量赋值和如何读取变量的值呢？这部分内容会在 <a href="https://www.lanqiao.cn/courses/944">高级 bash 脚本编程指南</a> 这门课中详细介绍，这里我简单举例说明一下：</p>
+<p>使用 <code>declare</code> 命令创建一个变量名为 tmp 的变量：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">declare</span> tmp
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>其实也可以不用 declare 预声明一个变量，直接即用即创建，这里只是告诉你 declare 的作用，这在创建其它指定类型的变量（如数组）时会用到。</p>
+</blockquote>
+<p>使用 <code>=</code> 号赋值运算符，将变量 tmp 赋值为 shiyanlou。注意，与其他语言不同的是， Shell 中的赋值操作，<code>=</code> 两边不可以输入空格，否则会报错。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 正确的赋值</span>
+</span></span><span class="line"><span class="cl"><span class="nv">tmp</span><span class="o">=</span>shiyanlou
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 错误的赋值</span>
+</span></span><span class="line"><span class="cl"><span class="nv">tmp</span> <span class="o">=</span> shiyanlou
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>读取变量的值，使用 <code>echo</code> 命令和 <code>$</code> 符号（<strong>$ 符号用于表示引用一个变量的值，初学者经常忘记输入</strong>）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="nv">$tmp</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://doc.shiyanlou.com/document-uid735639labid60timestamp1532339240610.png" alt="此处输入图片的描述"></p>
+<p><strong>注意：并不是任何形式的变量名都是可用的，变量名只能是英文字母、数字或者下划线，且不能以数字作为开头。</strong></p>
+<h3 id="环境变量">环境变量</h3>
+<p>简单理解了变量的概念，就很容易理解环境变量了。环境变量的作用域比自定义变量的要大，如 Shell 的环境变量作用于自身和它的子进程。在所有的 UNIX 和类 UNIX 系统中，每个进程都有其各自的环境变量设置，且默认情况下，当一个进程被创建时，除了创建过程中明确指定的话，它将继承其父进程的绝大部分环境设置。Shell 程序也作为一个进程运行在操作系统之上，而我们在 Shell 中运行的大部分命令都将以 Shell 的子进程的方式运行。</p>
+<p><img src="https://doc.shiyanlou.com/linux_base/5-2.png" alt="1"></p>
+<p>通常我们会涉及到的变量类型有三种：</p>
+<ul>
+<li>当前 Shell 进程私有用户自定义变量，如上面我们创建的 tmp 变量，只在当前 Shell 中有效。</li>
+<li>Shell 本身内建的变量。</li>
+<li>从自定义变量导出的环境变量。</li>
+</ul>
+<p>也有三个与上述三种环境变量相关的命令：<code>set</code>，<code>env</code>，<code>export</code>。这三个命令很相似，都是用于打印环境变量信息，区别在于涉及的变量范围不同。详见下表：</p>
+<table>
+<thead>
+<tr>
+<th>命 令</th>
+<th>说 明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>set</code></td>
+<td>显示当前 Shell 所有变量，包括其内建环境变量（与 Shell 外观等相关），用户自定义变量及导出的环境变量。</td>
+</tr>
+<tr>
+<td><code>env</code></td>
+<td>显示与当前用户相关的环境变量，还可以让命令在指定环境中运行。</td>
+</tr>
+<tr>
+<td><code>export</code></td>
+<td>显示从 Shell 中导出成环境变量的变量，也能通过它将自定义变量导出为环境变量。</td>
+</tr>
+</tbody>
+</table>
+<p><img src="https://doc.shiyanlou.com/linux_base/5-3.png" alt="1"></p>
+<p>你可以更直观的使用 <code>vimdiff</code> 工具比较一下它们之间的差别：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">temp</span><span class="o">=</span>shiyanlou
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">temp_env</span><span class="o">=</span>shiyanlou
+</span></span><span class="line"><span class="cl">env<span class="p">|</span>sort&gt;env.txt
+</span></span><span class="line"><span class="cl">export<span class="p">|</span>sort&gt;export.txt
+</span></span><span class="line"><span class="cl">set<span class="p">|</span>sort&gt;set.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上述操作将命令输出通过管道 <code>|</code> 使用 <code>sort</code> 命令排序，再重定向到对象文本文件中。管道的概念后面我们会学到，现在你知道这是什么意思就行了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">vimdiff env.txt export.txt set.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用 <code>vimdiff</code> 工具比较导出的几个文件的内容，退出 <code>vimdiff</code> 需要按下 Esc 后输入 <code>:q</code> 即可退出。</p>
+<p><img src="https://doc.shiyanlou.com/document-uid735639labid60timestamp1532339264870.png" alt="1"></p>
+<p>关于哪些变量是环境变量，可以简单地理解成在当前进程的子进程有效则为环境变量，否则不是（有些人也将所有变量统称为环境变量，只是以全局环境变量和局部环境变量进行区分，我们只要理解它们的实质区别即可）。我们这里用 <code>export</code> 命令来体会一下，先在 Shell 中设置一个变量 <code>temp=shiyanlou</code>，然后再新创建一个子 Shell 查看 <code>temp</code> 变量的值：</p>
+<p><img src="https://doc.shiyanlou.com/document-uid735639labid60timestamp1532339293501.png" alt="此处输入图片的描述"></p>
+<p><strong>注意：为了与普通变量区分，通常我们习惯将环境变量名设为大写。</strong></p>
+<h3 id="环境变量永久生效方案">环境变量永久生效方案</h3>
+<p>但是问题来了，当你关机后，或者关闭当前的 shell 之后，环境变量就没了啊。怎么才能让环境变量永久生效呢？</p>
+<p>按变量的生存周期来划分，Linux 变量可分为两类：</p>
+<ol>
+<li>永久的：需要修改配置文件，变量永久生效；</li>
+<li>临时的：使用 export 命令行声明即可，变量在关闭 shell 时失效。</li>
+</ol>
+<p>这里介绍两个重要文件 <code>/etc/bashrc</code>（有的 Linux 没有这个文件） 和 <code>/etc/profile</code> ，它们分别存放的是 shell 变量和环境变量。还有要注意区别的是每个用户目录下的一个隐藏文件：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># .profile 可以用 ls -a 查看</span>
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> /home/shiyanlou
+</span></span><span class="line"><span class="cl">ls -a
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://doc.shiyanlou.com/courses/uid871732-20200303-1583220161661" alt="图片描述"></p>
+<p>这个 .profile 只对当前用户永久生效。因为它保存在当前用户的 Home 目录下，当切换用户时，工作目录可能一并被切换到对应的目录中，这个文件就无法生效。而写在 <code>/etc/profile</code> 里面的是对所有用户永久生效，所以如果想要添加一个永久生效的环境变量，只需要打开 <code>/etc/profile</code>，在最后加上你想添加的环境变量就好啦。</p>
+<p>在前面我们应该注意到 <code>PATH</code> 里面的路径是以 <code>:</code> 作为分割符的，所以我们可以这样添加自定义路径：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:/home/shiyanlou/mybin
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注意这里一定要使用绝对路径。</strong></p>
+<p>现在你就可以在任意目录执行那两个命令了（注意需要去掉前面的 <code>./</code>）。你可能会意识到这样还并没有很好的解决问题，因为我给 PATH 环境变量追加了一个路径，它也只是在当前 Shell 有效，我一旦退出终端，再打开就会发现又失效了。有没有方法让添加的环境变量全局有效？或者每次启动 Shell 时自动执行上面添加自定义路径到 PATH 的命令？下面我们就来说说后一种方式——让它自动执行。</p>
+<p>在每个用户的 home 目录中有一个 Shell 每次启动时会默认执行一个配置脚本，以初始化环境，包括添加一些用户自定义环境变量等等。实验楼的环境使用的 Shell 是 zsh，它的配置文件是 <code>.zshrc</code>，相应的如果使用的 Shell 是 Bash，则配置文件为 <code>.bashrc</code>。它们在 <code>etc</code> 下还都有一个或多个全局的配置文件，不过我们一般只修改用户目录下的配置文件。Shell 的种类有很多，可以使用 <code>cat /etc/shells</code> 命令查看当前系统已安装的 Shell。</p>
+<p><img src="https://doc.shiyanlou.com/courses/uid871732-20200303-1583223324878" alt="图片描述"></p>
+<p>我们可以简单地使用下面命令直接添加内容到 <code>.zshrc</code> 中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;PATH=</span><span class="nv">$PATH</span><span class="s2">:/home/shiyanlou/mybin&#34;</span> &gt;&gt; .zshrc
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>上述命令中 <code>&gt;&gt;</code> 表示将标准输出以追加的方式重定向到一个文件中，注意前面用到的 <code>&gt;</code> 是以覆盖的方式重定向到一个文件中，使用的时候一定要注意分辨。在指定文件不存在的情况下都会创建新的文件。</strong></p>
+<h3 id="变量修改">变量修改</h3>
+<p>变量的修改有以下几种方式：</p>
+<table>
+<thead>
+<tr>
+<th>变量设置方式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>${变量名#匹配字串}</code></td>
+<td>从头向后开始匹配，删除符合匹配字串的最短数据</td>
+</tr>
+<tr>
+<td><code>${变量名##匹配字串}</code></td>
+<td>从头向后开始匹配，删除符合匹配字串的最长数据</td>
+</tr>
+<tr>
+<td><code>${变量名%匹配字串}</code></td>
+<td>从尾向前开始匹配，删除符合匹配字串的最短数据</td>
+</tr>
+<tr>
+<td><code>${变量名%%匹配字串}</code></td>
+<td>从尾向前开始匹配，删除符合匹配字串的最长数据</td>
+</tr>
+<tr>
+<td><code>${变量名/旧的字串/新的字串}</code></td>
+<td>将符合旧字串的第一个字串替换为新的字串</td>
+</tr>
+<tr>
+<td><code>${变量名//旧的字串/新的字串}</code></td>
+<td>将符合旧字串的全部字串替换为新的字串</td>
+</tr>
+</tbody>
+</table>
+<p>比如我们可以修改前面添加到 PATH 的环境变量，将添加的 mybin 目录从环境变量里删除。为了避免操作失误导致命令找不到，我们先将 PATH 赋值给一个新的自定义变量 mypath：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">mypath</span><span class="o">=</span><span class="nv">$PATH</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="nv">$mypath</span>
+</span></span><span class="line"><span class="cl"><span class="nv">mypath</span><span class="o">=</span><span class="si">${</span><span class="nv">mypath</span><span class="p">%/home/shiyanlou/mybin</span><span class="si">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 或使用通配符 * 表示任意多个任意字符</span>
+</span></span><span class="line"><span class="cl"><span class="nv">mypath</span><span class="o">=</span><span class="si">${</span><span class="nv">mypath</span><span class="p">%*/mybin</span><span class="si">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以看到路径已经不存在了。</p>
+<p><img src="https://doc.shiyanlou.com/courses/uid871732-20200303-1583224278229" alt="图片描述"></p>
+<h3 id="变量删除">变量删除</h3>
+<p>可以使用 <code>unset</code> 命令删除一个环境变量：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">unset</span> mypath
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://doc.shiyanlou.com/courses/uid871732-20200303-1583224422523" alt="图片描述"></p>
+<h2 id="文件管理命令">文件管理命令</h2>
+<h3 id="file命令">file命令</h3>
+<p>我们可以使用 <code>file</code> 命令查看文件的类型：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">file /bin/ls
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://doc.shiyanlou.com/document-uid735639labid59timestamp1531734243413.png" alt="4-3.6-1"></p>
+<p>说明这是一个可执行文件，运行在 64 位平台，并使用了动态链接文件（共享库）。</p>
+<p>与 Windows 不同的是，如果你新建了一个 shiyanlou.txt 文件，Windows 会自动把它识别为文本文件，而 <code>file</code> 命令会识别为一个空文件。这个前面我提到过，在 Linux 中文件的类型不是根据文件后缀来判断的。当你在文件里输入内容后才会显示文件类型。</p>
+<p><img src="https://doc.shiyanlou.com/courses/uid871732-20200303-1583215158345" alt="图片描述"></p>
+<h3 id="cat-命令">cat 命令</h3>
+<p>cat 命令用于连接文件并打印到标准输出设备上。</p>
+<p>cat 主要有三大功能：</p>
+<p>1.一次显示整个文件:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cat filename
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>2.从键盘创建一个文件:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cat &gt; filename
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>只能创建新文件，不能编辑已有文件。</p>
+<p>3.将几个文件合并为一个文件:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cat file1 file2 &gt; file
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>-b 对非空输出行号 -n 输出所有行号</p>
+<p>还有<strong>tac、nl</strong>命令，都是复制文件内容到终端，tac表示倒序输出在终端，nl表示正序并加上行号打印到终端上</p>
+<h4 id="实例">实例：</h4>
+<p>（1）把 log2012.log 的文件内容加上行号后输入 log2013.log 这个文件里</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cat -n log2012.log log2013.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）把 log2012.log 和 log2013.log 的文件内容加上行号（空白行不加）之后将内容附加到 log.log 里</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cat -b log2012.log log2013.log log.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（3）使用 here doc 生成新文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cat &gt;log.txt &lt;&lt;EOF
+</span></span><span class="line"><span class="cl">&gt;Hello
+</span></span><span class="line"><span class="cl">&gt;World
+</span></span><span class="line"><span class="cl">&gt;PWD=$(pwd)
+</span></span><span class="line"><span class="cl">&gt;EOF
+</span></span><span class="line"><span class="cl">ls -l log.txt
+</span></span><span class="line"><span class="cl">cat log.txt
+</span></span><span class="line"><span class="cl">Hello
+</span></span><span class="line"><span class="cl">World
+</span></span><span class="line"><span class="cl">PWD=/opt/soft/test
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（4）反向列示</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">tac log.txt
+</span></span><span class="line"><span class="cl">PWD=/opt/soft/test
+</span></span><span class="line"><span class="cl">World
+</span></span><span class="line"><span class="cl">Hello
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="chmod-命令">chmod 命令</h3>
+<p>Linux/Unix 的文件调用权限分为三级 : 文件拥有者、群组、其他。利用 chmod 可以控制文件如何被他人所调用。</p>
+<p>用于改变 linux 系统文件或目录的访问权限。用它控制文件或目录的访问权限。该命令有两种用法。一种是包含字母和操作符表达式的文字设定法；另一种是包含数字的数字设定法。</p>
+<p>每一文件或目录的访问权限都有三组，每组用三位表示，分别为文件属主的读、写和执行权限；与属主同组的用户的读、写和执行权限；系统中其他用户的读、写和执行权限。可使用 ls -l test.txt 查找。</p>
+<p>以文件 log2012.log 为例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-rw-r--r-- 1 root root 296K 11-13 06:03 log2012.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>第一列共有 10 个位置，第一个字符指定了文件类型。在通常意义上，一个目录也是一个文件。如果第一个字符是横线，表示是一个非目录的文件。如果是 d，表示是一个目录。从第二个字符开始到第十个 9 个字符，3 个字符一组，分别表示了 3 组用户对文件或者目录的权限。权限字符用横线代表空许可，r 代表只读，w 代表写，x 代表可执行。</p>
+<p><strong>常用参数</strong>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-c 当发生改变时，报告处理信息
+</span></span><span class="line"><span class="cl">-R 处理指定目录以及其子目录下所有文件
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>权限范围</strong>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">u ：目录或者文件的当前的用户
+</span></span><span class="line"><span class="cl">g ：目录或者文件的当前的群组
+</span></span><span class="line"><span class="cl">o ：除了目录或者文件的当前用户或群组之外的用户或者群组
+</span></span><span class="line"><span class="cl">a ：所有的用户及群组
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>权限代号</strong>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">r ：读权限，用数字4表示
+</span></span><span class="line"><span class="cl">w ：写权限，用数字2表示
+</span></span><span class="line"><span class="cl">x ：执行权限，用数字1表示
+</span></span><span class="line"><span class="cl">- ：删除权限，用数字0表示
+</span></span><span class="line"><span class="cl">s ：特殊权限
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-1">实例：</h4>
+<p>（1）增加文件 t.log 所有用户可执行权限</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">chmod a+x t.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）减少文件 t.log 所有用户读写权限</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">chmod a-rw t.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（3）撤销原来所有的权限，然后使拥有者具有可读权限,并输出处理信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">chmod u=r t.log -c
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（4）给 file 的属主分配读、写、执行(7)的权限，给file的所在组分配读、执行(5)的权限，给其他用户分配执行(1)的权限</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">chmod 751 t.log -c（或者：chmod u=rwx,g=rx,o=x t.log -c)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（5）将 test 目录及其子目录所有文件添加可读权限</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">chmod u+r,g+r,o+r -R text/ -c
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="chown-命令">chown 命令</h3>
+<p>chown 将指定文件的拥有者改为指定的用户或组，用户可以是用户名或者用户 ID；组可以是组名或者组 ID；文件是以空格分开的要改变权限的文件列表，支持通配符。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-c 显示更改的部分的信息
+</span></span><span class="line"><span class="cl">-R 处理指定目录及子目录
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-2">实例：</h4>
+<p>（1）改变拥有者和群组 并显示改变信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">chown -c mail:mail log2012.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）改变文件群组</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">chown -c :mail t.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（3）改变文件夹及子文件目录属主及属组为 mail</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">chown -cR mail: test/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="cp-命令">cp 命令</h3>
+<p>将源文件复制至目标文件，或将多个源文件复制至目标目录。</p>
+<p>注意：命令行复制，如果目标文件已经存在会提示是否覆盖，而在 shell 脚本中，如果不加 -i 参数，则不会提示，而是直接覆盖！</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-i 提示
+</span></span><span class="line"><span class="cl">-r 复制目录及目录内所有项目
+</span></span><span class="line"><span class="cl">-a 复制的文件与原文件时间一样
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-3">实例：</h4>
+<p>（1）复制 a.txt 到 test 目录下，保持原文件时间，如果原文件存在提示是否覆盖。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cp -ai a.txt test
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）为 a.txt 建议一个链接（快捷方式）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cp -s a.txt link_a.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="find-命令">find 命令</h3>
+<p>用于在文件树中查找文件，并作出相应的处理。</p>
+<p>命令格式：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">find pathname -options [-print -exec -ok ...]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>命令参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">pathname: find命令所查找的目录路径。例如用.来表示当前目录，用/来表示系统根目录。
+</span></span><span class="line"><span class="cl">-print：find命令将匹配的文件输出到标准输出。
+</span></span><span class="line"><span class="cl">-exec：find命令对匹配的文件执行该参数所给出的shell命令。相应命令的形式为&#39;command&#39; {  } \;，注意{   }和\；之间的空格。
+</span></span><span class="line"><span class="cl">-ok： 和-exec的作用相同，只不过以一种更为安全的模式来执行该参数所给出的shell命令，在执行每一个命令之前，都会给出提示，让用户来确定是否执行。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>命令选项：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-name 按照文件名查找文件
+</span></span><span class="line"><span class="cl">-perm 按文件权限查找文件
+</span></span><span class="line"><span class="cl">-user 按文件属主查找文件
+</span></span><span class="line"><span class="cl">-group  按照文件所属的组来查找文件。
+</span></span><span class="line"><span class="cl">-type  查找某一类型的文件，诸如：
+</span></span><span class="line"><span class="cl">   b - 块设备文件
+</span></span><span class="line"><span class="cl">   d - 目录
+</span></span><span class="line"><span class="cl">   c - 字符设备文件
+</span></span><span class="line"><span class="cl">   l - 符号链接文件
+</span></span><span class="line"><span class="cl">   p - 管道文件
+</span></span><span class="line"><span class="cl">   f - 普通文件
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-4">实例：</h4>
+<p>（1）查找 48 小时内修改过的文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">find -atime -2
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）在当前目录查找 以 .log 结尾的文件。. 代表当前目录</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">find ./ -name &#39;*.log&#39;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（3）查找 /opt 目录下 权限为 777 的文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">find /opt -perm 777
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（4）查找大于 1K 的文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">find -size +1000c
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>(5)查找等于 1000 字符的文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">find -size 1000c 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>-exec</code> 参数后面跟的是 <code>command</code> 命令，它的终止是以 ; 为结束标志的，所以这句命令后面的分号是不可缺少的，考虑到各个系统中分号会有不同的意义，所以前面加反斜杠。{} 花括号代表前面find查找出来的文件名。</p>
+<h3 id="head-命令">head 命令</h3>
+<p>head 用来显示档案的开头至标准输出中，默认 head 命令打印其相应文件的开头 10 行。</p>
+<p>常用参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-n&lt;行数&gt; 显示的行数（行数为复数表示从最后向前数）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-5">实例：</h4>
+<p>（1）显示 1.log 文件中前 20 行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">head 1.log -n 20
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）显示 1.log 文件前 20 字节</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">head -c 20 log2014.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（3）显示 t.log最后 10 行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">head -n -10 t.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="less-命令">less 命令</h3>
+<p>less 与 more 类似，但使用 less 可以随意浏览文件，而 more 仅能向前移动，却不能向后移动，而且 less 在查看之前不会加载整个文件。</p>
+<p>常用命令参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-i  忽略搜索时的大小写
+</span></span><span class="line"><span class="cl">-N  显示每行的行号
+</span></span><span class="line"><span class="cl">-o  &lt;文件名&gt; 将less 输出的内容在指定文件中保存起来
+</span></span><span class="line"><span class="cl">-s  显示连续空行为一行
+</span></span><span class="line"><span class="cl">/字符串：向下搜索“字符串”的功能
+</span></span><span class="line"><span class="cl">?字符串：向上搜索“字符串”的功能
+</span></span><span class="line"><span class="cl">n：重复前一个搜索（与 / 或 ? 有关）
+</span></span><span class="line"><span class="cl">N：反向重复前一个搜索（与 / 或 ? 有关）
+</span></span><span class="line"><span class="cl">-x &lt;数字&gt; 将“tab”键显示为规定的数字空格
+</span></span><span class="line"><span class="cl">b  向后翻一页
+</span></span><span class="line"><span class="cl">d  向后翻半页
+</span></span><span class="line"><span class="cl">h  显示帮助界面
+</span></span><span class="line"><span class="cl">Q  退出less 命令
+</span></span><span class="line"><span class="cl">u  向前滚动半页
+</span></span><span class="line"><span class="cl">y  向前滚动一行
+</span></span><span class="line"><span class="cl">空格键 滚动一行
+</span></span><span class="line"><span class="cl">回车键 滚动一页
+</span></span><span class="line"><span class="cl">[pagedown]： 向下翻动一页
+</span></span><span class="line"><span class="cl">[pageup]：   向上翻动一页
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-6">实例：</h4>
+<p>（1）ps 查看进程信息并通过 less 分页显示</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ps -aux | less -N
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）查看多个文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">less 1.log 2.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>可以使用 n 查看下一个，使用 p 查看前一个。</p>
+<h3 id="ln-命令">ln 命令</h3>
+<p>功能是为文件在另外一个位置建立一个同步的链接，当在不同目录需要该问题时，就不需要为每一个目录创建同样的文件，通过 ln 创建的链接（link）减少磁盘占用量。</p>
+<p>链接分类：软件链接及硬链接</p>
+<p>软链接：</p>
+<ol>
+<li>软链接，以路径的形式存在。类似于Windows操作系统中的快捷方式</li>
+<li>软链接可以 跨文件系统 ，硬链接不可以</li>
+<li>软链接可以对一个不存在的文件名进行链接</li>
+<li>软链接可以对目录进行链接</li>
+</ol>
+<p>硬链接:</p>
+<ol>
+<li>硬链接，以文件副本的形式存在。但不占用实际空间。</li>
+<li>不允许给目录创建硬链接</li>
+<li>硬链接只有在同一个文件系统中才能创建 需要注意：</li>
+</ol>
+<ul>
+<li>第一：ln命令会保持每一处链接文件的同步性，也就是说，不论你改动了哪一处，其它的文件都会发生相同的变化；</li>
+<li>第二：ln的链接又分软链接和硬链接两种，软链接就是ln –s 源文件 目标文件，它只会在你选定的位置上生成一个文件的镜像，不会占用磁盘空间，硬链接 ln 源文件 目标文件，没有参数-s， 它会在你选定的位置上生成一个和源文件大小相同的文件，无论是软链接还是硬链接，文件都保持同步变化。</li>
+<li>第三：ln指令用在链接文件或目录，如同时指定两个以上的文件或目录，且最后的目的地是一个已经存在的目录，则会把前面指定的所有文件或目录复制到该目录中。若同时指定多个文件或目录，且最后的目的地并非是一个已存在的目录，则会出现错误信息。</li>
+</ul>
+<p>常用参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-b 删除，覆盖以前建立的链接
+</span></span><span class="line"><span class="cl">-s 软链接（符号链接）
+</span></span><span class="line"><span class="cl">-v 显示详细处理过程
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-7">实例：</h4>
+<p>（1）给文件创建软链接，并显示操作信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ln -sv source.log link.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）给文件创建硬链接，并显示操作信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ln -v source.log link1.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（3）给目录创建软链接</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ln -sv /opt/soft/test/test3 /opt/soft/test/test5
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="locate-命令">locate 命令</h3>
+<p>locate 通过搜寻系统内建文档数据库达到快速找到档案，数据库由 updatedb 程序来更新，updatedb 是由 cron daemon 周期性调用的。默认情况下 locate 命令在搜寻数据库时比由整个由硬盘资料来搜寻资料来得快，但较差劲的是 locate 所找到的档案若是最近才建立或 刚更名的，可能会找不到，在内定值中，updatedb 每天会跑一次，可以由修改 crontab 来更新设定值 (etc/crontab)。</p>
+<p>locate 与 find 命令相似，可以使用如 *、? 等进行正则匹配查找</p>
+<p>常用参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-l num（要显示的行数）
+</span></span><span class="line"><span class="cl">-f   将特定的档案系统排除在外，如将proc排除在外
+</span></span><span class="line"><span class="cl">-r   使用正则运算式做为寻找条件\
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-8">实例：</h4>
+<p>（1）查找和 pwd 相关的所有文件(文件名中包含 pwd）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">locate pwd
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）搜索 etc 目录下所有以 sh 开头的文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">locate /etc/sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（3）查找 /var 目录下，以 reason 结尾的文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">locate -r &#39;^/var.*reason$&#39;（其中.表示一个字符，*表示任务多个；.*表示任意多个字符）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="more-命令">more 命令</h3>
+<p>功能类似于 cat, more 会以一页一页的显示方便使用者逐页阅读，而最基本的指令就是按空白键（space）就往下一页显示，按 b 键就会往回（back）一页显示。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">命令参数：
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">+n      从笫 n 行开始显示
+</span></span><span class="line"><span class="cl">-n       定义屏幕大小为n行
+</span></span><span class="line"><span class="cl">+/pattern 在每个档案显示前搜寻该字串（pattern），然后从该字串前两行之后开始显示 
+</span></span><span class="line"><span class="cl">-c       从顶部清屏，然后显示
+</span></span><span class="line"><span class="cl">-d       提示“Press space to continue，’q’ to quit（按空格键继续，按q键退出）”，禁用响铃功能
+</span></span><span class="line"><span class="cl">-l        忽略Ctrl+l（换页）字符
+</span></span><span class="line"><span class="cl">-p       通过清除窗口而不是滚屏来对文件进行换页，与-c选项相似
+</span></span><span class="line"><span class="cl">-s       把连续的多个空行显示为一行
+</span></span><span class="line"><span class="cl">-u       把文件内容中的下画线去掉
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>常用操作命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Enter    向下 n 行，需要定义。默认为 1 行
+</span></span><span class="line"><span class="cl">Ctrl+F   向下滚动一屏
+</span></span><span class="line"><span class="cl">空格键  向下滚动一屏
+</span></span><span class="line"><span class="cl">Ctrl+B  返回上一屏
+</span></span><span class="line"><span class="cl">=       输出当前行的行号
+</span></span><span class="line"><span class="cl">:f     输出文件名和当前行的行号
+</span></span><span class="line"><span class="cl">V      调用vi编辑器
+</span></span><span class="line"><span class="cl">!命令   调用Shell，并执行命令
+</span></span><span class="line"><span class="cl">q       退出more
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-9">实例：</h4>
+<p>（1）显示文件中从第3行起的内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">more +3 text.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）在所列出文件目录详细信息，借助管道使每次显示 5 行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ls -l | more -5
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>按空格显示下 5 行。</p>
+<p>与<strong>more****相似的命令</strong>less**来分页查看文件内容。</p>
+<h3 id="mv-命令">mv 命令</h3>
+<p>移动文件或修改文件名，根据第二参数类型（如目录，则移动文件；如为文件则重命令该文件）。</p>
+<p>当第二个参数为目录时，第一个参数可以是多个以空格分隔的文件或目录，然后移动第一个参数指定的多个文件到第二个参数指定的目录中。</p>
+<h4 id="实例-10">实例：</h4>
+<p>（1）将文件 test.log 重命名为 test1.txt</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mv test.log test1.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）将文件 log1.txt,log2.txt,log3.txt 移动到根的 test3 目录中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mv llog1.txt log2.txt log3.txt /test3
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（3）将文件 file1 改名为 file2，如果 file2 已经存在，则询问是否覆盖</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mv -i log1.txt log2.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（4）移动当前文件夹下的所有文件到上一级目录</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mv * ../
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="rename命令">rename命令</h3>
+<p>要实现批量重命名，<code>mv</code> 命令就有点力不从心了，我们可以使用一个看起来更专业的命令 <code>rename</code> 来实现。不过它要用 perl 正则表达式来作为参数，关于正则表达式我们要在后面才会介绍到，这里只做演示，你只要记得这个 <code>rename</code> 命令可以批量重命名就好了，以后再重新学习也不会有任何问题，毕竟你已经掌握了一个更常用的 <code>mv</code> 命令。</p>
+<p><code>rename</code> 命令并不是内置命令，若提示无该命令可以使用 <code>sudo apt-get install rename</code> 命令自行安装。</p>
+<h4 id="实例-11">实例：</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> /home/shiyanlou/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 使用通配符批量创建 5 个文件:</span>
+</span></span><span class="line"><span class="cl">touch file<span class="o">{</span>1..5<span class="o">}</span>.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 批量将这 5 个后缀为 .txt 的文本文件重命名为以 .c 为后缀的文件:</span>
+</span></span><span class="line"><span class="cl">rename <span class="s1">&#39;s/\.txt/\.c/&#39;</span> *.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 批量将这 5 个文件，文件名和后缀改为大写:</span>
+</span></span><span class="line"><span class="cl">rename <span class="s1">&#39;y/a-z/A-Z/&#39;</span> *.c
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://doc.shiyanlou.com/courses/uid871732-20200303-1583213792916" alt="图片描述"></p>
+<p>简单解释一下上面的命令，<code>rename</code> 是先使用第二个参数的通配符匹配所有后缀为 <code>.txt</code> 的文件，然后使用第一个参数提供的正则表达式将匹配的这些文件的 <code>.txt</code> 后缀替换为 <code>.c</code>，这一点在我们后面学习了 <code>sed</code> 命令后，相信你会更好地理解。</p>
+<h3 id="rm-命令">rm 命令</h3>
+<p>删除一个目录中的一个或多个文件或目录，如果没有使用 -r 选项，则 rm 不会删除目录。如果使用 rm 来删除文件，通常仍可以将该文件恢复原状。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">rm [选项] 文件…
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-12">实例：</h4>
+<p>（1）删除任何 .log 文件，删除前逐一询问确认：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">rm -i *.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）删除 test 子目录及子目录中所有档案删除，并且不用一一确认：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">rm -rf test
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（3）删除以 -f 开头的文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">rm -- -f*
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="tail-命令">tail 命令</h3>
+<p>用于显示指定文件末尾内容，不指定文件时，作为输入信息进行处理。常用查看日志文件。</p>
+<p>常用参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-f 循环读取（常用于查看递增的日志文件）
+</span></span><span class="line"><span class="cl">-n&lt;行数&gt; 显示行数（从后向前）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（1）循环读取逐渐增加的文件内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ping 127.0.0.1 &gt; ping.log &amp;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>后台运行：可使用 jobs -l 查看，也可使用 fg 将其移到前台运行。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">tail -f ping.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（查看日志）</p>
+<h3 id="touch-命令">touch 命令</h3>
+<p>Linux touch命令用于修改文件或者目录的时间属性，包括存取时间和更改时间。若文件不存在，系统会建立一个新的文件。</p>
+<p>ls -l 可以显示档案的时间记录。</p>
+<h4 id="语法">语法</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">touch [-acfm][-d&lt;日期时间&gt;][-r&lt;参考文件或目录&gt;] [-t&lt;日期时间&gt;][--help][--version][文件或目录…]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>参数说明：</p>
+<ul>
+<li>a 改变档案的读取时间记录。</li>
+<li>m 改变档案的修改时间记录。</li>
+<li>c 假如目的档案不存在，不会建立新的档案。与 &ndash;no-create 的效果一样。</li>
+<li>f 不使用，是为了与其他 unix 系统的相容性而保留。</li>
+<li>r 使用参考档的时间记录，与 &ndash;file 的效果一样。</li>
+<li>d 设定时间与日期，可以使用各种不同的格式。</li>
+<li>t 设定档案的时间记录，格式与 date 指令相同。</li>
+<li>–no-create 不会建立新档案。</li>
+<li>–help 列出指令格式。</li>
+<li>–version 列出版本讯息。</li>
+</ul>
+<h4 id="实例-13">实例</h4>
+<p>使用指令&quot;touch&quot;修改文件&quot;testfile&quot;的时间属性为当前系统时间，输入如下命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ touch testfile                #修改文件的时间属性 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>首先，使用ls命令查看testfile文件的属性，如下所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ ls -l testfile                #查看文件的时间属性  
+</span></span><span class="line"><span class="cl">#原来文件的修改时间为16:09  
+</span></span><span class="line"><span class="cl">-rw-r--r-- 1 hdd hdd 55 2011-08-22 16:09 testfile  
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>执行指令&quot;touch&quot;修改文件属性以后，并再次查看该文件的时间属性，如下所示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ touch testfile                #修改文件时间属性为当前系统时间  
+</span></span><span class="line"><span class="cl">$ ls -l testfile                #查看文件的时间属性  
+</span></span><span class="line"><span class="cl">#修改后文件的时间属性为当前系统时间  
+</span></span><span class="line"><span class="cl">-rw-r--r-- 1 hdd hdd 55 2011-08-22 19:53 testfile  
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用指令&quot;touch&quot;时，如果指定的文件不存在，则将创建一个新的空白文件。例如，在当前目录下，使用该指令创建一个空白文件&quot;file&quot;，输入如下命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ touch file            #创建一个名为“file”的新的空白文件 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="vim-命令">vim 命令</h3>
+<p>Vim是从 vi 发展出来的一个文本编辑器。代码补完、编译及错误跳转等方便编程的功能特别丰富，在程序员中被广泛使用。</p>
+<ul>
+<li>打开文件并跳到第 10 行：vim +10 filename.txt 。</li>
+<li>打开文件跳到第一个匹配的行：vim +/search-term filename.txt 。</li>
+<li>以只读模式打开文件：vim -R /etc/passwd 。</li>
+</ul>
+<p>基本上 vi/vim 共分为三种模式，分别是<strong>命令模式（Command mode），输入模式（Insert mode）和底线命令模式（Last line mode）</strong>。</p>
+<p>简单的说，我们可以将这三个模式想成底下的图标来表示：</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/lH7qcFOtBkhWAvIa4c7YHXAsib0eia8c3d8T2B3gXtmQZJ9GBajwF47VspzNWfibbgK8GxMsgoibiagkictfjM1s8ibdw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片"></p>
+<h3 id="whereis-命令">whereis 命令</h3>
+<p>whereis 命令只能用于程序名的搜索，而且只搜索二进制文件（参数-b）、man说明文件（参数-m）和源代码文件（参数-s）。如果省略参数，则返回所有信息。whereis 及 locate 都是基于系统内建的数据库进行搜索，因此效率很高，而find则是遍历硬盘查找文件。</p>
+<p>常用参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-b   定位可执行文件。
+</span></span><span class="line"><span class="cl">-m   定位帮助文件。
+</span></span><span class="line"><span class="cl">-s   定位源代码文件。
+</span></span><span class="line"><span class="cl">-u   搜索默认路径下除可执行文件、源代码文件、帮助文件以外的其它文件。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-14">实例：</h4>
+<p>（1）查找 locate 程序相关文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">whereis locate
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）查找 locate 的源码文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">whereis -s locate
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（3）查找 lcoate 的帮助文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">whereis -m locate
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="which-命令">which 命令</h3>
+<p>在 linux 要查找某个文件，但不知道放在哪里了，可以使用下面的一些命令来搜索：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">which     查看可执行文件的位置。
+</span></span><span class="line"><span class="cl">whereis 查看文件的位置。
+</span></span><span class="line"><span class="cl">locate  配合数据库查看文件位置。
+</span></span><span class="line"><span class="cl">find        实际搜寻硬盘查询文件名称。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>which 是在 PATH 就是指定的路径中，搜索某个系统命令的位置，并返回第一个搜索结果。使用 which 命令，就可以看到某个系统命令是否存在，以及执行的到底是哪一个位置的命令。</p>
+<p>常用参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-n  指定文件名长度，指定的长度必须大于或等于所有文件中最长的文件名。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-15">实例：</h4>
+<p>（1）查看 ls 命令是否存在，执行哪个</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">which ls
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）查看 which</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">which which
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（3）查看 cd</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">which cd（显示不存在，因为 cd 是内建命令，而 which 查找显示是 PATH 中的命令）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>查看当前 PATH 配置：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">echo $PATH
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>或使用 env 查看所有环境变量及对应值</p>
+<h2 id="文档编辑命令">文档编辑命令</h2>
+<h3 id="grep-命令">grep 命令</h3>
+<p>强大的文本搜索命令，grep(Global Regular Expression Print) 全局正则表达式搜索。</p>
+<p>grep 的工作方式是这样的，它在一个或多个文件中搜索字符串模板。如果模板包括空格，则必须被引用，模板后的所有字符串被看作文件名。搜索的结果被送到标准输出，不影响原文件内容。</p>
+<p>命令格式：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">grep [option] pattern file|dir
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>常用参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-A n --after-context显示匹配字符后n行
+</span></span><span class="line"><span class="cl">-B n --before-context显示匹配字符前n行
+</span></span><span class="line"><span class="cl">-C n --context 显示匹配字符前后n行
+</span></span><span class="line"><span class="cl">-c --count 计算符合样式的列数
+</span></span><span class="line"><span class="cl">-i 忽略大小写
+</span></span><span class="line"><span class="cl">-l 只列出文件内容符合指定的样式的文件名称
+</span></span><span class="line"><span class="cl">-f 从文件中读取关键词
+</span></span><span class="line"><span class="cl">-n 显示匹配内容的所在文件中行数
+</span></span><span class="line"><span class="cl">-R 递归查找文件夹
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>grep 的规则表达式:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">^  #锚定行的开始 如：&#39;^grep&#39;匹配所有以grep开头的行。 
+</span></span><span class="line"><span class="cl">$  #锚定行的结束 如：&#39;grep$&#39;匹配所有以grep结尾的行。 
+</span></span><span class="line"><span class="cl">.  #匹配一个非换行符的字符 如：&#39;gr.p&#39;匹配gr后接一个任意字符，然后是p。  
+</span></span><span class="line"><span class="cl">*  #匹配零个或多个先前字符 如：&#39;*grep&#39;匹配所有一个或多个空格后紧跟grep的行。
+</span></span><span class="line"><span class="cl">.*   #一起用代表任意字符。  
+</span></span><span class="line"><span class="cl">[]   #匹配一个指定范围内的字符，如&#39;[Gg]rep&#39;匹配Grep和grep。 
+</span></span><span class="line"><span class="cl">[^]  #匹配一个不在指定范围内的字符，如：&#39;[^A-FH-Z]rep&#39;匹配不包含A-R和T-Z的一个字母开头，紧跟rep的行。  
+</span></span><span class="line"><span class="cl">\(..\)  #标记匹配字符，如&#39;\(love\)&#39;，love被标记为1。   
+</span></span><span class="line"><span class="cl">\&lt;      #锚定单词的开始，如:&#39;\&lt;grep&#39;匹配包含以grep开头的单词的行。
+</span></span><span class="line"><span class="cl">\&gt;      #锚定单词的结束，如&#39;grep\&gt;&#39;匹配包含以grep结尾的单词的行。
+</span></span><span class="line"><span class="cl">x\{m\}  #重复字符x，m次，如：&#39;0\{5\}&#39;匹配包含5个o的行。 
+</span></span><span class="line"><span class="cl">x\{m,\}  #重复字符x,至少m次，如：&#39;o\{5,\}&#39;匹配至少有5个o的行。  
+</span></span><span class="line"><span class="cl">x\{m,n\}  #重复字符x，至少m次，不多于n次，如：&#39;o\{5,10\}&#39;匹配5--10个o的行。  
+</span></span><span class="line"><span class="cl">\w    #匹配文字和数字字符，也就是[A-Za-z0-9]，如：&#39;G\w*p&#39;匹配以G后跟零个或多个文字或数字字符，然后是p。  
+</span></span><span class="line"><span class="cl">\W    #\w的反置形式，匹配一个或多个非单词字符，如点号句号等。  
+</span></span><span class="line"><span class="cl">\b    #单词锁定符，如: &#39;\bgrep\b&#39;只匹配grep。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-16">实例：</h4>
+<p>（1）查找指定进程</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ps -ef | grep svn
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）查找指定进程个数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ps -ef | grep svn -c
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（3）从文件中读取关键词</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cat test1.txt | grep -f key.log
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（4）从文件夹中递归查找以grep开头的行，并只列出文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">grep -lR &#39;^grep&#39; /tmp
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（5）查找非x开关的行内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">grep &#39;^[^x]&#39; test.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（6）显示包含 ed 或者 at 字符的内容行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">grep -E &#39;ed|at&#39; test.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="wc-命令">wc 命令</h3>
+<p>wc(word count)功能为统计指定的文件中字节数、字数、行数，并将统计结果输出</p>
+<p>命令格式：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">wc [option] file..
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>命令参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-c 统计字节数
+</span></span><span class="line"><span class="cl">-l 统计行数
+</span></span><span class="line"><span class="cl">-m 统计字符数
+</span></span><span class="line"><span class="cl">-w 统计词数，一个字被定义为由空白、跳格或换行字符分隔的字符串
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-17">实例：</h4>
+<p>（1）查找文件的 行数 单词数 字节数 文件名</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">wc text.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>结果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">7     8     70     test.txt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）统计输出结果的行数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cat test.txt | wc -l
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="磁盘管理命令">磁盘管理命令</h2>
+<p>cd 命令 cd(changeDirectory) 命令语法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cd [目录名]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>说明：切换当前目录至 dirName。</p>
+<h4 id="实例-18">实例：</h4>
+<p>（1）进入要目录</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cd /
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）进入 “home” 目录</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cd ~
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（3）进入上一次工作路径</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cd -
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（4）把上个命令的参数作为cd参数使用。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">cd !$
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="df-命令">df 命令</h3>
+<p>显示磁盘空间使用情况。获取硬盘被占用了多少空间，目前还剩下多少空间等信息，如果没有文件名被指定，则所有当前被挂载的文件系统的可用空间将被显示。</p>
+<p>默认情况下，磁盘空间将以 1KB 为单位进行显示，除非环境变量 POSIXLY_CORRECT 被指定，那样将以512字节为单位进行显示：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-a 全部文件系统列表
+</span></span><span class="line"><span class="cl">-h 以方便阅读的方式显示信息
+</span></span><span class="line"><span class="cl">-i 显示inode信息
+</span></span><span class="line"><span class="cl">-k 区块为1024字节
+</span></span><span class="line"><span class="cl">-l 只显示本地磁盘
+</span></span><span class="line"><span class="cl">-T 列出文件系统类型
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="实例-19">实例：</h3>
+<p>（1）显示磁盘使用情况</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">df -l
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）以易读方式列出所有文件系统及其类型</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">df -haT
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="du-命令">du 命令</h3>
+<p>du 命令也是查看使用空间的，但是与 df 命令不同的是 Linux du 命令是对文件和目录磁盘使用的空间的查看：</p>
+<p>命令格式：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">du [选项] [文件]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>常用参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-a 显示目录中所有文件大小
+</span></span><span class="line"><span class="cl">-k 以KB为单位显示文件大小
+</span></span><span class="line"><span class="cl">-m 以MB为单位显示文件大小
+</span></span><span class="line"><span class="cl">-g 以GB为单位显示文件大小
+</span></span><span class="line"><span class="cl">-h 以易读方式显示文件大小
+</span></span><span class="line"><span class="cl">-s 仅显示总计
+</span></span><span class="line"><span class="cl">-c或--total  除了显示个别目录或文件的大小外，同时也显示所有目录或文件的总和
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-20">实例：</h4>
+<p>（1）以易读方式显示文件夹内及子文件夹大小</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">du -h scf/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）以易读方式显示文件夹内所有文件大小</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">du -ah scf/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（3）显示几个文件或目录各自占用磁盘空间的大小，还统计它们的总和</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">du -hc test/ scf/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（4）输出当前目录下各个子目录所使用的空间</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">du -hc --max-depth=1 scf/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="ls命令">ls命令</h3>
+<p>就是 list 的缩写，通过 ls 命令不仅可以查看 linux 文件夹包含的文件，而且可以查看文件权限(包括目录、文件夹、文件权限)查看目录信息等等。</p>
+<p>常用参数搭配：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ls -a 列出目录所有文件，包含以.开始的隐藏文件
+</span></span><span class="line"><span class="cl">ls -A 列出除.及..的其它文件
+</span></span><span class="line"><span class="cl">ls -r 反序排列
+</span></span><span class="line"><span class="cl">ls -t 以文件修改时间排序
+</span></span><span class="line"><span class="cl">ls -S 以文件大小排序
+</span></span><span class="line"><span class="cl">ls -h 以易读大小显示
+</span></span><span class="line"><span class="cl">ls -l 除了文件名之外，还将文件的权限、所有者、文件大小等信息详细列出来
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-21">实例：</h4>
+<p>(1) 按易读方式按时间反序排序，并显示文件详细信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ls -lhrt
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>(2) 按大小反序显示文件详细信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ls -lrS
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>(3)列出当前目录中所有以&quot;t&quot;开头的目录的详细内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ls -l t*
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>(4) 列出文件绝对路径（不包含隐藏文件）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">ls</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">sed</span><span class="w"> </span><span class="s2">&#34;s:^:`pwd`/:&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>(5) 列出文件绝对路径（包含隐藏文件）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">find $pwd -maxdepth 1 | xargs ls -ld
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="mkdir-命令">mkdir 命令</h3>
+<p>mkdir 命令用于创建文件夹。</p>
+<p>可用选项：</p>
+<ul>
+<li>-m: 对新建目录设置存取权限，也可以用 chmod 命令设置;</li>
+<li>-p: 可以是一个路径名称。此时若路径中的某些目录尚不存在,加上此选项后，系统将自动建立好那些尚不在的目录，即一次可以建立多个目录。</li>
+</ul>
+<h4 id="实例-22">实例：</h4>
+<p>（1）当前工作目录下创建名为 t的文件夹</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mkdir t
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）在 tmp 目录下创建路径为 test/t1/t 的目录，若不存在，则创建：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">mkdir -p /tmp/test/t1/t
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>pwd 命令 pwd 命令用于查看当前工作目录路径。</p>
+<h4 id="实例-23">实例：</h4>
+<p>（1）查看当前路径</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">pwd
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）查看软链接的实际路径</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">pwd -P
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="rmdir-命令">rmdir 命令</h3>
+<p>从一个目录中删除一个或多个子目录项，删除某目录时也必须具有对其父目录的写权限。</p>
+<p>注意：不能删除非空目录</p>
+<h4 id="实例-24">实例：</h4>
+<p>（1）当 parent 子目录被删除后使它也成为空目录的话，则顺便一并删除：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">rmdir -p parent/child/child11
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="网络通讯命令">网络通讯命令</h2>
+<h3 id="ifconfig-命令">ifconfig 命令</h3>
+<ul>
+<li>ifconfig 用于查看和配置 Linux 系统的网络接口。</li>
+<li>查看所有网络接口及其状态：ifconfig -a 。</li>
+<li>使用 up 和 down 命令启动或停止某个接口：ifconfig eth0 up 和 ifconfig eth0 down 。</li>
+</ul>
+<h3 id="iptables-命令">iptables 命令</h3>
+<p>iptables ，是一个配置 Linux 内核防火墙的命令行工具。功能非常强大，对于我们开发来说，主要掌握如何开放端口即可。例如：</p>
+<ul>
+<li>把来源 IP 为 192.168.1.101 访问本机 80 端口的包直接拒绝：iptables -I INPUT -s 192.168.1.101 -p tcp &ndash;dport 80 -j REJECT 。</li>
+<li>开启 80 端口，因为web对外都是这个端口</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">iptables -A INPUT -p tcp --dport 80 -j ACCEP
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>另外，要注意使用 iptables save 命令，进行保存。否则，服务器重启后，配置的规则将丢失。</li>
+</ul>
+<h3 id="netstat-命令">netstat 命令</h3>
+<p>Linux netstat命令用于显示网络状态。</p>
+<p>利用netstat指令可让你得知整个Linux系统的网络情况。</p>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">netstat [-acCeFghilMnNoprstuvVwx][-A&lt;网络类型&gt;][--ip]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>参数说明：</p>
+<ul>
+<li>-a或–all 显示所有连线中的Socket。</li>
+<li>-A&lt;网络类型&gt;或–&lt;网络类型&gt; 列出该网络类型连线中的相关地址。</li>
+<li>-c或–continuous 持续列出网络状态。</li>
+<li>-C或–cache 显示路由器配置的快取信息。</li>
+<li>-e或–extend 显示网络其他相关信息。</li>
+<li>-F或–fib 显示FIB。</li>
+<li>-g或–groups 显示多重广播功能群组组员名单。</li>
+<li>-h或–help 在线帮助。</li>
+<li>-i或–interfaces 显示网络界面信息表单。</li>
+<li>-l或–listening 显示监控中的服务器的Socket。</li>
+<li>-M或–masquerade 显示伪装的网络连线。</li>
+<li>-n或–numeric 直接使用IP地址，而不通过域名服务器。</li>
+<li>-N或–netlink或–symbolic 显示网络硬件外围设备的符号连接名称。</li>
+<li>-o或–timers 显示计时器。</li>
+<li>-p或–programs 显示正在使用Socket的程序识别码和程序名称。</li>
+<li>-r或–route 显示Routing Table。</li>
+<li>-s或–statistice 显示网络工作信息统计表。</li>
+<li>-t或–tcp 显示TCP传输协议的连线状况。</li>
+<li>-u或–udp 显示UDP传输协议的连线状况。</li>
+<li>-v或–verbose 显示指令执行过程。</li>
+<li>-V或–version 显示版本信息。</li>
+<li>-w或–raw 显示RAW传输协议的连线状况。</li>
+<li>-x或–unix 此参数的效果和指定&quot;-A unix&quot;参数相同。</li>
+<li>–ip或–inet 此参数的效果和指定&quot;-A inet&quot;参数相同。</li>
+</ul>
+<h4 id="实例-25">实例</h4>
+<p><strong>如何查看系统都开启了哪些端口？</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@centos6 ~ 13:20 #55]# netstat -lnp
+</span></span><span class="line"><span class="cl">Active Internet connections (only servers)
+</span></span><span class="line"><span class="cl">Proto Recv-Q Send-Q Local Address               Foreign Address             State       PID/Program name
+</span></span><span class="line"><span class="cl">tcp        0      0 0.0.0.0:22                  0.0.0.0:*                   LISTEN      1035/sshd
+</span></span><span class="line"><span class="cl">tcp        0      0 :::22                       :::*                        LISTEN      1035/sshd
+</span></span><span class="line"><span class="cl">udp        0      0 0.0.0.0:68                  0.0.0.0:*                               931/dhclient
+</span></span><span class="line"><span class="cl">Active UNIX domain sockets (only servers)
+</span></span><span class="line"><span class="cl">Proto RefCnt Flags       Type       State         I-Node PID/Program name    Path
+</span></span><span class="line"><span class="cl">unix  2      [ ACC ]     STREAM     LISTENING     6825   1/init              @/com/ubuntu/upstart
+</span></span><span class="line"><span class="cl">unix  2      [ ACC ]     STREAM     LISTENING     8429   1003/dbus-daemon    /var/run/dbus/system_bus_socket
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>如何查看网络连接状况？</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@centos6 ~ 13:22 #58]# netstat -an
+</span></span><span class="line"><span class="cl">Active Internet connections (servers and established)
+</span></span><span class="line"><span class="cl">Proto Recv-Q Send-Q Local Address               Foreign Address             State
+</span></span><span class="line"><span class="cl">tcp        0      0 0.0.0.0:22                  0.0.0.0:*                   LISTEN
+</span></span><span class="line"><span class="cl">tcp        0      0 192.168.147.130:22          192.168.147.1:23893         ESTABLISHED
+</span></span><span class="line"><span class="cl">tcp        0      0 :::22                       :::*                        LISTEN
+</span></span><span class="line"><span class="cl">udp        0      0 0.0.0.0:68                  0.0.0.0:*
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>如何统计系统当前进程连接数？</strong></p>
+<ul>
+<li>输入命令 netstat -an | grep ESTABLISHED | wc -l 。</li>
+<li>输出结果 177 。一共有 177 连接数。</li>
+</ul>
+<p><strong>用 netstat 命令配合其他命令，按照源 IP 统计所有到 80 端口的 ESTABLISHED 状态链接的个数？</strong></p>
+<blockquote>
+<p>严格来说，这个题目考验的是对 awk 的使用。</p>
+</blockquote>
+<p>首先，使用 netstat -an|grep ESTABLISHED 命令。结果如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">tcp        0      0 120.27.146.122:80       113.65.18.33:62721      ESTABLISHED
+</span></span><span class="line"><span class="cl">tcp        0      0 120.27.146.122:80       27.43.83.115:47148      ESTABLISHED
+</span></span><span class="line"><span class="cl">tcp        0      0 120.27.146.122:58838    106.39.162.96:443       ESTABLISHED
+</span></span><span class="line"><span class="cl">tcp        0      0 120.27.146.122:52304    203.208.40.121:443      ESTABLISHED
+</span></span><span class="line"><span class="cl">tcp        0      0 120.27.146.122:33194    203.208.40.122:443      ESTABLISHED
+</span></span><span class="line"><span class="cl">tcp        0      0 120.27.146.122:53758    101.37.183.144:443      ESTABLISHED
+</span></span><span class="line"><span class="cl">tcp        0      0 120.27.146.122:27017    23.105.193.30:50556     ESTABLISHED
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="ping-命令">ping 命令</h3>
+<p>Linux ping命令用于检测主机。</p>
+<p>执行ping指令会使用ICMP传输协议，发出要求回应的信息，若远端主机的网络功能没有问题，就会回应该信息，因而得知该主机运作正常。</p>
+<p>指定接收包的次数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ping -c 2 www.baidu.com
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="telnet-命令">telnet 命令</h3>
+<p>Linux telnet命令用于远端登入。</p>
+<p>执行telnet指令开启终端机阶段作业，并登入远端主机。</p>
+<p>语法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">telnet [-8acdEfFKLrx][-b&lt;主机别名&gt;][-e&lt;脱离字符&gt;][-k&lt;域名&gt;][-l&lt;用户名称&gt;][-n&lt;记录文件&gt;][-S&lt;服务类型&gt;][-X&lt;认证形态&gt;][主机名称或IP地址&lt;通信端口&gt;]
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>参数说明：</p>
+<ul>
+<li>-8 允许使用8位字符资料，包括输入与输出。</li>
+<li>-a 尝试自动登入远端系统。</li>
+<li>-b&lt;主机别名&gt; 使用别名指定远端主机名称。</li>
+<li>-c 不读取用户专属目录里的.telnetrc文件。</li>
+<li>-d 启动排错模式。</li>
+<li>-e&lt;脱离字符&gt; 设置脱离字符。</li>
+<li>-E 滤除脱离字符。</li>
+<li>-f 此参数的效果和指定&quot;-F&quot;参数相同。</li>
+<li>-F 使用Kerberos V5认证时，加上此参数可把本地主机的认证数据上传到远端主机。</li>
+<li>-k&lt;域名&gt; 使用Kerberos认证时，加上此参数让远端主机采用指定的领域名，而非该主机的域名。</li>
+<li>-K 不自动登入远端主机。</li>
+<li>-l&lt;用户名称&gt; 指定要登入远端主机的用户名称。</li>
+<li>-L 允许输出8位字符资料。</li>
+<li>-n&lt;记录文件&gt; 指定文件记录相关信息。</li>
+<li>-r 使用类似rlogin指令的用户界面。</li>
+<li>-S&lt;服务类型&gt; 设置telnet连线所需的IP TOS信息。</li>
+<li>-x 假设主机有支持数据加密的功能，就使用它。</li>
+<li>-X&lt;认证形态&gt; 关闭指定的认证形态。</li>
+</ul>
+<h4 id="实例-26">实例</h4>
+<p>登录远程主机</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 登录IP为 192.168.0.5 的远程主机
+</span></span><span class="line"><span class="cl">telnet 192.168.0.5 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="系统管理命令">系统管理命令</h2>
+<h3 id="date-命令">date 命令</h3>
+<p>显示或设定系统的日期与时间。</p>
+<p>命令参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-d&lt;字符串&gt;  显示字符串所指的日期与时间。字符串前后必须加上双引号。
+</span></span><span class="line"><span class="cl">-s&lt;字符串&gt;  根据字符串来设置日期与时间。字符串前后必须加上双引号。
+</span></span><span class="line"><span class="cl">-u  显示GMT。
+</span></span><span class="line"><span class="cl">%H 小时(00-23)
+</span></span><span class="line"><span class="cl">%I 小时(00-12)
+</span></span><span class="line"><span class="cl">%M 分钟(以00-59来表示)
+</span></span><span class="line"><span class="cl">%s 总秒数。起算时间为1970-01-01 00:00:00 UTC。
+</span></span><span class="line"><span class="cl">%S 秒(以本地的惯用法来表示)
+</span></span><span class="line"><span class="cl">%a 星期的缩写。
+</span></span><span class="line"><span class="cl">%A 星期的完整名称。
+</span></span><span class="line"><span class="cl">%d 日期(以01-31来表示)。
+</span></span><span class="line"><span class="cl">%D 日期(含年月日)。
+</span></span><span class="line"><span class="cl">%m 月份(以01-12来表示)。
+</span></span><span class="line"><span class="cl">%y 年份(以00-99来表示)。
+</span></span><span class="line"><span class="cl">%Y 年份(以四位数来表示)。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-27">实例：</h4>
+<p>（1）显示下一天</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">date +%Y%m%d --date=&#34;+1 day&#34;  //显示下一天的日期
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）-d参数使用</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">date -d &#34;nov 22&#34;  今年的 11 月 22 日是星期三
+</span></span><span class="line"><span class="cl">date -d &#39;2 weeks&#39; 2周后的日期
+</span></span><span class="line"><span class="cl">date -d &#39;next monday&#39; (下周一的日期)
+</span></span><span class="line"><span class="cl">date -d next-day +%Y%m%d（明天的日期）或者：date -d tomorrow +%Y%m%d
+</span></span><span class="line"><span class="cl">date -d last-day +%Y%m%d(昨天的日期) 或者：date -d yesterday +%Y%m%d
+</span></span><span class="line"><span class="cl">date -d last-month +%Y%m(上个月是几月)
+</span></span><span class="line"><span class="cl">date -d next-month +%Y%m(下个月是几月)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="free-命令">free 命令</h3>
+<p>显示系统内存使用情况，包括物理内存、交互区内存(swap)和内核缓冲区内存。</p>
+<p>命令参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-b 以Byte显示内存使用情况
+</span></span><span class="line"><span class="cl">-k 以kb为单位显示内存使用情况
+</span></span><span class="line"><span class="cl">-m 以mb为单位显示内存使用情况
+</span></span><span class="line"><span class="cl">-g 以gb为单位显示内存使用情况
+</span></span><span class="line"><span class="cl">-s&lt;间隔秒数&gt; 持续显示内存
+</span></span><span class="line"><span class="cl">-t 显示内存使用总合
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="实例-28">实例：</h3>
+<p>（1）显示内存使用情况</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">free
+</span></span><span class="line"><span class="cl">free -k
+</span></span><span class="line"><span class="cl">free -m
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）以总和的形式显示内存的使用信息</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">free -t
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（3）周期性查询内存使用情况</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">free -s 10
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="kill-命令">kill 命令</h3>
+<p>发送指定的信号到相应进程。不指定型号将发送SIGTERM（15）终止指定进程。如果任无法终止该程序可用&quot;-KILL&quot; 参数，其发送的信号为SIGKILL(9) ，将强制结束进程，使用ps命令或者jobs 命令可以查看进程号。root用户将影响用户的进程，非root用户只能影响自己的进程。</p>
+<p>常用参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-l  信号，若果不加信号的编号参数，则使用“-l”参数会列出全部的信号名称
+</span></span><span class="line"><span class="cl">-a  当处理当前进程时，不限制命令名和进程号的对应关系
+</span></span><span class="line"><span class="cl">-p  指定kill 命令只打印相关进程的进程号，而不发送任何信号
+</span></span><span class="line"><span class="cl">-s  指定发送信号
+</span></span><span class="line"><span class="cl">-u  指定用户
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-29">实例：</h4>
+<p>（1）先使用ps查找进程pro1，然后用kill杀掉</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">kill -9 $(ps -ef | grep pro1)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="ps-命令">ps 命令</h3>
+<p>ps(process status)，用来查看当前运行的进程状态，一次性查看，如果需要动态连续结果使用 top</p>
+<p>linux上进程有5种状态:</p>
+<ol>
+<li>运行(正在运行或在运行队列中等待)</li>
+<li>中断(休眠中, 受阻, 在等待某个条件的形成或接受到信号)</li>
+<li>不可中断(收到信号不唤醒和不可运行, 进程必须等待直到有中断发生)</li>
+<li>僵死(进程已终止, 但进程描述符存在, 直到父进程调用wait4()系统调用后释放)</li>
+<li>停止(进程收到SIGSTOP, SIGSTP, SIGTIN, SIGTOU信号后停止运行运行)</li>
+</ol>
+<p>ps 工具标识进程的5种状态码:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">D 不可中断 uninterruptible sleep (usually IO)
+</span></span><span class="line"><span class="cl">R 运行 runnable (on run queue)
+</span></span><span class="line"><span class="cl">S 中断 sleeping
+</span></span><span class="line"><span class="cl">T 停止 traced or stopped
+</span></span><span class="line"><span class="cl">Z 僵死 a defunct (”zombie”) process
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>命令参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-A 显示所有进程
+</span></span><span class="line"><span class="cl">a 显示所有进程
+</span></span><span class="line"><span class="cl">-a 显示同一终端下所有进程
+</span></span><span class="line"><span class="cl">c 显示进程真实名称
+</span></span><span class="line"><span class="cl">e 显示环境变量
+</span></span><span class="line"><span class="cl">f 显示进程间的关系
+</span></span><span class="line"><span class="cl">r 显示当前终端运行的进程
+</span></span><span class="line"><span class="cl">-aux 显示所有包含其它使用的进程
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-30">实例：</h4>
+<p>（1）显示当前所有进程环境变量及进程间关系</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ps -ef
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）显示当前所有进程</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ps -A
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（3）与grep联用查找某进程</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ps -aux | grep apache
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（4）找出与 cron 与 syslog 这两个服务有关的 PID 号码</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">ps aux | grep &#39;(cron|syslog)&#39;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="rpm-命令">rpm 命令</h3>
+<p>Linux rpm 命令用于管理套件。</p>
+<p>rpm(redhat package manager) 原本是 Red Hat Linux 发行版专门用来管理 Linux 各项套件的程序，由于它遵循 GPL 规则且功能强大方便，因而广受欢迎。逐渐受到其他发行版的采用。RPM 套件管理方式的出现，让 Linux 易于安装，升级，间接提升了 Linux 的适用度。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 查看系统自带jdk
+</span></span><span class="line"><span class="cl">rpm -qa | grep jdk
+</span></span><span class="line"><span class="cl"># 删除系统自带jdk
+</span></span><span class="line"><span class="cl">rpm -e --nodeps 查看jdk显示的数据
+</span></span><span class="line"><span class="cl"># 安装jdk
+</span></span><span class="line"><span class="cl">rpm -ivh jdk-7u80-linux-x64.rpm
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="top-命令">top 命令</h3>
+<p>显示当前系统正在执行的进程的相关信息，包括进程 ID、内存占用率、CPU 占用率等</p>
+<p>常用参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-c 显示完整的进程命令
+</span></span><span class="line"><span class="cl">-s 保密模式
+</span></span><span class="line"><span class="cl">-p &lt;进程号&gt; 指定进程显示
+</span></span><span class="line"><span class="cl">-n &lt;次数&gt;循环显示次数
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-31">实例：</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">top - 14:06:23 up 70 days, 16:44,  2 users,  load average: 1.25, 1.32, 1.35
+</span></span><span class="line"><span class="cl">Tasks: 206 total,   1 running, 205 sleeping,   0 stopped,   0 zombie
+</span></span><span class="line"><span class="cl">Cpu(s):  5.9%us,  3.4%sy,  0.0%ni, 90.4%id,  0.0%wa,  0.0%hi,  0.2%si,  0.0%st
+</span></span><span class="line"><span class="cl">Mem:  32949016k total, 14411180k used, 18537836k free,   169884k buffers
+</span></span><span class="line"><span class="cl">Swap: 32764556k total,        0k used, 32764556k free,  3612636k cached
+</span></span><span class="line"><span class="cl">PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND  
+</span></span><span class="line"><span class="cl">28894 root      22   0 1501m 405m  10m S 52.2  1.3   2534:16 java  
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>前五行是当前系统情况整体的统计信息区。</p>
+<p>第一行，任务队列信息，同 uptime 命令的执行结果，具体参数说明情况如下：</p>
+<p>14:06:23 — 当前系统时间</p>
+<p>up 70 days, 16:44 — 系统已经运行了70天16小时44分钟（在这期间系统没有重启过的吆！）</p>
+<p>2 users — 当前有2个用户登录系统</p>
+<p>load average: 1.15, 1.42, 1.44 — load average后面的三个数分别是1分钟、5分钟、15分钟的负载情况。</p>
+<p>load average数据是每隔5秒钟检查一次活跃的进程数，然后按特定算法计算出的数值。如果这个数除以逻辑CPU的数量，结果高于5的时候就表明系统在超负荷运转了。</p>
+<p>第二行，Tasks — 任务（进程），具体信息说明如下：</p>
+<p>系统现在共有206个进程，其中处于运行中的有1个，205个在休眠（sleep），stoped状态的有0个，zombie状态（僵尸）的有0个。</p>
+<p>第三行，cpu状态信息，具体属性说明如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">5.9%us — 用户空间占用CPU的百分比。
+</span></span><span class="line"><span class="cl">3.4% sy — 内核空间占用CPU的百分比。
+</span></span><span class="line"><span class="cl">0.0% ni — 改变过优先级的进程占用CPU的百分比
+</span></span><span class="line"><span class="cl">90.4% id — 空闲CPU百分比
+</span></span><span class="line"><span class="cl">0.0% wa — IO等待占用CPU的百分比
+</span></span><span class="line"><span class="cl">0.0% hi — 硬中断（Hardware IRQ）占用CPU的百分比
+</span></span><span class="line"><span class="cl">0.2% si — 软中断（Software Interrupts）占用CPU的百分比
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>备注：在这里CPU的使用比率和windows概念不同，需要理解linux系统用户空间和内核空间的相关知识！</p>
+</blockquote>
+<p>第四行，内存状态，具体信息如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">32949016k total — 物理内存总量（32GB）
+</span></span><span class="line"><span class="cl">14411180k used — 使用中的内存总量（14GB）
+</span></span><span class="line"><span class="cl">18537836k free — 空闲内存总量（18GB）
+</span></span><span class="line"><span class="cl">169884k buffers — 缓存的内存量 （169M）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>第五行，swap交换分区信息，具体信息说明如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">32764556k total — 交换区总量（32GB）
+</span></span><span class="line"><span class="cl">0k used — 使用的交换区总量（0K）
+</span></span><span class="line"><span class="cl">32764556k free — 空闲交换区总量（32GB）
+</span></span><span class="line"><span class="cl">3612636k cached — 缓冲的交换区总量（3.6GB）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>第六行，空行。</p>
+<p>第七行以下：各进程（任务）的状态监控，项目列信息说明如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">PID — 进程id
+</span></span><span class="line"><span class="cl">USER — 进程所有者
+</span></span><span class="line"><span class="cl">PR — 进程优先级
+</span></span><span class="line"><span class="cl">NI — nice值。负值表示高优先级，正值表示低优先级
+</span></span><span class="line"><span class="cl">VIRT — 进程使用的虚拟内存总量，单位kb。VIRT=SWAP+RES
+</span></span><span class="line"><span class="cl">RES — 进程使用的、未被换出的物理内存大小，单位kb。RES=CODE+DATA
+</span></span><span class="line"><span class="cl">SHR — 共享内存大小，单位kb
+</span></span><span class="line"><span class="cl">S — 进程状态。D=不可中断的睡眠状态 R=运行 S=睡眠 T=跟踪/停止 Z=僵尸进程
+</span></span><span class="line"><span class="cl">%CPU — 上次更新到现在的CPU时间占用百分比
+</span></span><span class="line"><span class="cl">%MEM — 进程使用的物理内存百分比
+</span></span><span class="line"><span class="cl">TIME+ — 进程使用的CPU时间总计，单位1/100秒
+</span></span><span class="line"><span class="cl">COMMAND — 进程名称（命令名/命令行）
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="top-交互命令">top 交互命令</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">h 显示top交互命令帮助信息
+</span></span><span class="line"><span class="cl">c 切换显示命令名称和完整命令行
+</span></span><span class="line"><span class="cl">m 以内存使用率排序
+</span></span><span class="line"><span class="cl">P 根据CPU使用百分比大小进行排序
+</span></span><span class="line"><span class="cl">T 根据时间/累计时间进行排序
+</span></span><span class="line"><span class="cl">W 将当前设置写入~/.toprc文件中
+</span></span><span class="line"><span class="cl">o或者O 改变显示项目的顺序
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="yum-命令">yum 命令</h3>
+<p>yum（ Yellow dog Updater, Modified）是一个在Fedora和RedHat以及SUSE中的Shell前端软件包管理器。</p>
+<p>基於RPM包管理，能够从指定的服务器自动下载RPM包并且安装，可以自动处理依赖性关系，并且一次安装所有依赖的软体包，无须繁琐地一次次下载、安装。</p>
+<p>yum提供了查找、安装、删除某一个、一组甚至全部软件包的命令，而且命令简洁而又好记。</p>
+<ol>
+<li>列出所有可更新的软件清单命令：yum check-update</li>
+<li>更新所有软件命令：yum update</li>
+<li>仅安装指定的软件命令：yum install &lt;package_name&gt;</li>
+<li>仅更新指定的软件命令：yum update &lt;package_name&gt;</li>
+<li>列出所有可安裝的软件清单命令：yum list</li>
+<li>删除软件包命令：yum remove &lt;package_name&gt;</li>
+<li>查找软件包 命令：yum search</li>
+<li>清除缓存命令:</li>
+</ol>
+<ul>
+<li>yum clean packages: 清除缓存目录下的软件包</li>
+<li>yum clean headers: 清除缓存目录下的 headers</li>
+<li>yum clean oldheaders: 清除缓存目录下旧的 headers</li>
+<li>yum clean, yum clean all (= yum clean packages; yum clean oldheaders) :清除缓存目录下的软件包及旧的headers</li>
+</ul>
+<h4 id="实例-32">实例</h4>
+<p>安装 pam-devel</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">[root@www ~]# yum install pam-devel
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="备份压缩命令">备份压缩命令</h2>
+<h3 id="bzip2-命令">bzip2 命令</h3>
+<ul>
+<li>创建 <code>*.bz2</code> 压缩文件：<code>bzip2 test.txt</code> 。</li>
+<li>解压 <code>*.bz2</code> 文件：<code>bzip2 -d test.txt.bz2</code> 。</li>
+</ul>
+<h3 id="gzip-命令">gzip 命令</h3>
+<ul>
+<li>创建一个 *.gz 的压缩文件：gzip test.txt 。</li>
+<li>解压 *.gz 文件：gzip -d test.txt.gz 。</li>
+<li>显示压缩的比率：gzip -l *.gz 。</li>
+</ul>
+<h3 id="tar-命令">tar 命令</h3>
+<p>用来压缩和解压文件。tar 本身不具有压缩功能，只具有打包功能，有关压缩及解压是调用其它的功能来完成。</p>
+<p>弄清两个概念：打包和压缩。打包是指将一大堆文件或目录变成一个总的文件；压缩则是将一个大的文件通过一些压缩算法变成一个小文件</p>
+<p>常用参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">-c 建立新的压缩文件
+</span></span><span class="line"><span class="cl">-f 指定压缩文件
+</span></span><span class="line"><span class="cl">-r 添加文件到已经压缩文件包中
+</span></span><span class="line"><span class="cl">-u 添加改了和现有的文件到压缩包中
+</span></span><span class="line"><span class="cl">-x 从压缩包中抽取文件
+</span></span><span class="line"><span class="cl">-t 显示压缩文件中的内容
+</span></span><span class="line"><span class="cl">-z 支持gzip压缩
+</span></span><span class="line"><span class="cl">-j 支持bzip2压缩
+</span></span><span class="line"><span class="cl">-Z 支持compress解压文件
+</span></span><span class="line"><span class="cl">-v 显示操作过程
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>有关 gzip 及 bzip2 压缩:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">gzip 实例：压缩 gzip fileName .tar.gz 和.tgz  解压：gunzip filename.gz 或 gzip -d filename.gz
+</span></span><span class="line"><span class="cl">          对应：tar zcvf filename.tar.gz     tar zxvf filename.tar.gz
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">bz2实例：压缩 bzip2 -z filename .tar.bz2 解压：bunzip filename.bz2或bzip -d filename.bz2
+</span></span><span class="line"><span class="cl">       对应：tar jcvf filename.tar.gz         解压：tar jxvf filename.tar.bz2
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="实例-33">实例：</h4>
+<p>（1）将文件全部打包成 tar 包</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">tar -cvf log.tar 1.log,2.log 或tar -cvf log.*
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（2）将 /etc 下的所有文件及目录打包到指定目录，并使用 gz 压缩</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">tar -zcvf /tmp/etc.tar.gz /etc
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（3）查看刚打包的文件内容（一定加z，因为是使用 gzip 压缩的）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">tar -ztvf /tmp/etc.tar.gz
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>（4）要压缩打包 /home, /etc ，但不要 /home/dmtsai</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">tar --exclude /home/dmtsai -zcvf myfile.tar.gz /home/* /etc
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="unzip-命令">unzip 命令</h3>
+<ul>
+<li>解压 <code>*.zip</code> 文件：<code>unzip test.zip</code> 。</li>
+<li>查看 <code>*.zip</code> 文件的内容：<code>unzip -l jasper.zip</code> 。</li>
+</ul>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-01-10
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">linux常用命令</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E9%97%AE%E9%A2%98/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">汇编之数据处理问题</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
+            <span class="next-text nav-default">Linux常用命令</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-01-10 19:47:57 \u002b0800 CST',
+        title: 'Shell编程初识和Linux及其常用命令',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

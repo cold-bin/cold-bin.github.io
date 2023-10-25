@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Go语言reflect包的使用 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="Go语言reflect包的使用 反射包使用 map and slice 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 func MapAndSlice() { stringSlice := make([]string,0) stringMap := make(map[string]string) sliceType := reflect.TypeOf(stringSlice) mapType := reflect.TypeOf(stringMap) rMap := reflect.MakeMap(mapType) rSlice := reflect.MakeSlice(sliceType,0,0) k := &amp;#34;first&amp;#34; rMap.SetMapIndex(reflect.ValueOf(k),reflect.ValueOf(&amp;#34;test&amp;#34;)) i :=" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80reflect%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="Go语言reflect包的使用" />
+<meta property="og:description" content="Go语言reflect包的使用 反射包使用 map and slice 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 func MapAndSlice() { stringSlice := make([]string,0) stringMap := make(map[string]string) sliceType := reflect.TypeOf(stringSlice) mapType := reflect.TypeOf(stringMap) rMap := reflect.MakeMap(mapType) rSlice := reflect.MakeSlice(sliceType,0,0) k := &#34;first&#34; rMap.SetMapIndex(reflect.ValueOf(k),reflect.ValueOf(&#34;test&#34;)) i :=" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80reflect%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-09-02T19:26:22+08:00" />
+<meta property="article:modified_time" content="2022-09-02T19:26:22+08:00" />
+<meta itemprop="name" content="Go语言reflect包的使用">
+<meta itemprop="description" content="Go语言reflect包的使用 反射包使用 map and slice 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 func MapAndSlice() { stringSlice := make([]string,0) stringMap := make(map[string]string) sliceType := reflect.TypeOf(stringSlice) mapType := reflect.TypeOf(stringMap) rMap := reflect.MakeMap(mapType) rSlice := reflect.MakeSlice(sliceType,0,0) k := &#34;first&#34; rMap.SetMapIndex(reflect.ValueOf(k),reflect.ValueOf(&#34;test&#34;)) i :="><meta itemprop="datePublished" content="2022-09-02T19:26:22+08:00" />
+<meta itemprop="dateModified" content="2022-09-02T19:26:22+08:00" />
+<meta itemprop="wordCount" content="6281">
+<meta itemprop="keywords" content="go反射," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go语言reflect包的使用"/>
+<meta name="twitter:description" content="Go语言reflect包的使用 反射包使用 map and slice 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 func MapAndSlice() { stringSlice := make([]string,0) stringMap := make(map[string]string) sliceType := reflect.TypeOf(stringSlice) mapType := reflect.TypeOf(stringMap) rMap := reflect.MakeMap(mapType) rSlice := reflect.MakeSlice(sliceType,0,0) k := &#34;first&#34; rMap.SetMapIndex(reflect.ValueOf(k),reflect.ValueOf(&#34;test&#34;)) i :="/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go语言reflect包的使用</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2022-09-02 </span>
+        <div class="post-category">
+            <a href="/categories/golang/"> golang </a>
+            </div>
+          <span class="more-meta"> 约 6281 字 </span>
+          <span class="more-meta"> 预计阅读 13 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#go语言reflect包的使用">Go语言reflect包的使用</a>
+      <ul>
+        <li><a href="#反射包使用">反射包使用</a></li>
+        <li><a href="#三大法则">三大法则</a>
+          <ul>
+            <li><a href="#第一法则">第一法则</a></li>
+            <li><a href="#第二法则">第二法则</a></li>
+            <li><a href="#第三法则">第三法则</a></li>
+          </ul>
+        </li>
+        <li><a href="#反射底层原理刨析">反射底层原理刨析</a>
+          <ul>
+            <li><a href="#类型和值">类型和值</a></li>
+            <li><a href="#更新变量">更新变量</a></li>
+            <li><a href="#实现协议">实现协议</a></li>
+            <li><a href="#方法调用">方法调用</a></li>
+          </ul>
+        </li>
+        <li><a href="#小结">小结</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h1 id="go语言reflect包的使用">Go语言reflect包的使用</h1>
+<h2 id="反射包使用">反射包使用</h2>
+<ul>
+<li>map and slice</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">MapAndSlice</span><span class="p">()</span>  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">stringSlice</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">string</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">stringMap</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nx">sliceType</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">stringSlice</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">mapType</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">stringMap</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nx">rMap</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">MakeMap</span><span class="p">(</span><span class="nx">mapType</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">rSlice</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">MakeSlice</span><span class="p">(</span><span class="nx">sliceType</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="nx">k</span> <span class="o">:=</span> <span class="s">&#34;first&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">rMap</span><span class="p">.</span><span class="nf">SetMapIndex</span><span class="p">(</span><span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="nx">k</span><span class="p">),</span><span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="s">&#34;test&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">i</span> <span class="o">:=</span> <span class="nx">rMap</span><span class="p">.</span><span class="nf">Interface</span><span class="p">().(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">reflect</span><span class="p">.</span><span class="nf">AppendSlice</span><span class="p">(</span><span class="nx">rSlice</span><span class="p">,</span><span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="s">&#34;test slice&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">strings</span> <span class="o">:=</span> <span class="nx">rSlice</span><span class="p">.</span><span class="nf">Interface</span><span class="p">().([]</span><span class="kt">string</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">strings</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>function</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">MakeFun</span><span class="p">()</span><span class="kd">interface</span><span class="p">{}</span>   <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">f</span> <span class="o">:=</span> <span class="nx">timeMe</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">vf</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">MakeFunc</span><span class="p">(</span><span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">f</span><span class="p">),</span><span class="kd">func</span><span class="p">(</span><span class="nx">in</span> <span class="p">[]</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">Value</span><span class="p">)</span> <span class="p">[]</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">Value</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">start</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">out</span> <span class="o">:=</span> <span class="nx">vf</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="nx">in</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">end</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;calling %s took %v\n&#34;</span><span class="p">,</span> <span class="nx">runtime</span><span class="p">.</span><span class="nf">FuncForPC</span><span class="p">(</span><span class="nx">vf</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">()).</span><span class="nf">Name</span><span class="p">(),</span> <span class="nx">end</span><span class="p">.</span><span class="nf">Sub</span><span class="p">(</span><span class="nx">start</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nx">out</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}).</span><span class="nf">Interface</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>struct</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">MakeStruct</span><span class="p">(</span><span class="nx">vals</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="nx">sfs</span> <span class="p">[]</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">StructField</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">vals</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">t</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">sf</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">StructField</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">Name</span><span class="p">:</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;F%d&#34;</span><span class="p">,</span> <span class="p">(</span><span class="nx">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">Type</span><span class="p">:</span> <span class="nx">t</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">sfs</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">sfs</span><span class="p">,</span> <span class="nx">sf</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">st</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">StructOf</span><span class="p">(</span><span class="nx">sfs</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">so</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">st</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">so</span><span class="p">.</span><span class="nf">Interface</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>获取type typeOf valueOf</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">    <span class="c1">//type和value
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">m</span> <span class="o">:=</span> <span class="nx">MyStruct</span><span class="p">{</span><span class="s">&#34;test&#34;</span><span class="p">,</span><span class="mi">10</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">t</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">v</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">m</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">//读取
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">t</span><span class="p">.</span><span class="nf">NumField</span><span class="p">()</span> <span class="p">;</span><span class="nx">i</span><span class="o">++</span>  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;name:%s,json_tag:%s&#34;</span><span class="p">,</span><span class="nx">t</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="nx">i</span><span class="p">).</span><span class="nx">Name</span><span class="p">,</span><span class="nx">t</span><span class="p">.</span><span class="nf">Field</span><span class="p">(</span><span class="nx">i</span><span class="p">).</span><span class="nx">Tag</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;json&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">//设置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">v</span><span class="p">.</span><span class="nf">Elem</span><span class="p">().</span><span class="nf">Field</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nf">SetString</span><span class="p">(</span><span class="s">&#34;test1&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">v</span><span class="p">.</span><span class="nf">Elem</span><span class="p">().</span><span class="nf">Field</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="nf">SetInt</span><span class="p">(</span><span class="mi">31</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">//读取
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">t</span><span class="p">.</span><span class="nf">NumField</span><span class="p">()</span> <span class="p">;</span><span class="nx">i</span><span class="o">++</span>  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;name:%v&#34;</span><span class="p">,</span><span class="nx">v</span><span class="p">.</span><span class="nf">Elem</span><span class="p">().</span><span class="nf">Field</span><span class="p">(</span><span class="nx">i</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>反射调用struct方法</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">//带参数调用方式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">setNameMethod</span> <span class="o">:=</span> <span class="nx">v</span><span class="p">.</span><span class="nf">MethodByName</span><span class="p">(</span> <span class="s">&#34;AddAge&#34;</span>  <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">args</span> <span class="o">:=</span> <span class="p">[]</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">Value</span><span class="p">{</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>  <span class="p">}</span> <span class="c1">//构造一个类型为reflect.Value的切片
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">setNameMethod</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="c1">//返回Value类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;User.Age = &#34;</span><span class="p">,</span><span class="nx">m</span><span class="p">.</span><span class="nx">Age</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>还有很多反射api就不逐一介绍了，翻翻源码就行</li>
+</ul>
+<h2 id="三大法则">三大法则</h2>
+<p>运行时反射是程序在运行期间检查其自身结构的一种方式。反射带来的灵活性是一把双刃剑，反射作为一种元编程方式可以减少重复代码，但是过量的使用反射会使我们的程序逻辑变得难以理解并且运行缓慢。我们在这一节中会介绍 Go 语言反射的三大法则，其中包括：</p>
+<ol>
+<li>从 <code>interface{}</code> 变量可以反射出反射对象；</li>
+<li>从反射对象可以获取 <code>interface{}</code> 变量；</li>
+<li>要修改反射对象，其值必须可设置；</li>
+</ol>
+<h3 id="第一法则">第一法则</h3>
+<p>反射的第一法则是我们能将 Go 语言的 <code>interface{}</code> 变量转换成反射对象。很多读者可能会对这以法则产生困惑 — 为什么是从 <code>interface{}</code> 变量到反射对象？当我们执行 <code>reflect.ValueOf(1)</code> 时，虽然看起来是获取了基本类型 <code>int</code> 对应的反射类型，但是由于 <a href="https://draveness.me/golang/tree/reflect.TypeOf"><code>reflect.TypeOf</code></a>、<a href="https://draveness.me/golang/tree/reflect.ValueOf"><code>reflect.ValueOf</code></a> 两个方法的入参都是 <code>interface{}</code> 类型，所以在方法执行的过程中发生了类型转换。</p>
+<p>因为Go 语言的函数调用都是值传递的，所以变量会在函数调用时进行类型转换。基本类型 <code>int</code> 会转换成 <code>interface{}</code> 类型，这也就是为什么第一条法则是从接口到反射对象。</p>
+<p>上面提到的 <a href="https://draveness.me/golang/tree/reflect.TypeOf"><code>reflect.TypeOf</code></a> 和 <a href="https://draveness.me/golang/tree/reflect.ValueOf"><code>reflect.ValueOf</code></a> 函数就能完成这里的转换，如果我们认为 Go 语言的类型和反射类型处于两个不同的世界，那么这两个函数就是连接这两个世界的桥梁。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209031117610.png" alt="golang-interface-to-reflection"></p>
+<p><strong>图 接口到反射对象</strong></p>
+<p>我们可以通过以下例子简单介绍它们的作用，<a href="https://draveness.me/golang/tree/reflect.TypeOf"><code>reflect.TypeOf</code></a> 获取了变量 <code>author</code> 的类型，<a href="https://draveness.me/golang/tree/reflect.ValueOf"><code>reflect.ValueOf</code></a> 获取了变量的值 <code>draven</code>。如果我们知道了一个变量的类型和值，那么就意味着我们知道了这个变量的全部信息。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;reflect&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">author</span> <span class="o">:=</span> <span class="s">&#34;draven&#34;</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;TypeOf author:&#34;</span><span class="p">,</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">author</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;ValueOf author:&#34;</span><span class="p">,</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="nx">author</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span>
+</span></span><span class="line"><span class="cl"><span class="nx">TypeOf</span> <span class="nx">author</span><span class="p">:</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="cl"><span class="nx">ValueOf</span> <span class="nx">author</span><span class="p">:</span> <span class="nx">draven</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>有了变量的类型之后，我们可以通过 <code>Method</code> 方法获得类型实现的方法，通过 <code>Field</code> 获取类型包含的全部字段。对于不同的类型，我们也可以调用不同的方法获取相关信息：</p>
+<ul>
+<li>
+<p>结构体：获取字段的数量并通过下标和字段名获取字段 <code>StructField</code>；</p>
+</li>
+<li>
+<p>哈希表：获取哈希表的 <code>Key</code> 类型；</p>
+</li>
+<li>
+<p>函数或方法：获取入参和返回值的类型；</p>
+<p>……</p>
+</li>
+</ul>
+<p>总而言之，使用 <a href="https://draveness.me/golang/tree/reflect.TypeOf"><code>reflect.TypeOf</code></a> 和 <a href="https://draveness.me/golang/tree/reflect.ValueOf"><code>reflect.ValueOf</code></a> 能够获取 Go 语言中的变量对应的反射对象。一旦获取了反射对象，我们就能得到跟当前类型相关数据和操作，并可以使用这些运行时获取的结构执行方法。</p>
+<h3 id="第二法则">第二法则</h3>
+<p>反射的第二法则是我们可以从反射对象可以获取 <code>interface{}</code> 变量。既然能够将接口类型的变量转换成反射对象，那么一定需要其他方法将反射对象还原成接口类型的变量，<a href="https://golang.org/pkg/reflect/"><code>reflect</code></a> 中的 <a href="https://draveness.me/golang/tree/reflect.Value.Interface"><code>reflect.Value.Interface</code></a> 就能完成这项工作：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209031118204.png" alt="golang-reflection-to-interface"></p>
+<p><strong>图 反射对象到接口</strong></p>
+<p>不过调用 <a href="https://draveness.me/golang/tree/reflect.Value.Interface"><code>reflect.Value.Interface</code></a> 方法只能获得 <code>interface{}</code> 类型的变量，如果想要将其还原成最原始的状态还需要经过如下所示的显式类型转换：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">v</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">v</span><span class="p">.</span><span class="nf">Interface</span><span class="p">().(</span><span class="kt">int</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从反射对象到接口值的过程是从接口值到反射对象的镜面过程，两个过程都需要经历两次转换</p>
+<ul>
+<li>从接口值到反射对象
+<ul>
+<li>从基本类型到接口类型的类型转换</li>
+<li>从接口类型到反射对象的转换</li>
+</ul>
+</li>
+<li>从反射对象到接口值
+<ul>
+<li>反射对象转换成接口类型</li>
+<li>通过显式类型转换变成原始类型</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209031119865.png" alt="golang-bidirectional-reflection"></p>
+<p><strong>图 接口和反射对象的双向转换</strong></p>
+<p>当然不是所有的变量都需要类型转换这一过程。如果变量本身就是 <code>interface{}</code> 类型的，那么它不需要类型转换，因为类型转换这一过程一般都是隐式的，所以我不太需要关心它，只有在我们需要将反射对象转换回基本类型时才需要显式的转换操作。</p>
+<h3 id="第三法则">第三法则</h3>
+<p>Go 语言反射的最后一条法则是与值是否可以被更改有关，如果我们想要更新一个 <a href="https://draveness.me/golang/tree/reflect.Value"><code>reflect.Value</code></a>，那么它持有的值一定是可以被更新的，假设我们有以下代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">v</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">v</span><span class="p">.</span><span class="nf">SetInt</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">reflect</span><span class="p">.</span><span class="k">go</span>
+</span></span><span class="line"><span class="cl"><span class="nx">panic</span><span class="p">:</span> <span class="nx">reflect</span><span class="p">:</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">flag</span><span class="p">.</span><span class="nx">mustBeAssignable</span> <span class="nx">using</span> <span class="nx">unaddressable</span> <span class="nx">value</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">goroutine</span> <span class="mi">1</span> <span class="p">[</span><span class="nx">running</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl"><span class="nx">reflect</span><span class="p">.</span><span class="nx">flag</span><span class="p">.</span><span class="nf">mustBeAssignableSlow</span><span class="p">(</span><span class="mh">0x82</span><span class="p">,</span> <span class="mh">0x1014c0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">/</span><span class="nx">usr</span><span class="o">/</span><span class="nx">local</span><span class="o">/</span><span class="k">go</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">reflect</span><span class="o">/</span><span class="nx">value</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">247</span> <span class="o">+</span><span class="mh">0x180</span>
+</span></span><span class="line"><span class="cl"><span class="nx">reflect</span><span class="p">.</span><span class="nx">flag</span><span class="p">.</span><span class="nf">mustBeAssignable</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">/</span><span class="nx">usr</span><span class="o">/</span><span class="nx">local</span><span class="o">/</span><span class="k">go</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">reflect</span><span class="o">/</span><span class="nx">value</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">234</span>
+</span></span><span class="line"><span class="cl"><span class="nx">reflect</span><span class="p">.</span><span class="nx">Value</span><span class="p">.</span><span class="nf">SetInt</span><span class="p">(</span><span class="mh">0x100dc0</span><span class="p">,</span> <span class="mh">0x414020</span><span class="p">,</span> <span class="mh">0x82</span><span class="p">,</span> <span class="mh">0x1840</span><span class="p">,</span> <span class="mh">0xa</span><span class="p">,</span> <span class="mh">0x0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="o">/</span><span class="nx">usr</span><span class="o">/</span><span class="nx">local</span><span class="o">/</span><span class="k">go</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">reflect</span><span class="o">/</span><span class="nx">value</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">1606</span> <span class="o">+</span><span class="mh">0x40</span>
+</span></span><span class="line"><span class="cl"><span class="nx">main</span><span class="p">.</span><span class="nf">main</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="o">/</span><span class="nx">tmp</span><span class="o">/</span><span class="nx">sandbox590309925</span><span class="o">/</span><span class="nx">prog</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">11</span> <span class="o">+</span><span class="mh">0xe0</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>运行上述代码会导致程序崩溃并报出 “reflect: reflect.flag.mustBeAssignable using unaddressable value” 错误，仔细思考一下就能够发现出错的原因：由于 Go 语言的函数调用都是传值的，所以我们得到的反射对象跟最开始的变量没有任何关系，那么直接修改反射对象无法改变原始变量，程序为了防止错误就会崩溃。</p>
+<p>想要修改原变量只能使用如下的方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">v</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">v</span><span class="p">.</span><span class="nf">Elem</span><span class="p">().</span><span class="nf">SetInt</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">$</span> <span class="k">go</span> <span class="nx">run</span> <span class="nx">reflect</span><span class="p">.</span><span class="k">go</span>
+</span></span><span class="line"><span class="cl"><span class="mi">10</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol>
+<li>调用 <a href="https://draveness.me/golang/tree/reflect.ValueOf"><code>reflect.ValueOf</code></a> 获取变量指针；</li>
+<li>调用 <a href="https://draveness.me/golang/tree/reflect.Value.Elem"><code>reflect.Value.Elem</code></a> 获取指针指向的变量；</li>
+<li>调用 <a href="https://draveness.me/golang/tree/reflect.Value.SetInt"><code>reflect.Value.SetInt</code></a> 更新变量的值：</li>
+</ol>
+<p>由于 Go 语言的函数调用都是值传递的，所以我们只能只能用迂回的方式改变原变量：先获取指针对应的 <a href="https://draveness.me/golang/tree/reflect.Value"><code>reflect.Value</code></a>，再通过 <a href="https://draveness.me/golang/tree/reflect.Value.Elem"><code>reflect.Value.Elem</code></a> 方法得到可以被设置的变量，我们可以通过下面的代码理解这个过程：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">v</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">i</span>
+</span></span><span class="line"><span class="cl">	<span class="o">*</span><span class="nx">v</span> <span class="p">=</span> <span class="mi">10</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果不能直接操作 <code>i</code> 变量修改其持有的值，我们就只能获取 <code>i</code> 变量所在地址并使用 <code>*v</code> 修改所在地址中存储的整数。</p>
+<h2 id="反射底层原理刨析">反射底层原理刨析</h2>
+<p>虽然在大多数的应用和服务中并不常见，但是很多框架都依赖 Go 语言的反射机制简化代码。因为 Go 语言的语法元素很少、设计简单，所以它没有特别强的表达能力，但是 Go 语言的 <a href="https://golang.org/pkg/reflect/"><code>reflect</code></a> 包能够弥补它在语法上<a href="https://draveness.me/golang/tree/reflect.Type"><code>reflect.Type</code></a>的一些劣势。</p>
+<p><a href="https://golang.org/pkg/reflect/"><code>reflect</code></a> 实现了运行时的反射能力，能够让程序操作不同类型的对象。反射包中有两对非常重要的函数和类型，两个函数分别是：</p>
+<ul>
+<li><a href="https://draveness.me/golang/tree/reflect.TypeOf"><code>reflect.TypeOf</code></a> 能获取类型信息；</li>
+<li><a href="https://draveness.me/golang/tree/reflect.ValueOf"><code>reflect.ValueOf</code></a> 能获取数据的运行时表示；</li>
+</ul>
+<p>两个类型是 <a href="https://draveness.me/golang/tree/reflect.Type"><code>reflect.Type</code></a> 和 <a href="https://draveness.me/golang/tree/reflect.Value"><code>reflect.Value</code></a>，它们与函数是一一对应的关系：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209031115965.png" alt=""></p>
+<p>类型 <a href="https://draveness.me/golang/tree/reflect.Type"><code>reflect.Type</code></a> 是反射包定义的一个接口，我们可以使用 <a href="https://draveness.me/golang/tree/reflect.TypeOf"><code>reflect.TypeOf</code></a> 函数获取任意变量的类型，<a href="https://draveness.me/golang/tree/reflect.Type"><code>reflect.Type</code></a> 接口中定义了一些有趣的方法，<code>MethodByName</code> 可以获取当前类型对应方法的引用、<code>Implements</code> 可以判断当前类型是否实现了某个接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Type</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">Align</span><span class="p">()</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">FieldAlign</span><span class="p">()</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">Method</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="nx">Method</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">MethodByName</span><span class="p">(</span><span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">Method</span><span class="p">,</span> <span class="kt">bool</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">NumMethod</span><span class="p">()</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">        <span class="o">...</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">Implements</span><span class="p">(</span><span class="nx">u</span> <span class="nx">Type</span><span class="p">)</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl">        <span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>反射包中 <a href="https://draveness.me/golang/tree/reflect.Value"><code>reflect.Value</code></a> 的类型与 <a href="https://draveness.me/golang/tree/reflect.Type"><code>reflect.Type</code></a> 不同，它被声明成了结构体。这个结构体没有对外暴露的字段，但是提供了获取或者写入数据的方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">Value</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 包含过滤的或者未导出的字段
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">v</span> <span class="nx">Value</span><span class="p">)</span> <span class="nf">Addr</span><span class="p">()</span> <span class="nx">Value</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">v</span> <span class="nx">Value</span><span class="p">)</span> <span class="nf">Bool</span><span class="p">()</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">v</span> <span class="nx">Value</span><span class="p">)</span> <span class="nf">Bytes</span><span class="p">()</span> <span class="p">[]</span><span class="kt">byte</span>
+</span></span><span class="line"><span class="cl"><span class="o">...</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>反射包中的所有方法基本都是围绕着 <a href="https://draveness.me/golang/tree/reflect.Type"><code>reflect.Type</code></a> 和 <a href="https://draveness.me/golang/tree/reflect.Value"><code>reflect.Value</code></a> 两个类型设计的。我们通过 <a href="https://draveness.me/golang/tree/reflect.TypeOf"><code>reflect.TypeOf</code></a>、<a href="https://draveness.me/golang/tree/reflect.ValueOf"><code>reflect.ValueOf</code></a> 可以将一个普通的变量转换成反射包中提供的 <a href="https://draveness.me/golang/tree/reflect.Type"><code>reflect.Type</code></a> 和 <a href="https://draveness.me/golang/tree/reflect.Value"><code>reflect.Value</code></a>，随后就可以使用反射包中的方法对它们进行复杂的操作。</p>
+<h3 id="类型和值">类型和值</h3>
+<p>Go 语言的 <code>interface{}</code> 类型在语言内部是通过 <a href="https://draveness.me/golang/tree/reflect.emptyInterface"><code>reflect.emptyInterface</code></a> 结体表示的，其中的 <code>rtype</code> 字段用于表示变量的类型，另一个 <code>word</code> 字段指向内部封装的数据：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">emptyInterface</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">typ</span>  <span class="o">*</span><span class="nx">rtype</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">word</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>用于获取变量类型的 <a href="https://draveness.me/golang/tree/reflect.TypeOf"><code>reflect.TypeOf</code></a> 函数将传入的变量隐式转换成 <a href="https://draveness.me/golang/tree/reflect.emptyInterface"><code>reflect.emptyInterface</code></a> 类型并获取其中存储的类型信息 <a href="https://draveness.me/golang/tree/reflect.rtype"><code>reflect.rtype</code></a>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">TypeOf</span><span class="p">(</span><span class="nx">i</span> <span class="kd">interface</span><span class="p">{})</span> <span class="nx">Type</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">eface</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="nx">emptyInterface</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">i</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nf">toType</span><span class="p">(</span><span class="nx">eface</span><span class="p">.</span><span class="nx">typ</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">toType</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">rtype</span><span class="p">)</span> <span class="nx">Type</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">t</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">t</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><a href="https://draveness.me/golang/tree/reflect.rtype"><code>reflect.rtype</code></a> 是一个实现了 <a href="https://draveness.me/golang/tree/reflect.Type"><code>reflect.Type</code></a> 接口的结构体，该结构体实现的 <a href="https://draveness.me/golang/tree/reflect.rtype.String"><code>reflect.rtype.String</code></a> 方法可以帮助我们获取当前类型的名称：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">rtype</span><span class="p">)</span> <span class="nf">String</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">s</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">nameOff</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">str</span><span class="p">).</span><span class="nf">name</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">t</span><span class="p">.</span><span class="nx">tflag</span><span class="o">&amp;</span><span class="nx">tflagExtraStar</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">s</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">s</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><a href="https://draveness.me/golang/tree/reflect.TypeOf"><code>reflect.TypeOf</code></a> 的实现原理其实并不复杂，它只是将一个 <code>interface{}</code> 变量转换成了内部的 <a href="https://draveness.me/golang/tree/reflect.emptyInterface"><code>reflect.emptyInterface</code></a> 表示，然后从中获取相应的类型信息。</p>
+<p>用于获取接口值 <a href="https://draveness.me/golang/tree/reflect.Value"><code>reflect.Value</code></a> 的函数 <a href="https://draveness.me/golang/tree/reflect.ValueOf"><code>reflect.ValueOf</code></a> 实现也非常简单，在该函数中我们先调用了 <a href="https://draveness.me/golang/tree/reflect.escapes"><code>reflect.escapes</code></a> 保证当前值逃逸到堆上，然后通过 <a href="https://draveness.me/golang/tree/reflect.unpackEface"><code>reflect.unpackEface</code></a> 从接口中获取 <a href="https://draveness.me/golang/tree/reflect.Value"><code>reflect.Value</code></a> 结构体：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">ValueOf</span><span class="p">(</span><span class="nx">i</span> <span class="kd">interface</span><span class="p">{})</span> <span class="nx">Value</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">i</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">Value</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nf">escapes</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nf">unpackEface</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">unpackEface</span><span class="p">(</span><span class="nx">i</span> <span class="kd">interface</span><span class="p">{})</span> <span class="nx">Value</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">e</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">emptyInterface</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">i</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">typ</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">t</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">Value</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">f</span> <span class="o">:=</span> <span class="nf">flag</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nf">Kind</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nf">ifaceIndir</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">f</span> <span class="o">|=</span> <span class="nx">flagIndir</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">Value</span><span class="p">{</span><span class="nx">t</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">word</span><span class="p">,</span> <span class="nx">f</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><a href="https://draveness.me/golang/tree/reflect.unpackEface"><code>reflect.unpackEface</code></a> 会将传入的接口转换成 <a href="https://draveness.me/golang/tree/reflect.emptyInterface"><code>reflect.emptyInterface</code></a>，然后将具体类型和指针包装成 <a href="https://draveness.me/golang/tree/reflect.Value"><code>reflect.Value</code></a> 结构体后返回。</p>
+<p><a href="https://draveness.me/golang/tree/reflect.TypeOf"><code>reflect.TypeOf</code></a> 和 <a href="https://draveness.me/golang/tree/reflect.ValueOf"><code>reflect.ValueOf</code></a> 的实现都很简单。我们已经分析了这两个函数的实现，现在需要了解编译器在调用函数之前做了哪些工作：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="s">&#34;reflect&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">i</span> <span class="o">:=</span> <span class="mi">20</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">_</span> <span class="p">=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="err">$</span> <span class="k">go</span> <span class="nx">build</span> <span class="o">-</span><span class="nx">gcflags</span><span class="p">=</span><span class="s">&#34;-S -N&#34;</span> <span class="nx">main</span><span class="p">.</span><span class="k">go</span>
+</span></span><span class="line"><span class="cl"><span class="o">...</span>
+</span></span><span class="line"><span class="cl"><span class="nx">MOVQ</span>	<span class="err">$</span><span class="mi">20</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">..</span><span class="nx">autotmp_20</span><span class="o">+</span><span class="mi">56</span><span class="p">(</span><span class="nx">SP</span><span class="p">)</span> <span class="c1">// autotmp = 20
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">LEAQ</span>	<span class="kd">type</span><span class="p">.</span><span class="nb">int</span><span class="p">(</span><span class="nx">SB</span><span class="p">),</span> <span class="nx">AX</span>           <span class="c1">// AX = type.int(SB)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">MOVQ</span>	<span class="nx">AX</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">..</span><span class="nx">autotmp_19</span><span class="o">+</span><span class="mi">280</span><span class="p">(</span><span class="nx">SP</span><span class="p">)</span> <span class="c1">// autotmp_19+280(SP) = type.int(SB)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">LEAQ</span>	<span class="s">&#34;&#34;</span><span class="p">..</span><span class="nx">autotmp_20</span><span class="o">+</span><span class="mi">56</span><span class="p">(</span><span class="nx">SP</span><span class="p">),</span> <span class="nx">CX</span>  <span class="c1">// CX = 20
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">MOVQ</span>	<span class="nx">CX</span><span class="p">,</span> <span class="s">&#34;&#34;</span><span class="p">..</span><span class="nx">autotmp_19</span><span class="o">+</span><span class="mi">288</span><span class="p">(</span><span class="nx">SP</span><span class="p">)</span> <span class="c1">// autotmp_19+288(SP) = 20
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="o">...</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从上面这段截取的汇编语言，我们可以发现在函数调用之前已经发生了类型转换，上述指令将 <code>int</code> 类型的变量转换成了占用 16 字节 <code>autotmp_19+280(SP) ~ autotmp_19+288(SP)</code> 的接口，两个 <code>LEAQ</code> 指令分别获取了类型的指针 <code>type.int(SB)</code> 以及变量 <code>i</code> 所在的地址。</p>
+<p>当我们想要将一个变量转换成反射对象时，Go 语言会在编译期间完成类型转换，将变量的类型和值转换成了 <code>interface{}</code> 并等待运行期间使用 <a href="https://golang.org/pkg/reflect/"><code>reflect</code></a> 包获取接口中存储的信息。</p>
+<h3 id="更新变量">更新变量</h3>
+<p>当我们想要更新 <a href="https://draveness.me/golang/tree/reflect.Value"><code>reflect.Value</code></a> 时，就需要调用 <a href="https://draveness.me/golang/tree/reflect.Value.Set"><code>reflect.Value.Set</code></a> 更新反射对象，该方法会调用 <a href="https://draveness.me/golang/tree/reflect.flag.mustBeAssignable"><code>reflect.flag.mustBeAssignable</code></a> 和 <a href="https://draveness.me/golang/tree/reflect.flag.mustBeExported"><code>reflect.flag.mustBeExported</code></a> 分别检查当前反射对象是否是可以被设置的以及字段是否是对外公开的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">v</span> <span class="nx">Value</span><span class="p">)</span> <span class="nf">Set</span><span class="p">(</span><span class="nx">x</span> <span class="nx">Value</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">v</span><span class="p">.</span><span class="nf">mustBeAssignable</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">x</span><span class="p">.</span><span class="nf">mustBeExported</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">target</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">v</span><span class="p">.</span><span class="nf">kind</span><span class="p">()</span> <span class="o">==</span> <span class="nx">Interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">target</span> <span class="p">=</span> <span class="nx">v</span><span class="p">.</span><span class="nx">ptr</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">x</span> <span class="p">=</span> <span class="nx">x</span><span class="p">.</span><span class="nf">assignTo</span><span class="p">(</span><span class="s">&#34;reflect.Set&#34;</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">typ</span><span class="p">,</span> <span class="nx">target</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">typedmemmove</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">typ</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">ptr</span><span class="p">,</span> <span class="nx">x</span><span class="p">.</span><span class="nx">ptr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><a href="https://draveness.me/golang/tree/reflect.Value.Set"><code>reflect.Value.Set</code></a> 会调用 <a href="https://draveness.me/golang/tree/reflect.Value.assignTo"><code>reflect.Value.assignTo</code></a> 并返回一个新的反射对象，这个返回的反射对象指针会直接覆盖原反射变量。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">v</span> <span class="nx">Value</span><span class="p">)</span> <span class="nf">assignTo</span><span class="p">(</span><span class="nx">context</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">dst</span> <span class="o">*</span><span class="nx">rtype</span><span class="p">,</span> <span class="nx">target</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">)</span> <span class="nx">Value</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span><span class="line"><span class="cl">	<span class="k">switch</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="nf">directlyAssignable</span><span class="p">(</span><span class="nx">dst</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">typ</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">		<span class="o">...</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">Value</span><span class="p">{</span><span class="nx">dst</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">ptr</span><span class="p">,</span> <span class="nx">fl</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">case</span> <span class="nf">implements</span><span class="p">(</span><span class="nx">dst</span><span class="p">,</span> <span class="nx">v</span><span class="p">.</span><span class="nx">typ</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">v</span><span class="p">.</span><span class="nf">Kind</span><span class="p">()</span> <span class="o">==</span> <span class="nx">Interface</span> <span class="o">&amp;&amp;</span> <span class="nx">v</span><span class="p">.</span><span class="nf">IsNil</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span> <span class="nx">Value</span><span class="p">{</span><span class="nx">dst</span><span class="p">,</span> <span class="kc">nil</span><span class="p">,</span> <span class="nf">flag</span><span class="p">(</span><span class="nx">Interface</span><span class="p">)}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">x</span> <span class="o">:=</span> <span class="nf">valueInterface</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">dst</span><span class="p">.</span><span class="nf">NumMethod</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="kd">interface</span><span class="p">{})(</span><span class="nx">target</span><span class="p">)</span> <span class="p">=</span> <span class="nx">x</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nf">ifaceE2I</span><span class="p">(</span><span class="nx">dst</span><span class="p">,</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">target</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="nx">Value</span><span class="p">{</span><span class="nx">dst</span><span class="p">,</span> <span class="nx">target</span><span class="p">,</span> <span class="nx">flagIndir</span> <span class="p">|</span> <span class="nf">flag</span><span class="p">(</span><span class="nx">Interface</span><span class="p">)}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">panic</span><span class="p">(</span><span class="nx">context</span> <span class="o">+</span> <span class="s">&#34;: value of type &#34;</span> <span class="o">+</span> <span class="nx">v</span><span class="p">.</span><span class="nx">typ</span><span class="p">.</span><span class="nf">String</span><span class="p">()</span> <span class="o">+</span> <span class="s">&#34; is not assignable to type &#34;</span> <span class="o">+</span> <span class="nx">dst</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><a href="https://draveness.me/golang/tree/reflect.Value.assignTo"><code>reflect.Value.assignTo</code></a> 会根据当前和被设置的反射对象类型创建一个新的 <a href="https://draveness.me/golang/tree/reflect.Value"><code>reflect.Value</code></a> 结构体</p>
+<ul>
+<li>如果两个反射对象的类型是可以被直接替换，就会直接返回目标反射对象</li>
+<li>如果当前反射对象是接口并且目标对象实现了接口，就会把目标对象简单包装成接口值</li>
+</ul>
+<p>在变量更新的过程中，<a href="https://draveness.me/golang/tree/reflect.Value.assignTo"><code>reflect.Value.assignTo</code></a> 返回的 <a href="https://draveness.me/golang/tree/reflect.Value"><code>reflect.Value</code></a> 中的指针会覆盖当前反射对象中的指针实现变量的更新。</p>
+<h3 id="实现协议">实现协议</h3>
+<p><a href="https://golang.org/pkg/reflect/"><code>reflect</code></a> 包还为我们提供了 <a href="https://draveness.me/golang/tree/reflect.rtype.Implements"><code>reflect.rtype.Implements</code></a> 方法可以用于判断某些类型是否遵循特定的接口。在 Go 语言中获取结构体的反射类型 <a href="https://draveness.me/golang/tree/reflect.Type"><code>reflect.Type</code></a> 还是比较容易的，但是想要获得接口类型需要通过以下方式：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">((</span><span class="o">*</span><span class="p">&lt;</span><span class="kd">interface</span><span class="p">&gt;)(</span><span class="kc">nil</span><span class="p">)).</span><span class="nf">Elem</span><span class="p">()</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Go</p>
+<p>我们通过一个例子在介绍如何判断一个类型是否实现了某个接口。假设我们需要判断如下代码中的 <code>CustomError</code> 是否实现了 Go 语言标准库中的 <code>error</code> 接口：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">type</span> <span class="nx">CustomError</span> <span class="kd">struct</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="o">*</span><span class="nx">CustomError</span><span class="p">)</span> <span class="nf">Error</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="s">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">typeOfError</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">((</span><span class="o">*</span><span class="kt">error</span><span class="p">)(</span><span class="kc">nil</span><span class="p">)).</span><span class="nf">Elem</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">customErrorPtr</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">CustomError</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">customError</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">TypeOf</span><span class="p">(</span><span class="nx">CustomError</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">customErrorPtr</span><span class="p">.</span><span class="nf">Implements</span><span class="p">(</span><span class="nx">typeOfError</span><span class="p">))</span> <span class="c1">// #=&gt; true
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">customError</span><span class="p">.</span><span class="nf">Implements</span><span class="p">(</span><span class="nx">typeOfError</span><span class="p">))</span> <span class="c1">// #=&gt; false
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li><code>CustomError</code> 类型并没有实现 <code>error</code> 接口；</li>
+<li><code>*CustomError</code> 指针类型实现了 <code>error</code> 接口；</li>
+</ul>
+<p>抛开上述的执行结果不谈，我们来分析一下 <a href="https://draveness.me/golang/tree/reflect.rtype.Implements"><code>reflect.rtype.Implements</code></a> 方法的工作原理：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">rtype</span><span class="p">)</span> <span class="nf">Implements</span><span class="p">(</span><span class="nx">u</span> <span class="nx">Type</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">u</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;reflect: nil type passed to Type.Implements&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">u</span><span class="p">.</span><span class="nf">Kind</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">Interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;reflect: non-interface type passed to Type.Implements&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nf">implements</span><span class="p">(</span><span class="nx">u</span><span class="p">.(</span><span class="o">*</span><span class="nx">rtype</span><span class="p">),</span> <span class="nx">t</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><a href="https://draveness.me/golang/tree/reflect.rtype.Implements"><code>reflect.rtype.Implements</code></a> 会检查传入的类型是不是接口，如果不是接口或者是空值就会直接崩溃并中止当前程序。在参数没有问题的情况下，上述方法会调用私有函数 <a href="https://draveness.me/golang/tree/reflect.implements"><code>reflect.implements</code></a> 判断类型之间是否有实现关系：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">implements</span><span class="p">(</span><span class="nx">T</span><span class="p">,</span> <span class="nx">V</span> <span class="o">*</span><span class="nx">rtype</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">t</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">interfaceType</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">T</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">methods</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">v</span> <span class="o">:=</span> <span class="nx">V</span><span class="p">.</span><span class="nf">uncommon</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">vmethods</span> <span class="o">:=</span> <span class="nx">v</span><span class="p">.</span><span class="nf">methods</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">j</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="p">&lt;</span> <span class="nb">int</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">mcount</span><span class="p">);</span> <span class="nx">j</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">tm</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">t</span><span class="p">.</span><span class="nx">methods</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">tmName</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">nameOff</span><span class="p">(</span><span class="nx">tm</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">vm</span> <span class="o">:=</span> <span class="nx">vmethods</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">vmName</span> <span class="o">:=</span> <span class="nx">V</span><span class="p">.</span><span class="nf">nameOff</span><span class="p">(</span><span class="nx">vm</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">vmName</span><span class="p">.</span><span class="nf">name</span><span class="p">()</span> <span class="o">==</span> <span class="nx">tmName</span><span class="p">.</span><span class="nf">name</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="nx">V</span><span class="p">.</span><span class="nf">typeOff</span><span class="p">(</span><span class="nx">vm</span><span class="p">.</span><span class="nx">mtyp</span><span class="p">)</span> <span class="o">==</span> <span class="nx">t</span><span class="p">.</span><span class="nf">typeOff</span><span class="p">(</span><span class="nx">tm</span><span class="p">.</span><span class="nx">typ</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="nx">i</span><span class="o">++</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">methods</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果接口中不包含任何方法，就意味着这是一个空的接口，任意类型都自动实现该接口，这时会直接返回 <code>true</code>。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209031123910.png" alt="golang-type-implements-interface"></p>
+<p><strong>图 类型实现接口</strong></p>
+<p>在其他情况下，由于方法都是按照字母序存储的，<a href="https://draveness.me/golang/tree/reflect.implements"><code>reflect.implements</code></a> 会维护两个用于遍历接口和类型方法的索引 <code>i</code> 和 <code>j</code> 判断类型是否实现了接口，因为最多只会进行 <code>n</code> 次比较（类型的方法数量），所以整个过程的时间复杂度是 O(n)。</p>
+<h3 id="方法调用">方法调用</h3>
+<p>作为一门静态语言，如果我们想要通过 <a href="https://golang.org/pkg/reflect/"><code>reflect</code></a> 包利用反射在运行期间执行方法不是一件容易的事情，下面的十几行代码就使用反射来执行 <code>Add(0, 1)</code> 函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">Add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">v</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="nx">Add</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">v</span><span class="p">.</span><span class="nf">Kind</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">Func</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">v</span><span class="p">.</span><span class="nf">Type</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">argv</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">Value</span><span class="p">,</span> <span class="nx">t</span><span class="p">.</span><span class="nf">NumIn</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">argv</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">t</span><span class="p">.</span><span class="nf">In</span><span class="p">(</span><span class="nx">i</span><span class="p">).</span><span class="nf">Kind</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">Int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">return</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">argv</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">result</span> <span class="o">:=</span> <span class="nx">v</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="nx">argv</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span> <span class="o">||</span> <span class="nx">result</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nf">Kind</span><span class="p">()</span> <span class="o">!=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">Int</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">result</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nf">Int</span><span class="p">())</span> <span class="c1">// #=&gt; 1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol>
+<li>通过 <a href="https://draveness.me/golang/tree/reflect.ValueOf"><code>reflect.ValueOf</code></a> 获取函数 <code>Add</code> 对应的反射对象；</li>
+<li>调用 <a href="https://draveness.me/golang/tree/reflect.rtype.NumIn"><code>reflect.rtype.NumIn</code></a> 获取函数的入参个数；</li>
+<li>多次调用 <a href="https://draveness.me/golang/tree/reflect.ValueOf"><code>reflect.ValueOf</code></a> 函数逐一设置 <code>argv</code> 数组中的各个参数；</li>
+<li>调用反射对象 <code>Add</code> 的 <a href="https://draveness.me/golang/tree/reflect.Value.Call"><code>reflect.Value.Call</code></a> 方法并传入参数列表；</li>
+<li>获取返回值数组、验证数组的长度以及类型并打印其中的数据；</li>
+</ol>
+<p>使用反射来调用方法非常复杂，原本只需要一行代码就能完成的工作，现在需要十几行代码才能完成，但这也是在静态语言中使用动态特性需要付出的成本。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">v</span> <span class="nx">Value</span><span class="p">)</span> <span class="nf">Call</span><span class="p">(</span><span class="nx">in</span> <span class="p">[]</span><span class="nx">Value</span><span class="p">)</span> <span class="p">[]</span><span class="nx">Value</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">v</span><span class="p">.</span><span class="nf">mustBe</span><span class="p">(</span><span class="nx">Func</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">v</span><span class="p">.</span><span class="nf">mustBeExported</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">v</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="s">&#34;Call&#34;</span><span class="p">,</span> <span class="nx">in</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><a href="https://draveness.me/golang/tree/reflect.Value.Call"><code>reflect.Value.Call</code></a> 是运行时调用方法的入口，它通过两个 <code>MustBe</code> 开头的方法确定了当前反射对象的类型是函数以及可见性，随后调用 <a href="https://draveness.me/golang/tree/reflect.Value.call"><code>reflect.Value.call</code></a> 完成方法调用，这个私有方法的执行过程会分成以下的几个部分</p>
+<ol>
+<li>检查输入参数以及类型的合法性</li>
+<li>将传入的 <a href="https://draveness.me/golang/tree/reflect.Value"><code>reflect.Value</code></a> 参数数组设置到栈上</li>
+<li>通过函数指针和输入参数调用函数</li>
+<li>从栈上获取函数的返回值</li>
+</ol>
+<p>我们将按照上面的顺序分析使用 <a href="https://golang.org/pkg/reflect/"><code>reflect</code></a> 进行函数调用的几个过程。</p>
+<h4 id="参数检查">参数检查</h4>
+<p>参数检查是通过反射调用方法的第一步，在参数检查期间我们会从反射对象中取出当前的函数指针 <code>unsafe.Pointer</code>，如果该函数指针是方法，那么我们会通过 <a href="https://draveness.me/golang/tree/reflect.methodReceiver"><code>reflect.methodReceiver</code></a> 获取方法的接收者和函数指针。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">v</span> <span class="nx">Value</span><span class="p">)</span> <span class="nf">call</span><span class="p">(</span><span class="nx">op</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">in</span> <span class="p">[]</span><span class="nx">Value</span><span class="p">)</span> <span class="p">[]</span><span class="nx">Value</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">t</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">funcType</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">typ</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">	<span class="o">...</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">v</span><span class="p">.</span><span class="nx">flag</span><span class="o">&amp;</span><span class="nx">flagMethod</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">rcvr</span> <span class="p">=</span> <span class="nx">v</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">rcvrtype</span><span class="p">,</span> <span class="nx">t</span><span class="p">,</span> <span class="nx">fn</span> <span class="p">=</span> <span class="nf">methodReceiver</span><span class="p">(</span><span class="nx">op</span><span class="p">,</span> <span class="nx">v</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nx">v</span><span class="p">.</span><span class="nx">flag</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="nx">flagMethodShift</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">...</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">n</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">NumIn</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">in</span><span class="p">)</span> <span class="p">&lt;</span> <span class="nx">n</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;reflect: Call with too few input arguments&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">in</span><span class="p">)</span> <span class="p">&gt;</span> <span class="nx">n</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;reflect: Call with too many input arguments&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">n</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">if</span> <span class="nx">xt</span><span class="p">,</span> <span class="nx">targ</span> <span class="o">:=</span> <span class="nx">in</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nf">Type</span><span class="p">(),</span> <span class="nx">t</span><span class="p">.</span><span class="nf">In</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span> <span class="p">!</span><span class="nx">xt</span><span class="p">.</span><span class="nf">AssignableTo</span><span class="p">(</span><span class="nx">targ</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;reflect: &#34;</span> <span class="o">+</span> <span class="nx">op</span> <span class="o">+</span> <span class="s">&#34; using &#34;</span> <span class="o">+</span> <span class="nx">xt</span><span class="p">.</span><span class="nf">String</span><span class="p">()</span> <span class="o">+</span> <span class="s">&#34; as type &#34;</span> <span class="o">+</span> <span class="nx">targ</span><span class="p">.</span><span class="nf">String</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上述方法还会检查传入参数的个数以及参数的类型与函数签名中的类型是否可以匹配，任何参数的不匹配都会导致整个程序的崩溃中止。</p>
+<h4 id="准备参数">准备参数</h4>
+<p>当我们已经对当前方法的参数完成验证后，就会进入函数调用的下一个阶段，为函数调用准备参数，在前面函数调用一节中，我们已经介绍过 Go 语言的函数调用惯例，函数或者方法在调用时，所有的参数都会被依次放到栈上。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">	<span class="nx">nout</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">NumOut</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">frametype</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">retOffset</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">framePool</span> <span class="o">:=</span> <span class="nf">funcLayout</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">rcvrtype</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">args</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">nout</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">args</span> <span class="p">=</span> <span class="nx">framePool</span><span class="p">.</span><span class="nf">Get</span><span class="p">().(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">args</span> <span class="p">=</span> <span class="nf">unsafe_New</span><span class="p">(</span><span class="nx">frametype</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">off</span> <span class="o">:=</span> <span class="nb">uintptr</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">rcvrtype</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">storeRcvr</span><span class="p">(</span><span class="nx">rcvr</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">off</span> <span class="p">=</span> <span class="nx">ptrSize</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">in</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">targ</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">In</span><span class="p">(</span><span class="nx">i</span><span class="p">).(</span><span class="o">*</span><span class="nx">rtype</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">a</span> <span class="o">:=</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">targ</span><span class="p">.</span><span class="nx">align</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">off</span> <span class="p">=</span> <span class="p">(</span><span class="nx">off</span> <span class="o">+</span> <span class="nx">a</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;^</span> <span class="p">(</span><span class="nx">a</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">n</span> <span class="o">:=</span> <span class="nx">targ</span><span class="p">.</span><span class="nx">size</span>
+</span></span><span class="line"><span class="cl">		<span class="o">...</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">addr</span> <span class="o">:=</span> <span class="nf">add</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">off</span><span class="p">,</span> <span class="s">&#34;n &gt; 0&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">v</span> <span class="p">=</span> <span class="nx">v</span><span class="p">.</span><span class="nf">assignTo</span><span class="p">(</span><span class="s">&#34;reflect.Value.Call&#34;</span><span class="p">,</span> <span class="nx">targ</span><span class="p">,</span> <span class="nx">addr</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span><span class="p">)(</span><span class="nx">addr</span><span class="p">)</span> <span class="p">=</span> <span class="nx">v</span><span class="p">.</span><span class="nx">ptr</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">off</span> <span class="o">+=</span> <span class="nx">n</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol>
+<li>通过 <a href="https://draveness.me/golang/tree/reflect.funcLayout"><code>reflect.funcLayout</code></a> 计算当前函数需要的参数和返回值的栈布局，也就是每一个参数和返回值所占的空间大小；</li>
+<li>如果当前函数有返回值，需要为当前函数的参数和返回值分配一片内存空间 <code>args</code>；</li>
+<li>如果当前函数是方法，需要向将方法的接收接收者者拷贝到 <code>args</code> 内存中；</li>
+<li>将所有函数的参数按照顺序依次拷贝到对应 <code>args</code> 内存中
+<ol>
+<li>使用 <a href="https://draveness.me/golang/tree/reflect.funcLayout"><code>reflect.funcLayout</code></a> 返回的参数计算参数在内存中的位置；</li>
+<li>将参数拷贝到内存空间中；</li>
+</ol>
+</li>
+</ol>
+<p>准备参数是计算各个参数和返回值占用的内存空间并将所有的参数都拷贝内存空间对应位置的过程，该过程会考虑函数和方法、返回值数量以及参数类型带来的差异。</p>
+<h4 id="调用函数">调用函数</h4>
+<p>准备好调用函数需要的全部参数后，就会通过下面的代码执行函数指针了。我们会向该函数传入栈类型、函数指针、参数和返回值的内存空间、栈的大小以及返回值的偏移量：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nf">call</span><span class="p">(</span><span class="nx">frametype</span><span class="p">,</span> <span class="nx">fn</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="nb">uint32</span><span class="p">(</span><span class="nx">frametype</span><span class="p">.</span><span class="nx">size</span><span class="p">),</span> <span class="nb">uint32</span><span class="p">(</span><span class="nx">retOffset</span><span class="p">))</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上述函数实际上并不存在，它会在编译期间链接到 <a href="https://draveness.me/golang/tree/reflect.reflectcall"><code>reflect.reflectcall</code></a> 这个用汇编实现的函数上，我们在这里不会分析该函数的具体实现，感兴趣的读者可以自行了解其实现原理。</p>
+<h4 id="处理返回值">处理返回值</h4>
+<p>当函数调用结束之后，就会开始处理函数的返回值</p>
+<ul>
+<li>如果函数没有任何返回值，会直接清空 <code>args</code> 中的全部内容来释放内存空间</li>
+<li>如果当前函数有返回值
+<ol>
+<li>将 <code>args</code> 中与输入参数有关的内存空间清空</li>
+<li>创建一个 <code>nout</code> 长度的切片用于保存由反射对象构成的返回值数组</li>
+<li>从函数对象中获取返回值的类型和内存大小，将 <code>args</code> 内存中的数据转换成 <a href="https://draveness.me/golang/tree/reflect.Value"><code>reflect.Value</code></a> 类型并存储到切片中</li>
+</ol>
+</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">ret</span> <span class="p">[]</span><span class="nx">Value</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">nout</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">typedmemclr</span><span class="p">(</span><span class="nx">frametype</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">framePool</span><span class="p">.</span><span class="nf">Put</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">typedmemclrpartial</span><span class="p">(</span><span class="nx">frametype</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">retOffset</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">ret</span> <span class="p">=</span> <span class="nb">make</span><span class="p">([]</span><span class="nx">Value</span><span class="p">,</span> <span class="nx">nout</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">off</span> <span class="p">=</span> <span class="nx">retOffset</span>
+</span></span><span class="line"><span class="cl">		<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">nout</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">tv</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Out</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">a</span> <span class="o">:=</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">tv</span><span class="p">.</span><span class="nf">Align</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">off</span> <span class="p">=</span> <span class="p">(</span><span class="nx">off</span> <span class="o">+</span> <span class="nx">a</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;^</span> <span class="p">(</span><span class="nx">a</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="k">if</span> <span class="nx">tv</span><span class="p">.</span><span class="nf">Size</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="nx">fl</span> <span class="o">:=</span> <span class="nx">flagIndir</span> <span class="p">|</span> <span class="nf">flag</span><span class="p">(</span><span class="nx">tv</span><span class="p">.</span><span class="nf">Kind</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">				<span class="nx">ret</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nx">Value</span><span class="p">{</span><span class="nx">tv</span><span class="p">.</span><span class="nf">common</span><span class="p">(),</span> <span class="nf">add</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">off</span><span class="p">,</span> <span class="s">&#34;tv.Size() != 0&#34;</span><span class="p">),</span> <span class="nx">fl</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">				<span class="nx">ret</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="p">=</span> <span class="nf">Zero</span><span class="p">(</span><span class="nx">tv</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">off</span> <span class="o">+=</span> <span class="nx">tv</span><span class="p">.</span><span class="nf">Size</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">return</span> <span class="nx">ret</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>由 <a href="https://draveness.me/golang/tree/reflect.Value"><code>reflect.Value</code></a> 构成的 <code>ret</code> 数组会被返回到调用方，到这里为止使用反射实现函数调用的过程就结束了。</p>
+<h2 id="小结">小结</h2>
+<p>Go 语言的 <a href="https://golang.org/pkg/reflect/"><code>reflect</code></a> 包为我们提供了多种能力，包括如何使用反射来动态修改变量、判断类型是否实现了某些接口以及动态调用方法等功能，通过分析反射包中方法的原理能帮助我们理解之前看起来比较怪异、令人困惑的现象。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2022-09-02
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/go%E5%8F%8D%E5%B0%84/">go反射</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/mysql%E6%9E%B6%E6%9E%84%E7%AF%87/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">MySQL架构篇</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/">
+            <span class="next-text nav-default">sync.pool的使用场景</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2022-09-02 19:26:22 \u002b0800 CST',
+        title: 'Go语言reflect包的使用',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

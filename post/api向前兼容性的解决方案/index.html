@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>API向前兼容性的解决方案 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="API向前兼容性的解决方案 应该有不少程序员受过这样的困扰，特别是做后端的。项目一直在持续不断的迭代，但是呢老版本的代码还不能直接删掉，因为不" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9%E6%80%A7%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="API向前兼容性的解决方案" />
+<meta property="og:description" content="API向前兼容性的解决方案 应该有不少程序员受过这样的困扰，特别是做后端的。项目一直在持续不断的迭代，但是呢老版本的代码还不能直接删掉，因为不" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9%E6%80%A7%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-07-07T17:51:45+08:00" />
+<meta property="article:modified_time" content="2022-07-07T17:51:45+08:00" />
+<meta itemprop="name" content="API向前兼容性的解决方案">
+<meta itemprop="description" content="API向前兼容性的解决方案 应该有不少程序员受过这样的困扰，特别是做后端的。项目一直在持续不断的迭代，但是呢老版本的代码还不能直接删掉，因为不"><meta itemprop="datePublished" content="2022-07-07T17:51:45+08:00" />
+<meta itemprop="dateModified" content="2022-07-07T17:51:45+08:00" />
+<meta itemprop="wordCount" content="1742">
+<meta itemprop="keywords" content="api向前兼容," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="API向前兼容性的解决方案"/>
+<meta name="twitter:description" content="API向前兼容性的解决方案 应该有不少程序员受过这样的困扰，特别是做后端的。项目一直在持续不断的迭代，但是呢老版本的代码还不能直接删掉，因为不"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">API向前兼容性的解决方案</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2022-07-07 </span>
+        <div class="post-category">
+            <a href="/categories/%E6%9D%82/"> 杂 </a>
+            </div>
+          <span class="more-meta"> 约 1742 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#api向前兼容性的解决方案"><code>API</code>向前兼容性的解决方案</a>
+      <ul>
+        <li><a href="#通过接口上增加版本号">通过接口上增加版本号</a></li>
+        <li><a href="#一个前端版本对应一个后端版本">一个前端版本对应一个后端版本</a></li>
+        <li><a href="#数据库设计预留扩展字段">数据库设计预留扩展字段</a></li>
+        <li><a href="#app提供强制更新功能">APP提供强制更新功能</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h1 id="api向前兼容性的解决方案"><code>API</code>向前兼容性的解决方案</h1>
+<p>应该有不少程序员受过这样的困扰，特别是做后端的。项目一直在持续不断的迭代，但是呢老版本的代码还不能直接删掉，因为不一定所有的调用端都能在同一时间点完成升级。</p>
+<p>你是怎么处理这种情况的呢？</p>
+<p>方法上增加参数？方法实现里增加<code>if else</code>？</p>
+<p>论难度的话，这个问题是不难，肯定每个人都有办法解决。但是解决的是否优雅？是否会给后续带来更大的成本？有这考虑的人可能就不多了。</p>
+<p>我看到过一些项目里做兼容的方法是真的粗暴，直接怼<code>if else</code>。</p>
+<p>比如，原本创建一笔交易的时候，我们需要的数据是用户的姓名、收货地址、邮编。现在迭代的一个新版本需要增加手机号信息，并且不需要邮编了。</p>
+<p>粗暴的写法怎么写呢？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="k">if</span><span class="p">(</span><span class="nx">postData</span> <span class="o">!=</span> <span class="nx">null</span> <span class="p">){</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span><span class="p">(</span><span class="nx">postData</span><span class="p">.</span><span class="nx">mobile</span> <span class="o">!=</span> <span class="nx">null</span><span class="p">){</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">//新版本的处理方式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">//旧版本的处理方式
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>   <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果以后再新加了一个参数呢？<code>if else</code>再多嵌套一层……</p>
+<p>你见过类似上面那样的代码吗？</p>
+<p>这可能是最容易想到的改法，但针对向前兼容不仅仅只有这一种方式。容我一个个来说。</p>
+<h2 id="通过接口上增加版本号">通过接口上增加版本号</h2>
+<p>最常用的增加版本号的方式是直接加到接口上。比如，</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">http://api.xxx.com/1/user/login
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果后续的改动完全是新业务的追加，那么可以继续沿用这个1版本的接口。如果有做删减，那么可以新增一个版本2的接口，调整后的业务逻辑在这个版本的接口里实现。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">http://api.xxx.com/2/user/login
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样一来，你的项目中就同时存在了两个版本的接口。新的客户端调用2版本的，老的客户端调用1版本的。</p>
+<p>在这个期间，让客户端尽快都升级到2版本，然后后续就把1版本的接口删掉。</p>
+<p>有的人有代码洁癖，觉得一个项目里同时存在两个相同业务逻辑的接口不太舒服，那么可以试试下面这个方法。</p>
+<h2 id="一个前端版本对应一个后端版本">一个前端版本对应一个后端版本</h2>
+<p>与上面的区别就是，在项目的代码里，你不用新增加一个接口出来，直接把原先的接口修改成新的业务逻辑即可。</p>
+<p>但是呢，新版本上线的时候，老版本不能被全部替换掉，需要保留一段时间给旧版本的客户端使用。这件事的逻辑与前面一样，给客户端一段时间来升级。</p>
+<p>其实所谓的「服务发现」或者说「服务治理」就是这类思想的体现，只是玩的更加体系化。</p>
+<p>在服务发现的服务端，针对不同的服务本身就有版本的概念，比如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">OrderService/v1 : 192.168.0.1:8000 , 192.168.0.1:8001
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">OrderService/v2 : 192.168.0.1:8100 , 192.168.0.1:8101
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">UserService/v1 : 192.168.0.1:9000 , 192.168.0.1:9001
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">UserService/v2 : 192.168.0.1:9100 , 192.168.0.1:9101
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">……
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>客户端调用的时候，根据其传入的版本号，自动路由到对应版本的服务目标地址。</p>
+<p>当然这个方案有一个问题是，由于产生环境同时运行着多个版本的程序，所以数据库的字段只能增加，不能删除，并且增加的字段需要给上默认值。</p>
+<p>删除字段只能随着后续旧版本的去除进行。</p>
+<p>除了以上两种方案外，我们还可以做一些其他的工作以保障向前兼容更好地进行。</p>
+<h2 id="数据库设计预留扩展字段">数据库设计预留扩展字段</h2>
+<p>我们在设计数据表的时候，如果对后续业务预判会扩展。那么可以在做数据表设计的时候预留几个扩展字段<code>（ext1,ext2,ext3,……）</code>。</p>
+<p>这样的话配合上面提到的方案2能更好地进行，因为后续新增的字段可以暂时存在这些扩展字段里，不需要对表结构作出变更。</p>
+<h2 id="app提供强制更新功能">APP提供强制更新功能</h2>
+<p>如果是针对APP的向前兼容，那么务必在APP里留出一个强制更新的口子。以免有些用户长期不升级，导致你的旧版本迟迟无法去除。</p>
+<p>针对你可以承受的多版本情况，可以给予提示性的更新提醒，由用户自行选择是否更新。如果针对少数隔了多个版本还未升级的用户，可以给出强制性的更新，让其无法继续在旧版本上操作。</p>
+<p>强制更新也分局部更新和全量更新。现在针对局部更新的「热更新」受到了一些应用市场的限制，所以在用「热更新」之前谨慎了解对应平台的规则。</p>
+<p>另外，向前兼容不可能是无止境，不丢掉一些包袱，不断的新增包袱只会让后续的维护成本不堪重负。</p>
+<p>所以需要做好对各个版本使用情况的监控，一旦某个版本的使用量低于某个值，就应该给予强制更新的提醒。</p>
+<p>其实类似的向前兼容问题，除了<code>api</code>之外，在对外提供的三方库<code>SDK</code>、公司内给其他项目调用的二方库<code>SDK</code>中，也有一样的情况。</p>
+<p>他们的解决思路也是类似的。</p>
+<p>最后我建议你多看一些知名的开源项目，从中你可以学到很多优雅的编程技巧和代码设计理念。</p>
+<p>好了，总结一下。</p>
+<p>这篇呢Z哥和你分享了软件向前兼容的一些方法。除了粗暴的<code>if else</code>之外，你可以尝试一下以下两种方法：</p>
+<p>通过接口上增加版本号</p>
+<p>一个前端版本对应一个后端版本</p>
+<p>除此之外，以下这两件事也对做好向前兼容有很大帮助。</p>
+<p>数据库设计预留扩展字段</p>
+<p>APP提供强制更新功能</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2022-07-07
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/">api向前兼容</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">集中式与分布式</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/go%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">
+            <span class="next-text nav-default">Go测试与性能优化</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2022-07-07 17:51:45 \u002b0800 CST',
+        title: 'API向前兼容性的解决方案',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

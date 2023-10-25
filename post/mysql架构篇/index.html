@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>MySQL架构篇 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="[toc] 第04章_逻辑架构 1. 逻辑架构剖析 1.1 服务器处理客户端请求 首先MySQL是典型的C/S架构，即Client/Server 架构，服务端程序使用的" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/mysql%E6%9E%B6%E6%9E%84%E7%AF%87/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="MySQL架构篇" />
+<meta property="og:description" content="[toc] 第04章_逻辑架构 1. 逻辑架构剖析 1.1 服务器处理客户端请求 首先MySQL是典型的C/S架构，即Client/Server 架构，服务端程序使用的" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/mysql%E6%9E%B6%E6%9E%84%E7%AF%87/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-09-05T15:10:32+08:00" />
+<meta property="article:modified_time" content="2022-09-05T15:10:32+08:00" />
+<meta itemprop="name" content="MySQL架构篇">
+<meta itemprop="description" content="[toc] 第04章_逻辑架构 1. 逻辑架构剖析 1.1 服务器处理客户端请求 首先MySQL是典型的C/S架构，即Client/Server 架构，服务端程序使用的"><meta itemprop="datePublished" content="2022-09-05T15:10:32+08:00" />
+<meta itemprop="dateModified" content="2022-09-05T15:10:32+08:00" />
+<meta itemprop="wordCount" content="10523">
+<meta itemprop="keywords" content="mysql存储引擎,innodb引擎,sql执行过程," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="MySQL架构篇"/>
+<meta name="twitter:description" content="[toc] 第04章_逻辑架构 1. 逻辑架构剖析 1.1 服务器处理客户端请求 首先MySQL是典型的C/S架构，即Client/Server 架构，服务端程序使用的"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">MySQL架构篇</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2022-09-05 </span>
+        <div class="post-category">
+            <a href="/categories/mysql/"> mysql </a>
+            </div>
+          <span class="more-meta"> 约 10523 字 </span>
+          <span class="more-meta"> 预计阅读 22 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#第04章_逻辑架构">第04章_逻辑架构</a>
+      <ul>
+        <li><a href="#1-逻辑架构剖析">1. 逻辑架构剖析</a>
+          <ul>
+            <li><a href="#11-服务器处理客户端请求">1.1 服务器处理客户端请求</a></li>
+            <li><a href="#12-connectors">1.2 Connectors</a></li>
+            <li><a href="#13-第一层连接层">1.3 第一层：连接层</a></li>
+            <li><a href="#14-第二层服务层">1.4 第二层：服务层</a></li>
+            <li><a href="#15-第三层引擎层">1.5 第三层：引擎层</a></li>
+            <li><a href="#16-存储层">1.6 存储层</a></li>
+            <li><a href="#17-小结">1.7 小结</a></li>
+          </ul>
+        </li>
+        <li><a href="#2-sql执行流程">2. SQL执行流程</a>
+          <ul>
+            <li><a href="#21-mysql中的sql执行流程">2.1 MySQL中的SQL执行流程</a></li>
+            <li><a href="#22-mysql8中sql执行原理">2.2 MySQL8中SQL执行原理</a></li>
+            <li><a href="#23-mysql57中sql执行原理">2.3 MySQL5.7中SQL执行原理</a></li>
+            <li><a href="#24-sql语法顺序">2.4 SQL语法顺序</a></li>
+          </ul>
+        </li>
+        <li><a href="#3-数据库缓冲池buffer-pool">3. 数据库缓冲池（buffer pool）</a>
+          <ul>
+            <li><a href="#31-缓冲池-vs-查询缓存">3.1 缓冲池 vs 查询缓存</a></li>
+            <li><a href="#32-缓冲池如何读取数据">3.2 缓冲池如何读取数据</a></li>
+            <li><a href="#33-查看设置缓冲池的大小">3.3 查看/设置缓冲池的大小</a></li>
+            <li><a href="#34-多个buffer-pool实例">3.4 多个Buffer Pool实例</a></li>
+            <li><a href="#35-引申问题">3.5 引申问题</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#第05章_存储引擎">第05章_存储引擎</a>
+      <ul>
+        <li><a href="#1-查看存储引擎">1. 查看存储引擎</a></li>
+        <li><a href="#2-设置系统默认的存储引擎">2. 设置系统默认的存储引擎</a></li>
+        <li><a href="#3-设置表的存储引擎">3. 设置表的存储引擎</a>
+          <ul>
+            <li><a href="#31-创建表时指定存储引擎">3.1 创建表时指定存储引擎</a></li>
+            <li><a href="#32-修改表的存储引擎">3.2 修改表的存储引擎</a></li>
+          </ul>
+        </li>
+        <li><a href="#4-引擎介绍">4. 引擎介绍</a>
+          <ul>
+            <li><a href="#41-innodb-引擎具备外键支持功能的事务存储引擎">4.1 InnoDB 引擎：具备外键支持功能的事务存储引擎</a></li>
+            <li><a href="#42-myisam-引擎主要的非事务处理存储引擎">4.2 MyISAM 引擎：主要的非事务处理存储引擎</a></li>
+            <li><a href="#43-archive-引擎用于数据存档">4.3 Archive 引擎：用于数据存档</a></li>
+            <li><a href="#44-blackhole-引擎丢弃写操作读操作会返回空内容">4.4 Blackhole 引擎：丢弃写操作，读操作会返回空内容</a></li>
+            <li><a href="#45-csv-引擎存储数据时以逗号分隔各个数据项">4.5 CSV 引擎：存储数据时，以逗号分隔各个数据项</a></li>
+            <li><a href="#46-memory-引擎置于内存的表">4.6 Memory 引擎：置于内存的表</a></li>
+            <li><a href="#47-federated-引擎访问远程表">4.7 Federated 引擎：访问远程表</a></li>
+            <li><a href="#48-merge引擎管理多个myisam表构成的表集合">4.8 Merge引擎：管理多个MyISAM表构成的表集合</a></li>
+            <li><a href="#49-ndb引擎mysql集群专用存储引擎">4.9 NDB引擎：MySQL集群专用存储引擎</a></li>
+            <li><a href="#410-引擎对比">4.10 引擎对比</a></li>
+          </ul>
+        </li>
+        <li><a href="#5-myisam和innodb">5. MyISAM和InnoDB</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <p>[toc]</p>
+<h1 id="第04章_逻辑架构">第04章_逻辑架构</h1>
+<h2 id="1-逻辑架构剖析">1. 逻辑架构剖析</h2>
+<h3 id="11-服务器处理客户端请求">1.1 服务器处理客户端请求</h3>
+<p>首先MySQL是典型的C/S架构，即Client/Server 架构，服务端程序使用的<code>mysqld</code>。</p>
+<p>不论客户端进程和服务器进程是采用哪种方式进行通信，最后实现的效果是：<strong>客户端进程向服务器进程发送一段文本（SQL语句），服务器进程处理后再向客户端进程发送一段文本（处理结果）</strong>。</p>
+<p>那服务器进程对客户端进程发送的请求做了什么处理，才能产生最后的处理结果呢？这里以查询请求为 例展示：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202208301022215.png" alt="image-20220615133227202"></p>
+<p>下面具体展开如下：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202208301023986.png" alt="image-20220615133420251"></p>
+<h3 id="12-connectors">1.2 Connectors</h3>
+<p>Connectors, 指的是不同语言中与SQL的交互。MySQL首先是一个网络程序，在TCP之上定义了自己的应用层协议。所以要使用MySQL，我们可以编写代码，跟MySQL Server建立TCP连接，之后按照其定义好的协议进行交互。或者比较方便的方法是调用SDK，比如Native C API、JDBC、PHP等各语言MySQL Connectors,或者通过ODBC。但<strong>通过SDK来访问MySQL，本质上还是在TCP连接上通过MySQL协议跟MySQL进行交互</strong></p>
+<p><strong>接下来的MySQL Server结构可以分为如下三层：</strong></p>
+<h3 id="13-第一层连接层">1.3 第一层：连接层</h3>
+<p>系统（客户端）访问 MySQL 服务器前，做的第一件事就是建立 TCP 连接。经过三次握手建立连接成功后， MySQL 服务器对 TCP 传输过来的账号密码做身份认证、权限获取。</p>
+<ul>
+<li>用户名或密码不对，会收到一个Access denied for user错误，客户端程序结束执行</li>
+<li>用户名密码认证通过，会从<strong>权限表</strong>查出账号拥有的权限与连接关联，之后的权限判断逻辑，都将依赖于此时读到的权限</li>
+</ul>
+<p>TCP 连接收到请求后，必须要分配给一个<strong>线程</strong>专门与这个客户端的交互。所以还会有个<strong>线程池</strong>，去走后面的流程。每一个连接从线程池中获取线程，省去了创建和销毁线程的开销。</p>
+<p>所以<strong>连接管理</strong>的职责是负责认证、管理连接、获取权限信息。</p>
+<h3 id="14-第二层服务层">1.4 第二层：服务层</h3>
+<p>第二层架构主要完成大多数的核心服务功能，如SQL接口，并完成缓存的查询，SQL的分析和优化及部分内置函数的执行。所有跨存储引擎的功能也在这一层实现，如过程、函数等。</p>
+<p>在该层，服务器会解析查询并创建相应的内部解析树，并对其完成相应的优化：如确定查询表的顺序，是否利用索引等，最后生成相应的执行操作。</p>
+<p>如果是<code>SELECT</code>语句，服务器还会查询内部的缓存。如果缓存空间足够大，这样在解决大量读操作的环境中能够很好的提升系统的性能。</p>
+<ul>
+<li>
+<p>SQL Interface: SQL接口</p>
+<ul>
+<li>接收用户的SQL命令，并且返回用户需要查询的结果。比如<code>SELECT ... FROM</code>就是调用SQL Interface</li>
+<li>MySQL支持DML（数据操作语言）、DDL（数据定义语言）、存储过程、视图、触发器、自定义函数等多种SQL语言接口</li>
+</ul>
+</li>
+<li>
+<p>Parser: 解析器</p>
+<ul>
+<li>
+<p>在解析器中对 SQL 语句进行语法分析、语义分析。将SQL语句分解成数据结构，并将这个结构传递到后续步骤，以后SQL语句的传递和处理就是基于这个结构的。如果在分解构成中遇到错误，那么就说明这个SQL语句是不合理的。</p>
+</li>
+<li>
+<p>在SQL命令传递到解析器的时候会被解析器验证和解析，并为其创建语法树 ，并根据数据字典丰富查询语法树，会验证该客户端是否具有执行该查询的权限。创建好语法树后，MySQL还会对SQl查询进行语法上的优化，进行查询重写。</p>
+<p><strong>ps: 所以在连接数据库的时候权限一般不要给的太高，一般只是应用数据的话，只需要赋予用户不能对系统数据库进行操作的权限</strong></p>
+</li>
+</ul>
+</li>
+<li>
+<p>Optimizer: 查询优化器</p>
+<ul>
+<li>SQL语句在语法解析之后、查询之前会使用查询优化器确定 SQL 语句的执行路径，生成一个执行计划 。</li>
+<li>这个执行计划表明应该使用哪些索引进行查询（全表检索还是使用索引检索），表之间的连接顺序如何，最后会按照执行计划中的步骤调用存储引擎提供的方法来真正的执行查询，并将查询结果返回给用户。</li>
+<li>它使用“ 选取-投影-连接 ”策略进行查询。例如：</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="n">name</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">student</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">gender</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;女&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个<code>SELECT</code>查询先根据<code>WHERE</code>语句进行选取 ，而不是将表全部查询出来以后再进行<code>gender</code>过滤。 这个<code>SELECT</code>查询先根据<code>id</code>和<code>name</code>进行属性投影，而不是将属性全部取出以后再进行过滤，将这两个查询条件连接起来生成最终查询结果。</p>
+<p><strong>ps: 编写查询语句时，应尽可能避免全表查询和表级锁，写SQL语句应该尽可能地书写性能更好的SQL语句</strong></p>
+</li>
+<li>
+<p><del>Caches &amp; Buffers： 查询缓存组件</del></p>
+<ul>
+<li><del>MySQL内部维持着一些Cache和Buffer，比如Query Cache用来缓存一条<code>SELECT</code>语句的执行结果，如果能够在其中找到对应的查询结果，那么就不必再进行查询解析、优化和执行的整个过程了，直接将结果反馈给客户端。</del></li>
+<li><del>这个缓存机制是由一系列小缓存组成的。比如表缓存，记录缓存，key缓存，权限缓存等。 这个查询缓存可以在不同客户端之间共享。</del></li>
+<li><strong>MySQL 8.0+ 不支持查询缓存，并且鼓励用户升级以使用服务器端查询重写或ProxySQL作为中间人缓存。</strong></li>
+</ul>
+</li>
+</ul>
+<h3 id="15-第三层引擎层">1.5 第三层：引擎层</h3>
+<p>插件式存储引擎层（Storage Engines），<strong>真正的负责了MySQL中数据的存储和提取，对物理服务器级别维护的底层数据执行操作</strong>，服务器通过API与存储引擎进行通信。不同的存储引擎具有的功能不同，这样 我们可以根据自己的实际需要进行选取。</p>
+<p>MySQL 8.0.25默认支持的存储引擎如下：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202208301147844.png" alt="image-20220615140556893"></p>
+<h3 id="16-存储层">1.6 存储层</h3>
+<p>所有的数据，数据库、表的定义，表的每一行的内容，索引，都是存在文件系统上，以<strong>文件</strong>的方式存在的，并完成与存储引擎的交互。当然有些存储引擎比如InnoDB，也支持不使用文件系统直接管理裸设备，但现代文件系统的实现使得这样做没有必要了。在文件系统之下，可以使用本地磁盘，可以使用 DAS、NAS、SAN等各种存储系统。</p>
+<h3 id="17-小结">1.7 小结</h3>
+<p>MySQL架构图本节开篇所示。下面为了熟悉SQL执行流程方便，我们可以简化如下：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202208301147063.png" alt="image-20220615140710351"></p>
+<p>简化为三层结构：</p>
+<ol>
+<li>连接层：客户端和服务器端建立连接，客户端发送 SQL 至服务器端；</li>
+<li>SQL 层（服务层）：对 SQL 语句进行查询处理；与数据库文件的存储方式无关；</li>
+<li>存储引擎层：与数据库文件打交道，负责数据的存储和读取。</li>
+</ol>
+<h2 id="2-sql执行流程">2. SQL执行流程</h2>
+<h3 id="21-mysql中的sql执行流程">2.1 MySQL中的SQL执行流程</h3>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202208311105445.png" alt="image-20220615141934531"></p>
+<p>MySQL的查询流程：</p>
+<ol>
+<li><strong>查询缓存</strong>：Server 如果在查询缓存中发现了这条 SQL 语句，就会直接将结果返回给客户端；如果没有，就进入到解析器阶段。需要说明的是，因为查询缓存往往效率不高，所以在 MySQL8.0 之后就抛弃了这个功能。</li>
+</ol>
+<p><strong>总之，因为查询缓存往往弊大于利，查询缓存的失效非常频繁。缓存本质就是将查询语句的字符串作为key，查询结果作为value进行缓存，瓶颈在于更新数据之后，再使用缓存取得数据虽然快但是显然不是新的数据，而且查询的语法发生改变、多个空格等都会导致缓存命中失败</strong></p>
+<p>一般建议大家在<strong>静态表里使用查询缓存</strong>，什么叫静态表呢？就是一般我们极少更新的表。比如，一个系统配置表、字典表，这张表上的查询才适合使用查询缓存。好在MySQL也提供了这种“按需使用”的方式。你可以将 <code>my.cnf</code> 参数 <code>query_cache_type</code> 设置成 <code>DEMAND</code>，代表当 sql 语句中有 <code>SQL_CACHE</code>关键字时才缓存。比如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="c1"># query_cache_type 有3个值。 0代表关闭查询缓存OFF，1代表开启ON，2代表(DEMAND)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">query_cache_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样对于默认的SQL语句都不使用查询缓存。而对于你确定要使用查询缓存的语句，可以供<code>SQL_CACHE</code>显示指定，像下面这个语句一样：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">SELECT</span><span class="w"> </span><span class="n">SQl_CACHE</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">ID</span><span class="o">=</span><span class="mi">5</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>查看当前 mysql 实例是否开启缓存机制</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="c1"># MySQL5.7中：
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">show</span><span class="w"> </span><span class="n">global</span><span class="w"> </span><span class="n">variables</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s2">&#34;%query_cache_type%&#34;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>监控查询缓存的命中率：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">show</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;%Qcache%&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202208311141708.png" alt="image-20220615144537260" style="float:left;" />
+<p>运行结果解析：</p>
+<p><code>Qcache_free_blocks</code>: 表示查询缓存中海油多少剩余的blocks，如果该值显示较大，则说明查询缓存中的内部碎片过多了，可能在一定的时间进行整理。</p>
+<p><code>Qcache_free_memory</code>: 查询缓存的内存大小，通过这个参数可以很清晰的知道当前系统的查询内存是否够用，DBA可以根据实际情况做出调整。</p>
+<p><code>Qcache_hits</code>: 表示有多少次命中缓存。我们主要可以通过该值来验证我们的查询缓存的效果。数字越大，缓存效果越理想。</p>
+<p><code>Qcache_inserts</code>: 表示多少次未命中然后插入，意思是新来的SQL请求在缓存中未找到，不得不执行查询处理，执行查询处理后把结果<code>insert</code>到查询缓存中。这样的情况的次数越多，表示查询缓存应用到的比较少，效果也就不理想。当然系统刚启动后，查询缓存是空的，这也正常。</p>
+<p><code>Qcache_lowmem_prunes</code>: 该参数记录有多少条查询因为内存不足而被移除出查询缓存。通过这个值，用户可以适当的调整缓存大小。</p>
+<p><code>Qcache_not_cached</code>: 表示因为query_cache_type的设置而没有被缓存的查询数量。</p>
+<p><code>Qcache_queries_in_cache</code>: 当前缓存中缓存的查询数量。</p>
+<p><code>Qcache_total_blocks</code>: 当前缓存的block数量。</p>
+<ol start="2">
+<li><strong>解析器</strong>：在解析器中对 SQL 语句进行语法分析、语义分析。</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202208311143462.png" alt="image-20220615142301226"></p>
+<p>如果没有命中查询缓存，就要开始真正执行语句了。首先，MySQL需要知道你要做什么，因此需要对SQL语句做解析。SQL语句的分析分为词法分析与语法分析。</p>
+<p>分析器先做<strong>词法分析</strong>。你输入的是由多个字符串和空格组成的一条 SQL 语句，MySQL 需要识别出里面的字符串分别是什么，代表什么。</p>
+<p>MySQL 从你输入的<code>select</code>这个关键字识别出来，这是一个查询语句。它也要把字符串<code>T</code>识别成表名<code>T</code>，把字符串<code>ID</code>识别成列<code>ID</code>。</p>
+<p>接着，要做<strong>语法分析</strong>。根据词法分析的结果，语法分析器（比如：Bison）会根据语法规则，判断你输入的这个 SQL 语句是否满足 MySQL 语法 。</p>
+<p><code>select department_id,job_id, avg(salary) from employees group by department_id; </code></p>
+<p>如果SQL语句正确，则会生成一个这样的<strong>语法树</strong>：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051010701.png" alt="image-20220615162031427"></p>
+<p>下图是SQL分词分析的过程步骤:</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051056514.png" alt="image-20220615163338495"></p>
+<p>至此解析器的工作任务也基本圆满了。</p>
+<ol start="3">
+<li>
+<p><strong>优化器</strong>：在优化器中会确定 SQL 语句的执行路径，比如是根据 <code>全表检索</code> ，还是根据 <code>索引检索</code> 等。</p>
+<p>经过解释器，MySQL就知道你要做什么了。在开始执行之前，还要先经过优化器的处理。<strong>一条查询可以有很多种执行方式，最后都返回相同的结果。优化器的作用就是找到这其中最好的执行计划</strong>。</p>
+<p>比如：优化器是在表里面有多个索引的时候，决定使用哪个索引；或者在一个语句有多表关联 (join) 的时候，决定各个表的连接顺序，还有表达式简化、子查询转为连接、外连接转为内连接等。</p>
+<p>举例：如下语句是执行两个表的 join：</p>
+</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">test1</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">test2</span><span class="w"> </span><span class="k">using</span><span class="p">(</span><span class="n">ID</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">test1</span><span class="p">.</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;zhangwei&#39;</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">test2</span><span class="p">.</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;mysql高级课程&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="err">方案</span><span class="mi">1</span><span class="err">：可以先从表</span><span class="w"> </span><span class="n">test1</span><span class="w"> </span><span class="err">里面取出</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;zhangwei&#39;</span><span class="err">的记录的</span><span class="w"> </span><span class="n">ID</span><span class="w"> </span><span class="err">值，再根据</span><span class="w"> </span><span class="n">ID</span><span class="w"> </span><span class="err">值关联到表</span><span class="w"> </span><span class="n">test2</span><span class="err">，再判</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">断</span><span class="w"> </span><span class="n">test2</span><span class="w"> </span><span class="err">里面</span><span class="w"> </span><span class="n">name的值是否等于</span><span class="w"> </span><span class="s1">&#39;mysql高级课程&#39;</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">方案</span><span class="mi">2</span><span class="err">：可以先从表</span><span class="w"> </span><span class="n">test2</span><span class="w"> </span><span class="err">里面取出</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;mysql高级课程&#39;</span><span class="w"> </span><span class="err">的记录的</span><span class="w"> </span><span class="n">ID</span><span class="w"> </span><span class="err">值，再根据</span><span class="w"> </span><span class="n">ID</span><span class="w"> </span><span class="err">值关联到</span><span class="w"> </span><span class="n">test1</span><span class="err">，</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">再判断</span><span class="w"> </span><span class="n">test1</span><span class="w"> </span><span class="err">里面</span><span class="w"> </span><span class="n">name的值是否等于</span><span class="w"> </span><span class="n">zhangwei</span><span class="err">。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">这两种执行方法的逻辑结果是一样的，但是执行的效率会有不同，而优化器的作用就是决定选择使用哪一个方案。优化</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">器阶段完成后，这个语句的执行方案就确定下来了，然后进入执行器阶段。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">如果你还有一些疑问，比如优化器是怎么选择索引的，有没有可能选择错等。后面讲到索引我们再谈。</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>在查询优化器中，可以分为 <code>逻辑查询</code> 优化阶段和 <code>物理查询</code> 优化阶段。</p>
+<p>逻辑查询优化就是通过改变SQL语句的内容来使得SQL查询更高效，同时为物理查询优化提供更多的候选执行计划。通常采用的方式是对SQL语句进行<code>等价变换</code>，对查询进行<code>重写</code>，而查询重写的数学基础就是关系代数。对条件表达式进行等价谓词重写、条件简化，对视图进行重写，对子查询进行优化，对连接语义进行了外连接消除、嵌套连接消除等。</p>
+<p>物理查询优化是基于关系代数进行的查询重写，而关系代数的每一步都对应着物理计算，这些物理计算往往存在多种算法，因此需要计算各种物理路径的代价，从中选择代价最小的作为执行计划。在这个阶段里，对于单表和多表连接的操作，需要高效地<code>使用索引</code>，提升查询效率。</p>
+<ol start="4">
+<li><strong>执行器</strong>：</li>
+</ol>
+<p>截止到现在，还没有真正去读写真实的表，仅仅只是产出了一个执行计划。于是就进入了执行器阶段 。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051056260.png" alt="image-20220615162613806"></p>
+<p>在执行之前需要判断该用户是否 <code>具备权限</code> 。如果没有，就会返回权限错误。如果具备权限，就执行 SQL 查询并返回结果。在 MySQL8.0 以下的版本，如果设置了查询缓存，这时会将查询结果进行缓存。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>比如：表 test 中，ID 字段没有索引，那么执行器的执行流程是这样的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="err">调用</span><span class="w"> </span><span class="n">InnoDB</span><span class="w"> </span><span class="err">引擎接口取这个表的第一行，判断</span><span class="w"> </span><span class="n">ID</span><span class="w"> </span><span class="err">值是不是</span><span class="mi">1</span><span class="err">，如果不是则跳过，如果是则将这行存在结果集中；</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">调用引擎接口取“下一行”，重复相同的判断逻辑，直到取到这个表的最后一行。</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">执行器将上述遍历过程中所有满足条件的行组成的记录集作为结果集返回给客户端。</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>至此，这个语句就执行完成了。对于有索引的表，执行的逻辑也差不多。</p>
+<p>SQL 语句在 MySQL 中的流程是： <code>SQL语句</code>→<code>查询缓存</code>→<code>解析器</code>→<code>优化器</code>→<code>执行器</code> 。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051056965.png" alt="image-20220615164722975"></p>
+<h3 id="22-mysql8中sql执行原理">2.2 MySQL8中SQL执行原理</h3>
+<h4 id="1-确认profiling是否开启">1) 确认profiling是否开启</h4>
+<p>了解查询语句底层执行的过程：<code>select @profiling</code> 或者 <code>show variables like '%profiling'</code> 查看是否开启计划。开启它可以让MySQL收集在SQL</p>
+<p>执行时所使用的资源情况，命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">@@</span><span class="n">profiling</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">variables</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;profiling&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>profiling=0 代表关闭，我们需要把 profiling 打开，即设置为 1：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="n">profiling</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="2-多次执行相同sql查询">2) 多次执行相同SQL查询</h4>
+<p>然后我们执行一个 SQL 查询（你可以执行任何一个 SQL 查询）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">employees</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="3-查看profiles">3) 查看profiles</h4>
+<p>查看当前会话所产生的所有 profiles：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">profiles</span><span class="p">;</span><span class="w"> </span><span class="c1"># 显示最近的几次查询
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="4-查看profile">4) 查看profile</h4>
+<p>显示执行计划，查看程序的执行步骤：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">profile</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051108889.png" alt="image-20220615172149919"></p>
+<p>当然你也可以查询指定的 Query ID，比如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">profile</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="mi">7</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>查询 SQL 的执行时间结果和上面是一样的。</p>
+<p>此外，还可以查询更丰富的内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">profile</span><span class="w"> </span><span class="n">cpu</span><span class="p">,</span><span class="n">block</span><span class="w"> </span><span class="n">io</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="mi">6</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051107608.png" alt="image-20220615172409967"></p>
+<p>继续：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">profile</span><span class="w"> </span><span class="n">cpu</span><span class="p">,</span><span class="n">block</span><span class="w"> </span><span class="n">io</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="mi">7</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051107599.png" alt="image-20220615172438338"></p>
+<p>1、除了查看cpu、io阻塞等参数情况，还可以查询下列参数的利用情况。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">Syntax</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SHOW</span><span class="w"> </span><span class="n">PROFILE</span><span class="w"> </span><span class="p">[</span><span class="n">type</span><span class="w"> </span><span class="p">[,</span><span class="w"> </span><span class="n">type</span><span class="p">]</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">[</span><span class="k">FOR</span><span class="w"> </span><span class="n">QUERY</span><span class="w"> </span><span class="n">n</span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="p">[</span><span class="k">LIMIT</span><span class="w"> </span><span class="n">row_count</span><span class="w"> </span><span class="p">[</span><span class="n">OFFSET</span><span class="w"> </span><span class="n">offset</span><span class="p">]]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">type</span><span class="p">:</span><span class="w"> </span><span class="err">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">	</span><span class="o">|</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="c1">-- 显示所有参数的开销信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">	</span><span class="o">|</span><span class="w"> </span><span class="n">BLOCK</span><span class="w"> </span><span class="n">IO</span><span class="w"> </span><span class="c1">-- 显示IO的相关开销
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">	</span><span class="o">|</span><span class="w"> </span><span class="n">CONTEXT</span><span class="w"> </span><span class="n">SWITCHES</span><span class="w"> </span><span class="c1">-- 上下文切换相关开销
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">	</span><span class="o">|</span><span class="w"> </span><span class="n">CPU</span><span class="w"> </span><span class="c1">-- 显示CPU相关开销信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">	</span><span class="o">|</span><span class="w"> </span><span class="n">IPC</span><span class="w"> </span><span class="c1">-- 显示发送和接收相关开销信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">	</span><span class="o">|</span><span class="w"> </span><span class="n">MEMORY</span><span class="w"> </span><span class="c1">-- 显示内存相关开销信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">	</span><span class="o">|</span><span class="w"> </span><span class="n">PAGE</span><span class="w"> </span><span class="n">FAULTS</span><span class="w"> </span><span class="c1">-- 显示页面错误相关开销信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">	</span><span class="o">|</span><span class="w"> </span><span class="n">SOURCE</span><span class="w"> </span><span class="c1">-- 显示和Source_function,Source_file,Source_line 相关的开销信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="w">	</span><span class="o">|</span><span class="w"> </span><span class="n">SWAPS</span><span class="w"> </span><span class="c1">-- 显示交换次数相关的开销信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="err">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>2、发现两次查询当前情况都一致，说明没有缓存。</p>
+<p><code>在 8.0 版本之后，MySQL 不再支持缓存的查询</code>。一旦数据表有更新，缓存都将清空，因此只有数据表是静态的时候，或者数据表很少发生变化时，使用缓存查询才有价值，否则如果数据表经常更新，反而增加了 SQL 的查询时间。</p>
+<h3 id="23-mysql57中sql执行原理">2.3 MySQL5.7中SQL执行原理</h3>
+<p>上述操作在MySQL5.7中测试，发现前后两次相同的sql语句，执行的查询过程仍然是相同的。不是会使用 缓存吗？这里我们需要 显式开启查询缓存模式 。在MySQL5.7中如下设置：</p>
+<h4 id="1-配置文件中开启查询缓存">1) 配置文件中开启查询缓存</h4>
+<p>在 /etc/my.cnf 中新增一行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">query_cache_type</span><span class="o">=</span><span class="mi">1</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="2-重启mysql服务">2) 重启mysql服务</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">systemctl</span><span class="w"> </span><span class="n">restart</span><span class="w"> </span><span class="n">mysqld</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="3-开启查询执行计划">3) 开启查询执行计划</h4>
+<p>由于重启过服务，需要重新执行如下指令，开启profiling。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="n">profiling</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="4-执行语句两次">4) 执行语句两次：</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">locations</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="5-查看profiles">5) 查看profiles</h4>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051107151.png" alt="image-20220615173727345"></p>
+<h4 id="6-查看profile">6) 查看profile</h4>
+<p>显示执行计划，查看程序的执行步骤：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">profile</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051107610.png" alt="image-20220615173803835"></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">show</span><span class="w"> </span><span class="n">profile</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051107042.png" alt="image-20220615173822079"></p>
+<p>结论不言而喻。执行编号2时，比执行编号1时少了很多信息，从截图中可以看出查询语句直接从缓存中 获取数据。</p>
+<h3 id="24-sql语法顺序">2.4 SQL语法顺序</h3>
+<p>随着Mysql版本的更新换代，其优化器也在不断的升级，优化器会分析不同执行顺序产生的性能消耗不同 而动态调整执行顺序。</p>
+<h2 id="3-数据库缓冲池buffer-pool">3. 数据库缓冲池（buffer pool）</h2>
+<p>InnoDB 存储引擎是以页为单位来管理存储空间的，我们进行的增删改查操作其实本质上都是在访问页面（包括读页面、写页面、创建新页面等操作）。而磁盘 I/O 需要消耗的时间很多，而在内存中进行操作，效率则会高很多，为了能让数据表或者索引中的数据随时被我们所用，DBMS会申请占用内存来作为数据缓冲池，在真正访问页面之前，需要把在磁盘上的页缓存到内存中的 Buffer Pool 之后才可以访问。</p>
+<p>这样做的好处是可以让磁盘活动最小化，从而减少与磁盘直接进行 I/O 的时间。要知道，这种策略对提升 SQL 语句的查询性能来说至关重要。如果索引的数据在缓冲池里，那么访问的成本就会降低很多。</p>
+<h3 id="31-缓冲池-vs-查询缓存">3.1 缓冲池 vs 查询缓存</h3>
+<p>缓冲池和查询缓存是一个东西吗？不是。</p>
+<h4 id="1-缓冲池buffer-pool">1) 缓冲池（Buffer Pool）</h4>
+<p>首先我们需要了解在 InnoDB 存储引擎中，缓冲池都包括了哪些。</p>
+<p>在 InnoDB 存储引擎中有一部分数据会放到内存中，缓冲池则占了这部分内存的大部分，它用来存储各种数据的缓存，如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051123817.png" alt="image-20220615175309751"></p>
+<p>从图中，你能看到 InnoDB 缓冲池包括了数据页、索引页、插入缓冲、锁信息、自适应 Hash 和数据字典信息等。</p>
+<p><strong>缓存池的重要性：</strong></p>
+<p><strong>缓存原则：</strong></p>
+<p><strong>位置 * 频次</strong>，这个原则可以帮我们对 I/O 访问效率进行优化。</p>
+<p>首先，位置决定效率，提供缓冲池就是为了在内存中可以直接访问数据。</p>
+<p>其次，频次决定优先级顺序。因为缓冲池的大小是有限的，比如磁盘有200G，但是内存只有16G，缓冲池大小只有1G，就无法将所有数据都加载到缓冲池里，这时就涉及到优先级顺序，会<strong>优先对使用频次高的热数据进行加载</strong>。</p>
+<p><strong>缓冲池的预读特性:</strong></p>
+<p>缓冲池的作用就是提升 I/O 效率，而我们进行读取数据的时候存在一个“局部性原理”，也就是说我们使用了一些数据，<strong>大概率还会使用它周围的一些数据</strong>，因此采用“预读”的机制提前加载，可以减少未来可能的磁盘 I/O 操作。</p>
+<h4 id="2-查询缓存">2) 查询缓存</h4>
+<p>那么什么是查询缓存呢？</p>
+<p>查询缓存是提前把查询结果缓存起来，这样下次不需要执行就可以直接拿到结果。需要说明的是，在 MySQL 中的查询缓存，不是缓存查询计划，而是查询对应的结果。因为<strong>命中条件苛刻</strong>，而且只要数据表发生变化，查询缓存就会失效，因此命中率低。</p>
+<h3 id="32-缓冲池如何读取数据">3.2 缓冲池如何读取数据</h3>
+<p>缓冲池管理器会尽量将经常使用的数据保存起来，在数据库进行页面读操作的时候，首先会判断该页面是否在缓冲池中，如果存在就直接读取，如果不存在，就会通过内存或磁盘将页面存放到缓冲池中再进行读取。</p>
+<p>缓存在数据库中的结构和作用如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051129620.png" alt="image-20220615193131719"></p>
+<p><strong>如果我们执行 SQL 语句的时候更新了缓存池中的数据，那么这些数据会马上同步到磁盘上吗？</strong></p>
+<p>实际上，当我们对数据库中的记录进行修改的时候，首先会修改缓冲池中页里面的记录信息，然后数据库会<code>以一定的频率刷新</code>到磁盘中。注意并不是每次发生更新操作，都会立即进行磁盘回写。缓冲池会采用一种叫做 <code>checkpoint 的机制</code> 将数据回写到磁盘上，这样做的好处就是提升了数据库的整体性能。</p>
+<p>比如，当<code>缓冲池不够用</code>时，需要释放掉一些不常用的页，此时就可以强行采用checkpoint的方式，将不常用的脏页回写到磁盘上，然后再从缓存池中将这些页释放掉。这里的脏页 (dirty page) 指的是缓冲池中被修改过的页，与磁盘上的数据页不一致。</p>
+<h3 id="33-查看设置缓冲池的大小">3.3 查看/设置缓冲池的大小</h3>
+<p>如果你使用的是 MySQL MyISAM 存储引擎，它只缓存索引，不缓存数据，对应的键缓存参数为<code>key_buffer_size</code>，你可以用它进行查看。</p>
+<p>如果你使用的是 InnoDB 存储引擎，可以通过查看 innodb_buffer_pool_size 变量来查看缓冲池的大小。命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">show</span><span class="w"> </span><span class="n">variables</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;innodb_buffer_pool_size&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051131917.png" alt="image-20220615214847480" style="zoom:80%;" />
+<p>你能看到此时 InnoDB 的缓冲池大小只有 134217728/1024/1024=128MB。我们可以修改缓冲池大小，比如改为256MB，方法如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="kt">set</span><span class="w"> </span><span class="n">global</span><span class="w"> </span><span class="n">innodb_buffer_pool_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">268435456</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>或者：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="p">[</span><span class="n">server</span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">innodb_buffer_pool_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">268435456</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="34-多个buffer-pool实例">3.4 多个Buffer Pool实例</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="p">[</span><span class="n">server</span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">innodb_buffer_pool_instances</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样就表明我们要创建2个 <code>Buffer Pool</code> 实例。</p>
+<p>我们看下如何查看缓冲池的个数，使用命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">show</span><span class="w"> </span><span class="n">variables</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;innodb_buffer_pool_instances&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>那每个 Buffer Pool 实例实际占多少内存空间呢？其实使用这个公式算出来的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">innodb_buffer_pool_size</span><span class="o">/</span><span class="n">innodb_buffer_pool_instances</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>也就是总共的大小除以实例的个数，结果就是每个 Buffer Pool 实例占用的大小。</p>
+<p>不过也不是说 Buffer Pool 实例创建的越多越好，分别管理各个 Buffer Pool 也是需要性能开销的，InnDB规定：当innodb_buffer_pool_size的值小于1G的时候设置多个实例是无效的，InnoDB会默认把innodb_buffer_pool_instances的值修改为1。而我们鼓励在 Buffer Pool 大于等于 1G 的时候设置多个 Buffer Pool 实例。</p>
+<h3 id="35-引申问题">3.5 引申问题</h3>
+<p>Buffer Pool是MySQL内存结构中十分核心的一个组成，你可以先把它想象成一个黑盒子。</p>
+<p>黑盒下的更新数据流程</p>
+<p>当我们查询数据的时候，会先去 Buffer Pool 中查询。如果 Buffer Pool 中不存在，存储引擎会先将数据从磁盘加载到 Buffer Pool 中，然后将数据返回给客户端；同理，当我们更新某个数据的时候，如果这个数据不存在于 Buffer Pool，同样会先数据加载进来，然后修改内存的数据。被修改的数据会在之后统一刷入磁盘。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051444810.png" alt="image-20220615222455867"></p>
+<p>我更新到一半突然发生错误了，想要回滚到更新之前的版本，该怎么办？连数据持久化的保证、事务回滚都做不到还谈什么崩溃恢复？</p>
+<p>答案：<strong>Redo Log</strong> &amp; <strong>Undo Log</strong></p>
+<h1 id="第05章_存储引擎">第05章_存储引擎</h1>
+<h2 id="1-查看存储引擎">1. 查看存储引擎</h2>
+<ul>
+<li>查看mysql提供什么存储引擎</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">show</span><span class="w"> </span><span class="n">engines</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051444873.png" alt="image-20220615223831995"></p>
+<h2 id="2-设置系统默认的存储引擎">2. 设置系统默认的存储引擎</h2>
+<ul>
+<li>查看默认的存储引擎</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">show</span><span class="w"> </span><span class="n">variables</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="s1">&#39;%storage_engine%&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1">#或
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">SELECT</span><span class="w"> </span><span class="o">@@</span><span class="n">default_storage_engine</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051444139.png" alt="image-20220615224249491" style="zoom:60%;" />
+<ul>
+<li>修改默认的存储引擎</li>
+</ul>
+<p>如果在创建表的语句中没有显式指定表的存储引擎的话，那就会默认使用 InnoDB 作为表的存储引擎。 如果我们想改变表的默认存储引擎的话，可以这样写启动服务器的命令行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="kt">SET</span><span class="w"> </span><span class="n">DEFAULT_STORAGE_ENGINE</span><span class="o">=</span><span class="n">MyISAM</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>或者修改 my.cnf 文件：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">default</span><span class="o">-</span><span class="n">storage</span><span class="o">-</span><span class="kp">engine</span><span class="o">=</span><span class="n">MyISAM</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c1"># 重启服务
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">systemctl</span><span class="w"> </span><span class="n">restart</span><span class="w"> </span><span class="n">mysqld</span><span class="p">.</span><span class="n">service</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="3-设置表的存储引擎">3. 设置表的存储引擎</h2>
+<p>存储引擎是负责对表中的数据进行提取和写入工作的，我们可以为 不同的表设置不同的存储引擎 ，也就是 说不同的表可以有不同的物理存储结构，不同的提取和写入方式。</p>
+<h3 id="31-创建表时指定存储引擎">3.1 创建表时指定存储引擎</h3>
+<p>我们之前创建表的语句都没有指定表的存储引擎，那就会使用默认的存储引擎 InnoDB 。如果我们想显 式的指定一下表的存储引擎，那可以这么写：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="err">表名</span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="err">建表语句</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="kp">ENGINE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">存储引擎名称</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="32-修改表的存储引擎">3.2 修改表的存储引擎</h3>
+<p>如果表已经建好了，我们也可以使用下边这个语句来修改表的存储引擎：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="err">表名</span><span class="w"> </span><span class="kp">ENGINE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">存储引擎名称</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>比如我们修改一下 engine_demo_table 表的存储引擎：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">engine_demo_table</span><span class="w"> </span><span class="kp">ENGINE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">InnoDB</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这时我们再查看一下 engine_demo_table 的表结构：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">SHOW</span><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">engine_demo_table</span><span class="err">\</span><span class="n">G</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">***************************</span><span class="w"> </span><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="o">***************************</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">Table</span><span class="p">:</span><span class="w"> </span><span class="n">engine_demo_table</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">Create</span><span class="w"> </span><span class="k">Table</span><span class="p">:</span><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="o">`</span><span class="n">engine_demo_table</span><span class="o">`</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">`</span><span class="n">i</span><span class="o">`</span><span class="w"> </span><span class="kt">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="no">NULL</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">)</span><span class="w"> </span><span class="kp">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="kp">CHARSET</span><span class="o">=</span><span class="n">utf8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">1</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">01</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="4-引擎介绍">4. 引擎介绍</h2>
+<h3 id="41-innodb-引擎具备外键支持功能的事务存储引擎">4.1 InnoDB 引擎：具备外键支持功能的事务存储引擎</h3>
+<ul>
+<li>MySQL从3.23.34a开始就包含InnoDB存储引擎。 <code>大于等于5.5之后，默认采用InnoDB引擎</code> 。</li>
+<li>InnoDB是MySQL的 默认事务型引擎 ，它被设计用来处理大量的短期(short-lived)事务。可以确保事务的完整提交(Commit)和回滚(Rollback)。</li>
+<li>除了增加和查询外，还需要更新、删除操作，那么，应优先选择InnoDB存储引擎。 除非有非常特别的原因需要使用其他的存储引擎，否则应该优先考虑InnoDB引擎。</li>
+<li>数据文件结构：（在《第02章_MySQL数据目录》章节已讲）
+<ul>
+<li>表名.frm 存储表结构（MySQL8.0时，合并在表名.ibd中）</li>
+<li>表名.ibd 存储数据和索引</li>
+</ul>
+</li>
+<li>InnoDB是 为处理巨大数据量的最大性能设计 。
+<ul>
+<li>在以前的版本中，字典数据以元数据文件、非事务表等来存储。现在这些元数据文件被删除 了。比如： .frm ， .par ， .trn ， .isl ， .db.opt 等都在MySQL8.0中不存在了。</li>
+</ul>
+</li>
+<li>对比MyISAM的存储引擎，InnoDB写的处理效率差一些，并且会占用更多的磁盘空间以保存数据和索引。</li>
+<li>MyISAM只缓存索引，不缓存真实数据；InnoDB不仅缓存索引还要缓存真实数据，对内存要求较高 ，而且内存大小对性能有决定性的影响。</li>
+</ul>
+<h3 id="42-myisam-引擎主要的非事务处理存储引擎">4.2 MyISAM 引擎：主要的非事务处理存储引擎</h3>
+<ul>
+<li>MyISAM提供了大量的特性，包括全文索引、压缩、空间函数(GIS)等，但MyISAM不支持事务、行级 锁、外键 ，有一个毫无疑问的缺陷就是崩溃后无法安全恢复 。</li>
+<li>5.5之前默认的存储引擎</li>
+<li>优势是访问的速度快 ，对事务完整性没有要求或者以SELECT、INSERT为主的应用</li>
+<li>针对数据统计有额外的常数存储。故而 count(*) 的查询效率很高 数据文件结构：（在《第02章_MySQL数据目录》章节已讲）
+<ul>
+<li>表名.frm 存储表结构</li>
+<li>表名.MYD 存储数据 (MYData)</li>
+<li>表名.MYI 存储索引 (MYIndex)</li>
+</ul>
+</li>
+<li>应用场景：只读应用或者以读为主的业务</li>
+</ul>
+<h3 id="43-archive-引擎用于数据存档">4.3 Archive 引擎：用于数据存档</h3>
+<ul>
+<li>下表展示了ARCHIVE 存储引擎功能</li>
+</ul>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051444123.png" alt="image-20220616124743732" style="float:left;" />
+<h3 id="44-blackhole-引擎丢弃写操作读操作会返回空内容">4.4 Blackhole 引擎：丢弃写操作，读操作会返回空内容</h3>
+<ul>
+<li>没有实现任何存储机制，会<strong>丢弃所有插入的数据</strong>，不做任何保存</li>
+<li>但服务器会记录该引擎对应表的日志，所以可以用于赋值数据到备库，或者简单地记录到日志，但这种应用方式会碰到很多问题，因此不推荐</li>
+</ul>
+<h3 id="45-csv-引擎存储数据时以逗号分隔各个数据项">4.5 CSV 引擎：存储数据时，以逗号分隔各个数据项</h3>
+<p>使用案例如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="nf">test</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="kt">INT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="no">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="kt">CHAR</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="no">NULL</span><span class="p">)</span><span class="w"> </span><span class="kp">ENGINE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CSV</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Query</span><span class="w"> </span><span class="n">OK</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="nf">affected</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">06</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="k">VALUES</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;record one&#39;</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="s1">&#39;record two&#39;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Query</span><span class="w"> </span><span class="n">OK</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="nf">affected</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">05</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">Records</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">Duplicates</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">Warnings</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">mysql</span><span class="o">&gt;</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">test</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+---+------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">|</span><span class="w">      </span><span class="n">c</span><span class="w">     </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+---+------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">record</span><span class="w"> </span><span class="n">one</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">|</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">record</span><span class="w"> </span><span class="n">two</span><span class="w"> </span><span class="o">|</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">+---+------------+</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="mi">2</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="kt">set</span><span class="w"> </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="w"> </span><span class="n">sec</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>创建CSV表还会创建相应的元文件 ，用于 存储表的状态 和 表中存在的行数 。此文件的名称与表的名称相同，后缀为 CSM 。如图所示</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051454252.png" alt="image-20220616125342599"></p>
+<p>如果检查 test.CSV 通过执行上述语句创建的数据库目录中的文件，其内容使用Notepad++打开如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-mysql" data-lang="mysql"><span class="line"><span class="cl"><span class="s2">&#34;1&#34;</span><span class="p">,</span><span class="s2">&#34;record one&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="s2">&#34;2&#34;</span><span class="p">,</span><span class="s2">&#34;record two&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这种格式可以被 Microsoft Excel 等电子表格应用程序读取，甚至写入。使用Microsoft Excel打开如图所示</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051454858.png" alt="image-20220616125448555"></p>
+<h3 id="46-memory-引擎置于内存的表">4.6 Memory 引擎：置于内存的表</h3>
+<p><strong>概述：</strong></p>
+<p>Memory采用的逻辑介质是内存，响应速度很快 ，但是当mysqld守护进程崩溃的时候数据会丢失 。另外，要求存储的数据是数据长度不变的格式，比如，Blob和Text类型的数据不可用(长度不固定的)。</p>
+<p><strong>主要特征：</strong></p>
+<ul>
+<li>Memory同时 支持哈希（HASH）索引 和 B+树索引 。</li>
+<li>Memory表至少比MyISAM表要快一个数量级 。</li>
+<li>MEMORY 表的大小是受到限制 的。表的大小主要取决于两个参数，分别是 max_rows 和 max_heap_table_size 。其中，max_rows可以在创建表时指定；max_heap_table_size的大小默 认为16MB，可以按需要进行扩大。</li>
+<li>数据文件与索引文件分开存储。</li>
+<li>缺点：其数据易丢失，生命周期短。基于这个缺陷，选择MEMORY存储引擎时需要特别小心。</li>
+</ul>
+<p><strong>使用Memory存储引擎的场景：</strong></p>
+<ol>
+<li>目标数据比较小 ，而且非常频繁的进行访问 ，在内存中存放数据，如果太大的数据会造成内存溢出 。可以通过参数 max_heap_table_size 控制Memory表的大小，限制Memory表的最大的大小。</li>
+<li>如果数据是临时的 ，而且必须立即可用得到，那么就可以放在内存中。</li>
+<li>存储在Memory表中的数据如果突然间丢失的话也没有太大的关系。</li>
+</ol>
+<h3 id="47-federated-引擎访问远程表">4.7 Federated 引擎：访问远程表</h3>
+<p><strong>Federated引擎是访问其他MySQL服务器的一个 代理 ，尽管该引擎看起来提供了一种很好的 跨服务 器的灵活性 ，但也经常带来问题，因此 默认是禁用的 。</strong></p>
+<h3 id="48-merge引擎管理多个myisam表构成的表集合">4.8 Merge引擎：管理多个MyISAM表构成的表集合</h3>
+<h3 id="49-ndb引擎mysql集群专用存储引擎">4.9 NDB引擎：MySQL集群专用存储引擎</h3>
+<p>也叫做 NDB Cluster 存储引擎，主要用于 MySQL Cluster 分布式集群 环境，类似于 Oracle 的 RAC 集 群。</p>
+<h3 id="410-引擎对比">4.10 引擎对比</h3>
+<p>MySQL中同一个数据库，不同的表可以选择不同的存储引擎。如下表对常用存储引擎做出了对比。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051505696.png" alt="image-20220616125928861"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/202209051511902.png" alt="image-20220616125945304"></p>
+<p>其实这些东西大家没必要立即就给记住，列出来的目的就是想让大家明白不同的存储引擎支持不同的功能。</p>
+<p>其实我们最常用的就是 InnoDB 和 MyISAM ，有时会提一下 Memory 。其中 InnoDB 是 MySQL 默认的存储引擎。</p>
+<h2 id="5-myisam和innodb">5. MyISAM和InnoDB</h2>
+<p>很多人对 InnoDB 和 MyISAM 的取舍存在疑问，到底选择哪个比较好呢？</p>
+<p>MySQL5.5之前的默认存储引擎是MyISAM，5.5之后改为了InnoDB。</p>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2022-09-05
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">mysql存储引擎</a>
+          <a href="/tags/innodb%E5%BC%95%E6%93%8E/">innodb引擎</a>
+          <a href="/tags/sql%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B/">sql执行过程</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/mysql%E7%B4%A2%E5%BC%95%E5%8F%8A%E8%B0%83%E4%BC%98%E7%AF%87/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">MySQL索引及调优篇</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/go%E8%AF%AD%E8%A8%80reflect%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/">
+            <span class="next-text nav-default">Go语言reflect包的使用</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2022-09-05 15:10:32 \u002b0800 CST',
+        title: 'MySQL架构篇',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

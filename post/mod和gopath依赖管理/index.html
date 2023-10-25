@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Mod和gopath依赖管理 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="彻底搞懂GOROOT、GOPATH、PATH、mod管理和gopath管理项目的区别 1、GOPATH 和 GOROOT 不同于其他语言，go中没有项目的说法" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/mod%E5%92%8Cgopath%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="Mod和gopath依赖管理" />
+<meta property="og:description" content="彻底搞懂GOROOT、GOPATH、PATH、mod管理和gopath管理项目的区别 1、GOPATH 和 GOROOT 不同于其他语言，go中没有项目的说法" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/mod%E5%92%8Cgopath%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-01-09T10:33:48+08:00" />
+<meta property="article:modified_time" content="2023-01-09T10:33:48+08:00" />
+<meta itemprop="name" content="Mod和gopath依赖管理">
+<meta itemprop="description" content="彻底搞懂GOROOT、GOPATH、PATH、mod管理和gopath管理项目的区别 1、GOPATH 和 GOROOT 不同于其他语言，go中没有项目的说法"><meta itemprop="datePublished" content="2023-01-09T10:33:48+08:00" />
+<meta itemprop="dateModified" content="2023-01-09T10:33:48+08:00" />
+<meta itemprop="wordCount" content="2592">
+<meta itemprop="keywords" content="go依赖管理," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Mod和gopath依赖管理"/>
+<meta name="twitter:description" content="彻底搞懂GOROOT、GOPATH、PATH、mod管理和gopath管理项目的区别 1、GOPATH 和 GOROOT 不同于其他语言，go中没有项目的说法"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Mod和gopath依赖管理</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-01-09 </span>
+        <div class="post-category">
+            <a href="/categories/golang/"> golang </a>
+            </div>
+          <span class="more-meta"> 约 2592 字 </span>
+          <span class="more-meta"> 预计阅读 6 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#彻底搞懂gorootgopathpathmod管理和gopath管理项目的区别">彻底搞懂GOROOT、GOPATH、PATH、mod管理和gopath管理项目的区别</a>
+      <ul>
+        <li><a href="#1gopath-和-goroot">1、GOPATH 和 GOROOT</a></li>
+        <li><a href="#2修改-gopath-和-goroot">2、修改 GOPATH 和 GOROOT</a></li>
+        <li><a href="#3hellowordgopath版">3、HelloWord——GOPATH版</a>
+          <ul>
+            <li><a href="#1设置并查看gopath和goroot环境变量">（1）设置并查看GOPATH和GOROOT环境变量</a></li>
+            <li><a href="#2goland环境配置">（2）GOLand环境配置</a></li>
+            <li><a href="#3测试">（3）测试</a></li>
+          </ul>
+        </li>
+        <li><a href="#4一些踩坑经验">4、一些踩坑经验</a>
+          <ul>
+            <li><a href="#1使用了了相对路径import-models">（1）使用了了相对路径：import &ldquo;./models&rdquo;</a></li>
+            <li><a href="#2使用结合了gopath的形式import-go-playersrcademomodels">（2）使用结合了GOPATH的形式：<code>import &quot;Go-Player/src/ademo/models&quot;</code></a></li>
+            <li><a href="#3彻底解决方法用go-env--u-恢复初始设置">（3）彻底解决方法：用go env -u 恢复初始设置</a></li>
+          </ul>
+        </li>
+        <li><a href="#4最佳实践">4、最佳实践</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h1 id="彻底搞懂gorootgopathpathmod管理和gopath管理项目的区别">彻底搞懂GOROOT、GOPATH、PATH、mod管理和gopath管理项目的区别</h1>
+<h2 id="1gopath-和-goroot">1、GOPATH 和 GOROOT</h2>
+<p>不同于其他语言，go中没有项目的说法，只有包, 其中有两个重要的路径，GOROOT 和 GOPATH</p>
+<p>Go开发相关的环境变量如下：</p>
+<p>GOROOT：GOROOT就是Go的安装目录，（类似于java的JDK）
+GOPATH：GOPATH是我们的工作空间,保存go项目代码和第三方依赖包
+GOPATH可以设置多个，其中，第一个将会是默认的包目录，使用 go get 下载的包都会在第一个path中的src目录下，使用 go install时，在哪个GOPATH中找到了这个包，就会在哪个GOPATH下的bin目录生成可执行文件</p>
+<h2 id="2修改-gopath-和-goroot">2、修改 GOPATH 和 GOROOT</h2>
+<p>GOROOT
+GOROOT是Go的安装路径。GOROOT在绝大多数情况下都不需要修改</p>
+<p>Mac中安装Go会自动配置好GOROOT，路径为<code>/usr/local/go</code>。Win中默认的GOROOT是在 <code>C:\Go</code>中，也可自己指定</p>
+<p>【如下图所示则我的GORROT为：<code>D:\development\go</code>】，以下是GOROOT目录的内容：</p>
+<p>可以看到GOROOT下有bin，doc和src目录。bin目录下有我们熟悉的go和gofmt工具。可以认为GOOROOT和Java里的JDK目录类似。</p>
+<p>GOPATH
+GOPATH是开发时的工作目录。用于：</p>
+<p>保存编译后的二进制文件。
+go get和go install命令会下载go代码到GOPATH。
+import包时的搜索路径
+使用GOPATH时，GO会在以下目录中搜索包：</p>
+<p>GOROOT/src：该目录保存了Go标准库代码。
+GOPATH/src：该目录保存了应用自身的代码和第三方依赖的代码。
+假设程序中引入了如下的包：</p>
+<p><code>import &quot;Go-Player/src/chapter17/models&quot;</code>
+第一步：Go会先去GOROOT的scr目录中查找，很显然它不是标准库的包，没找到。
+第二步：继续在GOPATH的src目录去找，准确说是GOPATH/src/Go-Player/src/chapter17/models这个目录。如果该目录不存在，会报错找不到package。在使用GOPATH管理项目时，需要按照GO寻找package的规范来合理地保存和组织Go代码。</p>
+<h2 id="3hellowordgopath版">3、HelloWord——GOPATH版</h2>
+<h3 id="1设置并查看gopath和goroot环境变量">（1）设置并查看GOPATH和GOROOT环境变量</h3>
+<p>安装go SKD目录：<code>D:\development\go</code>
+go项目存放目录：<code>D:\development\jetbrains\goland\workspace</code>，并且此目录下含有bin、src、pkg三个文件夹，src文件夹用来存放项目代码
+当引入module时，首先在GOROOT的src目录下查找，然后再GPOPATH的src目录下查找</p>
+<h3 id="2goland环境配置">（2）GOLand环境配置</h3>
+<p>在<code>D:\development\jetbrains\goland\workspace\src</code>目录下新建项目GO-Player
+bin：存放编译后的exe文件</p>
+<p>pkg：存放自定义包的目录</p>
+<p>src：存放项目源文件的目录</p>
+<p>按如下指令进行配置</p>
+<p>可在Settings中选择SDK和添加GOPATH</p>
+<h3 id="3测试">（3）测试</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="nx">models</span><span class="err">：</span><span class="nx">Student</span><span class="p">.</span><span class="k">go</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">main</span><span class="err">：</span><span class="nx">hello</span><span class="p">.</span><span class="k">go</span>
+</span></span><span class="line"><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">//&#34;./models&#34;  //相对路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="s">&#34;Go-Player/src/ademo/models&#34;</span>  <span class="c1">//根据GOPATH找
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">//根据GOPATH：D:\development\jetbrains\goland\workspace，在其src目录下查找
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">//即GOPATH/src/Go-Player/src/ademo/models
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">stu</span> <span class="o">:=</span> <span class="nx">models</span><span class="p">.</span><span class="nx">Student</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">Name</span><span class="p">:</span> <span class="s">&#34;张三&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">stu</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此篇文章仅介绍网上大部分GOPATH版本。Go语言Hello World都只简单地介绍了GOPATH版本。但是从Go的1.11版本之后，已不再推荐使用GOPATH来构建应用了。也就是说GOPATH被认为是废弃的，错误的做法。</p>
+<h2 id="4一些踩坑经验">4、一些踩坑经验</h2>
+<p>当你开启了GO111MODULE，仍然使用GOPATH模式的方法，在引入自定义模块时会报错。go mod具体使用将在下一篇介绍</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">GO111MODULE 有三个值：off, on和auto（默认值）。
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">GO111MODULE=off，go命令行将不会支持module功能，寻找依赖包的方式将会沿用旧版本那种通过vendor目录或者GOPATH模式来查找。
+</span></span><span class="line"><span class="cl">GO111MODULE=on，go命令行会使用modules，而一点也不会去GOPATH目录下查找。
+</span></span><span class="line"><span class="cl">GO111MODULE=auto，默认值，go命令行将会根据当前目录来决定是否启用module功能。这种情况下可以分为两种情形：
+</span></span><span class="line"><span class="cl">当前目录在GOPATH/src之外且该目录包含go.mod文件，即使用go mod对项目的第三方依赖进行管理，不再使用gopath的方式
+</span></span><span class="line"><span class="cl">当前文件在包含go.mod文件的目录下面。
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当modules 功能启用时，依赖包的存放位置变更为$GOPATH/pkg，允许同一个package多个版本并存，且多个项目可以共享缓存的 module。</p>
+<h3 id="1使用了了相对路径import-models">（1）使用了了相对路径：import &ldquo;./models&rdquo;</h3>
+<p>报错：<code>build command-line-arguments: cannot find module for path _/D_/dev</code>这里后面一堆本地路径
+这是因为在go module下 你源码中 <code>impot …/ </code>这样的引入形式不支持了， 应该改成 impot 模块名/ 。 这样就ok了</p>
+<h3 id="2使用结合了gopath的形式import-go-playersrcademomodels">（2）使用结合了GOPATH的形式：<code>import &quot;Go-Player/src/ademo/models&quot;</code></h3>
+<p>于是我们把上面的import改成了结合GOPATH的如上形式</p>
+<p>报错：<code>package Go-Player/src/ademo/models is not in GOROOT D:/development/go/src/GPlayer/src/ademo/models</code></p>
+<h3 id="3彻底解决方法用go-env--u-恢复初始设置">（3）彻底解决方法：用go env -u 恢复初始设置</h3>
+<p>不再使用go mod：</p>
+<p><code>go env -w GO111MODULE=off</code>  或者  <code>go env -w GO111MODULE=auto</code>
+<code>go env -u GO111MODULE</code>
+区别在于，如果GO111MODULE=on或者auto，在go get下载包时候，会下载到GOPATH/pkg/mod，引入时也是同样的从这个目录开始。如果这行了上述命令，那么在go get下载包时候，会下载到GOPATH/src 目录下</p>
+<h2 id="4最佳实践">4、最佳实践</h2>
+<ul>
+<li>
+<p>如果在GOPATH目录下的src文件下编写项目代码，可以不使用mod管理方式，直接沿用旧版本的GOPATH管理；</p>
+</li>
+<li>
+<p>如果在GOPATH以外的任意目录下要编译并运行项目代码，为了方便管理第三方依赖，使用go mod进行管理。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt"><span class="line"><span class="cl">#初始化并创建以“当前项目根目录”为moudles名称的go.mod文件
+</span></span><span class="line"><span class="cl">go mod init 当前项目根目录
+</span></span><span class="line"><span class="cl">#剔除无用包，拿取有用包，准备代码所需环境（第三方依赖）
+</span></span><span class="line"><span class="cl">go mod tidy
+</span></span><span class="line"><span class="cl">#编译运行即可
+</span></span><span class="line"><span class="cl">#注意：当前mod文件里的moudles名称必须与当前项目目录名保持一致，否则会报错！
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+</ul>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-01-09
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/go%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/">go依赖管理</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/redis%E5%BA%94%E7%94%A8/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Redis应用</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAgo%E5%BA%94%E7%94%A8%E7%9A%84docker%E9%95%9C%E5%83%8F/">
+            <span class="next-text nav-default">如何构建Go应用的Docker镜像</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-01-09 10:33:48 \u002b0800 CST',
+        title: 'Mod和gopath依赖管理',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

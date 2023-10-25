@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>八股系列|操作系统|调度算法 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="调度算法 进程调度 FIFO 先来先服务。每次从就绪队列里调度最先进入就绪队列的进程执行，执行完毕再调度下一个次先进入就绪队列的进程执行。 **缺点：**" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="八股系列|操作系统|调度算法" />
+<meta property="og:description" content="调度算法 进程调度 FIFO 先来先服务。每次从就绪队列里调度最先进入就绪队列的进程执行，执行完毕再调度下一个次先进入就绪队列的进程执行。 **缺点：**" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-08-23T21:35:02+08:00" />
+<meta property="article:modified_time" content="2023-08-23T21:35:02+08:00" />
+<meta itemprop="name" content="八股系列|操作系统|调度算法">
+<meta itemprop="description" content="调度算法 进程调度 FIFO 先来先服务。每次从就绪队列里调度最先进入就绪队列的进程执行，执行完毕再调度下一个次先进入就绪队列的进程执行。 **缺点：**"><meta itemprop="datePublished" content="2023-08-23T21:35:02+08:00" />
+<meta itemprop="dateModified" content="2023-08-23T21:35:02+08:00" />
+<meta itemprop="wordCount" content="2795">
+<meta itemprop="keywords" content="操作系统调度算法," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="八股系列|操作系统|调度算法"/>
+<meta name="twitter:description" content="调度算法 进程调度 FIFO 先来先服务。每次从就绪队列里调度最先进入就绪队列的进程执行，执行完毕再调度下一个次先进入就绪队列的进程执行。 **缺点：**"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">八股系列|操作系统|调度算法</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-08-23 </span>
+        <div class="post-category">
+            <a href="/categories/%E5%85%AB%E8%82%A1%E6%96%87/"> 八股文 </a>
+            <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"> 操作系统 </a>
+            </div>
+          <span class="more-meta"> 约 2795 字 </span>
+          <span class="more-meta"> 预计阅读 6 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#调度算法">调度算法</a>
+      <ul>
+        <li><a href="#进程调度">进程调度</a></li>
+        <li><a href="#页面置换">页面置换</a></li>
+        <li><a href="#磁盘调度">磁盘调度</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h1 id="调度算法">调度算法</h1>
+<h2 id="进程调度">进程调度</h2>
+<ul>
+<li>
+<p>FIFO</p>
+<p>先来先服务。每次从就绪队列里调度最先进入就绪队列的进程执行，执行完毕再调度下一个次先进入就绪队列的进程执行。</p>
+<p>**缺点：**如果长进程先进入就绪队列，会造成短进程周转时间变长，引发饥饿。</p>
+<p>**优点：**对长进程有利，适合于CPU繁忙型的系统</p>
+</li>
+<li>
+<p>SJF</p>
+<p>最短作业优先调度算法。每次从就绪队列调度执行时间最短的进程执行，执行完毕再调度下一个次短的进程执行</p>
+<p>**缺点：**会对长进程造成饥饿问题</p>
+<p>**优点：**利于短进程，提高系统吞吐量（单位时间完成的进程数）</p>
+</li>
+<li>
+<p>HRRN</p>
+<p>高响应比优先调度算法。综合前两种算法优劣，<strong>每次进行进程调度时，先计算「响应比优先级」，然后把「响应比优先级」最高的进程投入运行</strong>，「响应比优先级」的计算公式：<code>优先权=（等待时间+要求服务时间）/要求服务时间</code></p>
+<p>**优点：**等待时间越长，优先级越高（利于长进程）；要求服务时间越短，优先级越高（利于短进程）</p>
+<p>**缺点：**很难估计等待时间，算法实现难度大，几乎没有现成的实现</p>
+</li>
+<li>
+<p>RR</p>
+<p>时间片轮转调度算法。最公平的调度算法，就绪队列里的每个进程没有优先级，依次获得相同CPU时间片使用权，时间片用完后或提前结束运行，就会调度下一个线程执行。</p>
+<p>**优点：**不会出现进程的饥饿问题</p>
+<p>**缺点：**没有优先级，无法即时响应紧急任务</p>
+</li>
+<li>
+<p>HPF</p>
+<p>最高优先级调度算法。从就绪队列中选择最高优先级的进程调度并执行。</p>
+<p>进程的优先级可以分为，静态优先级和动态优先级：</p>
+<ul>
+<li>静态优先级：创建进程时候，就已经确定了优先级了，然后整个运行时间优先级都不会变化；</li>
+<li>动态优先级：根据进程的动态变化调整优先级，比如如果进程运行时间增加，则降低其优先级，如果进程等待时间（就绪队列的等待时间）增加，则升高其优先级，也就是<strong>随着时间的推移增加等待进程的优先级</strong>。</li>
+</ul>
+<p>该算法也有两种处理优先级高的方法，非抢占式和抢占式：</p>
+<ul>
+<li>非抢占式：当就绪队列中出现优先级高的进程，运行完当前进程，再选择优先级高的进程。</li>
+<li>抢占式：当就绪队列中出现优先级高的进程，当前进程挂起，调度优先级高的进程运行。</li>
+</ul>
+<p>**缺点：**可能会导致低优先级的进程饥饿，甚至无法被调度执行</p>
+<p>**优点：**能及时响应紧急任务</p>
+</li>
+<li>
+<p>MFQ</p>
+<p>多级反馈队列调度算法。该调度算法是综合最高优先级和时间片轮转调度算法的优劣。</p>
+<p>**多级：**多个就绪队列，每个队列优先级从高到低，同时优先级越高时间片越短</p>
+<p>**反馈：**新的高优先级进入就绪队列，CPU停止执行当前进程，并将其移到当前就绪队列尾部，并调度新进程执行。</p>
+<p><strong>过程：</strong></p>
+<ol>
+<li>多个就绪队列，从高到低优先级降低，并且优先级越高，时间片越短</li>
+<li>新的进程会被放到第一级队列末尾，按照先来先服务原则执行，时间片用完后还没执行完毕就将其放到下一级就绪队列</li>
+<li>当较高优先级就绪队列执行完毕，则下一级就绪队列开始执行。如果进程运行时，有新进程进入较高优先级的队列，则停止当前运行的进程并将其移入到原队列末尾，接着让较高优先级的进程运行</li>
+</ol>
+</li>
+</ul>
+<h2 id="页面置换">页面置换</h2>
+<ul>
+<li>
+<p>最佳页面置换</p>
+<p>置换在未来最长时间不访问的页面</p>
+<p>**缺点：**无法实现预测未来，仅仅只能作为最优参考</p>
+</li>
+<li>
+<p>先进先出置换</p>
+<p>选择在内存驻留时间最长的页面置换。</p>
+<p>**缺点：**可能会将频繁访问的内存驻留时间最长的页面置换出去，反而会增加后续页面置换的概率</p>
+</li>
+<li>
+<p>最近最久未使用置换（LRU）</p>
+<p>选择最长时间没有被访问的页面进行置换。需要为所有页面保存一个访问链表，只要访问了某页面，就将页面放到链表尾部，需要置换的时候，就置换链表首部页面，即淘汰最近最久未使用页面。</p>
+<p>**缺点：**开销较高</p>
+<p>**优点：**实现效果接近最佳页面置换</p>
+</li>
+<li>
+<p>最不常用（LFU）</p>
+<p>选择访问频率最低的页面置换。</p>
+<p>**缺点：**没有考虑到时间维度，可能会把以前访问频率高但是近期或以后不会被访问的页面驻留在内存里；而且硬件需要为每个页面都保留一个计数器，成本太高。</p>
+</li>
+<li>
+<p><a href="https://xiaolincoding.com/os/5_schedule/schedule.html#%E6%97%B6%E9%92%9F%E9%A1%B5%E9%9D%A2%E7%BD%AE%E6%8D%A2%E7%AE%97%E6%B3%95">时钟页面置换</a></p>
+</li>
+</ul>
+<h2 id="磁盘调度">磁盘调度</h2>
+<blockquote>
+<p>假设有下面一个请求序列，每个数字代表磁道的位置：</p>
+<p>98，183，37，122，14，124，65，67</p>
+<p>初始磁头当前的位置是在第 <code>53</code> 磁道。</p>
+</blockquote>
+<ul>
+<li>
+<p>先来先服务</p>
+<p>按照请求序列的顺序，移动磁头到指定磁道上。可以看出总共移动了<code>(98-53)+(183-98)+(183-37)+(122-37)+(122-14)+(124-14)+(124-65)+(67-65) = 640</code>。</p>
+<p>简单粗暴，如果大量进程的请求序列分散，会导致磁头移动很距离，导致寻道时间过长，拖垮磁盘IO性能</p>
+</li>
+<li>
+<p>最短寻道时间优先</p>
+<p>优先选择从当前磁头位置所需寻道时间最短的请求。</p>
+<p>所以，针对请求序列排序：65，67，37，14，98，122，124，183。磁头移动的总距离是 <code>236</code> 磁道，相比先来先服务性能提高了不少。</p>
+<p>**缺点：**磁头有可能在一小块区域来回移动，会让某些请求饥饿。</p>
+<p>**优点：**解决了先来先服务性能问题</p>
+</li>
+<li>
+<p>扫描算法</p>
+<p>最短寻道时间优先算法会产生饥饿的原因在于：磁头有可能再一个小区域内来回得移动。</p>
+<p>为了防止这个问题，可以规定：磁头在一个方向上移动，访问所有未完成的请求，直到磁头到达该方向上的最后的磁道，才调换方向，这就是扫描（*Scan*）算法。</p>
+<p>还是以这个序列为例子，磁头的初始位置是 53：</p>
+<p>98，183，37，122，14，124，65，67</p>
+<p>那么，假设扫描调度算先朝磁道号减少的方向移动，具体请求则会是下列从左到右的顺序：</p>
+<p>37，14，<code>0</code>，65，67，98，122，124，183</p>
+<p>磁头先响应左边的请求，直到到达最左端（ 0 磁道）后，才开始反向移动，响应右边的请求（同理到最右端）。</p>
+<p><strong>缺点：<strong>由于扫描算法如果没有完成所有请求就会扫描至端点处，所以会出现中间部分被来回扫描的情况，也就是</strong>多扫了一遍</strong></p>
+</li>
+<li>
+<p>循环扫描法</p>
+<p>为了解决扫描算法的缺点，循环扫描（<em>Circular Scan, CSCAN</em> ）规定：只有磁头朝某个特定方向移动时，才处理磁道访问请求，而返回时直接快速移动至最靠边缘的磁道，也就是复位磁头，这个过程是很快的，并且<strong>返回中途不处理任何请求</strong>，该算法的特点，就是<strong>磁道只响应一个方向上的请求</strong>。</p>
+<p>还是以这个序列为例子，磁头的初始位置是 53：</p>
+<p>98，183，37，122，14，124，65，67</p>
+<p>那么，假设循环扫描调度算先朝磁道增加的方向移动，具体请求会是下列从左到右的顺序：</p>
+<p>65，67，98，122，124，183，<code>199</code>，<code>0</code>，14，37</p>
+<img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost2/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/%E7%A3%81%E7%9B%98%E8%B0%83%E5%BA%A6-C-SCAN%E7%AE%97%E6%B3%95.png" alt="循环扫描算法" style="zoom:33%;" />
+<p>循环扫描算法相比于扫描算法，对于各个位置磁道响应频率相对比较平均。</p>
+</li>
+<li>
+<p>LOOK 与 C-LOOK算法</p>
+<p>我们前面说到的扫描算法和循环扫描算法，都是磁头移动到磁盘「最始端或最末端」才开始调换方向。</p>
+<p>那这其实是可以优化的，优化的思路就是<strong>磁头在移动到「最远的请求」位置，然后立即反向移动。</strong></p>
+<p>那针对 SCAN 算法的优化则叫 LOOK 算法，它的工作方式，磁头在每个方向上仅仅移动到最远的请求位置，然后立即反向移动，而不需要移动到磁盘的最始端或最末端，<strong>反向移动的途中会响应请求</strong>。</p>
+<p>而针 C-SCAN 算法的优化则叫 C-LOOK，它的工作方式，磁头在每个方向上仅仅移动到最远的请求位置，然后立即反向移动，而不需要移动到磁盘的最始端或最末端，<strong>反向移动的途中不会响应请求</strong>。</p>
+</li>
+</ul>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-08-23
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/">操作系统调度算法</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">八股系列|操作系统|文件系统</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/">
+            <span class="next-text nav-default">八股系列|操作系统|进程管理其一</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-08-23 21:35:02 \u002b0800 CST',
+        title: '八股系列|操作系统|调度算法',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

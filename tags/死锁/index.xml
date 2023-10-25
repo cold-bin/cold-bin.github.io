@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>死锁 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/%E6%AD%BB%E9%94%81/</link>
+    <description>Recent content in 死锁 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Fri, 17 Mar 2023 14:55:42 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/%E6%AD%BB%E9%94%81/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>操作系统之进程管理</title>
+      <link>https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Fri, 17 Mar 2023 14:55:42 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/</guid>
+      <description>[TOC] 什么是进程？ 概念 进程（process）：是一个具有一定独立功能的程序，关于某个数据集合的一次运行活动，是操作系统资源分配的基本单位 要点 进程</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>操作系统之内存管理 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="[toc] 内存管理概念 内存管理的基本原理和要求 存储器结构 上图展示了一个典型的存储器层次结构。一般而言，从高层往底层走，存储设备变得更慢、更便宜和更大" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="操作系统之内存管理" />
+<meta property="og:description" content="[toc] 内存管理概念 内存管理的基本原理和要求 存储器结构 上图展示了一个典型的存储器层次结构。一般而言，从高层往底层走，存储设备变得更慢、更便宜和更大" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-05-11T19:53:00+08:00" />
+<meta property="article:modified_time" content="2023-05-11T19:53:00+08:00" />
+<meta itemprop="name" content="操作系统之内存管理">
+<meta itemprop="description" content="[toc] 内存管理概念 内存管理的基本原理和要求 存储器结构 上图展示了一个典型的存储器层次结构。一般而言，从高层往底层走，存储设备变得更慢、更便宜和更大"><meta itemprop="datePublished" content="2023-05-11T19:53:00+08:00" />
+<meta itemprop="dateModified" content="2023-05-11T19:53:00+08:00" />
+<meta itemprop="wordCount" content="15109">
+<meta itemprop="keywords" content="虚拟内存,内存分配与回收," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="操作系统之内存管理"/>
+<meta name="twitter:description" content="[toc] 内存管理概念 内存管理的基本原理和要求 存储器结构 上图展示了一个典型的存储器层次结构。一般而言，从高层往底层走，存储设备变得更慢、更便宜和更大"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">操作系统之内存管理</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-05-11 </span>
+        <div class="post-category">
+            <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"> 操作系统 </a>
+            </div>
+          <span class="more-meta"> 约 15109 字 </span>
+          <span class="more-meta"> 预计阅读 31 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#内存管理概念">内存管理概念</a>
+          <ul>
+            <li><a href="#内存管理的基本原理和要求">内存管理的基本原理和要求</a></li>
+            <li><a href="#内存扩充">内存扩充</a></li>
+            <li><a href="#连续分配管理方式">连续分配管理方式</a></li>
+            <li><a href="#非连续分配与管理方式">非连续分配与管理方式</a></li>
+            <li><a href="#内存回收">内存回收*</a></li>
+          </ul>
+        </li>
+        <li><a href="#虚拟内存管理">虚拟内存管理</a>
+          <ul>
+            <li><a href="#虚拟内存基本概念">虚拟内存基本概念</a></li>
+            <li><a href="#虚拟内存实现">虚拟内存实现</a></li>
+            <li><a href="#页面置换算法">页面置换算法</a></li>
+            <li><a href="#页面分配策略">页面分配策略</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <p>[toc]</p>
+<h2 id="内存管理概念">内存管理概念</h2>
+<h3 id="内存管理的基本原理和要求">内存管理的基本原理和要求</h3>
+<h4 id="存储器结构">存储器结构</h4>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/656644-4926af6833b07e99.png" alt="img" style="zoom:50%;" />
+<p>上图展示了一个典型的存储器层次结构。一般而言，从高层往底层走，存储设备变得更慢、更便宜和更大。在最高层是少量快速的CPU 寄存器，CPU 可以再一个时钟周期内访问它们。接下来是一个或者多个小型到中型的基于 SRAM 的高速缓存存储器，可以再几个 CPU 时钟周期内访问它们。然后是一个大的基于 DRAM 的主存，可以在几十或者几百个时钟周期内访问它们。接下来是慢速但是容量很大的本地磁盘。最后有些系统甚至包括了一层附加的远程服务器上的磁盘，要通过网络来访问它们，例如网络文件系统（Network File System,NFS）这样的分布式文件系统，允许程序访问存储在远程的网络服务器上的文件。</p>
+<p>存储器层次结构的核心是，对于每个 k , 位于 k 层的更快更小的存储设备作为位于 k+1 层的更大更慢的存储设备的缓存。也就是说，层次结构中的每一层都缓存来自较低一层的数据对象。例如，本地磁盘作为通过网络从远程磁盘取出文件的缓存，以此类推知道 CPU 寄存器作为L1的缓存。</p>
+<h4 id="进程运行原理">进程运行原理</h4>
+<p><strong>用户程序-&gt;进程的过程</strong></p>
+<p>创建进程首先要将程序和数据装入内存。将用户源程序变为可在内存中执行的程序，通常需要以下几个步骤：</p>
+<ol>
+<li>
+<p>编译：<strong>由编译程序</strong>将用户源代码编译成若干个目标模块（也就是机器码）。</p>
+<blockquote>
+<p>注意！！！</p>
+<p>编译并不能生成可执行的程序，仅仅只是将用户源代码编译成了若干个目标模块（机器码），需要链接后才能拿到可执行文件。</p>
+</blockquote>
+</li>
+<li>
+<p>链接：<strong>由链接程序</strong>将编译后形成的一组目标模块以及所需库函数链接在一起，形成一个完整的装入模块。</p>
+<blockquote>
+<p>生成了可执行文件，也就是装入模块.</p>
+<p>显然实际开发中引入他人编写好的库文件可以省略某些功能的开发环节，提高项目的开发效率。但遗憾的是，“开源”的库文件很难找到，多数程序员并不会直接分享源代码，他们更愿意分享库文件的二进制版本——链接库。</p>
+<p><strong>所谓链接库（库函数文件），其实就是将开源的库文件进行编译、打包操作后得到的二进制文件。</strong></p>
+<blockquote>
+<p>库函数文件通常是库函数文件通常是二进制文件，其文件类型取决于库函数的编译方式和目标平台。在Unix/Linux系统中，常用的库函数文件扩展名为.so（共享对象）或.a（静态库），在Windows系统中则通常是.dll（动态链接库）或.lib（静态库）。这些库文件包含了编译好的函数和代码，可以被程序调用和链接，以实现特定的功能。库函数文件可以由开发者自己编写，也可以使用第三方库，如标准C库或开源库等。</p>
+</blockquote>
+<p>虽然链接库是二进制文件，但无法独立运行，必须等待其它程序调用，才会被载入内存，但是已经编译成机器码了，只需等待调用即可运行了。</p>
+</blockquote>
+</li>
+<li>
+<p>装入：<strong>由装入程序</strong>将装入模块装入内存运行。</p>
+</li>
+</ol>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/img_9d416348e5303043d2eabda18fd4884f.jpeg" alt=""></p>
+<h5 id="编译">编译</h5>
+<p>这部分并不是操作系统的工作，是由编程语言编译器完成。</p>
+<h5 id="链接">链接</h5>
+<p>程序的链接有以下三种方式：</p>
+<ul>
+<li>
+<p>静态链接：在程序运行之前，先将各目标模块及它们所需的库函数链接成一个完整的可执行程序，以后不再拆开。</p>
+<blockquote>
+<p>缺点</p>
+<ul>
+<li>首先，可执行文件内部拷贝了所有目标文件和静态链接库的指令和数据，<strong>文件本身的体积会很大</strong>。</li>
+<li>当系统中存在多个链接同一个静态库的可执行文件时，每个可执行文件中都存有一份静态库的指令和数据，就会造成<strong>内存空间的极大浪费</strong>。</li>
+</ul>
+<p>优点</p>
+<ul>
+<li>动态链接库形成的可执行文件，可以放到其他机子上运行，前提是目标机器上有与该可执行文件所需的动态链接库版本兼容的库文件并且目标操作系统与编译时使用的操作系统兼容。而静态链接库，只有编译时使用的操作系统兼容这一条限制。</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<p>装入时动态链接：将用户源程序编译后所得到的一组目标模块，在装入内存时，釆用边装入边链接的链接方式。</p>
+</li>
+<li>
+<p>运行时动态链接：对某些目标模块的链接，是在程序执行中需要该目标模块时，才对它进行的链接。其优点是便于修改和更新，便于实现对目标模块的共享。</p>
+</li>
+</ul>
+<h5 id="装入">装入</h5>
+<ol>
+<li>
+<p>绝对装入</p>
+<p>在编译时，如果知道程序将驻留在内存的某个位置，编译程序将产生绝对地址的目标代码。绝对装入程序按照装入模块中的地址，将程序和数据装入内存。由于程序中的逻辑地址与实际内存地址完全相同，故不需对程序和数据的地址进行修改。</p>
+<blockquote>
+<p>绝对装入方式只适用于单道程序环境。另外，程序中所使用的绝对地址,可在编译或汇编时给出，也可由程序员直接赋予。而通常情况下在程序中釆用的是符号地址，编译或汇编时再转换为绝对地址。</p>
+</blockquote>
+</li>
+<li>
+<p>可重定位装入</p>
+<p>在多道程序环境下，多个目标模块的起始地址通常都是从0开始，程序中的其他地址都是相对于起始地址的,此时应釆用可重定位装入方式。根据内存的当前情况，将装入模块装入到内存的适当位置。装入时对目标程序中指令和数据的修改过程称为重定位，地址变换通常是在装入时一次完成的，所以又称为静态重定位，如下图（a）所示。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/img_1d31760ddcb2ee4ff0d2a6204ccbd4f4.jpeg" alt=""></p>
+<blockquote>
+<p>静态重定位的特点是在一个作业装入内存时，必须分配其要求的全部内存空间，如果没有足够的内存，就不能装入该作业。此外，作业一旦进入内存后，在整个运行期间不能在内存中移动，也不能再申请内存空间。</p>
+</blockquote>
+</li>
+<li>
+<p>动态运行时装入，也称为动态重定位</p>
+<p>程序在内存中如果发生移动，就需要釆用动态的装入方式。装入程序在把装入模块装入内存后，并不立即把装入模块中的相对地址转换为绝对地址，而是把这种地址转换推迟到程序真正要执行时才进行。因此，装入内存后的所有地址均为相对地址。这种方式需要一个重定位寄存器的支持，如上图（b）所示。</p>
+<blockquote>
+<p>动态重定位的特点是可以将程序分配到不连续的存储区中；在程序运行之前可以只装入它的部分代码即可投入运行，然后在程序运行期间，根据需要动态申请分配内存；便于程序段的共享，可以向用户提供一个比存储空间大得多的地址空间。</p>
+</blockquote>
+</li>
+</ol>
+<h4 id="逻辑地址空间与物理地址空间">逻辑地址空间与物理地址空间</h4>
+<p>编译后，每个目标模块都是从0号单元开始编址，称为该目标模块的相对地址（或逻辑地址)。</p>
+<p>当链接程序将各个模块链接成一个完整的可执行目标程序时，链接程序顺序依次按各个模块的相对地址构成统一的从0号单元开始编址的逻辑地址空间。用户程序和程序员只需知道逻辑地址，而内存管理的具体机制则是完全透明的，它们只有系统编程人员才会涉及。不同进程可以有相同的逻辑地址，因为这些相同的逻辑地址可以映射到主存的不同位置。</p>
+<p>物理地址空间是指内存中物理单元的集合，它是地址转换的最终地址，进程在运行时执行指令和访问数据最后都要通过物理地址从主存中存取。当装入程序将可执行代码装入内存时，必须通过地址转换将逻辑地址转换成物理地址，这个过程称为地址重定位。</p>
+<h4 id="内存保护">内存保护</h4>
+<p>内存分配前，需要保护操作系统不受用户进程的影响，同时保护用户进程不受其他用户进程的影响。通过釆用重定位寄存器和界地址寄存器来实现这种保护。重定位寄存器含最小的物理地址值，界地址寄存器含逻辑地址值。每个逻辑地址值必须小于界地址寄存器；内存管理机构动态地将逻辑地址与界地址寄存器进行比较，如果未发生地址越界，则加上重定位寄存器的值后映射成物理地址，再送交内存单元，如图所示。</p>
+<p>当CPU调度程序选择进程执行时，派遣程序会初始化重定位寄存器和界地址寄存器。每一个逻辑地址都需要与这两个寄存器进行核对，以保证操作系统和其他用户程序及数据不被该进程的运行所影响。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/img_3a533ac66d727e9b16c885841206bf3d.jpeg" alt=""></p>
+<h3 id="内存扩充">内存扩充</h3>
+<p>覆盖与交换技术是在多道程序环境下用来扩充内存的两种方法。</p>
+<h4 id="内存覆盖">内存覆盖</h4>
+<p>早期的计算机系统中，主存容量很小，虽然主存中仅存放一道用户程序，但是存储空间放不下用户进程的现象也经常发生，这一矛盾可以用覆盖技术来解决。</p>
+<p>覆盖的基本思想是：由于程序运行时并非任何时候都要访问程序及数据的各个部分（尤其是大程序），因此可以把用户空间分成一个固定区和若干个覆盖区。将经常活跃的部分放在固定区，其余部分按调用关系分段。首先将那些即将要访问的段放入覆盖区，其他段放在外存中，在需要调用前，系统再将其调入覆盖区，替换覆盖区中原有的段。</p>
+<blockquote>
+<p>外存就是磁盘缓存，进程被suspend之后存储的地方</p>
+</blockquote>
+<p>覆盖技术的特点是打破了必须将一个进程的全部信息装入主存后才能运行的限制，但当同时运行程序的代码量大于主存时仍不能运行。</p>
+<h4 id="内存交换">内存交换</h4>
+<p>交换（对换）的基本思想是：把处于等待状态（或在CPU调度原则下被剥夺运行权利）的程序从内存移到辅（外）存，把内存空间腾出来，这一过程又叫换出；把准备好竞争CPU运行的程序从辅（外）存移到内存，这一过程又称为换入。中级调度就是釆用交换技术。</p>
+<blockquote>
+<p>例如，有一个CPU釆用时间片轮转调度算法的多道程序环境。时间片到，内存管理器将刚刚执行过的进程换出，将另一进程换入到刚刚释放的内存空间中。同时，CPU调度器可以将时间片分配给其他已在内存中的进程。每个进程用完时间片都与另一进程交换。理想情况下，内存管理器的交换过程速度足够快，总有进程在内存中可以执行。</p>
+</blockquote>
+<p>有关交换需要注意以下几个问题：</p>
+<ul>
+<li>交换需要备份存储，通常是快速磁盘。它必须足够大，并且提供对这些内存映像的直接访问。</li>
+<li>为了有效使用CPU，需要每个进程的执行时间比交换时间长，而影响交换时间的主要是转移时间。转移时间与所交换的内存空间成正比。</li>
+<li>如果换出进程，必须确保该进程是完全处于空闲状态。</li>
+<li>交换空间通常作为磁盘的一整块，且独立于文件系统，因此使用就可能很快。(外存，磁盘的缓存)</li>
+<li>交换通常在有许多进程运行且内存空间吃紧时开始启动，而系统负荷降低就暂停。</li>
+<li>普通的交换使用不多，但交换策略的某些变种在许多系统中（如UNIX系统）仍发挥作用。</li>
+</ul>
+<p>交换技术主要是在不同进程（或作业）之间进行，而覆盖则用于同一个程序或进程中。由于覆盖技术要求给出程序段之间的覆盖结构，使得其对用户和程序员不透明，所以对于主存无法存放用户程序的矛盾，<strong>现代操作系统是通过虚拟内存技术来解决的，覆盖技术则已成为历史；而交换技术在现代操作系统中仍具有较强的生命力</strong>。</p>
+<h3 id="连续分配管理方式">连续分配管理方式</h3>
+<p>连续分配方式，是指为一个用户程序分配一个连续的内存空间。它主要包括单一连续分配、固定分区分配和动态分区分配。</p>
+<h4 id="单一连续分配">单一连续分配</h4>
+<p>内存在此方式下分为系统区和用户区，系统区仅提供给操作系统使用，通常在低地址部分；用户区是为用户提供的、除系统区之外的内存空间。这种方式无需进行内存保护。</p>
+<ul>
+<li>
+<p>这种方式的优点是<strong>实现简单</strong>、<strong>无外部碎片</strong>，可以釆用覆盖技术，不需要额外的技术支持</p>
+<blockquote>
+<p>内存被分为系统区和用户区，没有任何外部的内存空间。</p>
+</blockquote>
+</li>
+<li>
+<p>缺点是<strong>只能用于单用户、单任务的操作系统</strong>中，<strong>有内部碎片</strong>，<strong>存储器的利用率极低</strong></p>
+<blockquote>
+<p>用户区只能存放一个用户进程，但是用户区的剩余内存肯定大于等于0，也就是内存碎片</p>
+</blockquote>
+</li>
+</ul>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20230513112318769.png" alt="image-20230513112318769" style="zoom:50%;" />
+<h4 id="固定分区分配">固定分区分配</h4>
+<p>固定分区分配是最简单的一种多道程序存储管理方式，它将用户内存空间划分为若干个固定大小的区域，每个分区只装入一道作业。当有空闲分区时，便可以再从外存的后备作业队列中,选择适当大小的作业装入该分区，如此循环。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/img_99bfc2217522de4a18eb8cf74c5c26f3.png" alt="img_99bfc2217522de4a18eb8cf74c5c26f3.png"></p>
+<p>固定分区分配在划分分区时，有两种不同的方法，如上图所示</p>
+<ul>
+<li>分区大小相等：用于利用一台计算机去控制多个相同对象的场合，缺乏灵活性。</li>
+<li>分区大小不等：划分为含有多个较小的分区、适量的中等分区及少量的大分区。</li>
+</ul>
+<p>为便于内存分配，通常将分区按大小排队，并为之建立一张分区说明表，其中各表项包括每个分区的起始地址、大小及状态（是否已分配），如图(a)所示。当有用户程序要装入时，便检索该表，以找到合适的分区给予分配并将其状态置为”已分配”；未找到合适分区则拒绝为该用户程序分配内存。存储空间的分配情况如图(b)所示。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/img_bd1fbafe059ca869134ae818b9e4f962.png" alt="img_bd1fbafe059ca869134ae818b9e4f962.png"></p>
+<p>这种分区方式存在两个问题：</p>
+<ul>
+<li>一是程序可能太大而放不进任何一个分区中，这时用户不得不使用覆盖技术来使用内存空间；</li>
+<li>二是主存利用率低，当程序小于固定分区大小时，也占用了一个完整的内存分区空间，这样分区内部有空间浪费，这种现象称为内部碎片。</li>
+</ul>
+<p>固定分区是可用于多道程序设计最简单的存储分配，无外部碎片，但不能实现多进程共享一个主存区，所以存储空间利用率低。<strong>固定分区分配很少用于现在通用的操作系统中，但在某些用于控制多个相同对象的控制系统中仍发挥着一定的作用</strong>。</p>
+<h4 id="动态分区分配">动态分区分配</h4>
+<p>动态分区分配又称为可变分区分配，是一种动态划分内存的分区方法。这种分区方法不预先将内存划分，而是在进程装入内存时，根据进程的大小动态地建立分区，并使分区的大小正好适合进程的需要。因此系统中分区的大小和数目是可变的。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/img_63e7910a1d2d271ae1f033d13aa34974.jpeg" alt="img_63e7910a1d2d271ae1f033d13aa34974.jpe"></p>
+<p>如上图所示，系统有64MB内存空间，其中低8MB固定分配给操作系统，其余为用户可用内存。开始时装入前三个进程，在它们分别分配到所需空间后，内存只剩下4MB，进程4无法装入。在某个时刻，内存中没有一个就绪进程，CPU出现空闲，操作系统就换出进程2，换入进程4。由于进程4比进程2小，这样在主存中就产生了一个6MB的内存块。之后CPU又出现空闲，而主存无法容纳进程2,操作系统就换出进程1，换入进程2。</p>
+<p>动态分区在开始分配时是很好的，但是之后会导致内存中出现许多小的内存块。随着时间的推移，内存中会产生越来越多的碎片（图中最后的4MB和中间的6MB，且随着进程的换入/换出，很可能会出现更多更小的内存块)，内存的利用率随之下降。</p>
+<p>这些小的内存块称为外部碎片(指在所有分区外的存储空间会变成越来越多的碎片)，这与固定分区中的内部碎片正好相对。克服外部碎片可以通过紧凑（Compaction)技术来解决，就是操作系统不时地对进程进行移动和整理。但是这需要动态重定位寄存器的支持，且相对费时。紧凑的过程实际上类似于Windows系统中的磁盘整理程序，只不过后者是对外存空间的紧凑。</p>
+<p>在进程装入或换入主存时，如果内存中有多个足够大的空闲块，操作系统必须确定分配哪个内存块给进程使用，这就是动态分区的分配策略，考虑以下几种算法：</p>
+<ul>
+<li>首次适应(First Fit)算法：空闲分区以地址递增的次序链接。分配内存时顺序查找，找到大小能满足要求的第一个空闲分区。</li>
+<li>最佳适应(Best Fit)算法：空闲分区按容量递增形成分区链，找到第一个能满足要求的空闲分区。</li>
+<li>最坏适应(Worst Fit)算法：又称最大适应(Largest Fit)算法，空闲分区以容量递减的次序链接。找到第一个能满足要求的空闲分区，也就是挑选出最大的分区。</li>
+<li>邻近适应(Next Fit)算法：又称循环首次适应算法，由首次适应算法演变而成。不同之处是分配内存时从上次查找结束的位置开始继续查找。</li>
+</ul>
+<p>在这几种方法中，首次适应算法不仅是最简单的，而且通常也是最好和最快的。在UNIX 系统的最初版本中，就是使用首次适应算法为进程分配内存空间，其中使用数组的数据结构 (而非链表）来实现。不过，首次适应算法会使得内存的低地址部分出现很多小的空闲分区，而每次分配查找时，都要经过这些分区，因此也增加了查找的开销。</p>
+<p>邻近适应算法试图解决这个问题，但实际上，它常常会导致在内存的末尾分配空间（因为在一遍扫描中，内存前面部分使用后再释放时，不会参与分配)，分裂成小碎片。它通常比首次适应算法的结果要差。</p>
+<p>最佳适应算法虽然称为“最佳”，但是性能通常很差，因为每次最佳的分配会留下很小的难以利用的内存块，它会产生最多的外部碎片。</p>
+<p>最坏适应算法与最佳适应算法相反，选择最大的可用块，这看起来最不容易产生碎片，但是却把最大的连续内存划分开，会很快导致没有可用的大的内存块，因此性能也非常差。</p>
+<p>Kunth和Shore分别就前三种方法对内存空间的利用情况做了模拟实验，结果表明：</p>
+<p>首次适应算法可能比最佳适应法效果好，而它们两者一定比最大适应法效果好。另外注意,在算法实现时,分配操作中，最佳适应法和最大适应法需要对可用块进行排序或遍历查找，而首次适应法和邻近适应法只需要简单查找；回收操作中，当回收的块与原来的空闲块相邻时（有三种相邻的情况，比较复杂)，需要将这些块合并。在算法实现时，使用数组或链表进行管理。除了内存的利用率，这里的算法开销也是操作系统设计需要考虑的一个因素。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/img_e35a09558dc11821fabc2cd5aca5af7c.png" alt="img_e35a09558dc11821fabc2cd5aca5af7c.png"></p>
+<p>以上三种内存分区管理方法有一共同特点，即用户进程（或作业）在主存中都是连续存放的。这里对它们进行比较和总结，见上表图。</p>
+<h3 id="非连续分配与管理方式">非连续分配与管理方式</h3>
+<p>非连续分配允许一个程序分散地装入到不相邻的内存分区中，根据分区的大小是否固定分为<strong>分页存储管理方式</strong>和<strong>分段存储管理方式</strong>。</p>
+<p>分页存储管理方式中，又根据运行作业时是否要把作业的所有页面都装入内存才能运行分为<strong>基本分页存储管理方式</strong>和<strong>请求分页存储管理方式</strong>。下面介绍基本分页存储管理方式。</p>
+<h4 id="基本分页存储管理">基本分页存储管理</h4>
+<p>固定分区会产生内部碎片，动态分区会产生外部碎片，这两种技术对内存的利用率都比较低。我们希望内存的使用能尽量避免碎片的产生。</p>
+<p>这就引入了<strong>分页的思想：把主存空间划分为大小相等且固定的块，块相对较小，作为主存的基本单位。每个进程也以块为单位进行划分，进程在执行时，以块为单位逐个申请主存中的块空间。</strong></p>
+<p>分页的方法从形式上看，像分区相等的固定分区技术，分页管理不会产生外部碎片。但它又有本质的不同点：块的大小相对分区要小很多，而且进程也按照块进行划分，进程运行时按块申请主存可用空间并执行。这样，进程只会在为最后一个不完整的块申请一个主存块空间时，才产生主存碎片，所以尽管会产生内部碎片，但是这种碎片相对于进程来说也是很小的，每个进程平均只产生半个块大小的内部碎片（也称页内碎片）。</p>
+<h5 id="分页存储几个概念">分页存储几个概念</h5>
+<ul>
+<li>
+<p>页和页框</p>
+<p>进程中的块称为页(Page)，内存中的块称为页框（Page Frame，或页帧）。外存也以同样的单位进行划分，直接称为块(Block)。进程在执行时需要申请主存空间，就是要为每个页分配主存中的可用页框，这就产生了页和页框的一一对应。</p>
+</li>
+<li>
+<p>地址结构</p>
+<p>分页存储管理的逻辑地址结构如图所示</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/img_0d0c3778336a156946e7924d1404e14e.png" alt="img_0d0c3778336a156946e7924d1404e14e.png"></p>
+<p>地址结构包含两部分：前一部分为页号P，后一部分为页内偏移量W。地址长度为32 位，其中011位为页内地址，即每页大小为4KB；12-31位为页号，地址空间最多允许有2^20页。</p>
+</li>
+<li>
+<p>页表</p>
+<p>为了便于在内存中找到进程的每个页面所对应的物理块，系统为每个进程建立一张页表，记录页面在内存中对应的物理块号，页表一般存放在内存中。</p>
+<p>在配置了页表后，进程执行时，通过查找该表，即可找到每页在内存中的物理块号。</p>
+<p>可见，页表的作用是实现从页号到物理块号的地址映射，如图所示</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/img_83e772bcd622cdf1e3ddcc8475a21996.jpeg" alt="img_83e772bcd622cdf1e3ddcc8475a21996.jpe"></p>
+</li>
+</ul>
+<h5 id="基本地址变换机构">基本地址变换机构</h5>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/img_1d822ebb6200e781d18e0aa7ff8f2266.jpeg" alt="img_1d822ebb6200e781d18e0aa7ff8f2266.jpe"></p>
+<p>在系统中通常设置一个页表寄存器(PTR)，存放页表在内存的始址F和页表长度M。进程未执行时，页表的始址和长度存放在进程控制块中，当进程执行时，才将页表始址和长度存入页表寄存器。设页面大小为L，逻辑地址A到物理地址E的变换过程如下：</p>
+<ol>
+<li>计算页号P(P=A/L)和页内偏移量W (W=A%L)。</li>
+<li>比较页号P和页表长度M，若P &gt;= M，则产生越界中断，否则继续执行。</li>
+<li>页表中页号P对应的页表项地址 = 页表起始地址F + 页号P * 页表项长度，取出该页表项内容b，即为物理块号。</li>
+<li>计算E=b*L+W，用得到的物理地址E去访问内存。</li>
+</ol>
+<p>以上整个地址变换过程均是由硬件自动完成的。</p>
+<p>例如，若页面大小L为1K字节，页号2对应的物理块为b=8，计算逻辑地址A=2500 的物理地址E的过程如下：P=2500/1K=2，W=2500%1K=452，查找得到页号2对应的物理块的块号为 8，E=8*1024+452=8644。</p>
+<p><strong>下面讨论分页管理方式存在的两个主要问题</strong>：</p>
+<ul>
+<li>每次访存操作都需要进行逻辑地址到物理地址的转换，地址转换过程必须足够快，否则访存速度会降低；</li>
+<li>每个进程引入了页表，用于存储映射机制，页表不能太大，否则内存利用率会降低。</li>
+</ul>
+<p>为解决以上问题，引出了后面的“具有快表的地址变换机构”和“两级页表”</p>
+<h5 id="具有快表的地址变换机构">具有快表的地址变换机构</h5>
+<p>由上面介绍的地址变换过程可知，若页表全部放在内存中，则存取一个数据或一条指令至少要访问两次内存：一次是访问页表，确定所存取的数据或指令的物理地址，第二次才根据该地址存取数据或指令。显然，这种方法比通常执行指令的速度慢了一半。</p>
+<p>为此，在地址变换机构中增设了一个具有并行查找能力的高速缓冲存储器——快表，又称联想寄存器(TLB)，用来存放当前访问的若干页表项，以加速地址变换的过程。与此对应，主存中的页表也常称为慢表，配有快表的地址变换机构如图所示。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/img_5cb08987a29ed5398ecdd79afb9a3e09.jpeg" alt="img_5cb08987a29ed5398ecdd79afb9a3e09.jpe"></p>
+<p>在具有快表的分页机制中，地址的变换过程：</p>
+<ul>
+<li>CPU给出逻辑地址后，由硬件进行地址转换并将页号送入高速缓存寄存器，并将此页号与快表中的所有页号进行比较。</li>
+<li>如果找到匹配的页号，说明所要访问的页表项在快表中，则直接从中取出该页对应的页框号，与页内偏移量拼接形成物理地址。这样，存取数据仅一次访存便可实现。</li>
+<li>如果没有找到，则需要访问主存中的页表，在读出页表项后，应同时将其存入快表，以便后面可能的再次访问。但若快表已满，则必须按照一定的算法对旧的页表项进行替换。</li>
+</ul>
+<blockquote>
+<p>注意：有些处理机设计为快表和慢表同时查找，如果在快表中查找成功则终止慢表的查找。</p>
+</blockquote>
+<p>一般快表的命中率可以达到90%以上，这样，分页带来的速度损失就降低到10%以下。快表的有效性是基于著名的局部性原理，这在后面的虚拟内存中将会具体讨论。</p>
+<h5 id="两级页表">两级页表</h5>
+<p>问题一: 根据页号查询页表的方法:K 号页对应的页表项存放位置 = 页表始址 + K * 4 ，页表必须连续存放，因此当页表很大时，需要占用很多个连续的页框；</p>
+<p>问题二: 没有必要让整个页表常驻内存，因为进程在一段时间内可能只需要访问某几个特定的页面。</p>
+<p>解决办法：把页表再分页并离散存储，然后再建立一张页表记录页表各个部分的存放位置，称为页目录表，或称外层页表，或称顶层页表。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/8c10eb9199ac4604abc430a8aab243a8%7Etplv-k3u1fbpfcp-zoom-in-crop-mark%3A4536%3A0%3A0%3A0.awebp" alt="两级页表" style="zoom:40%;" />
+<h5 id="多级页表">多级页表</h5>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/91f61091052348a4b3474564b7ffb2e2%7Etplv-k3u1fbpfcp-zoom-in-crop-mark%3A4536%3A0%3A0%3A0.awebp" alt="多级页表"></p>
+<h4 id="基本分段存储管理方式">基本分段存储管理方式</h4>
+<p>分页管理方式是从计算机的角度考虑设计的，以提高内存的利用率，提升计算机的性能, 且分页通过硬件机制实现，对用户完全透明；而分段管理方式的提出则是考虑了用户和程序员，以满足方便编程、信息保护和共享、动态增长及动态链接等多方面的需要。</p>
+<h5 id="分段">分段</h5>
+<p>段式管理方式按照用户进程中的自然段划分逻辑空间。例如，用户进程由主程序、两个子程序、栈和一段数据组成，于是可以把这个用户进程划分为5个段，每段从0 开始编址，并分配一段连续的地址空间（段内要求连续，段间不要求连续，因此整个作业的地址空间是二维的）。其逻辑地址由段号S与段内偏移量W两部分组成。</p>
+<p>在下图中，段号为16位，段内偏移量为16位，则一个作业最多可有2^16=65536个段，最大段长为64KB。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20230516095112900.png" alt="image-20230516095112900"></p>
+<p><strong>在页式系统中，逻辑地址的页号和页内偏移量对用户是透明的，用户不可以更改，是由操作系统计算出来的；但在段式系统中，段号和段内偏移量必须由用户显示提供，在髙级程序设计语言中，这个工作由编译程序完成。</strong></p>
+<h5 id="段表">段表</h5>
+<p>每个进程都有一张逻辑空间与内存空间映射的段表，其中每一个段表项对应进程的一个段，段表项记录该段在内存中的起始地址和段的长度。段表的内容如图所示。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/img_9498e260dd6c5dbc1959a6870a45b95a.png" alt="img_9498e260dd6c5dbc1959a6870a45b95a.png"></p>
+<p>在配置了段表后，执行中的进程可通过查找段表，找到每个段所对应的内存区。可见，段表用于实现从逻辑段到物理内存区的映射，如图所示。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/img_ae6aed5ce9677734198d83a5781a8074.jpeg" alt="img_ae6aed5ce9677734198d83a5781a8074.jpe"></p>
+<h5 id="地址变换机构">地址变换机构</h5>
+<p>分段系统的地址变换过程如图所示。为了实现进程从逻辑地址到物理地址的变换功能，在系统中设置了段表寄存器，用于存放段表始址F和段表长度M。其从逻辑地址A到物理地址E之间的地址变换过程如下：</p>
+<ul>
+<li>从逻辑地址A中取出前几位为段号S，后几位为段内偏移量W。</li>
+<li>比较段号S和段表长度M，若S多M，则产生越界中断，否则继续执行。</li>
+<li>段表中段号S对应的段表项地址 = 段表起始地址F + 段号S * 段表项长度，取出该段表项的前几位得到段长C。若段内偏移量&gt;=C，则产生越界中断，否则继续执行。</li>
+<li>取出段表项中该段的起始地址b，计算 E = b + W，用得到的物理地址E去访问内存。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/img_725dd9d2108457a6c46c1e8e9999b8cc.jpeg" alt="img_725dd9d2108457a6c46c1e8e9999b8cc.jpe"></p>
+<h5 id="段的共享与保护">段的共享与保护</h5>
+<p>在分段系统中，段的共享是通过两个作业的段表中相应表项指向被共享的段的同一个物理副本来实现的。当一个作业正从共享段中读取数据时，必须防止另一个作业修改此共享段中的数据。不能修改的代码称为纯代码或可重入代码（它不属于临界资源)，这样的代码和不能修改的数据是可以共享的，而可修改的代码和数据则不能共享。</p>
+<p>与分页管理类似，分段管理的保护方法主要有两种：一种是存取控制保护，另一种是地址越界保护。地址越界保护是利用段表寄存器中的段表长度与逻辑地址中的段号比较，若段号大于段表长度则产生越界中断；再利用段表项中的段长和逻辑地址中的段内位移进行比较，若段内位移大于段长，也会产生越界中断。</p>
+<h4 id="段页管理方式">段页管理方式</h4>
+<p>页式存储管理能有效地提高内存利用率，而分段存储管理能反映程序的逻辑结构并有利于段的共享。如果将这两种存储管理方法结合起来，就形成了段页式存储管理方式。</p>
+<p>在段页式系统中，作业的地址空间首先被分成若干个逻辑段，每段都有自己的段号，然后再将每一段分成若干个大小固定的页。对内存空间的管理仍然和分页存储管理一样，将其分成若干个和页面大小相同的存储块，对内存的分配以存储块为单位，如图所示。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/img_07273851ee4a0a0e1c2acb63f41d62f2.jpeg" alt="img_07273851ee4a0a0e1c2acb63f41d62f2.jpe"></p>
+<p>在段页式系统中，作业的逻辑地址分为三部分：段号、页号和页内偏移量，如图所示。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/img_833f7011c7fa8cac80ac23377865755b.png" alt="img_833f7011c7fa8cac80ac23377865755b.png"></p>
+<p>为了实现地址变换，系统为每个进程建立一张段表，而每个分段有一张页表。段表表项中至少包括段号、页表长度和页表起始地址，页表表项中至少包括页号和块号。此外，系统中还应有一个段表寄存器，指出作业的段表起始地址和段表长度。</p>
+<p>注意：在一个进程中，段表只有一个，而页表可能有多个。</p>
+<p>在进行地址变换时，首先通过段表查到页表起始地址，然后通过页表找到页帧号，最后形成物理地址。如图所示，进行一次访问实际需要三次访问主存，这里同样可以使用快表以加快查找速度，其关键字由段号、页号组成，值是对应的页帧号和保护码。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/img_d861b1cc5f5d04974a566f9e181115b8.jpeg" alt="img_d861b1cc5f5d04974a566f9e181115b8.jpe"></p>
+<h4 id="分页-vs-分段">分页 VS 分段</h4>
+<ul>
+<li>页是信息的物理单位。分页的主要目的是为了实现离散分配，提高内存利用率。分页仅仅是系统管理上的需要，完全是系统行为，对用户是不可见的。</li>
+<li>段是信息的逻辑单位。分段的主要目的是更好地满足用户需求。一个段通常包含着一组属于一个逻辑模块的信息。</li>
+<li>分段对用户是可见的，用户编程时需要显式地给出段名。</li>
+<li><strong>页的大小固定且由系统决定。段的长度却不固定，决定于用户编写的程序。</strong></li>
+<li>分页的用户进程地址空间是一维的，程序员只需给出一个记忆符即可表示一个地址。</li>
+<li>分段的用户进程地址空间是二维的，程序员在标识一个地址时，既要给出段名，也要给出段内地址。</li>
+</ul>
+<h3 id="内存回收">内存回收*</h3>
+<p>操作系统层面的内存回收主要是通过虚拟内存管理来实现的</p>
+<h2 id="虚拟内存管理">虚拟内存管理</h2>
+<h3 id="虚拟内存基本概念">虚拟内存基本概念</h3>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20230516195844413.png" alt="image-20230516195844413" style="zoom:67%;" />
+<ul>
+<li>虚拟内存：具有请求调入和置换功能，从逻辑上对内存容量加以扩充的一种存储系统，也就是内存+外存</li>
+<li>局部性原理：
+<ul>
+<li><strong>时间局部性原理</strong>：如果执行了程序中的某条指令，那么不久后这条指令很有可能再次执行;如果某个数据被访问过，不久之后该数据很可能再次被访问。(因为程序中存在大量的循环)</li>
+<li><strong>空间局部性原理</strong>：一旦程序访问了某个存储单元，在不久之后，其附近的存储单元也很有可能被访问。(因为很多数据在内存中都是连续存放的，并且程序的指令也是顺序地在内存中存放的)</li>
+</ul>
+</li>
+<li>虚拟内存的特征：
+<ul>
+<li>多次性：前面内存基本管理方式就是一次性将整个进程装入内存运行，但是现在很多应用都远远大于内存大小，显而易见，内存并不能完整装下现在的应用了。一次装不下，我们可以分多次装入内存，每次只运行一部分需要的程序和加载需要的数据，不需要的数据和程序可以换出到硬盘缓存中，从而腾出空间存放要调入内存的信息</li>
+<li>对换性：是指无需在作业运行时一直常驻内存，而是允许在作业的运行过程中，进行换进和换出，例如，当进程被suspend后就剋以换出，ready后就换进。</li>
+<li>虚拟性：是指从逻辑上扩充内存的容量，使用户所看到的内存容量，远大于实际的内存容量。（不断换入换出，内存就可以容纳比实际内存容量更大的容量）</li>
+</ul>
+</li>
+</ul>
+<h3 id="虚拟内存实现">虚拟内存实现</h3>
+<h4 id="请求分页存储管理">请求分页存储管理</h4>
+<p>请求分页系统建立在基本分页系统基础之上，为了支持虚拟存储器功能而增加了请求调页功能和页面置换功能。</p>
+<p>请求分页是目前最常用的一种实现虚拟存储器的方法。</p>
+<p>在请求分页系统中，只要求将当前需要的一部分页面装入内存，便可以启动作业运行。</p>
+<p>在作业执行过程中，当所要访问的页面不在内存时，再通过调页功能将其从<strong>外存（硬盘，但不是硬盘缓存）<strong>调入，同时还可以通过置换功能将暂时不用的页面换出到</strong>外存</strong>上，以便腾出内存空间。</p>
+<p>为了实现请求分页，系统必须提供一定的硬件支持。除了需要一定容量的内存及外存的计算机系统，还需要有页表机制、缺页中断机构和地址变换机构。</p>
+<h5 id="页表机制">页表机制</h5>
+<p>请求分页系统的页表机制不同于基本分页系统，请求分页系统在一个作业运行之前不要求全部一次性调入内存，因此在作业的运行过程中，必然会出现要访问的页面不在内存的情况，如何发现和处理这种情况是请求分页系统必须解决的两个基本问题。</p>
+<p>为此，在请求页表项中增加了四个字段，如图所示。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/142123_311dd679_508704.png" alt="输入图片说明"></p>
+<p>相较于基本分页存储管理，页表项新增四列：</p>
+<ul>
+<li>状态位P：用于指示该页是否已调入内存，供程序访问时参考。</li>
+<li>访问字段A：用于记录本页在一段时间内被访问的次数，或记录本页最近己有多长时间未被访问，供置换算法换出页面时参考。</li>
+<li>修改位M：标识该页在调入内存后是否被修改过。</li>
+<li>外存地址：用于指出该页在外存上的地址，通常是物理块号，供调入该页时参考。</li>
+</ul>
+<h5 id="缺页中断机构">缺页中断机构</h5>
+<p>在请求分页系统中，每当所要访问的页面不在内存时，便产生一个缺页中断，请求操作系统将所缺的页调入内存。</p>
+<p>此时应将缺页的进程阻塞（调页完成唤醒)，如果内存中有空闲块，则分配一个块，将要调入的页装入该块，并修改页表中相应页表项，若此时内存中没有空闲块，则要淘汰某页（若被淘汰页在内存期间被修改过，则要将其写回外存)。</p>
+<p>缺页中断作为中断同样要经历，诸如保存CPU环境、分析中断原因、转入缺页中断处理程序、恢复CPU环境等几个步骤。</p>
+<p>但与一般的中断相比，它有以下两个明显的区别：</p>
+<p>在指令执行期间产生和处理中断信号，而非一条指令执行完后，属于内部中断。</p>
+<p>如果该指令访问的地址仍然没有在内存中，就会再次触发缺页中断，重复上述操作，直到该指令能够正常执行。</p>
+<p>因此，<strong>一条指令在执行期间可能会产生多次缺页中断，直到它所需要的所有页面都在内存中</strong>。</p>
+<h5 id="地址变换机构-1">地址变换机构</h5>
+<p>请求分页系统中的地址变换机构，是在分页系统地址变换机构的基础上，为实现虚拟内存，又增加了某些功能而形成的。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/142617_76b9f660_508704.png" alt="输入图片说明" style="zoom:67%;" />
+<p>如图所示，在进行地址变换时，先检索快表：</p>
+<ol>
+<li>若找到要访问的页，便修改页表项中的访问位（写指令则还须重置修改位)，然后利用页表项中给出的物理块号和页内地址形成物理地址。</li>
+<li>若未找到该页的页表项，应到内存中去查找页表，再对比页表项中的状态位P，看该页是否已调入内存，未调入则产生缺页中断，请求从外存把该页调入内存。</li>
+<li>可能需要页面置换。存在这种情况：当内存已经满了，但是此时CPU发生缺页中断，需要请求外存的缺页。那么只有将已经满了的内存，换出页，再调入所需的页。</li>
+</ol>
+<h4 id="请求分段存储管理">请求分段存储管理</h4>
+<p>略</p>
+<h4 id="请求段页式存储管理">请求段页式存储管理</h4>
+<p>略</p>
+<h3 id="页面置换算法">页面置换算法</h3>
+<p>页面的换入、换出需要磁盘I/O，会有较大的开销，因此好的页面置换算法应该追求更少的缺页率。</p>
+<ol>
+<li>
+<p>最佳置换算法(OPT)</p>
+</li>
+<li>
+<p>先进先出置换算法(FIFO)</p>
+</li>
+<li>
+<p>最近最久未使用置换算法(LRU)</p>
+</li>
+<li>
+<p>时钟置换算法(CLOCK)</p>
+<p>当采用简单Clock算法时，只需为每页设置一位<strong>访问位</strong>，再将内存中的所有页面都通过链接指针链接成一个<strong>循环队列</strong>。</p>
+<blockquote>
+<p>当某页被访问时，其访问位被置为1。置换算法在选择一页淘汰时，只需检查页的访问位，如果是0，就选择将该页换出；若为1，则重新将它置0，暂不换出，而给该页第二次驻留内存的机会，再按照FIFO算法检查下一个页面。当检查到队列中的最后一个页面时，若其访问位仍为1，则再返回到队首去检查第一个页面。由于该算法是<strong>循环地检查各页面的使用情况</strong>，故称为Clock算法。</p>
+<p>因该算法只有一位访问位，只能用它表示该页是否已经使用过，而置换时是将未使用过的页面换出去，又称为<strong>最近未用算法NRU(Not recently used)</strong>。</p>
+</blockquote>
+</li>
+<li>
+<p>改进型的时钟置换算法</p>
+<ul>
+<li>
+<p>在将一个页面换出时，如果该页<strong>已被修改过</strong>，需将该页<strong>重新写回到磁盘</strong>上；但如果该页<strong>未被修改过</strong>，则不必将它拷回磁盘。</p>
+</li>
+<li>
+<p>在改进型Clock算法中，除需考虑页面的使用情况外，需再增加一个因素，即<strong>置换代价</strong>。</p>
+</li>
+<li>
+<p>这样，在选择页面换出时，既要是<strong>未使用过</strong>的页面，又要是<strong>未被修改过</strong>的页面。把同时满足这两个条件的页面作为首选淘汰的页面。</p>
+</li>
+</ul>
+<p>由访问位A和修改位M可以组合成下面四种类型的页面：</p>
+<ul>
+<li>
+<p>1类（A=0,M=0）：表示该页最近既未被访问，又未被修改，是最佳淘汰页，可以换出到外存上。</p>
+</li>
+<li>
+<p>2类（A=0,M=1）：表示该页最近未被访问，但已被修改，并不是很好的淘汰页，可以考虑换出到外存（硬盘）。</p>
+</li>
+<li>
+<p>3类（A=1,M=0）：表示该页最近已被访问，但未被修改，该页有可能再被访问，需要保留在内存里。</p>
+</li>
+<li>
+<p>4类（A=1,M=1）：表示该页最近已被访问且被修改，该页很可能再被访问，需要保留在内存里。</p>
+</li>
+</ul>
+<p>在内存中的每个页必定是这四类页面之一，在进行页面置换时，可采用与简单Clock算法相类似的算法，其差别在于该算法需<strong>同时</strong>检查<strong>访问位</strong>与<strong>修改位</strong>，以确定该页是四类页面中的哪一种。其执行过程可分为以下三步：</p>
+<ul>
+<li>
+<p>第一步：从指针所指示的当前位置开始，扫描循环队列，寻找<strong>A=0且M=0</strong>的第一类页面，将所遇到的第一个页面作为所选中的淘汰页。在<strong>第一次扫描</strong>期间<strong>不改变访问位A</strong>。</p>
+</li>
+<li>
+<p>第二步：如果第一步失败，即扫描一次后未遇到第一类页面，则开始第二轮扫描，寻找<strong>A=0且M=1</strong>的第二类页面，将所遇到的第一个这类</p>
+<p>页面作为淘汰页。在<strong>第二轮扫描</strong>期间，将所有扫描过的页面的<strong>访问位都置0</strong>.</p>
+</li>
+<li>
+<p>第三步：如果第二步也失败，即也未找到第二类页面，则将指针返回到开始的位置。然后重复第一步，如果仍失败，必要时再重复第二步，此时就一定能找到被淘汰的页。</p>
+</li>
+</ul>
+<p>该算法与简单Clock算法相比，可<strong>减少磁盘的I/O操作次数</strong>。但为了找到一个可置换的页，可能需经过几轮扫描。换言之，实现该算法本身的开销将有所增加。</p>
+</li>
+</ol>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20230516213755067.png" alt="image-20230516213755067" style="zoom: 40%;" />
+<p><strong>上图的NRU算法有错误。</strong></p>
+<blockquote>
+<p>Belady异常：在某些情况下，分配的物理页越多，产生缺页中断的次数反而越多。</p>
+<p>Belady现象演示
+假定给某进程分为5页（page），但是它在内存中只分配到3个页帧（page frame），现在有一访问串：1,2,3,4,1,2,5,1,2,3,4,5，表示依次访问第1页、第2页……</p>
+<ol>
+<li>
+<p>刚开始时，进程页还在虚存（磁盘）中，尚未缓存到内存中，所以第一次要访问第1页时发生一次缺页故障，此时调入第1页到内存中，占一个页帧</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/f1007a88827b48d98f9f52022f09e335.png" alt="在这里插入图片描述"></p>
+</li>
+<li>
+<p>此时还剩下两个页帧未分配，由于接下来依次访问第2、3页，同理会触发两次缺页故障，在此之后，第1、2、3页都已经缓存在内存中</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/b0eb9f90071943c4afec97641566ff93.png" alt="在这里插入图片描述"></p>
+</li>
+<li>
+<p>接下来要访问第四页，由于在此之前第1,2,3页已经缓存在内存中，该进程所分配到的3个页帧已满，为此必须替换掉一页，才能把第四页加载进来，此时又发生一次缺页故障。由于采用FIFO替换算法，因为第一页是最先进来，所以它会被替换出去</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20230516222053670.png" alt="image-20230516222053670" style="zoom: 67%;" />
+</li>
+<li>
+<p>接下来又要访问第一页，由于当前缓存页时第4、2、3页，从而根据FIFO，要将第2页替换为第1页，这就又发生一次缺页中断，调入第1页后，此时存在于内存中的是第4、1、3页。同理，接下来要访问第2页，发生一次缺页中断，将第3页替换为第2页，此时存在于内存中的是第4、1、2页。</p>
+</li>
+<li>
+<p>在接下来的访问中，如果第K页已经存在内存中，则直接使用，所以此时不会发生缺页故障，重复按照上述过程，我们可以得到如下示例图表</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/cfe2be7d53904ac7ad9af61323922c6d.png" alt="在这里插入图片描述"></p>
+<p>红色标识出的是发生缺页故障后调入的页，可以看见共发生9次缺页异常，而从访问串可知访问12次，所以缺页率为9/12=0.75。</p>
+<p>现在，该进程在上述3页帧的基础上多分配一页帧，也就是变成四页帧，则仿照上述分析过程，可画出如下图表</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/image-20230516222410620.png" alt="image-20230516222410620"></p>
+</li>
+</ol>
+<p>红色标识出的是发生缺页故障后调入的页，蓝色标识的是之前调入的页面，可以看见共发生10次缺页异常，而从访问串可知访问12次，所以缺页率为10/12=0.833。</p>
+<p>FIFO替换算法产生该现象的原因是它没有考虑到程序执行的动态特征。</p>
+</blockquote>
+<h3 id="页面分配策略">页面分配策略</h3>
+<blockquote>
+<p>先简述几个名词：</p>
+<ul>
+<li>
+<p>驻留集：一个进程的驻留集指当前在主存中的这个进程的页的集合。</p>
+<p>由于采用虚拟存储技术，驻留集的大小（实际内存大小）一般小于进程的大小（实际占有内存再加上进程存储在外存上的资源）。若驻留集太小，会导致频繁缺页；太大会导致多道程序并发度降低，资源利用率下降。</p>
+</li>
+<li>
+<p>工作集：一个进程的工作集指这个进程最近被使用过的页的集合。</p>
+</li>
+<li>
+<p>抖动：又称颠簸，指刚被调出去的页又马上被调回，调回不久后又被调出。</p>
+</li>
+<li>
+<p>置换策略：固定分配局部置换、可变分配全部置换、可变分配局部置换。</p>
+</li>
+</ul>
+</blockquote>
+<h4 id="页面分配与置换策略">页面分配与置换策略</h4>
+<ol>
+<li>固定分配：操作系统为每个进程分配一组固定数目大小的物理块。在程序运行过程中，不允许改变。即驻留集大小固定不变。</li>
+<li>可变分配：先为每个进程分配一定大小的物理块，在程序运行过程中，可以动态改变物理块的大小。即驻留集大小可变。</li>
+<li>局部置换：进程发生缺页时，只能选择当前进程中的物理块进行置换。</li>
+<li>全局置换：可以将<strong>操作系统进程中保留的空闲物理块</strong>分配给缺页进程，还可以将<strong>别的进程持有的物理块</strong>置换到外存，再将这个物理块分配给缺页的进程。</li>
+</ol>
+<h5 id="固定分配局部置换">固定分配局部置换</h5>
+<p>系统为每个进程分配一定数量的内存块（物理块），在整个运行期都不改变。若进程在运行过程中发生了缺页，则只能在本进程的内存页面中选出一个进行调出，再调回需要的页面。</p>
+<ul>
+<li>缺点：不好确定一个进程到底应该分配多大的实际内存才合理。</li>
+</ul>
+<h5 id="可变分配全局置换">可变分配全局置换</h5>
+<p>系统为每个进程分配一定数量的内存块。操作系统还会保持一个空闲物理块的队列。若某个进程发生缺页，可以从空闲物理块中取出一块分配给该进程。如果空闲物理块没有了，那么会选择一个未锁定（不那么重要的，可能是其它进程的）的页面换出到外存，再将物理块分配给缺页的进程。</p>
+<ul>
+<li>缺点：在空闲物理块没有的情况下，如果将其它进程的页面调出外存，那么这个进程就会拥有较小的驻留集，如此会导致该进程的缺页率上升。</li>
+</ul>
+<h5 id="可变分配局部置换">可变分配局部置换</h5>
+<p>刚开始为每个进程分配一定数量的物理块。当进程发生缺页时，只允许从当前进程的物理块中选出一个换出内存。如果当前进程在运行的时候频繁缺页，系统会为该进程动态增加一些物理块，直到该进程缺页率趋于适中程度；如果说一个进程在运行过程中缺页率很低或者不缺页，则可以适当减少该进程分配的物理块。通过这些操作可以保持多道程序的并发度较高。</p>
+<p>与 可变分配全局置换 的区别：</p>
+<ul>
+<li>可变分配全局置换：只要发生缺页，就会分配新的物理块</li>
+<li>可变分配局部置换：根据缺页率动态增加或者减少物理块的数量。</li>
+</ul>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-05-11
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/">虚拟内存</a>
+          <a href="/tags/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E4%B8%8E%E5%9B%9E%E6%94%B6/">内存分配与回收</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">操作系统之文件管理</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E6%8B%B7%E8%B4%9D/">
+            <span class="next-text nav-default">拷贝</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-05-11 19:53:00 \u002b0800 CST',
+        title: '操作系统之内存管理',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

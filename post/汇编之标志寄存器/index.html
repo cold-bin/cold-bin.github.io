@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>汇编之标志寄存器 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="标志寄存器 1、标志寄存器 CPU内部的寄存器中，有一种特殊的寄存器（对于不同的处理机，个数和结构都可能不同）具有以下3种作用。 （1）用来存储相" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A0%87%E5%BF%97%E5%AF%84%E5%AD%98%E5%99%A8/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="汇编之标志寄存器" />
+<meta property="og:description" content="标志寄存器 1、标志寄存器 CPU内部的寄存器中，有一种特殊的寄存器（对于不同的处理机，个数和结构都可能不同）具有以下3种作用。 （1）用来存储相" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A0%87%E5%BF%97%E5%AF%84%E5%AD%98%E5%99%A8/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-01-17T21:08:13+08:00" />
+<meta property="article:modified_time" content="2023-01-17T21:08:13+08:00" />
+<meta itemprop="name" content="汇编之标志寄存器">
+<meta itemprop="description" content="标志寄存器 1、标志寄存器 CPU内部的寄存器中，有一种特殊的寄存器（对于不同的处理机，个数和结构都可能不同）具有以下3种作用。 （1）用来存储相"><meta itemprop="datePublished" content="2023-01-17T21:08:13+08:00" />
+<meta itemprop="dateModified" content="2023-01-17T21:08:13+08:00" />
+<meta itemprop="wordCount" content="4434">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="汇编之标志寄存器"/>
+<meta name="twitter:description" content="标志寄存器 1、标志寄存器 CPU内部的寄存器中，有一种特殊的寄存器（对于不同的处理机，个数和结构都可能不同）具有以下3种作用。 （1）用来存储相"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">汇编之标志寄存器</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-01-17 </span>
+        <div class="post-category">
+            <a href="/categories/%E6%B1%87%E7%BC%96/"> 汇编 </a>
+            </div>
+          <span class="more-meta"> 约 4434 字 </span>
+          <span class="more-meta"> 预计阅读 9 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#标志寄存器">标志寄存器</a>
+      <ul>
+        <li><a href="#1标志寄存器">1、标志寄存器</a>
+          <ul>
+            <li><a href="#1零标志位-zf">1、零标志位 (ZF)</a></li>
+            <li><a href="#2奇偶标志位-pf">2、奇偶标志位 (PF)</a></li>
+            <li><a href="#3符号标志位sf">3、符号标志位(SF)</a></li>
+            <li><a href="#3进位标志位cf">3、进位标志位(CF)</a></li>
+            <li><a href="#4溢出标志位of">4、溢出标志位(OF)</a></li>
+          </ul>
+        </li>
+        <li><a href="#2adc指令和sbb指令">2、adc指令和sbb指令</a></li>
+        <li><a href="#3cmp指令">3、cmp指令</a></li>
+        <li><a href="#4检测比较结果的条件转移指令">4、检测比较结果的条件转移指令</a></li>
+        <li><a href="#5df标志和串传送指令">5、DF标志和串传送指令</a></li>
+        <li><a href="#6pushf和popf">6、pushf和popf</a></li>
+        <li><a href="#7总结">7、总结</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h1 id="标志寄存器">标志寄存器</h1>
+<hr>
+<h2 id="1标志寄存器">1、标志寄存器</h2>
+<p>CPU内部的寄存器中，有一种特殊的寄存器（对于不同的处理机，个数和结构都可能不同）具有以下3种作用。</p>
+<p>（1）用来存储相关指令的某些执行结果；</p>
+<p>（2）用来为CPU执行相关指令提供行为依据；</p>
+<p>（3）用来控制CPU的相关工作方式。</p>
+<p>这种特殊的寄存器在8086CPU中，被称为标志寄存器（flag）。</p>
+<p>8086CPU的标志寄存器有16位，其中存储的信息通常被称为程序状态字（PSW-Program Status Word）</p>
+<p>flag寄存器是按位起作用的，它的每一位都有专门的含义，记录特定的信息。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20190322182130199.png" alt="在这里插入图片描述">
+在8086CPU的指令集中，有的指令的执行是影响标志寄存器的，比如，add、sub、mul、div、inc、or、and等，它们大都是运算指令（进行逻辑或算术运算）；有的指令的执行对标志寄存器没有影响，比如，mov、push、pop等，它们大都是传送指令</p>
+<h3 id="1零标志位-zf">1、零标志位 (ZF)</h3>
+<p>零标志位（Zero Flag）。它记录相关指令执行后，其结果是否为0。</p>
+<p>如果结果为0，那么zf = 1(表示结果是0)；如果结果不为0，那么zf = 0。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="nf">sub</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">1</span> <span class="c1">;执行后，结果为0，则zf = 1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="nf">sub</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">1</span> <span class="c1">;执行后，结果不为0，则zf = 0
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="2奇偶标志位-pf">2、奇偶标志位 (PF)</h3>
+<p>奇偶标志位（Parity Flag）。它记录相关指令执行后，其结果的所有bit位中1的个数是否为偶数。</p>
+<p>如果1的个数为偶数，pf = 1，如果为奇数，那么pf = 0。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="nf">add</span> <span class="no">al</span><span class="p">,</span> <span class="mi">10</span> <span class="c1">;执行后，结果为00001011B，其中有3（奇数）个1，则pf = 0；
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="nf">or</span> <span class="no">al</span><span class="p">,</span> <span class="mi">2</span>  <span class="c1">;执行后，结果为00000011B，其中有2（偶数）个1，则pf = 1；
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="3符号标志位sf">3、符号标志位(SF)</h3>
+<p>符号标志位(Symbol Flag)。它记录相关指令执行后，其结果是否为负。</p>
+<p>如果结果为负，sf = 1；如果非负，sf = 0。</p>
+<p>计算机中通常用补码来表示有符号数据。计算机中的一个数据可以看作是有符号数，也可以看成是无符号数。</p>
+<p><code>00000001B</code>，可以看作为无符号数1，或有符号数+1；
+<code>10000001B</code>，可以看作为无符号数129，也可以看作有符号数-127。</p>
+<p>对于同一个二进制数据，计算机可以将它当作无符号数据来运算，也可以当作有符号数据来运算</p>
+<p>CPU在执行add等指令的时候，就包含了两种含义:可以将add指令进行的运算当作无符号数的运算，也可以将add指令进行的运算当作有符号数的运算</p>
+<p>SF标志，就是CPU对有符号数运算结果的一种记录，它记录数据的正负。在我们将数据当作有符号数来运算的时候，可以通过它来得知结果的正负。如果我们将数据当作无符号数来运算，SF的值则没有意义，虽然相关的指令影响了它的值</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="mi">10000001</span><span class="no">B</span> 
+</span></span><span class="line"><span class="cl"><span class="no">add</span> <span class="no">al</span><span class="p">,</span> <span class="mi">1</span>   <span class="c1">;执行后，结果为10000010B，sf = 1，表示：如果指令进行的是有符号数运算，那么结果为负；
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="mi">10000001</span><span class="no">B</span>
+</span></span><span class="line"><span class="cl"><span class="nf">add</span> <span class="no">al</span><span class="p">,</span> <span class="mi">01111111</span><span class="no">B</span>   <span class="c1">;执行后，结果为0，sf = 0，表示：如果指令进行的是有符号数运算，那么结果为非负
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="3进位标志位cf">3、进位标志位(CF)</h3>
+<p>进位标志位(Carry Flag)。一般情况下，在进行无符号数运算的时候，它记录了运算结果的最高有效位向更高位的进位值，或从更高位的借位值
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20190322222505568.png" alt="在这里插入图片描述">
+97H - 98H 产生借位CF = 1 ==&gt; (al) = 197H - 98H = FFH</p>
+<h3 id="4溢出标志位of">4、溢出标志位(OF)</h3>
+<p>溢出标志位(Overflow Flag)。一般情况下，OF记录了有符号数运算的结果是否发生了溢出。</p>
+<p>如果发生溢出，OF = 1；如果没有，OF = 0。</p>
+<p>CF和OF的区别：CF是对无符号数运算有意义的标志位，而OF是对有符号数运算有意义的标志位</p>
+<p>CPU在执行add等指令的时候，就包含了两种含义：无符号数运算和有符号数运算。</p>
+<ul>
+<li>对于无符号数运算，CPU用CF位来记录是否产生了进位；</li>
+<li>对于有符号数运算，CPU用OF位来记录是否产生了溢出，当然，还要用SF位来记录结果的符号。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">al</span><span class="p">,</span> <span class="mi">98</span>
+</span></span><span class="line"><span class="cl"><span class="nf">add</span> <span class="no">al</span><span class="p">,</span> <span class="mi">99</span>   <span class="c1">;执行后将产生溢出。因为进行的&#34;有符号数&#34;运算是：（al）=（al）+ 99 = 98 + 99=197 = C5H 为-59的补码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>             <span class="c1">;而结果197超出了机器所能表示的8位有符号数的范围：-128-127。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>             <span class="c1">;add 指令执行后：无符号运算没有进位CF=0，有符号运算溢出OF=1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>             <span class="c1">;当取出的数据C5H按无符号解析C5H = 197, 当按有符号解析通过SP得知数据为负,即C5H为-59补码存储，
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>             
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">al</span><span class="err">，</span><span class="mi">0</span><span class="no">F0H</span>  <span class="c1">;F0H，为有符号数-16的补码   -Not(F0 - 1)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">add</span> <span class="no">al</span><span class="err">，</span><span class="mi">088</span><span class="no">H</span>  <span class="c1">;88H，为有符号数-120的补码   -Not(88- 1)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>              <span class="c1">;执行后，将产生溢出。因为add al, 088H进行的有符号数运算结果是：（al）= -136 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>              <span class="c1">;而结果-136超出了机器所能表示的8位有符号数的范围：-128-127。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>              <span class="c1">;add 指令执行后：无符号运算有进位CF=1，有符号运算溢出OF=1
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="2adc指令和sbb指令">2、adc指令和sbb指令</h2>
+<p>adc是带进位加法指令，它利用了CF位上记录的进位值。</p>
+<p>指令格式：<code>adc 操作对象1, 操作对象2</code></p>
+<p>功能：操作对象1 = 操作对象1 + 操作对象2 + CF</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">bx</span><span class="p">,</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl"><span class="nf">sub</span> <span class="no">bx</span><span class="p">,</span> <span class="no">ax</span>  <span class="c1">;无符号运算借位CF=1，有符号运算OF = 0
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">adc</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">1</span>   <span class="c1">;执行后，（ax）= 4。adc执行时，相当于计算：(ax)+1+CF = 2+1+1 = 4。
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20190323125737798.png" alt="在这里插入图片描述"></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="c1">;计算1EF000H+201000H，结果放在ax（高16位）和bx（低16位）中。
+</span></span></span><span class="line"><span class="cl"><span class="c1">;将计算分两步进行，先将低16位相加，然后将高16位和进位值相加。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">001</span><span class="no">EH</span> 
+</span></span><span class="line"><span class="cl"><span class="no">mov</span> <span class="no">bx</span><span class="p">,</span> <span class="mi">0</span><span class="no">F000H</span> 
+</span></span><span class="line"><span class="cl"><span class="no">add</span> <span class="no">bx</span><span class="p">,</span> <span class="mi">1000</span><span class="no">H</span>
+</span></span><span class="line"><span class="cl"><span class="nf">adc</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">0020</span><span class="no">H</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>sbb指令</strong></p>
+<p>sbb是带借位减法指令，它利用了CF位上记录的借位值。</p>
+<p>指令格式：<code>sbb 操作对象1, 操作对象2</code></p>
+<p>功能：操作对象1 = 操作对象1 - 操作对象2 - CF</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="c1">;计算 003E1000H - 00202000H，结果放在ax，bx中，程序如下：
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">mov</span> <span class="no">bx</span><span class="p">,</span> <span class="mi">1000</span><span class="no">H</span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">003</span><span class="no">EH</span>
+</span></span><span class="line"><span class="cl"><span class="nf">sub</span> <span class="no">bx</span><span class="p">,</span> <span class="mi">2000</span><span class="no">H</span>
+</span></span><span class="line"><span class="cl"><span class="nf">sbb</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">0020</span><span class="no">H</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="3cmp指令">3、cmp指令</h2>
+<p>cmp是比较指令，cmp的功能相当于减法指令，只是不保存结果。cmp指令执行后，将对标志寄存器产生影响。</p>
+<p>其他相关指令通过识别这些被影响的标志寄存器位来得知比较结果。</p>
+<p>cmp指令格式：<code>cmp 操作对象1，操作对象2</code></p>
+<p>例如：
+指令<code>cmp ax, ax</code>，做（ax）-（ax）的运算，结果为0，但并不在ax中保存，仅影响flag的相关各位。
+指令执行后：zf=1，pf=1，sf=0，cf=0，of=0。</p>
+<p>CPU在执行cmp指令的时候，也包含两种含义：进行无符号数运算和进行有符号数运算。</p>
+<table>
+<thead>
+<tr>
+<th>cmp ax, bx</th>
+<th>无符号比较时</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(ax) = (bx)</td>
+<td>zf = 1</td>
+</tr>
+<tr>
+<td>(ax) ≠ (bx)</td>
+<td>zf = 0</td>
+</tr>
+<tr>
+<td>(ax) &lt; (bx)</td>
+<td>cf = 1</td>
+</tr>
+<tr>
+<td>(ax) ≥ (bx)</td>
+<td>cf = 0</td>
+</tr>
+<tr>
+<td>(ax) &gt; (bx)</td>
+<td>cf = 0 且 zf = 0</td>
+</tr>
+<tr>
+<td>(ax) ≤ (bx)</td>
+<td>cf = 1 且 zf = 1</td>
+</tr>
+</tbody>
+</table>
+<p>上面的表格可以正推也可以逆推</p>
+<p>如果用cmp来进行有符号数比较时
+SF只能记录实际结果的正负，发生溢出的时候，实际结果的正负不能说明逻辑上真正结果的正负。
+但是逻辑上的结果的正负，才是cmp指令所求的真正结果，所以我们在考察SF的同时考察OF，就可以得知逻辑上真正结果的正负，同时就知道比较的结果。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">ah</span><span class="p">,</span> <span class="mi">08</span><span class="no">AH</span>  <span class="c1">; -Not(8A-1) = -118  即当成有符号数时为-118
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">mov</span> <span class="no">bh</span><span class="p">,</span> <span class="mi">070</span><span class="no">H</span>  <span class="c1">; 有符号数时最高位为0为正数， 70H = 112
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">cmp</span> <span class="no">ah</span><span class="p">,</span> <span class="no">bh</span>    <span class="c1">;（ah）-（bh）实际得到的结果是1AH 
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		      <span class="c1">; 在逻辑上，运算所应该得到的结果是：（-118）- 112 = -230
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		      <span class="c1">; sf记录实际结果的正负，所以sf=0
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p><code>cmp ah, bh</code>
+（1）如果sf=1，而of=0 。 of=0说明没有溢出，逻辑上真正结果的正负=实际结果的正负； sf=1，实际结果为负，所以逻辑上真正的结果为负，所以（ah）&lt;（bh）</p>
+<p>（2）如果sf=1，而of=1： of=1，说明有溢出，逻辑上真正结果的正负≠实际结果的正负； sf=1，实际结果为负。
+实际结果为负，而又有溢出，这说明是由于溢出导致了实际结果为负，，如果因为溢出导致了实际结果为负，那么逻辑上真正的结果必然为正。 这样，sf=1，of=1，说明了（ah）&gt;（bh）。</p>
+<p>（3）如果sf=0，而of=1。of=1，说明有溢出，逻辑上真正结果的正负≠实际结果的正负；sf=0，实际结果非负。而of=1说明有溢出，则结果非0，所以，实际结果为正。
+实际结果为正，而又有溢出，这说明是由于溢出导致了实际结果非负，如果因为溢出导致了实际结果为正，那么逻辑上真正的结果必然为负。这样，sf=0，of=1，说明了（ah）&lt;（bh）。
+（4）如果sf=0，而of=0
+of=0，说明没有溢出，逻辑上真正结果的正负=实际结果的正负；sf=0，实际结果非负，所以逻辑上真正的结果非负，所以（ah）≥（bh）。</p>
+</blockquote>
+<h2 id="4检测比较结果的条件转移指令">4、检测比较结果的条件转移指令</h2>
+<p>可以根据某种条件，决定是否修改IP的指令</p>
+<p>jcxz它可以检测cx中的数值，如果（cx）=0，就修改IP，否则什么也不做。</p>
+<p>所有条件转移指令的转移位移都是[-128，127]。</p>
+<p>多数条件转移指令都检测标志寄存器的相关标志位，根据检测的结果来决定是否修改IP</p>
+<p>这些条件转移指令通常都和cmp相配合使用,它们所检测的标志位，都是cmp指令进行无符号数比较的时记录比较结果的标志位</p>
+<p>根据无符号数的比较结果进行转移的条件转移指令（它们检测zf、cf的值）</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>含义</th>
+<th>检测的相关标志位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>je</td>
+<td>等于则转移</td>
+<td>zf = 1</td>
+</tr>
+<tr>
+<td>jne</td>
+<td>不等于则转移</td>
+<td>zf = 0</td>
+</tr>
+<tr>
+<td>jb</td>
+<td>低于则转移</td>
+<td>cf = 1</td>
+</tr>
+<tr>
+<td>jnb</td>
+<td>不低于则转移</td>
+<td>cf = 0</td>
+</tr>
+<tr>
+<td>ja</td>
+<td>高于则转移</td>
+<td>cf = 0 且 zf = 0</td>
+</tr>
+<tr>
+<td>jna</td>
+<td>不高于则转移</td>
+<td>cf = 1 且 zf = 1</td>
+</tr>
+</tbody>
+</table>
+<p>j：jump，e：equal，b：below，a：above，n：not</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="c1">;编程，统计data段中数值为8的字节的个数，用ax保存统计结果。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="no">data</span> 
+</span></span><span class="line"><span class="cl"><span class="no">mov</span> <span class="no">ds</span><span class="p">,</span> <span class="no">ax</span> 
+</span></span><span class="line"><span class="cl"><span class="no">mov</span> <span class="no">bx</span><span class="p">,</span> <span class="mi">0</span>   <span class="c1">;ds:bx指向第一个字节
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">0</span>   <span class="c1">;初始化累加器mov cx，8
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nl">s:</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">cmp</span> <span class="no">byte</span> <span class="no">ptr</span> <span class="p">[</span><span class="no">bx</span><span class="p">],</span> <span class="mi">8</span>   <span class="c1">;和8进行比较
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">jne</span> <span class="no">next</span>  <span class="c1">;如果不相等转到next，继续循环
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">inc</span> <span class="no">ax</span>  <span class="c1">;如果相等就将计数值加1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nl">next:</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">inc</span> <span class="no">bx</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">loop</span> <span class="no">s</span> <span class="c1">;程序执行后：（ax）=3
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="5df标志和串传送指令">5、DF标志和串传送指令</h2>
+<p>方向标志位。在串处理指令中，控制每次操作后si、di的增减。</p>
+<ul>
+<li>df = 0每次操作后si、di递增；</li>
+<li>df = 1每次操作后si、di递减。</li>
+</ul>
+<p>格式：<code>movsb</code>
+功能：将ds:si指向的内存单元中的字节送入es:di中，然后根据标志寄存器df位的值，将si和di递增或递减</p>
+<p>格式：<code>movsw</code>
+功能：将ds:si指向的内存字单元中的字送入es:di中，然后根据标志寄存器df位的值，将si和di递增2或递减2。</p>
+<p>格式：<code>rep movsb</code>
+movsb和movsw进行的是串传送操作中的一个步骤，一般来说，movsb和movsw都和rep配合使用，
+功能：rep的作用是根据cx的值，重复执行后面的串传送指令</p>
+<p>8086CPU提供下面两条指令对df位进行设置。</p>
+<ul>
+<li><code>cld</code>指令：将标志寄存器的df位置0</li>
+<li><code>std</code>指令：将标志寄存器的df位置1</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="c1">;将data段中的第一个字符串复制到它后面的空间中。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">data</span> <span class="no">segment</span> 
+</span></span><span class="line"><span class="cl">	<span class="no">db</span> <span class="err">&#39;</span><span class="no">Welcome</span> <span class="no">to</span> <span class="no">masm</span><span class="p">!</span><span class="err">&#39;</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">db</span> <span class="mi">16</span> <span class="no">dup</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nf">data</span> <span class="no">ends</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="no">data</span> 
+</span></span><span class="line"><span class="cl"><span class="no">mov</span> <span class="no">ds</span><span class="p">,</span> <span class="no">ax</span> 
+</span></span><span class="line"><span class="cl"><span class="no">mov</span> <span class="no">si</span><span class="p">,</span> <span class="mi">0</span>   <span class="c1">;ds:si 指向data:0
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">mov</span> <span class="no">es</span><span class="p">,</span> <span class="no">ax</span> 
+</span></span><span class="line"><span class="cl"><span class="no">mov</span> <span class="no">di</span><span class="p">,</span> <span class="mi">16</span>  <span class="c1">;es:di指向data:0010
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nf">mov</span> <span class="no">cx</span><span class="p">,</span> <span class="mi">16</span>  <span class="c1">;（cx）=16，rep循环16次
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">cld</span>  <span class="c1">;设置df=0，正向传送
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="na">rep</span> <span class="nf">movsb</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="6pushf和popf">6、pushf和popf</h2>
+<p>pushf的功能是将标志寄存器的值压栈，而popf是从栈中弹出数据，送入标志寄存器中</p>
+<p>pushf和popf，为直接访问标志寄存器提供了一种方法。</p>
+<h2 id="7总结">7、总结</h2>
+<blockquote>
+<ul>
+<li>当使用某些运算指令运算时，如果数据发生溢出或需要借位，都会在标志寄存器的某个位有所体现。那么可以根据这个标志寄存器实现大数之间的运算</li>
+<li>串转移指令，算是封装的汇编api</li>
+</ul>
+</blockquote>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-01-17
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">Redis高级篇之多级缓存</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/">
+            <span class="next-text nav-default">Redis高级篇之分布式缓存</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-01-17 21:08:13 \u002b0800 CST',
+        title: '汇编之标志寄存器',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

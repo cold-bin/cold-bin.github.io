@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>汇编之外中断 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="外中断 1、外中断 CPU在计算机系统中，除了能够执行指令，进行运算以外，还应该能够对外部设备进行控制，接收它们的输入，向它们进行输出（I/O能" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%A4%96%E4%B8%AD%E6%96%AD/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="汇编之外中断" />
+<meta property="og:description" content="外中断 1、外中断 CPU在计算机系统中，除了能够执行指令，进行运算以外，还应该能够对外部设备进行控制，接收它们的输入，向它们进行输出（I/O能" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%A4%96%E4%B8%AD%E6%96%AD/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-01-29T20:59:35+08:00" />
+<meta property="article:modified_time" content="2023-01-29T20:59:35+08:00" />
+<meta itemprop="name" content="汇编之外中断">
+<meta itemprop="description" content="外中断 1、外中断 CPU在计算机系统中，除了能够执行指令，进行运算以外，还应该能够对外部设备进行控制，接收它们的输入，向它们进行输出（I/O能"><meta itemprop="datePublished" content="2023-01-29T20:59:35+08:00" />
+<meta itemprop="dateModified" content="2023-01-29T20:59:35+08:00" />
+<meta itemprop="wordCount" content="2502">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="汇编之外中断"/>
+<meta name="twitter:description" content="外中断 1、外中断 CPU在计算机系统中，除了能够执行指令，进行运算以外，还应该能够对外部设备进行控制，接收它们的输入，向它们进行输出（I/O能"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">汇编之外中断</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-01-29 </span>
+        <div class="post-category">
+            <a href="/categories/%E6%B1%87%E7%BC%96/"> 汇编 </a>
+            </div>
+          <span class="more-meta"> 约 2502 字 </span>
+          <span class="more-meta"> 预计阅读 5 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#外中断">外中断</a>
+      <ul>
+        <li><a href="#1外中断">1、外中断</a></li>
+        <li><a href="#2pc机键盘的处理过程">2、PC机键盘的处理过程</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h1 id="外中断">外中断</h1>
+<h2 id="1外中断">1、外中断</h2>
+<p>CPU在计算机系统中，除了能够执行指令，进行运算以外，还应该能够对外部设备进行控制，接收它们的输入，向它们进行输出（I/O能力）</p>
+<p>PC系统的接口卡和主板上，装有各种接口芯片。这些外设接口芯片的内部有若干寄存器，CPU将这些寄存器当作端口来访问</p>
+<p>外设的输入不直接送入内存和CPU，而是送入相关的接口芯片的端口中；
+CPU向外设的输出也不是直接送入外设，而是先送入端口中，再由相关的芯片送到外设。
+CPU还可以向外设输出控制命令，而这些控制命令也是先送到相关芯片的端口中，然后再由相关的芯片根据命令对外设实施控制。</p>
+<p>即：CPU通过端口和外部设备进行联系</p>
+<p>当CPU外部有需要处理的事情发生的时候，比如说，外设的输入到达，相关芯片将向CPU发出相应的中断信息。CPU在执行完当前指令后，可以检测到发送过来的中断信息，引发中断过程，处理外设的输入。</p>
+<p><strong>PC系统中，外中断源有两类</strong></p>
+<p>1、可屏蔽中断</p>
+<p>可屏蔽中断是CPU可以不响应的外中断。CPU是否响应可屏蔽中断，要看标志寄存器的IF位的设置。
+当CPU检测到可屏蔽中断信息时，如果IF=1，则CPU在执行完当前指令后响应中断，引发中断过程；如果IF=0，则不响应可屏蔽中断。</p>
+<p>可屏蔽中断信息来自于CPU外部，中断类型码是通过数据总线送入CPU的；而内中断的中断类型码是在CPU内部产生的。</p>
+<p>中断过程中将IF置0的原因就是，在进入中断处理程序后，禁止其他的可屏蔽中断。
+如果在中断处理程序中需要处理可屏蔽中断，可以用指令将IF置1。</p>
+<p>8086CPU提供的设置IF的指令：<code>sti</code>，设置IF=1；<code>cli</code>，设置IF=0。</p>
+<p>2、不可屏蔽中断</p>
+<p>不可屏蔽中断是CPU必须响应的外中断。当CPU检测到不可屏蔽中断信息时，则在执行完当前指令后，立即响应，引发中断过程。</p>
+<p>对于8086CPU，不可屏蔽中断的中断类型码固定为2，所以中断过程中，不需要取中断类型码。则不可屏蔽中断的中断过程为：①标志寄存器入栈，IF=0，TF=0；②CS、IP入栈；③（IP）=（8），（CS）=（0AH）。</p>
+<p>几乎所有由外设引发的外中断，都是可屏蔽中断。当外设有需要处理的事件（比如说键盘输入）发生时，相关芯片向CPU发出可屏蔽中断信息。不可屏蔽中断是在系统中有必须处理的紧急情况发生时用来通知CPU的中断信息。</p>
+<h2 id="2pc机键盘的处理过程">2、PC机键盘的处理过程</h2>
+<p>键盘中有一个芯片对键盘上的每一个键的开关状态进行扫描。按下一个键时，开关接通，该芯片就产生一个扫描码，扫描码说明了按下的键在键盘上的位置。扫描码被送入主板上的相关接口芯片的寄存器中，该寄存器的端口地址为<code>60h</code>。松开按下的键时，也产生一个扫描码，扫描码说明了松开的键在键盘上的位置。松开按键时产生的扫描码也被送入60h端口中。</p>
+<p>一般将按下一个键时产生的扫描码称为通码，松开一个键产生的扫描码称为断码。</p>
+<p>扫描码长度为一个字节，通码的第7位为0，断码的第7位为1
+即：断码 = 通码 + 80h。比如，g键的通码为22h，断码为a2h</p>
+<p>键盘的输入到达60h端口时，相关的芯片就会向CPU发出中断类型码为9的可屏蔽中断信息。CPU检测到该中断信息后，如果IF=1，则响应中断，引发中断过程，转去执行int 9中断例程。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/2019032416380958.png" alt="在这里插入图片描述"></p>
+<p>BIOS提供了int 9中断例程，用来进行基本的键盘输入处理，主要的工作如下：
+（1）读出60h端口中的扫描码；
+（2）如果是字符键的扫描码，将该扫描码和它所对应的字符码（即ASCII码）送入内存中的BIOS键盘缓冲区； 如果是控制键（比如Ctrl）和切换键（比如CapsLock）的扫描码，则将其转变为状态字节写入内存中存储状态字节的单元；
+（3）对键盘系统进行相关的控制，比如说，向相关芯片发出应答信息。</p>
+<p>BIOS键盘缓冲区可以存储15个键盘输入，一个键盘输入用一个字单元存放，高位字节存放扫描码，低位字节存放字符码。</p>
+<p><code>0040:17</code>单元存储键盘状态字节，该字节记录了控制键和切换键的状态。键盘状态字节各位记录的信息如下。</p>
+<table>
+<thead>
+<tr>
+<th>0</th>
+<th>右shift状态</th>
+<th>置1表示按下右shift键</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>左shift状态</td>
+<td>置1表示按下左shift键</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Ctrl状态</td>
+<td>置1表示按下Ctrl键</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Alt状态</td>
+<td>置1表示按下Alt键</td>
+</tr>
+<tr>
+<td>4</td>
+<td>ScrollLock状态</td>
+<td>置1表示Scroll指示灯亮</td>
+</tr>
+<tr>
+<td>5</td>
+<td>NumLock状态</td>
+<td>置1表示小键盘输入的是数字</td>
+</tr>
+<tr>
+<td>6</td>
+<td>CapsLock状态</td>
+<td>置1表示输入大写字母</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Insert状态</td>
+<td>置1表示处于删除态</td>
+</tr>
+</tbody>
+</table>
+<p><strong>编写int 9中断例程</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-asm" data-lang="asm"><span class="line"><span class="cl"><span class="c1">;编程：在屏幕中间依次显示“a”~“z”，并可以让人看清。在显示的过程中，按下&#39;Esc&#39;键后，改变显示的颜色。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">;完整功能代码：
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nf">assume</span> <span class="no">cs</span><span class="p">:</span><span class="no">code</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">stack</span> <span class="no">segment</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">db</span> <span class="mi">128</span> <span class="no">dup</span> <span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nf">stack</span> <span class="no">ends</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">data</span> <span class="no">segment</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">dw</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="nf">data</span> <span class="no">ends</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">code</span> <span class="no">segment</span>
+</span></span><span class="line"><span class="cl"><span class="nl">start:</span>	
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="no">stack</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">ss</span><span class="p">,</span><span class="no">ax</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">sp</span><span class="p">,</span><span class="mi">128</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="no">data</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">ds</span><span class="p">,</span><span class="no">ax</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">es</span><span class="p">,</span><span class="no">ax</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nf">push</span> <span class="no">es</span><span class="p">:[</span><span class="mi">9</span><span class="p">*</span><span class="mi">4</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">pop</span> <span class="no">ds</span><span class="p">:[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">push</span> <span class="no">es</span><span class="p">:[</span><span class="mi">9</span><span class="p">*</span><span class="mi">4</span><span class="err">+</span><span class="mi">2</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">pop</span> <span class="no">ds</span><span class="p">:[</span><span class="mi">2</span><span class="p">]</span>		<span class="c1">;将原来的int 9中断例程的入口地址保存在ds:0、ds:2单元中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">word</span> <span class="no">ptr</span> <span class="no">es</span><span class="p">:[</span><span class="mi">9</span><span class="p">*</span><span class="mi">4</span><span class="p">],</span> <span class="no">offset</span> <span class="no">int9</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">es</span><span class="p">:[</span><span class="mi">9</span><span class="p">*</span><span class="mi">4</span><span class="err">+</span><span class="mi">2</span><span class="p">],</span> <span class="no">cs</span>	<span class="c1">;在中断向量表中设置新的int 9中断例程的入口地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">;显示字符串
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">0</span><span class="no">b800h</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">es</span><span class="p">,</span> <span class="no">ax</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">ah</span><span class="p">,</span> <span class="err">&#39;</span><span class="no">a</span><span class="err">&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nl">s:</span>	
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span>  <span class="no">es</span><span class="p">:[</span><span class="mi">160</span><span class="p">*</span><span class="mi">12</span><span class="err">+</span><span class="mi">40</span><span class="p">*</span><span class="mi">2</span><span class="p">],</span> <span class="no">ah</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">call</span> <span class="no">delay</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">inc</span> <span class="no">ah</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">cmp</span> <span class="no">ah</span><span class="p">,</span> <span class="err">&#39;</span><span class="no">z</span><span class="err">&#39;</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">jna</span> <span class="no">s</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">es</span><span class="p">,</span><span class="no">ax</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nf">push</span> <span class="no">ds</span><span class="p">:[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">pop</span> <span class="no">es</span><span class="p">:[</span><span class="mi">9</span><span class="p">*</span><span class="mi">4</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">push</span> <span class="no">ds</span><span class="c1">;[2]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">pop</span> <span class="no">es</span><span class="c1">;[9*4+2]   	;将中断向量表中int 9中断例程的入口恢复为原来的地址
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">4</span><span class="no">c00h</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">int</span> <span class="mi">21</span><span class="no">h</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">;将循环延时的程序段写为一个子程序
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nl">delay:</span>	
+</span></span><span class="line"><span class="cl">	<span class="nf">push</span> <span class="no">ax</span> 
+</span></span><span class="line"><span class="cl">	<span class="no">push</span> <span class="no">dx</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">dx</span><span class="p">,</span> <span class="mi">2000</span><span class="no">h</span>  <span class="c1">;用两个16位寄存器来存放32位的循环次数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl"><span class="nl">s1:</span> 	
+</span></span><span class="line"><span class="cl">	<span class="nf">sub</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">sbb</span> <span class="no">dx</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">cmp</span> <span class="no">ax</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">jne</span> <span class="no">s1</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">cmp</span> <span class="no">dx</span><span class="p">,</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">jne</span> <span class="no">s1</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">pop</span> <span class="no">dx</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">pop</span> <span class="no">ax</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">ret</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">;------以下为新的int 9中断例程--------------------
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nl">int9:</span>	
+</span></span><span class="line"><span class="cl">	<span class="nf">push</span> <span class="no">ax</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">push</span> <span class="no">bx</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">push</span> <span class="no">es</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nf">in</span> <span class="no">al</span><span class="p">,</span> <span class="mi">60</span><span class="no">h</span><span class="c1">;从端口60h读出键盘的输入
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="nf">pushf</span> <span class="c1">;标志寄存器入栈
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="nf">pushf</span>   
+</span></span><span class="line"><span class="cl">	<span class="no">pop</span> <span class="no">bx</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">and</span> <span class="no">bh</span><span class="p">,</span><span class="mi">11111100</span><span class="no">b</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">push</span> <span class="no">bx</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">popf</span>	<span class="c1">;TF=0,IF=0
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	
+</span></span><span class="line"><span class="cl">	<span class="nf">call</span> <span class="no">dword</span> <span class="no">ptr</span> <span class="no">ds</span><span class="p">:[</span><span class="mi">0</span><span class="p">]</span> 	<span class="c1">;对int指令进行模拟，调用原来的int 9中断例程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">	<span class="nf">cmp</span> <span class="no">al</span><span class="p">,</span><span class="mi">1</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">jne</span> <span class="no">int9ret</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">ax</span><span class="p">,</span><span class="mi">0</span><span class="no">b800h</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">mov</span> <span class="no">es</span><span class="p">,</span><span class="no">ax</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">inc</span> <span class="no">byte</span> <span class="no">ptr</span> <span class="no">es</span><span class="p">:[</span><span class="mi">160</span><span class="p">*</span><span class="mi">12</span><span class="err">+</span><span class="mi">40</span><span class="p">*</span><span class="mi">2</span><span class="err">+</span><span class="mi">1</span><span class="p">]</span>  <span class="c1">;属性增加1，改变颜色
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="nl">int9ret:</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">pop</span> <span class="no">es</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">pop</span> <span class="no">bx</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">pop</span> <span class="no">ax</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">iret</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">code</span> <span class="no">ends</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">end</span> <span class="no">start</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>CPU对外设输入的通常处理方法
+（1）外设的输入送入端口；
+（2）向CPU发出外中断（可屏蔽中断）信息；
+（3）CPU检测到可屏蔽中断信息，如果IF=1，CPU在执行完当前指令后响应中断，执行相应的中断例程；
+（4）可在中断例程中实现对外设输入的处理。</p>
+<p>端口和中断机制，是CPU进行I/O的基础。</p>
+</blockquote>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-01-29
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%80%BB%E7%BB%93/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">汇编之总结</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AB%AF%E5%8F%A3/">
+            <span class="next-text nav-default">汇编之端口</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-01-29 20:59:35 \u002b0800 CST',
+        title: '汇编之外中断',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

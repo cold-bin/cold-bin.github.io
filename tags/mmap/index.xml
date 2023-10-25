@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>mmap on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/mmap/</link>
+    <description>Recent content in mmap on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Wed, 05 Apr 2023 17:26:42 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/mmap/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>拷贝</title>
+      <link>https://cold-bin.github.io/post/%E6%8B%B7%E8%B4%9D/</link>
+      <pubDate>Wed, 05 Apr 2023 17:26:42 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E6%8B%B7%E8%B4%9D/</guid>
+      <description>[toc] 拷贝 说起拷贝，语文上的联想词大概就是“复制”。那么在计算机范围内，二者定义是否一样呢？答案是不一样的。 拷贝：是指在计算机程序中，将一个对象</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>tcp协议 on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/tcp%E5%8D%8F%E8%AE%AE/</link>
+    <description>Recent content in tcp协议 on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Tue, 11 Jul 2023 17:36:16 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/tcp%E5%8D%8F%E8%AE%AE/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>计算机网络之运输层</title>
+      <link>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E8%BF%90%E8%BE%93%E5%B1%82/</link>
+      <pubDate>Tue, 11 Jul 2023 17:36:16 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E8%BF%90%E8%BE%93%E5%B1%82/</guid>
+      <description>[toc] 运输层概述 运输层的基本功能 运输层协议为运行在不同主机上的应用进程之间提供了逻辑通信功能，使得运行在不同主机上的进程像直连一样。 复用和分用 差</description>
+    </item>
+    
+  </channel>
+</rss>

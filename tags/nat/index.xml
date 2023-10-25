@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>nat on cold bin&#39;s blog</title>
+    <link>https://cold-bin.github.io/tags/nat/</link>
+    <description>Recent content in nat on cold bin&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>cold-bin</copyright>
+    <lastBuildDate>Fri, 23 Jun 2023 22:05:45 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/nat/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>计算机网络之网络层</title>
+      <link>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82/</link>
+      <pubDate>Fri, 23 Jun 2023 22:05:45 +0800</pubDate>
+      
+      <guid>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82/</guid>
+      <description>[toc] 4.1、网络层概述 简介 网络层的主要任务是实现网络互连，进而实现数据包在各网络之间的传输 这些异构型网络N1~N7如果只是需要各自内部通信，他</description>
+    </item>
+    
+  </channel>
+</rss>

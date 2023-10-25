@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>计算机网络之概述 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="[toc] 图示说明 代表着主机 代表服务器 代表着路由器 代表着网络 1.1、计算机网络在信息时代的作用 计算机网络已由一种通信基础设施发展成为一种重要的信息服" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E6%A6%82%E8%BF%B0/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="计算机网络之概述" />
+<meta property="og:description" content="[toc] 图示说明 代表着主机 代表服务器 代表着路由器 代表着网络 1.1、计算机网络在信息时代的作用 计算机网络已由一种通信基础设施发展成为一种重要的信息服" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E6%A6%82%E8%BF%B0/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-06-03T22:42:06+08:00" />
+<meta property="article:modified_time" content="2023-06-03T22:42:06+08:00" />
+<meta itemprop="name" content="计算机网络之概述">
+<meta itemprop="description" content="[toc] 图示说明 代表着主机 代表服务器 代表着路由器 代表着网络 1.1、计算机网络在信息时代的作用 计算机网络已由一种通信基础设施发展成为一种重要的信息服"><meta itemprop="datePublished" content="2023-06-03T22:42:06+08:00" />
+<meta itemprop="dateModified" content="2023-06-03T22:42:06+08:00" />
+<meta itemprop="wordCount" content="10479">
+<meta itemprop="keywords" content="osi七层模型," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="计算机网络之概述"/>
+<meta name="twitter:description" content="[toc] 图示说明 代表着主机 代表服务器 代表着路由器 代表着网络 1.1、计算机网络在信息时代的作用 计算机网络已由一种通信基础设施发展成为一种重要的信息服"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">计算机网络之概述</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2023-06-03 </span>
+        <div class="post-category">
+            <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"> 计算机网络 </a>
+            </div>
+          <span class="more-meta"> 约 10479 字 </span>
+          <span class="more-meta"> 预计阅读 21 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#图示说明">图示说明</a></li>
+    <li><a href="#11计算机网络在信息时代的作用">1.1、计算机网络在信息时代的作用</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#数字化">数字化</a></li>
+            <li><a href="#网络化">网络化</a></li>
+            <li><a href="#信息化">信息化</a></li>
+          </ul>
+        </li>
+        <li><a href="#我国互联网发展状况">我国互联网发展状况</a></li>
+      </ul>
+    </li>
+    <li><a href="#12因特网概述">1.2、因特网概述</a>
+      <ul>
+        <li><a href="#1网络互连网互联网和因特网">1、网络、互连网（互联网）和因特网</a></li>
+        <li><a href="#2因特网发展的三个阶段">2、因特网发展的三个阶段</a></li>
+        <li><a href="#3因特网的标准化工作">3、因特网的标准化工作</a></li>
+        <li><a href="#4因特网的组成">4、因特网的组成</a>
+          <ul>
+            <li><a href="#补充">补充：</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#13-三种交换方式">1.3 三种交换方式</a>
+      <ul>
+        <li><a href="#1电路交换circuit-switching">1、电路交换（Circuit Switching）</a></li>
+        <li><a href="#2分组交换packet-switching">2、分组交换（Packet Switching）</a></li>
+        <li><a href="#3报文交换message-switching">3、报文交换（Message Switching）</a></li>
+        <li><a href="#三种交换方式的对比">三种交换方式的对比</a></li>
+      </ul>
+    </li>
+    <li><a href="#14-计算机网络的定义和分类">1.4 计算机网络的定义和分类</a>
+      <ul>
+        <li><a href="#定义">定义</a></li>
+        <li><a href="#分类">分类</a></li>
+      </ul>
+    </li>
+    <li><a href="#15-计算机网络的性能指标">1.5 计算机网络的性能指标</a>
+      <ul>
+        <li><a href="#速率">速率</a></li>
+        <li><a href="#带宽">带宽</a></li>
+        <li><a href="#吞吐量">吞吐量</a></li>
+        <li><a href="#时延">时延</a></li>
+        <li><a href="#时延带宽积">时延带宽积</a></li>
+        <li><a href="#往返时间">往返时间</a></li>
+        <li><a href="#利用率">利用率</a></li>
+        <li><a href="#丢包率">丢包率</a></li>
+      </ul>
+    </li>
+    <li><a href="#16-计算机网络体系结构">1.6 计算机网络体系结构</a>
+      <ul>
+        <li><a href="#1常见的计算机网络体系结构">1、常见的计算机网络体系结构</a>
+          <ul>
+            <li><a href="#osi七层模型">OSI七层模型</a></li>
+            <li><a href="#tcpip四层模型">TCP/IP四层模型</a></li>
+          </ul>
+        </li>
+        <li><a href="#2计算机网络体系结构分层的必要性">2、计算机网络体系结构分层的必要性</a></li>
+        <li><a href="#3计算机网络体系结构分层思想举例">3、计算机网络体系结构分层思想举例</a>
+          <ul>
+            <li></li>
+          </ul>
+        </li>
+        <li><a href="#4计算机网络体系结构中的专用术语">4、计算机网络体系结构中的专用术语</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <p>[toc]</p>
+<h1 id="图示说明">图示说明</h1>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103344.png" alt="image-20201007143815954" style="zoom: 50%;" />代表着主机</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103558.png" alt="image-20201007144130208" style="zoom:50%;" /> 代表服务器</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103603.png" alt="image-20201007143904153" style="zoom:50%;" /> 代表着路由器</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103608.png" alt="image-20201007143936128" style="zoom:50%;" />代表着网络</p>
+<h1 id="11计算机网络在信息时代的作用">1.1、计算机网络在信息时代的作用</h1>
+<ul>
+<li>计算机网络已由一种<strong>通信基础设施</strong>发展成为一种重要的<strong>信息服务基础设施</strong></li>
+<li>计算机网络已经像水，电，煤气这些基础设施一样，成为我们<strong>生活中不可或缺</strong>的一部分</li>
+</ul>
+<h3 id="数字化">数字化</h3>
+<p>将现实世界的信息存储到计算机中，也就是<code>01</code>二进制来表示所有的现实世界信息。例如，我们可以将个人的身份信息存放为计算机中的一堆二进制位。</p>
+<p>数字化的目的是将现实世界中的事物转化为数字化的形式，以便于计算机和互联网的处理和传输。</p>
+<h3 id="网络化">网络化</h3>
+<p>网络化中有三网：电信网络、计算机网络、有线电视网络。</p>
+<h4 id="电信网络">电信网络</h4>
+<p>电信网络是指通过电信技术实现的通信网络，它包括了固定电话网络、移动通信网络、互联网等。</p>
+<p>电信网络通过无线电波、光纤、铜线等传输介质，将声音、图像、数据等信息传输到用户之间。电信网络的优点是覆盖面广、传输速度快、信息容量大、可靠性高等。</p>
+<p>在现代社会中，电信网络已经成为人们生活、工作、学习和娱乐中不可或缺的一部分。</p>
+<h4 id="计算机网络">计算机网络</h4>
+<p>计算机网络是指将多台计算机通过通信设备连接起来，以便它们之间可以进行<strong>数据交换</strong>和<strong>资源共享</strong>的网络系统。</p>
+<p>计算机网络可以通过有线或无线的方式连接计算机，使得计算机之间可以相互通信，共享数据和设备。计算机网络的目的是实现信息的共享和传递，提高计算机资源的利用率，同时也可以提高工作效率和降低成本。</p>
+<p>计算机网络的应用非常广泛，包括<strong>互联网（因特网）</strong>、<strong>局域网</strong>、<strong>广域网</strong>、<strong>数据中心网络</strong>等。</p>
+<h4 id="有线电视网络">有线电视网络</h4>
+<p>有线电视网络是一种通过有线电缆传输电视信号的网络。它使用同轴电缆、光纤或双绞线等传输介质，将电视信号传输到用户家中的电视机上。</p>
+<p>有线电视网络通常提供更多的电视频道和更高的画质，同时也可以提供互联网和电话服务。</p>
+<p>优点：信号稳定、画质高、可靠性强，但需要铺设大量的电缆，成本较高。</p>
+<h3 id="信息化">信息化</h3>
+<p>利用信息技术和通信技术来改善生产、管理和服务等方面的工作，使得信息的获取、处理、传递和利用更加高效和便捷。</p>
+<blockquote>
+<p>数字化是信息化的基础和前提，而信息化则是数字化的高级应用和发展。</p>
+</blockquote>
+<h2 id="我国互联网发展状况">我国互联网发展状况</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103619.png" alt="image-20201006160618748"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103648.png" alt="image-20201006160645887"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103659.png" alt="image-20201006160715764"></p>
+<hr>
+<h1 id="12因特网概述">1.2、因特网概述</h1>
+<h2 id="1网络互连网互联网和因特网">1、网络、互连网（互联网）和因特网</h2>
+<p>网络：网络（Network）由若干**结点（Node）<strong>和连接这些结点的</strong>链路（Link）**组成。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103711.png" alt="image-20201006163406232" style="zoom: 50%;" />
+<p>互连网（互联网）：多个网络通过路由器互连起来，这样就构成了一个覆盖范围更大的网络，即互连网（互联网）。因此，互联网又称为“网络的网络（Network of Networks）”。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103716.png" alt="image-20201006163857236" style="zoom:50%;" />
+<p>因特网：因特网（Internet）是世界上最大的互连网络（用户数以亿计，互连的网络数以百万计）。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103720.png" alt="image-20201006164114523" style="zoom:50%;" />
+<blockquote>
+<p><strong>internet与Internet的区别</strong></p>
+<ul>
+<li><strong>internet(互联网或互连网)<strong>是一个通用名词，它泛指</strong>多个计算机网络互连而成的网络</strong>。在这些网络之间的通信协议可以是任意的。</li>
+<li><strong>Internet（因特网）则是一个专用名词</strong>，它指<strong>当前全球最大的、开放的、由众多网络互连而成的特定计算机网络</strong>，它采用TCP/IP协议族作为通信的规则，其前身是美国的ARPANET。</li>
+</ul>
+<p><strong>任意把几个计算机网络互连起来（不管采用什么协议），并能够相互通信，这样构成的是一个互连网(internet) ，而不是互联网(Internet)。</strong></p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103731.png" alt="image-20201010233227407"></p>
+<h2 id="2因特网发展的三个阶段">2、因特网发展的三个阶段</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103739.png" alt="image-20201006164655173"></p>
+<p><strong>因特网服务提供者<code>ISP</code>(<code>I</code>nternet <code>S</code>ervice <code>P</code>rovider)</strong></p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103744.png" alt="image-20201006165117756" style="zoom:67%;" />
+<blockquote>
+<p>普通用户是如何接入到因特网的呢？</p>
+<p>答：<strong>通过ISP接入因特网</strong></p>
+<p>ISP可以从因特网管理机构申请到成块的IP地址，同时拥有通信线路以及路由器等联网设备。任何机构和个人只需缴纳费用，就可从<strong>ISP的得到所需要的IP地址</strong>。</p>
+<p><strong>因为因特网上的主机都必须有IP地址才能进行通信，这样就可以通过该ISP接入到因特网</strong></p>
+</blockquote>
+<p><strong>中国的三大<code>ISP</code>：中国电信，中国联通和中国移动</strong></p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103801.png" alt="image-20201006165738879" style="zoom:67%;" />
+<p><strong>基于ISP的三层结构的因特网</strong></p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103810.png" alt="image-20201006170140504" style="zoom:67%;" />
+<blockquote>
+<p>一旦某个用户能够接入到因特网，那么他也可以成为一个ISP，所需要做的就是购买一些如调制解调器或路由器这样的设备，让其他用户可以和他相连。</p>
+</blockquote>
+<h2 id="3因特网的标准化工作">3、因特网的标准化工作</h2>
+<ul>
+<li>因特网的标准化工作对因特网的发展起到了非常重要的作用。</li>
+<li>因特网在指定其标准上的一个很大的特点是<strong>面向公众。</strong>
+<ul>
+<li>因特网所有的<strong>RFC</strong>(Request For Comments)技术文档都可从因特网上免费下载；</li>
+<li>任何人都可以随时用电子邮件发表对某个文档的意见或建议。</li>
+</ul>
+</li>
+<li><strong>因特网协会ISOC</strong>是一个国际性组织，它负责对因特网进行全面管理，以及在世界范围内促进其发展和使用。
+<ul>
+<li>因特网体系结构委员会IAB，负责管理因特网有关协议的开发；</li>
+<li>因特网工程部IETF，负责研究中短期工程问题，主要针对协议的开发和标准化；</li>
+<li>因特网研究部IRTF，从事理论方面的研究和开发一些需要长期考虑的问题。</li>
+</ul>
+</li>
+</ul>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103816.png" alt="image-20201006170959060" style="zoom:67%;" />
+<ul>
+<li>
+<p>制订因特网的正式标准要经过一下<strong>4个阶段</strong>：</p>
+<p>1、因特网草案（在这个阶段还不是RFC文档）</p>
+<p>2、建议标准（从这个阶段开始就成为RFC文档）</p>
+<p>3、草案标准</p>
+<p>4、因特网标准</p>
+</li>
+</ul>
+<h2 id="4因特网的组成">4、因特网的组成</h2>
+<ul>
+<li>
+<p>边缘部分</p>
+<p>由所有连接在因特网上的<strong>主机</strong>组成（台式电脑，大型服务器，笔记本电脑，平板，智能手机等）。这部分是<strong>用户直接使用</strong>的，用来进行<strong>通信</strong>（传送数据、音频或视频）和<strong>资源共享</strong>。</p>
+</li>
+<li>
+<p>核心部分</p>
+<p>由<strong>大量网络</strong>和连接这些网络的<strong>路由器</strong>组成。这部分是<strong>为边缘部分提供服务</strong>的（提供连通性和交换）。</p>
+</li>
+</ul>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103822.png" alt="image-20201006180725282" style="zoom:67%;" />
+<blockquote>
+<p>路由器是一种专用计算机，但我们不称它为主机，路由器是实现分组交换的关键构建，其任务是转发收到的分组，这是网络核心最重要的部分。</p>
+<p><strong>处在互联网边缘的部分就是连接在互联网上的所有的主机，这些主机又称为端系统 (end system)。</strong></p>
+<p><strong>端系统在功能上可能有很大的差别：</strong></p>
+<ol>
+<li>
+<p>小的端系统可以是一台普通个人电脑，具有上网功能的智能手机，甚至是一个很小的网络摄像头。</p>
+</li>
+<li>
+<p>大的端系统则可以是一台非常昂贵的大型计算机。</p>
+</li>
+<li>
+<p>端系统的拥有者可以是个人，也可以是单位（如学校、企业、政府机关等），当然也可以是某个ISP。</p>
+</li>
+</ol>
+</blockquote>
+<h3 id="补充">补充：</h3>
+<p><strong>端系统之间通信的含义</strong></p>
+<p>“主机 A 和主机 B 进行通信”实际上是指：运行在主机 A 上的某个程序和运行在主机 B 上的另一个程序进行通信。<strong>即“主机</strong> <strong>A</strong> <strong>的某个进程和主机</strong> <strong>B</strong> <strong>上的另一个进程进行通信”。简称为“计算机之间通信”。</strong></p>
+<p>端系统之间的通信方式通常可划分为两大类：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103829.png" alt="image-20201010234145371"></p>
+<p><strong>客户-服务器方式：</strong></p>
+<ul>
+<li>客户 (client) 和服务器 (server) 都是指通信中所涉及的两个应用进程。</li>
+<li>客户 - 服务器方式所描述的是进程之间服务和被服务的关系。</li>
+<li>客户是服务的请求方，服务器是服务的提供方。</li>
+</ul>
+<blockquote>
+<p><strong>服务请求方和服务提供方都要使用网络核心部分所提供的服务。</strong></p>
+</blockquote>
+<p><strong>对等连接方式：</strong></p>
+<ul>
+<li><strong>对等连接</strong> (peer-to-peer，简写为 <strong>P2P</strong> ) 是指两个主机在通信时并不区分哪一个是服务请求方还是服务提供方。</li>
+<li>只要两个主机都运行了对等连接软件 ( P2P 软件) ，它们就可以进行<strong>平等的、对等连接通信</strong>。</li>
+<li>双方都可以下载对方已经存储在硬盘中的共享文档。</li>
+</ul>
+<hr>
+<h1 id="13-三种交换方式">1.3 三种交换方式</h1>
+<p>网络核心部分是互联网中最复杂的部分。</p>
+<p>网络中的核心部分要向网络边缘中的大量主机提供连通性，使边缘部分中的任何一个主机都能够向其他主机通信（即传送或接收各种形式的数据）。</p>
+<p>数据是怎么在网络中进行交换的呢？数据交换的方式有三种：</p>
+<ul>
+<li>电路交换</li>
+<li>分组交换</li>
+<li>报文交换</li>
+</ul>
+<h2 id="1电路交换circuit-switching">1、电路交换（Circuit Switching）</h2>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103836.png" alt="image-20201006182240000" style="zoom:67%;" />
+<blockquote>
+<p>传统两两相连的方式，当电话数量很多时，电话线也很多，就很不方便</p>
+<p>所以要使得每一部电话能够很方便地和另一部电话进行通信，就应该使用一个<strong>中间设备</strong>将这些电话连接起来，这个中间设备就是<strong>电话交换机</strong></p>
+</blockquote>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103840.png" alt="image-20201006182634249" style="zoom:50%;" />
+<ul>
+<li>电话交换机接通电话线的方式称为电路交换；</li>
+<li>从通信资源的分配角度来看，交换（Switching）就是按照某种方式动态地分配传输线路的资源；</li>
+<li>电路交换的三个步骤：</li>
+</ul>
+<ol>
+<li>建立连接：分配通信资源</li>
+<li>通话：一直占用通信资源，也就是那些线路资源。如果有其他连接请求则会等当前连接释放。</li>
+<li>释放连接：归还通信资源</li>
+</ol>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103845.png" alt="image-20201006183020317" style="zoom:67%;" />
+<blockquote>
+<p>当使用电路交换来传送计算机数据时，其线路的传输效率往往很低。这是因为计算机数据是突发式地出现在传输线路上的，而传输路线可能已经被上一个电路交换连接占有着，那么这个线路就不能被其他连接所使用。</p>
+<p><strong>所以计算机通常采用的是分组交换，而不是电路交换</strong></p>
+</blockquote>
+<p><strong>优点：</strong></p>
+<ul>
+<li>特别适合大量数据的实时交换，例如打电话、看直播等</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>缺点也很明显。一旦建立连接后就会一直占有通信资源，使得被占用的那些线路无法被其他连接使用，只能等当前连接释放</li>
+</ul>
+<h2 id="2分组交换packet-switching">2、分组交换（Packet Switching）</h2>
+<p>在网络核心部分起特殊作用的是<strong>路由器</strong>(router)。<strong>路由器</strong>是实现<strong>分组交换</strong> (packet switching) 的关键构件，其任务是<strong>转发</strong>收到的分组，这是网络核心部分最重要的功能。</p>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103852.png" alt="image-20201006183312843" style="zoom:67%;" />
+<blockquote>
+<p>通常我们把表示<strong>该消息的整块数据</strong>成为一个<strong>报文</strong>。</p>
+<p>在发送报文之前，先把较长的报文划分成一个个更小的<strong>等长数据段</strong>，在每一个数据段前面。加上一些由必<strong>要的控制信息组成的首部</strong>后，就构成一个分组，也可简称为“包”，相应地，首部也可称为“包头”。</p>
+<p>首部包含了<strong>分组的目的地址</strong></p>
+<p><strong>分组从源主机到目的主机，可走不同的路径。</strong></p>
+</blockquote>
+<p>发送方</p>
+<ul>
+<li>构造分组</li>
+<li>发送分组</li>
+</ul>
+<p>路由器</p>
+<ul>
+<li>缓存分组</li>
+<li>转发分组</li>
+<li>简称为“分组转发”</li>
+</ul>
+<blockquote>
+<p>在路由器中的输入和输出端口之间没有直接连线。</p>
+<p>路由器处理分组的过程是：</p>
+<ol>
+<li>把收到的分组先<strong>放入缓存（暂时存储）；</strong></li>
+<li><strong>查找转发表</strong>，找出到某个目的地址应从哪个端口转发；</li>
+<li>把分组送到适当的端口<strong>转发</strong>出去。</li>
+</ol>
+</blockquote>
+<p>接收方</p>
+<ul>
+<li>接收分组</li>
+<li>还原报文</li>
+</ul>
+<p><strong>优点：</strong></p>
+<ul>
+<li>相较于电路交换、报文交换而言，分组交换类似于多级流水线CPU，可以大幅提高数据交换的效率。</li>
+<li>现代计算机网络的数据交换方式就是采用分组交换方式</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>分组交换可能会出现时延，阻塞的情况</li>
+</ul>
+<h2 id="3报文交换message-switching">3、报文交换（Message Switching）</h2>
+<p>报文交换中的交换结点也采用存储转发方式，但报文交换对报文的大小没有限制，这就要求交换结点需要较大的缓存空间。报文交换主要用于早期的电报通信网，现在较少使用，<strong>通常被较先进的分组交换方式所取代</strong>。</p>
+<h2 id="三种交换方式的对比">三种交换方式的对比</h2>
+<blockquote>
+<p>假设A，B，C，D是分组传输路径所要经过的4个结点交换机，纵坐标为时间</p>
+</blockquote>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103900.png" alt="image-20201006184451671" style="zoom:67%;" />
+<p><strong>电路交换：</strong></p>
+<ul>
+<li>
+<p>通信之前首先要建立连接；连接建立好之后，就可以使用已建立好的连接进行数据传送；数据传送后，需释放连接，以归还之前建立连接所占用的通信线路资源。</p>
+</li>
+<li>
+<p>一旦建立连接，中间的各结点交换机就是直通形式的，比特流可以直达终点；</p>
+</li>
+<li>
+<p>一旦连接建立，所占用的线路资源不可以被其他连接所复用，只有等待当前连接资源的释放。</p>
+</li>
+</ul>
+<p><strong>报文交换：</strong></p>
+<ul>
+<li>可以随时发送报文，而<strong>不需要事先建立连接</strong>；整个报文先传送到相邻结点交换机，全部存储下来后进行查表转发，转发到下一个结点交换机。</li>
+<li>整个报文需要在各结点交换机上进行存储转发，由于不限制报文大小，因此需要各结点交换机都具有较大的缓存空间。</li>
+<li>很少使用这种数据交换方式了</li>
+</ul>
+<p><strong>分组交换：</strong></p>
+<ul>
+<li>可以随时发送分组，而<strong>不需要事先建立连接</strong>。构成原始报文的一个个分组，依次在各结点交换机上存储转发。各结点交换机在发送分组的同时，还缓存接收到的分组。</li>
+<li>构成原始报文的一个个分组，在各结点交换机上进行存储转发，相比报文交换，减少了转发时延，还可以避免过长的报文长时间占用链路，同时也有利于进行差错控制。</li>
+<li>某个节点转发完一个分组数据包到下一个节点时，又可以继续转发下一个分组数据包，同时下一个节点也可以转发收到分组数据包。类似于CPU多级流水线原理。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103949.png" alt="image-20201006185601460"></p>
+<hr>
+<h1 id="14-计算机网络的定义和分类">1.4 计算机网络的定义和分类</h1>
+<h2 id="定义">定义</h2>
+<ul>
+<li>计算机网络的精确定义并未统一</li>
+<li>计算机网络的最简单的定义是：一些<strong>互</strong>相<strong>连</strong>接的、<strong>自治</strong>的计算机的<strong>集合</strong>。
+<ul>
+<li>互连：是指计算机之间可以通过有线或无线的方式进行数据通信；</li>
+<li>自治：是指独立的计算机，他有自己的硬件和软件，可以单独运行使用；</li>
+<li>集合：是指至少需要两台计算机；</li>
+</ul>
+</li>
+<li>计算机网络的较好的定义是：计算机网络主要是由一些<strong>通用的，可编程的硬件（一定包含有中央处理机CPU）互连</strong>而成的，而这些硬件并非专门用来实现某一特定目的（例如，传送数据或视频信号）。这些可编程的硬件能够用来<strong>传送多种不同类型的数据</strong>，并能<strong>支持广泛的和日益增长的应用</strong>。
+<ul>
+<li>计算机网络所连接的硬件，并不限于一般的计算机，而是包括了智能手机等智能硬件。</li>
+<li>计算机网络并非专门用来传送数据，而是能够支持很多种的应用（包括今后可能出现的各种应用）。</li>
+</ul>
+</li>
+</ul>
+<h2 id="分类">分类</h2>
+<p><strong>按交换技术分类：</strong></p>
+<ul>
+<li>电路交换网络</li>
+<li>报文交换网络</li>
+<li>分组交换网络</li>
+</ul>
+<p><strong>按使用者分类：</strong></p>
+<ul>
+<li>公用网</li>
+<li>专用网</li>
+</ul>
+<p><strong>按传输介质分类：</strong></p>
+<ul>
+<li>有线网络</li>
+<li>无线网络</li>
+</ul>
+<p><strong>按覆盖范围分类：</strong></p>
+<ul>
+<li>广域网WAN（Wide Area Network）</li>
+</ul>
+<p>作用范围通常为几十到几千公里，因而有时也称为远程网（long haul network）。广域网是互联网的核心部分，其任务是通过长距离（例如跨越不同的国家）运送主机所发送的数据。</p>
+<ul>
+<li>城域网MAN</li>
+</ul>
+<p>作用范围一般是一个城市，可跨越几个街区甚至整个城市</p>
+<ul>
+<li>局域网LAN</li>
+</ul>
+<p>一般用微型计算机或工作站通过高速通信线路相连（速率通常在 10 Mbit/s 以上），但地理上作用范围较小（1 km 左右）</p>
+<ul>
+<li>个域网PAN</li>
+</ul>
+<p>就是在个人工作的地方把个人使用的电子设备用无线技术连接起来的网络。</p>
+<blockquote>
+<p>以上的作用范围或距离的含义指的是：实际数据网络传输距离。</p>
+<p>例如：A户和B户主机，距离50m，但是两个通过互联网或者任何广域网技术进行相互地资源访问。那么显然，这属于广域网。但是如果A户和B户通过自己购买交换机搭建网络线路和路由，使得两户互通，然后通过这个线路进行资源访问，那么这就是局域网。</p>
+</blockquote>
+<p><strong>按拓扑结构分类：</strong></p>
+<ul>
+<li>总线型网络</li>
+</ul>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016103958.png" alt="image-20201007005149993" style="zoom: 67%;" />
+<ul>
+<li>星型网络</li>
+</ul>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104005.png" alt="image-20201007005203129" style="zoom:67%;" />
+<ul>
+<li>环形网络</li>
+</ul>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104009.png" alt="image-20201007005212345" style="zoom:67%;" />
+<ul>
+<li>网状型网络</li>
+</ul>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104015.png" alt="image-20201007005249137" style="zoom:67%;" />
+<hr>
+<h1 id="15-计算机网络的性能指标">1.5 计算机网络的性能指标</h1>
+<h2 id="速率">速率</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104021.png" alt="image-20201007012419698"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104026.png" alt="image-20201007012439769"></p>
+<h2 id="带宽">带宽</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104031.png" alt="image-20201007012943970"></p>
+<h2 id="吞吐量">吞吐量</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104038.png" alt="image-20201007013119621"></p>
+<blockquote>
+<p>带宽1 Gb/s的以太网，代表其额定速率是1 Gb/s，这个数值也是该以太网的<strong>吞吐量的绝对上限值</strong>。因此，对于带宽1 Gb/s的以太网，可能实际吞吐量只有 700 Mb/s，甚至更低。</p>
+<p>注意：吞吐量还可以用每秒传送的字节数或帧数表示</p>
+</blockquote>
+<h2 id="时延">时延</h2>
+<p>时延时指数据（一个报文或分组，甚至比特）从网络（或链路）的一端传送到另一端所需的时间。</p>
+<p>网络时延由几部分组成：</p>
+<ul>
+<li>发送时延</li>
+</ul>
+<p>主机或路由器发送数据帧所需要的时间，也就是从发送数据帧的第一个比特算起，到该帧的最后一个比特发送完毕所需的时间。</p>
+<ul>
+<li>传播时延</li>
+</ul>
+<p>电磁波在信道中传播一定的距离需要花费的时间。</p>
+<ul>
+<li>处理时延</li>
+</ul>
+<p>主机或路由器在收到分组时要花费一定时间进行处理</p>
+<ul>
+<li>排队时延</li>
+</ul>
+<p>分组在进过网络传输时，要经过许多路由器。但分组在进入路由器后要先在输入队列中排队等待处理。</p>
+<blockquote>
+<p>有时会把排队时延看成<strong>处理时延一部分</strong></p>
+<p><strong>网络时延 = 发送时延 + 传播时延 + 处理时延 （处理时延包含排队时延）</strong></p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104045.png" alt="image-20201007014139333"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104050.png" alt="image-20201007015401505"></p>
+<blockquote>
+<p>当处理时延忽略不计时，发送时延 和 传播时延谁占主导，要具体情况具体分析</p>
+</blockquote>
+<h2 id="时延带宽积">时延带宽积</h2>
+<p>时延带宽积 = 传播时延 * 带宽</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104057.png" alt="image-20201007115317347"></p>
+<h2 id="往返时间">往返时间</h2>
+<p>互联网上的信息不仅仅单方向传输而是双向交互的。因此，我们有时很需要知道<strong>双向交互一次所需的时间</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104104.png" alt="image-20201007115647631"></p>
+<h2 id="利用率">利用率</h2>
+<p>利用率有<strong>信道利用率</strong>和<strong>网络利用率</strong>两种。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104110.png" alt="image-20201012164544306"></p>
+<blockquote>
+<p>为什么信道利用率越高反而网络时延就会越大呢？</p>
+<p>答案：当信道利用率越高时，网络中传输的数据量也就越大，但同时也会带来更多的数据包冲突和重传，导致网络时延增加。当网络中的数据包冲突和重传达到一定程度时，就会出现网络拥塞，导致数据传输的时延和丢包率增加。因此，在设计网络时，需要综合考虑信道利用率和网络时延之间的关系，以达到最优的性能。</p>
+</blockquote>
+<h2 id="丢包率">丢包率</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104116.png" alt="image-20201007132900210"></p>
+<hr>
+<h1 id="16-计算机网络体系结构">1.6 计算机网络体系结构</h1>
+<h2 id="1常见的计算机网络体系结构">1、常见的计算机网络体系结构</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104122.png" alt="image-20201007133848212"></p>
+<h3 id="osi七层模型">OSI七层模型</h3>
+<h4 id="第1层物理层">第1层：物理层</h4>
+<p>从OSI模型的最底层开始是<strong>物理层</strong>。<strong>物理层规定了在载体上发送和接收数据的硬件方法</strong>，包括定义电缆，网卡和物理方面。快速以太网，RS232和ATM是具有物理层组件的协议。</p>
+<p>它解决了网络的物理特征。这包括用于将所有物体连接在一起的电缆类型。所使用的连接器的类型，电缆的长度等。例如，用于100BaseT电缆的以太网标准规定了双绞线电缆的电气特性，连接器的尺寸和形状，电缆的最大长度。</p>
+<p>**物理层还规定了用于通过电缆将数据从一个网络节点传输到另一个网络的信号的电气特性。**除了‘0’或‘1’的二进制特征外，信号没有任何特殊的含义。OSI模型上层将为在物理层传输的比特分配含义。</p>
+<p>网络中使用的一种非常重要的物理层设备是网络TAP。网络TAP是一种硬件设备，用于复制网络链路上的流量并将副本重定向到故障排除和分析工具，即使TAP断电也不会中断流量或引入故障点。</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/fytl1k901b.png" alt="img"></p>
+<p>从图中可以看出，东向流量被引向Monitor端口A，西向流量被引向Monitor端口B。</p>
+<p>▣<em>第1层物理实例包括以太网，FDDI，B8ZS，V.35，V.24，RJ45。</em></p>
+<h4 id="第2层数据链路层">第2层：数据链路层</h4>
+<p>数据链路层是我们开始对要通过网络发送的内容赋予意义或智能的地方。<strong>数据链路层上的协议解决了以下问题，例如要发送的数据包的大小，要传送的每个数据包的寻址方式，使其到达预定的接收方，以及一种确保不超过一个节点尝试同时向接收方发送数据包的方法。</strong></p>
+<p><strong>数据链路层提供了错误检测和纠正功能</strong>，以确保发送的数据与接收的数据相同。如果错误无法纠正，数据链接标准需要规定如何将错误告知节点，以便它可以重新发送出错的数据。</p>
+<p>每个节点(网络接口卡–NIC)在数据链路层有一个地址，称为媒体访问控制地址，通常称为MAC地址。这是实际的硬件地址，是由设备制造商分配的。您可以通过打开命令窗口并运行<code>ipconfig / all</code>命令来找到设备的MAC地址。</p>
+<p>▣ <em>第2层数据链路示例包括PPP，FDDI，ATM，IEEE 802.5 / 802.2，IEEE 802.3 / 802.2，HDLC，帧中继。</em></p>
+<h4 id="第3层网络层">第3层：网络层</h4>
+<p>**第3层负责在网络中进行网络消息的路由。网络层的一个重要功能是逻辑寻址。**每个网络设备都有一个物理地址，称为MAC地址（见第2层）。当你为电脑买了一块网卡时，该网卡的MAC地址是不能改变的。但是，如果你想使用一些其他的寻址系统，来引用你的计算机和其他设备，第3层网络层就是你可以设置所谓的 “逻辑地址 “的地方。逻辑地址为网络设备提供了一个位置，可以使用您分配的地址在网络上对其进行访问。</p>
+<p>逻辑地址可以由IP或IPX等网络层协议创建和使用。<strong>网络层协议将逻辑地址转换为MAC地址。</strong></p>
+<p>例如，如果您使用IP作为网络层协议，则会为网络上的设备分配IP地址，例如107.210.76.30。由于IP协议在第3层上运行以实际发送数据包，因此IP需要将设备的<a href="https://cloud.tencent.com/product/nat?from=20065&amp;from_column=20065">IP地址转换</a>为正确的MAC地址。您可以使用<code>ipconfig / all</code>命令查找计算机或其他设备的IP地址。</p>
+<p>解析IP地址后，我们现在需要设置路由，将数据包移动到目的地。当一个网络上的数据包需要发送到另一个网络上的计算机时，路由就会发挥作用。</p>
+<p>▣<em>第3层网络示例包括AppleTalk DDP，IP，IPX。</em></p>
+<h4 id="第4层传输层">第4层：传输层</h4>
+<p>传输层是一台网络计算机与另一台网络计算机进行通信的基本层。传输层是最流行的网络协议之一传输控制协议（TCP）的地方。**传输层的主要目的是确保数据包在网络中可靠无误地移动。**传输层通过在网络设备之间建立连接，确认数据包的接收并重新发送未收到的或到达时已损坏的数据包来实现此目的。</p>
+<p>在许多情况下，传输层协议将大的消息分成较小的数据包，可以有效地在网络上发送（分组交换技术）。传输层协议在接收端重组消息，确保一次传输中包含的所有数据包都能收到，并且没有数据丢失。</p>
+<p>▣<em>第4层传输示例包括SPX，TCP，UDP。</em></p>
+<h4 id="第5层会话层">第5层：会话层</h4>
+<p><strong>会话层建立、管理和终止网络节点之间的连接</strong>。在网络上传输数据之前，必须先建立会话。会话层确保正确建立和维护这些会话。它提供全双工，半双工或单工操作，并建立检查点、延期、终止和重新启动过程。OSI模型使该层负责会话的正常关闭（这是<strong>TCP</strong>协议的一个属性），同时还负责会话检查点和恢复，这在Internet协议套件中通常不使用。会话层通常在使用远程过程调用的应用环境中显式实现。</p>
+<p>▣<em>第5层会话示例包括NFS，NetBios Name，RPC，SQL。</em></p>
+<h4 id="第6层表示层">第6层：表示层</h4>
+<p>表示层负责将网络发送的数据从一种表示形式转换为另一种表示形式。例如，表示层可以应用复杂的压缩技术，以便在网络上发送时，需要较少的数据字节来表示信息。在传输的另一端，传输层则对数据进行解压缩。</p>
+<p>这一层通过从应用到网络格式的转换，提供了不受数据表示差异（如加密）影响的独立性，反之亦然。<strong>表示层可以通过压缩、编码、加密等手段将数据转换为应用层可以接受的形式</strong>。该层对要在网络上发送的数据进行格式化和加密，使数据不受兼容性问题的影响。它有时被称为语法层。</p>
+<p>▣<em>第6层演示示例包括encryption，ASCII，EBCDIC，TIFF，GIF，PICT，JPEG，MPEG，MIDI。</em></p>
+<h4 id="第7层应用层">第7层：应用层</h4>
+<p>OSI模型的最高层-应用层，它处理应用程序用于与网络通信的技术。该层的名称是有点令人困惑，因为**应用程序（如Excel或Word）实际上不是该层的一部分。而是，应用层表示应用程序与网络交互的级别，使用编程接口请求网络服务。**HTTP是最常用的应用程序层协议之一，它代表超文本传输协议。HTTP是万维网的基础。</p>
+<p>▣<em>第7层应用示例包括WWW browsers，NFS，SNMP，Telnet，HTTP，FTP。</em></p>
+<h3 id="tcpip四层模型">TCP/IP四层模型</h3>
+<blockquote>
+<p>如今用的最多的是TCP/IP体系结构，现今规模最大的、覆盖全球的、基于TCP/IP的互联网并未使用OSI标准。</p>
+<p>TCP/IP体系结构相当于将OSI体系结构的<strong>物理层</strong>和<strong>数据链路层</strong>合并为了<strong>网络接口层</strong>，并去掉了<strong>会话层</strong>和<strong>表示层</strong>。</p>
+<p>TCP/IP在网络层使用的协议是IP协议，IP协议的意思是网际协议，因此<strong>TCP/IP体系结构的网络层称为网际层</strong></p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104127.png" alt="image-20201007135220030"></p>
+<blockquote>
+<p>在用户主机的操作系统中，通常都带有符合TCP/IP体系结构标准的TCP/IP协议族。</p>
+<p>而用于网络互连的路由器中，也带有符合TCP/IP体系结构标准的TCP/IP协议族。</p>
+<p>只不过路由器一般只包含网络接口层和网际层。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104135.png" alt="image-20201007135518050"></p>
+<blockquote>
+<p><strong>网络接口层</strong>：并没有规定具体内容，这样做的目的是可以互连全世界各种不同的网络接口，例如：有线的以太网接口，无线局域网的WIFI接口等。</p>
+<p><strong>网际层</strong>：它的核心协议是IP协议。</p>
+<p><strong>运输层</strong>：TCP和UDP是这层的两个重要协议。</p>
+<p><strong>应用层</strong>：这层包含了大量的应用层协议，如 HTTP , DNS 等。</p>
+</blockquote>
+<blockquote>
+<p>**IP协议（网际层）<strong>可以将不同的</strong>网络接口（网络接口层）<strong>进行互连，并向其上的</strong>TCP协议和UDP协议（运输层）**提供网络互连服务</p>
+<p>而<strong>TCP协议</strong>在享受IP协议提供的网络互连服务的基础上，可向<strong>应用层的相应协议</strong>提供<strong>可靠</strong>的传输服务。</p>
+<p><strong>UDP协议</strong>在享受IP协议提供的网络互连服务的基础上，可向<strong>应用层的相应协议</strong>提供<strong>不可靠</strong>的传输服务。</p>
+</blockquote>
+<blockquote>
+<p>TCP/IP体系结构中最重要的是<strong>IP协议</strong>和<strong>TCP协议</strong>，因此用TCP和IP来表示整个协议大家族。</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104142.png" alt="image-20201007141110338"></p>
+<blockquote>
+<p>教学时把TCP/IP体系结构的<strong>网络接口层</strong>分成了<strong>物理层</strong>和<strong>数据链路层</strong></p>
+</blockquote>
+<h2 id="2计算机网络体系结构分层的必要性">2、计算机网络体系结构分层的必要性</h2>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104151.png" alt="image-20201007141318411"></p>
+<p><strong>物理层问题</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104156.png" alt="image-20201007141806675"></p>
+<blockquote>
+<p>这图说明</p>
+<ul>
+<li>第一，严格来说，传输媒体并不属于物理层</li>
+<li>计算机传输的信号，并不是图示的方波信号</li>
+</ul>
+<p>这样举例只是让初学者容易理解</p>
+</blockquote>
+<p><strong>数据链路层问题</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104204.png" alt="image-20201007142049812"></p>
+<p><strong>网络层问题</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104211.png" alt="image-20201007142408792"></p>
+<p><strong>运输层问题</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104216.png" alt="image-20201007142631029"></p>
+<blockquote>
+<p>如何标识与网络通信相关的应用进程：一个分组到来，我们应该交给哪个进程处理呢？浏览器进程还是QQ进程</p>
+</blockquote>
+<p><strong>应用层问题</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104224.png" alt="image-20201007142755720"></p>
+<blockquote>
+<p>应用层该用什么方法（应用层协议）去解析数据</p>
+</blockquote>
+<p><strong>总结</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104231.png" alt="image-20201007204006284"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104235.png" alt="image-20201007143138937"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104241.png" alt="image-20201007195641140"></p>
+<h2 id="3计算机网络体系结构分层思想举例">3、计算机网络体系结构分层思想举例</h2>
+<p>例子：主机的浏览器如何与Web服务器进行通信</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104246.png" alt="image-20201007144900565"></p>
+<p><strong>解析：</strong></p>
+<p>主机和Web服务器之间基于网络的通信，实际上是主机中的<strong>浏览器应用进程</strong>与Web服务器中的<strong>Web服务器应用进程</strong>之间基于<strong>网络的通信</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104254.png" alt="image-20201007145242020"></p>
+<p><strong>体系结构的各层在整个过程中起到怎样的作用？</strong></p>
+<h4 id="1发送方发送">1、发送方发送</h4>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104300.png" alt="image-20201007145441370"></p>
+<blockquote>
+<p>第一步：</p>
+<ul>
+<li><strong>应用层</strong>按照HTTP协议的规定构建一个<strong>HTTP请求报文</strong></li>
+<li>应用层将<strong>HTTP请求报文</strong>交付给<strong>运输层</strong>处理</li>
+</ul>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104304.png" alt="image-20201007145720661"></p>
+<blockquote>
+<p>第二步：</p>
+<ul>
+<li><strong>运输层</strong>给<strong>HTTP请求报文</strong>添加一个<strong>TCP首部</strong>，使之成为<strong>TCP报文段</strong></li>
+<li><strong>TCP报文段的首部格式</strong>作用是区分应用进程以及实现可靠传输</li>
+<li><strong>运输层</strong>将T<strong>CP报文段</strong>交付给<strong>网络层</strong>处理</li>
+</ul>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104309.png" alt="image-20201007150234909"></p>
+<blockquote>
+<p>第三步：</p>
+<ul>
+<li><strong>网络层</strong>给<strong>TCP报文段</strong>添加一个<strong>IP首部</strong>，使之成为<strong>IP数据报</strong></li>
+<li><strong>IP数据报的首部格式</strong>作用是使<strong>IP数据报</strong>可以在互联网传输，也就是被路由器转发</li>
+<li><strong>网络层</strong>将<strong>IP数据报</strong>交付给<strong>数据链路层</strong>处理</li>
+</ul>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104314.png" alt="image-20201007150723365"></p>
+<blockquote>
+<p>第四步：</p>
+<ul>
+<li><strong>数据链路层</strong>给<strong>IP数据报</strong>添加一个<strong>首部</strong>和一个<strong>尾部</strong>，使之成为<strong>帧</strong>（图示右边为首部，左边为尾部）</li>
+<li>该<strong>首部</strong>的作用主要是为了让<strong>帧</strong>能够在一段链路上或一个网络上传输，能够被相应的目的主机接收</li>
+<li>该<strong>尾部</strong>的作用是让目的主机检查所接收到的<strong>帧</strong>是否有误码</li>
+<li><strong>数据链路层</strong>将<strong>帧</strong>交付给<strong>物理层</strong></li>
+</ul>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104319.png" alt="image-20201007151342502"></p>
+<blockquote>
+<p>第五步：</p>
+<ul>
+<li><strong>物理层</strong>先将<strong>帧</strong>看做是<strong>比特流</strong>，这里的网络N1假设是以太网，所以<strong>物理层</strong>还会给该<strong>比特流</strong>前面添加<strong>前导码</strong></li>
+<li><strong>前导码</strong>的作用是为了让目的主机做好接收帧的准备</li>
+<li><strong>物理层</strong>将装有<strong>前导码</strong>的<strong>比特流</strong>变换成相应的<strong>信号</strong>发送给传输媒体</li>
+</ul>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104325.png" alt="image-20201007151900254"></p>
+<blockquote>
+<p>第六步：</p>
+<ul>
+<li><strong>信号</strong>通过<strong>传输媒体</strong>到达<strong>路由器</strong></li>
+</ul>
+</blockquote>
+<h4 id="2路由器转发">2、路由器转发</h4>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104331.png" alt="image-20201007152029458" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104337.png" alt="image-20201007152138961" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104350.png" alt="image-20201007152627778" style="zoom:50%;" />
+<blockquote>
+<p>在路由器中</p>
+<ul>
+<li><strong>物理层</strong>将<strong>信号</strong>变为<strong>比特流</strong>，然后去掉<strong>前导码</strong>后，将其交付给<strong>数据链路层</strong></li>
+<li><strong>数据链路层</strong>将<strong>帧</strong>的<strong>首部</strong>和<strong>尾部</strong>去掉后，将其交付给<strong>网络层</strong>，这实际交付的是<strong>IP数据报</strong></li>
+<li><strong>网络层</strong>解析<strong>IP数据报</strong>的<strong>首部</strong>，从中提取<strong>目的网络地址</strong></li>
+</ul>
+</blockquote>
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104356.png" alt="image-20201007152650863" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104400.png" alt="image-20201007152812431" style="zoom:50%;" />
+<img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104404.png" alt="image-20201007153714840" style="zoom:50%;" />
+<blockquote>
+<p>在路由器中</p>
+<ul>
+<li>提取<strong>目的网络地址</strong>后查找<strong>自身路由表</strong>。确定<strong>转发端口</strong>，以便进行转发</li>
+<li><strong>网络层</strong>将<strong>IP数据报</strong>交付给<strong>数据链路层</strong></li>
+<li><strong>数据链路层</strong>给<strong>IP数据报</strong>添加一个<strong>首部</strong>和一个<strong>尾部</strong>，使之成为<strong>帧</strong></li>
+<li><strong>数据链路层</strong>将帧交付给<strong>物理层</strong></li>
+<li><strong>物理层</strong>先将<strong>帧</strong>看成<strong>比特流</strong>，这里的网络N2假设是以太网，所以<strong>物理层</strong>还会给该<strong>比特流</strong>前面添加<strong>前导码</strong></li>
+<li>物理层将装有<strong>前导码</strong>的<strong>比特流</strong>变换成相应的<strong>信号</strong>发送给传输媒体，信号通过传输媒体到达<strong>Web服务器</strong></li>
+</ul>
+</blockquote>
+<p>可以看得出来：路由器的工作主要是将在物理线路里的信号，按照OSI七层模型进行解析，直到得到网络层的IP数据报的目的网络地址，这样就可以根据路由器的路由表和当前数据包需要转发的目的网络地址，选择一个最佳的路径将数据报发送出去，直到数据报到达目的主机。</p>
+<h4 id="3接收方接收">3、接收方接收</h4>
+<blockquote>
+<p>和发送方（主机）发送过程的封装正好是反着来</p>
+<p>在Web 服务器上</p>
+<ul>
+<li><strong>物理层</strong>将<strong>信号</strong>变换为<strong>比特流</strong>，然后去掉<strong>前导码</strong>后成为<strong>帧</strong>，交付给<strong>数据链路层</strong></li>
+<li><strong>数据链路层</strong>将<strong>帧</strong>的<strong>首部</strong>和<strong>尾部</strong>去掉后成为<strong>IP数据报</strong>，将其交付给<strong>网络层</strong></li>
+<li><strong>网络层</strong>将<strong>IP数据报</strong>的<strong>首部</strong>去掉后成为<strong>TCP报文段</strong>，将其交付给<strong>运输层</strong></li>
+<li><strong>运输层</strong>将<strong>TCP报文段</strong>的<strong>首部</strong>去掉后成为<strong>HTTP请求报文</strong>，将其交付给<strong>应用层</strong></li>
+<li><strong>应用层</strong>对<strong>HTTP请求报文</strong>进行<strong>解析</strong>，然后给主机发回<strong>响应报文</strong></li>
+</ul>
+<p><strong>发回响应报文的步骤和之前过程类似</strong></p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104410.png" alt="image-20201007155051275"></p>
+<h2 id="4计算机网络体系结构中的专用术语">4、计算机网络体系结构中的专用术语</h2>
+<p>以下介绍的专用术语来源于OSI的七层协议体系结构，但也适用于TCP/IP的四层体系结构和五层协议体系结构</p>
+<p><strong>实体</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104417.png" alt="image-20201007155444920"></p>
+<p><strong>协议</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104423.png" alt="image-20201007155545934"></p>
+<blockquote>
+<p>协议：控制两个对等实体进行逻辑通信的规则的集合</p>
+<p>协议三要素：</p>
+<ul>
+<li>语法：定义所交换信息的格式</li>
+<li>语义：定义收发双方所要完成的操作</li>
+<li>同步：定义收发双发的时序关系</li>
+</ul>
+</blockquote>
+<p><strong>服务</strong></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104434.png" alt="image-20201007160246561"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104757.png" alt="image-20201016104750288"></p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20201016104806.png" alt="image-20201007162620250"></p>
+<blockquote>
+<p>简单来说，PDU是在网络协议中传输的数据单元，而SDU是上层协议向下层协议传递的数据单元。在数据传输过程中，SDU会被分割成多个PDU进行传输，而接收方会将接收到的PDU重新组装成SDU。</p>
+</blockquote>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-06-03
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      <div class="post-tags">
+          <a href="/tags/osi%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/">osi七层模型</a>
+          </div>
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E7%89%A9%E7%90%86%E5%B1%82/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">计算机网络之物理层</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5/">
+            <span class="next-text nav-default">缓存淘汰策略</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-06-03 22:42:06 \u002b0800 CST',
+        title: '计算机网络之概述',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>

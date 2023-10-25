@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>汇编之寄存器 - cold bin&#39;s blog</title>
+  <meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+<meta name="author" content="cold-bin" /><meta name="description" content="寄存器 概述 一个典型的CPU主要由运算器，控制器，寄存器等器件构成，它们靠内部总线相连（内部总线实现CPU内部各机器件间的联系，外部总线实现C" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.119.0 with theme even" />
+
+
+<link rel="canonical" href="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<link href="/sass/main.min.f7f4d73c43a767e434997279164764c32c7f0f3b1ec88bfb5bfc297b77fd7e7a.css" rel="stylesheet">
+<link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
+
+
+<meta property="og:title" content="汇编之寄存器" />
+<meta property="og:description" content="寄存器 概述 一个典型的CPU主要由运算器，控制器，寄存器等器件构成，它们靠内部总线相连（内部总线实现CPU内部各机器件间的联系，外部总线实现C" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-11-30T11:01:12+08:00" />
+<meta property="article:modified_time" content="2022-11-30T11:01:12+08:00" />
+<meta itemprop="name" content="汇编之寄存器">
+<meta itemprop="description" content="寄存器 概述 一个典型的CPU主要由运算器，控制器，寄存器等器件构成，它们靠内部总线相连（内部总线实现CPU内部各机器件间的联系，外部总线实现C"><meta itemprop="datePublished" content="2022-11-30T11:01:12+08:00" />
+<meta itemprop="dateModified" content="2022-11-30T11:01:12+08:00" />
+<meta itemprop="wordCount" content="3282">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="汇编之寄存器"/>
+<meta name="twitter:description" content="寄存器 概述 一个典型的CPU主要由运算器，控制器，寄存器等器件构成，它们靠内部总线相连（内部总线实现CPU内部各机器件间的联系，外部总线实现C"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+</head>
+<body>
+
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">cold bin&#39;s blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <a href="/">
+        <li class="mobile-menu-item">Home</li>
+      </a><a href="/post/">
+        <li class="mobile-menu-item">Archives</li>
+      </a><a href="/tags/">
+        <li class="mobile-menu-item">Tags</li>
+      </a><a href="/categories/">
+        <li class="mobile-menu-item">Categories</li>
+      </a><a href="/about/">
+        <li class="mobile-menu-item">About</li>
+      </a><a href="/links/">
+        <li class="mobile-menu-item">Links</li>
+      </a><a href="/search/">
+        <li class="mobile-menu-item">Search</li>
+      </a>
+  </ul>
+
+  
+
+
+</nav>
+
+  <div class="container" id="mobile-panel">
+    <header id="header" class="header">
+        <div class="logo-wrapper">
+  <a href="/" class="logo">cold bin&#39;s blog</a>
+</div>
+
+
+
+
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    <li class="menu-item">
+        <a class="menu-item-link" href="/">Home</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/post/">Archives</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/tags/">Tags</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/categories/">Categories</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/about/">About</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/links/">Links</a>
+      </li><li class="menu-item">
+        <a class="menu-item-link" href="/search/">Search</a>
+      </li>
+  </ul>
+</nav>
+
+    </header>
+
+    
+    <main id="main" class="main">
+      <div class="content-wrapper">
+        <div id="content" class="content">
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">汇编之寄存器</h1>
+
+      <div class="post-meta">
+        <span class="post-time"> 2022-11-30 </span>
+        <div class="post-category">
+            <a href="/categories/%E6%B1%87%E7%BC%96/"> 汇编 </a>
+            </div>
+          <span class="more-meta"> 约 3282 字 </span>
+          <span class="more-meta"> 预计阅读 7 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#寄存器">寄存器</a>
+          <ul>
+            <li><a href="#概述">概述</a></li>
+            <li><a href="#通用寄存器">通用寄存器</a></li>
+            <li><a href="#代码段寄存器与指令指针寄存器">代码段寄存器与指令指针寄存器</a></li>
+            <li><a href="#数据段寄存器ds和偏移地址address">数据段寄存器DS和偏移地址[address]</a></li>
+            <li><a href="#栈寄存器">栈寄存器</a></li>
+            <li><a href="#debug工具">Debug工具</a></li>
+            <li><a href="#小结">小结</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h2 id="寄存器">寄存器</h2>
+<h3 id="概述">概述</h3>
+<p>一个典型的CPU主要由运算器，控制器，<a href="https://so.csdn.net/so/search?q=%E5%AF%84%E5%AD%98%E5%99%A8&amp;spm=1001.2101.3001.7020">寄存器</a>等器件构成，它们靠内部总线相连（内部总线实现CPU内部各机器件间的联系，外部总线实现CPU和主板上其他器件之间的联系）。</p>
+<p>本篇博文叙述CPU中的寄存器，程序员可以通过指令读写寄存器，从而实现对CPU的控制。不同的CPU其寄存器的个数与结构也不相同，以8086CPU为例，其有14各寄存器，每个寄存器有一个名称，且所有寄存器都是16位的，可以存放两个字节，分别为：AX、BX、CX、DX、SI、DI、SP、BP、IP、CS、SS、DS、ES、PSW，后面将一一进行介绍。</p>
+<h3 id="通用寄存器">通用寄存器</h3>
+<p>AX，BX，CX，DX为四个通用寄存器，用于存放一般性数据（所谓一般性数据指的是那些并非用于CPU控制的数据）。如前所述，8086CPU使用的是16位寄存器，为了兼容之前针对8位CPU编写的程序，每个通用寄存器都可以分为两个8位寄存器来独立使用，即AX可分为AH和AL，BX可分为BH和BL，CX可分为CH和CL,DX可分为DH和DL。如下图所示： <img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/2019090319524311.png" alt="img"></p>
+<p>通过<a href="https://so.csdn.net/so/search?q=%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80&amp;spm=1001.2101.3001.7020">汇编语言</a>使用通用寄存器：（汇编语言中不能直接相加两个数字，而是要通过寄存器来做加法）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// 18 + 2
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">MOV</span> <span class="n">AX</span> <span class="mi">18</span> <span class="c1">// 将18送入寄存器AX
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">add</span> <span class="n">ax</span> <span class="mi">8</span>  <span class="c1">// 将AX中的数值加上8
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 或如下写法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">MOV</span> <span class="n">AX</span> <span class="mi">18</span>
+</span></span><span class="line"><span class="cl"><span class="n">MOV</span> <span class="n">BX</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span> <span class="n">ax</span> <span class="n">bx</span> <span class="c1">// 将AX和BX中的数值相加，结果保存在AX中
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>**【注】：**在写一条汇编指令或一个寄存器名称时不区分大小写。</p>
+<h3 id="代码段寄存器与指令指针寄存器">代码段寄存器与指令指针寄存器</h3>
+<p>要说明这两个寄存器，首先我们要理解一下几个概念。</p>
+<h4 id="物理地址">物理地址</h4>
+<p>每个内存单元都有一个编号，而这就是内存单元唯一的地址，也就是物理地址。</p>
+<h4 id="16位结构的cpu">16位结构的CPU</h4>
+<p>一个16位结构的CPU意味着该CPU具有以下特征：</p>
+<ul>
+<li>运算器一次最多可以处理16位的数据</li>
+<li>寄存器的最大宽度位16位</li>
+<li>寄存器与运算器之间的通路为16位</li>
+</ul>
+<h4 id="8086cpu给出的物理地址方法分段结构">8086CPU给出的物理地址方法（分段结构）</h4>
+<p>8086CPU的物理总线的宽度为20，而CPU内部只能处理和传输16位地址，那么如果将地址从内部简单的发出，那么只能送出16位的地址，表现出的寻址能力只有64KB，因此，8080CPU添加了了一个地址加法器，将两个16位地址合并为一个20位的物理地址。其中两个16位地址分别位段地址和偏移地址，地址加法器的计算方法为：<code>物理地址 = 段地址 * 16 + 偏移地址</code>， 即<code>物理地址 = 段地址 &lt;&lt; (20 - 16) + 偏移地址</code>。如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20190907114343977.png" alt="img"></p>
+<h4 id="代码段寄存器cs指令指针寄存器ip">代码段寄存器CS，指令指针寄存器IP</h4>
+<p>8086CPU含有4个段寄存器(存放段地址)：CS，DS，SS，ES。本节只说明CS。CS为代码段寄存器，IP为指令指针寄存器，8086CPU从<code>CS*16 + IP</code>单元开始读取一条指令并执行，即<strong>通过CS寄存器找到段地址，IP则记录的是偏移地址</strong>，通过二者可以找到要执行的指令代码。</p>
+<p>**其过程如下：**将段地址和偏移地址送至地址加法器，之后通过地址总线送至内存芯片，随后内存芯片将对应地址空间中的内容（指令）通过数据总线送达CPU，此时CPU将增加IP寄存器的值（增加值为所读取指令的长度），以便读入下一条指令。</p>
+<h4 id="修改csip的指令">修改CS、IP的指令</h4>
+<p>mov指令可以用于修改大部分寄存器的值，但不可以用于修改CS、IP的内容。若想修改，可以使用如下语法：<em><strong>*jmp 段地址 ： 偏移地址*</strong></em>，例如：<code>jmp 2AE3:3</code> 执行后 <code>cs = 2AE3H</code>, <code>IP = 0003H</code>。若仅想修改IP的内容，可用形如：<em><strong>*jmp 某一合法寄存器*</strong></em> 来完成，比如 <code>jmp ax</code>或 <code>jmp bx</code> ，那么该语句执行后便会用寄存器中的值修改IP寄存器。</p>
+<h3 id="数据段寄存器ds和偏移地址address">数据段寄存器DS和偏移地址[address]</h3>
+<p>8086CPU中有一个DS寄存器，通常用于存放要访问数据的段地址，在配合偏移地址[address]来使用，则可以读取指定内存单元中的数据，如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scss" data-lang="scss"><span class="line"><span class="cl"><span class="c1">// 读取10000H单元的内容
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nt">mov</span> <span class="nt">bx</span><span class="o">,</span> <span class="nt">1000H</span>
+</span></span><span class="line"><span class="cl"><span class="nt">mov</span> <span class="nt">ds</span><span class="o">,</span> <span class="nt">bx</span>
+</span></span><span class="line"><span class="cl"><span class="nt">mov</span> <span class="nt">al</span><span class="o">,</span> <span class="o">[</span><span class="nt">0</span><span class="o">]</span>  <span class="o">//</span> <span class="o">[</span><span class="nt">adderss</span><span class="o">]</span><span class="nt">表示偏移地址</span>
+</span></span><span class="line"><span class="cl"><span class="nt">mov</span> <span class="o">[</span><span class="nt">0</span><span class="o">]</span> <span class="nt">cx</span><span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>上述代码描述了mov指令可以完成的四种操作：1）將数据直接写入寄存器；2）将一个寄存器中的内容送至另一个寄存器；3）将一个内存单元中的内容送至寄存器；4）将寄存器中的数据送入内存单元。</p>
+<p>**【注】：**8086CPU不支持将数据直接送入段寄存器，因此修改DS寄存器需要从另一个寄存器移入。</p>
+<h3 id="栈寄存器">栈寄存器</h3>
+<h4 id="出栈入栈指令">出栈入栈指令</h4>
+<p>汇编语言的出栈入栈指令为PUSH和POP，其使用方式如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-perl" data-lang="perl"><span class="line"><span class="cl"><span class="nb">push</span><span class="o">/</span><span class="nb">pop</span> <span class="n">寄存器</span><span class="err">；</span>
+</span></span><span class="line"><span class="cl"><span class="nb">push</span><span class="o">/</span><span class="nb">pop</span> <span class="n">段寄存器</span>
+</span></span><span class="line"><span class="cl"><span class="nb">push</span><span class="o">/</span><span class="nb">pop</span> <span class="n">内存单元</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="栈段寄存器ss与偏移寄存器sp">栈段寄存器SS与偏移寄存器SP</h4>
+<p>栈顶通过段寄存器ss与偏移寄存器SP指出。在任意时刻SS:SP总是指向栈顶元素，即最后入栈的数据。每次入栈时，push指令都将先移动栈顶指针再写入数据。当栈为空时，栈顶指针SS:SP指向比栈底地址高一个元素大小的位置（栈由高地址向低地址增长）。</p>
+<p>**【注】：**将一段地址当作栈段仅仅是编程时的一种安排，而CPU并不会区别的对待这段内存地址空间。</p>
+<h3 id="debug工具">Debug工具</h3>
+<p>Debug是供程序员使用的程序调试工具，可以用它检查内存中任何地方的字节以及修改任何地方的字节。</p>
+<h4 id="-r命令">-r命令</h4>
+<p>r命令用于查看和改变CPU寄存器的内容，使用如下图所示</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20200226213429245.png" alt="img"></p>
+<h4 id="-d命令">-d命令</h4>
+<p>可以通过&quot;d 段地址：偏移地址&quot;的格式查看从指定地址起的内存块中的内容。</p>
+<h4 id="-e命令">-e命令</h4>
+<p>改写内存单元的内容</p>
+<h4 id="-a命令">-a命令</h4>
+<p>以汇编指令的形式改写指定的内存单元。如下所示：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20200226214743365.png" alt="img"></p>
+<h4 id="-t命令">-t命令</h4>
+<p>执行-t命令后，CPU将执行CS:IP指向的指令。如下图所示：</p>
+<p><img src="https://raw.githubusercontent.com/cold-bin/img-for-cold-bin-blog/master/img/20200226215328387.png" alt="img"></p>
+<h3 id="小结">小结</h3>
+<blockquote>
+<ul>
+<li>CPU访问内存时，必须向内存提供内存单元的物理地址。8086CPU在内部用段地址和偏移地址移位相加的方法形成最终的物理地址</li>
+</ul>
+<p>结论：CPU可以使用不同的段地址和偏移地址形成同一个物理地址</p>
+<ul>
+<li>
+<p>偏移地址16位，变化范围为0~FFFFH，仅用偏移地址来寻址最多可寻64kb个内存单元</p>
+</li>
+<li>
+<p>在8086PC机，存储单元的地址用两个元素来表述————段地址和偏移地址</p>
+</li>
+<li>
+<p>可以根据需要，将地址连续，起始地址为16的倍数的一组内存单元定义为一个段</p>
+</li>
+<li>
+<p>段地址在8086CPU的段寄存器中存放。当8086CPU要访问内存时，由段寄存器提供内存单元的段地址。8086CPU有四个段寄存器，其中CS用来存放指令的段地址</p>
+</li>
+<li>
+<p>CS存放指令的段地址，IP存放指令的偏移地址</p>
+</li>
+</ul>
+<p>8086机中，任意时刻，CPU将CS:IP指向的内容当作指令来执行</p>
+<ul>
+<li>
+<p>8086CPU的工作执行过程：</p>
+<ol>
+<li>从CS:IP指向的内存单元读取指令，读取的指令进入指令缓冲器</li>
+<li>IP指向下一条指令</li>
+<li>执行指令（转到步骤1，重复这个过程）</li>
+</ol>
+</li>
+<li>
+<p>8086CPU提供转移指令修改CS:IP的值（jmp指令）</p>
+</li>
+<li>
+<p>字在内存里存储时，要用两个连续的地址单元来存储，字的低位字节存放在低地址单元中，高位字节存放在地址单元中</p>
+</li>
+<li>
+<p>用mov指令访问内存单元，可以在mov指令中只给出内存单元的偏移地址，此时，段地址默认在DS寄存器中</p>
+</li>
+<li>
+<p>[address]表示一个偏移地址为address的内存单元</p>
+</li>
+<li>
+<p>在内存和寄存器之间传送字型数据时，高地址单元和高8位寄存器，低地址单元和低8位寄存器相对应</p>
+</li>
+<li>
+<p>mov、add、sub是具有两个操作对象的指令。jmp是具有一个操作对象的指令</p>
+</li>
+<li>
+<p>在8086CPU提供了栈操作机制：SS段寄存器存放栈顶的段地址，在SP寄存器里存放栈顶的偏移地址。提供入栈和出栈的指令，它们根据SS:IP指示的地址，按照栈的方式访问内存单元</p>
+</li>
+<li>
+<p>push：①SP=SP-2;②向SS:IP指向的字单元中送入数据</p>
+</li>
+<li>
+<p>pop：①从SS:IP指向的字单元中读取数据;②SP=SP+2</p>
+</li>
+<li>
+<p>任意时刻，SS:IP指向的栈顶元素</p>
+</li>
+<li>
+<p>8086CPU只记录栈顶，栈顶空间大小，是否栈溢出等需要我们自己管理</p>
+</li>
+<li>
+<p>可以用栈来保存需要恢复寄存器的内容</p>
+</li>
+<li>
+<p>我们可以将一段内存定义为一个段，用一个段地址指示段，用偏移地址访问段内的内存单元。</p>
+</li>
+</ul>
+<p>我们可以用一个段存放数据，将他定义为“数据段”</p>
+<p>我们可以用一个段存放代码，将他定义为“代码段”</p>
+<p>我们可以用一个段当作栈，将他定义为“栈段”</p>
+<p>不管我们如何安排，CPU将内存中的某些内容当作代码，是因为CS:IP指向了那里；CPU将内存中的某些内容当作栈，是因为CS:IP指向了那里</p>
+<p>所以，一段内存既可以是代码的存储空间，又可以是数据的存储空间，还可以是栈空间，也可以是栈空间，也可以什么都不是。关键在于CPU寄存器的设置，即CS、IP、SS、SP、DS的指向。</p>
+</blockquote>
+
+    </div>
+
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2022-11-30
+        
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        <a class="prev" href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/">
+            <i class="iconfont icon-left"></i>
+            <span class="prev-text nav-default">汇编之第一个程序</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        <a class="next" href="/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/">
+            <span class="next-text nav-default">汇编之概述</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2022-11-30 11:01:12 \u002b0800 CST',
+        title: '汇编之寄存器',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
+
+      </div>
+    </main>
+	
+
+    <footer id="footer" class="footer">
+      <div class="social-links">
+      <a href="mailto:cold-bin@qq.com" class="iconfont icon-email" title="email"></a>
+      <a href="https://github.com/cold-bin" class="iconfont icon-github" title="github"></a>
+      <a href="https://space.bilibili.com/248959839" class="iconfont icon-bilibili" title="bilibili"></a>
+  <a href="https://cold-bin.github.io/index.xml" type="application/rss+xml" class="iconfont icon-rss" title="rss"></a>
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://gohugo.io">Hugo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/olOwOlo/hugo-theme-even">Even</a>
+  </span>
+
+  <div class="busuanzi-footer">
+    <span id="busuanzi_container_site_pv"> 本站总访问量 <span id="busuanzi_value_site_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次 </span>
+      <span class="division">|</span>
+    <span id="busuanzi_container_site_uv"> 本站总访客数 <span id="busuanzi_value_site_uv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 人 </span>
+  </div>
+
+  <span class="copyright-year">
+    &copy; 
+    2023<span class="heart"><i class="iconfont icon-heart"></i></span><span>cold-bin</span>
+  </span>
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top" title="回到顶部">
+      <i class="iconfont icon-up"></i>
+    </div>
+  </div>
+  <script type="text/javascript" src="/lib/jquery/jquery-3.6.4.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox-3.1.20.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/js/main.min.4ae89da218555efa0e7093a20b92017d2e1202b66fff9fc2edf4cb8d44b44c6e.js"></script>
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        tags: 'ams',
+        }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.0.5/es5/tex-mml-chtml.js" integrity="sha256-HGLuEfFcsUJGhvB8cQ8nr0gai9EucOOaIxFw7qxmd+w=" crossorigin="anonymous"></script>
+
+<script id="baidu_analytics">
+	  var _hmt = _hmt || [];
+	  (function() {
+		if (window.location.hostname === 'localhost') return;
+		var hm = document.createElement("script"); hm.async = true;
+		hm.src = "https://hm.baidu.com/hm.js?cabc0a71f63da092412d82d1aefe7d1c";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	  })();
+	</script>
+
+
+	<script id="baidu_push">
+	  (function(){
+		if (window.location.hostname === 'localhost') return;
+		var bp = document.createElement('script'); bp.async = true;
+		var curProtocol = window.location.protocol.split(':')[0];
+		if (curProtocol === 'https') {
+		  bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+		}
+		else {
+		  bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+		}
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(bp, s);
+	  })();
+	</script>
+
+
+<script>
+  function createCopyButton(highlightDiv) {
+    const div = document.createElement("div");
+    div.className = "copy-code";
+    div.innerText = "Copy";
+    div.addEventListener("click", () =>
+      copyCodeToClipboard(div, highlightDiv)
+    );
+    addCopyButtonToDom(div, highlightDiv);
+  }
+
+  async function copyCodeToClipboard(button, highlightDiv) {
+    const codeToCopy = highlightDiv.querySelector(":last-child > .chroma > code")
+      .innerText;
+    await navigator.clipboard.writeText(codeToCopy);
+    button.blur();
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy", 2000);
+  }
+
+  function addCopyButtonToDom(button, highlightDiv) {
+    highlightDiv.insertBefore(button, highlightDiv.firstChild);
+    const wrapper = document.createElement("div");
+    wrapper.className = "highlight-wrapper";
+    highlightDiv.parentNode.insertBefore(wrapper, highlightDiv);
+    wrapper.appendChild(highlightDiv);
+  }
+
+  var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(!isMobile){
+     document.querySelectorAll(".highlight").forEach((highlightDiv) => createCopyButton(highlightDiv));
+  }
+</script>  
+
+
+</body>
+</html>
