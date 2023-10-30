@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>cold bin&#39;s blog</title>
+  <title>Go语言设计与实现之内存分配器 - cold bin&#39;s blog</title>
   <meta name="renderer" content="webkit" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 
@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
-<meta name="author" content="cold-bin" /><meta name="description" content="study and day day up!" />
+<meta name="author" content="cold-bin" /><meta name="description" content="介绍go内存分配策略" /><meta name="keywords" content="tcmallac" />
 
 
 
@@ -26,9 +26,7 @@
 <meta name="generator" content="Hugo 0.119.0 with theme even" />
 
 
-<link rel="canonical" href="https://cold-bin.github.io/" />
-  <link href="https://cold-bin.github.io/index.xml" rel="alternate" type="application/rss+xml" title="cold bin&#39;s blog" />
-  <link href="https://cold-bin.github.io/index.xml" rel="feed" type="application/rss+xml" title="cold bin&#39;s blog" />
+<link rel="canonical" href="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/" />
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -41,14 +39,19 @@
 <link href="/lib/fancybox/jquery.fancybox-3.1.20.min.css" rel="stylesheet">
 
 
-<meta property="og:title" content="cold bin&#39;s blog" />
-<meta property="og:description" content="study and day day up!" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://cold-bin.github.io/" />
-<meta itemprop="name" content="cold bin&#39;s blog">
-<meta itemprop="description" content="study and day day up!"><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="cold bin&#39;s blog"/>
-<meta name="twitter:description" content="study and day day up!"/>
+<meta property="og:title" content="Go语言设计与实现之内存分配器" />
+<meta property="og:description" content="介绍go内存分配策略" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2023-10-29T15:09:36+08:00" />
+<meta property="article:modified_time" content="2023-10-29T15:09:36+08:00" />
+<meta itemprop="name" content="Go语言设计与实现之内存分配器">
+<meta itemprop="description" content="介绍go内存分配策略"><meta itemprop="datePublished" content="2023-10-29T15:09:36+08:00" />
+<meta itemprop="dateModified" content="2023-10-29T15:09:36+08:00" />
+<meta itemprop="wordCount" content="542">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go语言设计与实现之内存分配器"/>
+<meta name="twitter:description" content="介绍go内存分配策略"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -132,136 +135,144 @@
     <main id="main" class="main">
       <div class="content-wrapper">
         <div id="content" class="content">
-          <section id="posts" class="posts">
-    <article class="post">
-  <header class="post-header">
-    <h1 class="post-title"><a class="post-link" href="/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/">计算机网络之数据链路层</a></h1>
-    <div class="post-meta">
-      <span class="post-time"> 2023-06-08 </span>
-      <div class="post-category">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"> 计算机网络 </a>
-          </div>
-        <span class="more-meta"> 约 14564 字 </span>
-        <span class="more-meta"> 预计阅读 30 分钟 </span>
-    </div>
-  </header>
-  
-  <div class="post-content">
-    <div class="post-summary">
-      [toc] 3.1、数据链路层概述 概述 链路与数据链路 链路是从一个结点到相邻结点的一段物理线路，数据链路则是在链路的基础上增加了一些必要的硬件（如网络适
-    </div>
-    <div class="read-more">
-      <a href="/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/" class="read-more-link">阅读更多</a>
-    </div>
-  </div>
-</article>
+          <article class="post">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go语言设计与实现之内存分配器</h1>
 
-    <article class="post">
-  <header class="post-header">
-    <h1 class="post-title"><a class="post-link" href="/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E7%89%A9%E7%90%86%E5%B1%82/">计算机网络之物理层</a></h1>
-    <div class="post-meta">
-      <span class="post-time"> 2023-06-08 </span>
-      <div class="post-category">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"> 计算机网络 </a>
-          </div>
-        <span class="more-meta"> 约 3328 字 </span>
-        <span class="more-meta"> 预计阅读 7 分钟 </span>
-    </div>
-  </header>
-  
-  <div class="post-content">
-    <div class="post-summary">
-      [toc] 2.1、物理层的基本概念 2.2、物理层下面的传输媒体 传输媒体也称为传输介质或传输媒介，他就是数据传输系统中在发送器和接收器之间的物理通路。
-    </div>
-    <div class="read-more">
-      <a href="/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E7%89%A9%E7%90%86%E5%B1%82/" class="read-more-link">阅读更多</a>
-    </div>
-  </div>
-</article>
+      <div class="post-meta">
+        <span class="post-time"> 2023-10-29 </span>
+        <div class="post-category">
+            <a href="/categories/golang/"> golang </a>
+            </div>
+          <span class="more-meta"> 约 542 字 </span>
+          <span class="more-meta"> 预计阅读 2 分钟 </span>
+        <span id="busuanzi_container_page_pv" class="more-meta"> <span id="busuanzi_value_page_pv"><img src="/img/spinner.svg" alt="spinner.svg"/></span> 次阅读 </span>
+      </div>
+    </header>
 
-    <article class="post">
-  <header class="post-header">
-    <h1 class="post-title"><a class="post-link" href="/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E6%A6%82%E8%BF%B0/">计算机网络之概述</a></h1>
-    <div class="post-meta">
-      <span class="post-time"> 2023-06-03 </span>
-      <div class="post-category">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/"> 计算机网络 </a>
-          </div>
-        <span class="more-meta"> 约 10479 字 </span>
-        <span class="more-meta"> 预计阅读 21 分钟 </span>
-    </div>
-  </header>
-  
-  <div class="post-content">
-    <div class="post-summary">
-      [toc] 图示说明 代表着主机 代表服务器 代表着路由器 代表着网络 1.1、计算机网络在信息时代的作用 计算机网络已由一种通信基础设施发展成为一种重要的信息服
-    </div>
-    <div class="read-more">
-      <a href="/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E6%A6%82%E8%BF%B0/" class="read-more-link">阅读更多</a>
-    </div>
+    <div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#go内存分配器">go内存分配器</a>
+      <ul>
+        <li><a href="#内存分配方法">内存分配方法</a></li>
+        <li><a href="#多级缓存">多级缓存</a></li>
+        <li><a href="#分级分配">分级分配</a></li>
+        <li><a href="#go的虚拟内存布局">go的虚拟内存布局</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
   </div>
-</article>
+</div>
+	 
+	  	
+	
+    <div class="post-content image-border">
+	 <h1 id="go内存分配器">go内存分配器</h1>
+<h2 id="内存分配方法">内存分配方法</h2>
+<ul>
+<li>
+<p>线性分配法</p>
+<p>只在内存中维护一个指针，并指向剩余空闲内存地址，如果分配新的内存空间只需要将指针往后移即可，如果释放内存，需要通过额外操作来整理内存碎片。（线性分配器本身是无法合理利用已经被释放的内存。）</p>
+</li>
+<li>
+<p>空闲链表分配法</p>
+<p>空闲内存块之间通过指针相连，相比于线性分配法，可以重用已经被释放的内存。</p>
+</li>
+<li>
+<p>go的内存分配策略：隔离适应策略</p>
+<p>对不同大小的内存块分级，减少内存块链表的长度。分配时，先根据内存大小直接定位到特定的内存块链表头节点，然后在链表里查找空闲的内存块。（类似于二分的思想，可以减少遍历内存块的数量，提升效率）</p>
+</li>
+</ul>
+<h2 id="多级缓存">多级缓存</h2>
+<p>内存分配会根据所需内存的大小，从不同级别缓存申请内存。</p>
+<ul>
+<li>
+<p>线程缓存</p>
+<p>线程缓存属于每一个独立的线程内，并没有并发安全问题，申请很快。</p>
+</li>
+<li>
+<p>中心缓存</p>
+<p>中心缓存可能涉及到多个线程并发申请，需要加锁访问。</p>
+</li>
+<li>
+<p>页堆</p>
+<p>前面两种无法满足内存申请，则需要从页堆申请新的内存空间。</p>
+</li>
+</ul>
+<h2 id="分级分配">分级分配</h2>
+<p>go划分了对象大小的级别，按照对象的不同大小，采用不同的分配策略。</p>
+<ul>
+<li>
+<p>微对象(0, 16B]</p>
+<p>先使用微型分配器，再依次尝试线程缓存、中心缓存和堆分配内存；</p>
+</li>
+<li>
+<p>小对象(16B, 32KB]</p>
+<p>依次尝试使用线程缓存、中心缓存和堆分配内存；</p>
+</li>
+<li>
+<p>大对象(32KB, +♾️)</p>
+<p>大于32KB的内存分配申请，会直接在堆上申请。</p>
+</li>
+</ul>
+<h2 id="go的虚拟内存布局">go的虚拟内存布局</h2>
+<p>暂略</p>
+    </div>
 
-    <article class="post">
-  <header class="post-header">
-    <h1 class="post-title"><a class="post-link" href="/post/%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5/">缓存淘汰策略</a></h1>
-    <div class="post-meta">
-      <span class="post-time"> 2023-05-31 </span>
-      <div class="post-category">
-          <a href="/categories/%E7%BC%93%E5%AD%98%E7%B3%BB%E7%BB%9F/"> 缓存系统 </a>
-          </div>
-        <span class="more-meta"> 约 6855 字 </span>
-        <span class="more-meta"> 预计阅读 14 分钟 </span>
-    </div>
-  </header>
-  
-  <div class="post-content">
-    <div class="post-summary">
-      [toc] 缓存淘汰 背景 不论是进程内缓存，还是分布式缓存，都无法避免这样一个问题：当我们需要缓存的数据大于物理内存时，那么就需要通过操作系统虚拟内存管
-    </div>
-    <div class="read-more">
-      <a href="/post/%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5/" class="read-more-link">阅读更多</a>
-    </div>
-  </div>
-</article>
-
-    <article class="post">
-  <header class="post-header">
-    <h1 class="post-title"><a class="post-link" href="/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E7%AE%A1%E7%90%86/">操作系统之输入输出管理</a></h1>
-    <div class="post-meta">
-      <span class="post-time"> 2023-05-30 </span>
-      <div class="post-category">
-          <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"> 操作系统 </a>
-          </div>
-        <span class="more-meta"> 约 10145 字 </span>
-        <span class="more-meta"> 预计阅读 21 分钟 </span>
-    </div>
-  </header>
-  
-  <div class="post-content">
-    <div class="post-summary">
-      [toc] IO管理概述 IO设备基本概念 IO设备管理是操作系统设计中最凌乱也最具挑战性的部分。由于它包含了很多领域的不同设备以及与设备相关的应用程序，
-    </div>
-    <div class="read-more">
-      <a href="/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E7%AE%A1%E7%90%86/" class="read-more-link">阅读更多</a>
-    </div>
-  </div>
-</article>
-
-    </section>
-  
-  <nav class="pagination">
-    <a class="prev" href="/page/6/">
-        <i class="iconfont icon-left"></i>
-        <span class="prev-text">上一页</span>
-      </a>
-    <a class="next" href="/page/8/">
-        <span class="next-text">下一页</span>
-        <i class="iconfont icon-right"></i>
-      </a>
-  </nav>
-        </div>
+    <div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">cold-bin</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+        2023-10-29
         
+    </span>
+  </p>
+  
+  
+</div>
+<footer class="post-footer">
+      
+      <nav class="post-nav">
+        
+        <a class="next" href="/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E8%B0%83%E5%BA%A6%E5%99%A8/">
+            <span class="next-text nav-default">Go语言设计与实现之调度器</span>
+            <span class="next-text nav-mobile">下一篇</span>
+            <i class="iconfont icon-right"></i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+        </div>
+        <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      var gitalk = new Gitalk({
+        id: '2023-10-29 15:09:36 \u002b0800 CST',
+        title: 'Go语言设计与实现之内存分配器',
+        clientID: 'a19ac21c453d44aaaa57',
+        clientSecret: '6b740fcf1281b868b86bb30a974a5ed8db33dbf1',
+        repo: 'blog-comment',
+        owner: 'cold-bin',
+        admin: ['cold-bin'],
+        body: decodeURI(location.href)
+      });
+      gitalk.render('gitalk-container');
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://github.com/gitalk/gitalk">comments powered by gitalk.</a></noscript>
+
+  
+
+  
 
       </div>
     </main>
