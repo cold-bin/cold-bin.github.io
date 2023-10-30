@@ -146,12 +146,24 @@
    
     <div class="archive-title">
       <span class="archive-post-counter">
-        共计 107 篇文章
+        共计 108 篇文章
       </span>
     </div>
       <div class="collection-title">
         <h2 class="archive-year">2023</h2>
       </div>
+
+    <div class="archive-post">
+      <span class="archive-post-time">
+        10-30
+      </span>
+	  
+      <span class="archive-post-title">
+        <a href="/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E6%A0%88%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" class="archive-post-link">
+		  Go语言设计与实现之栈内存管理
+        </a>
+      </span>
+    </div>
 
     <div class="archive-post">
       <span class="archive-post-time">
@@ -739,18 +751,6 @@
 		  Redis高级篇之分布式缓存
         </a>
       </span>
-    </div>
-
-    <div class="archive-post">
-      <span class="archive-post-time">
-        01-14
-      </span>
-	  
-      <span class="archive-post-title">
-        <a href="/post/%E6%B1%87%E7%BC%96%E4%B9%8Bcall%E5%92%8Cret%E6%8C%87%E4%BB%A4/" class="archive-post-link">
-		  汇编之call和ret指令
-        </a>
-      </span>
     </div></section>
 
 <nav class="pagination">
@@ -841,7 +841,7 @@ Highcharts.chart('section_year_chart_1', {
         type: 'column',
 		color:"#16982b",
         yAxis: 1,
-        data: JSON.parse("[1,39,67]"),
+        data: JSON.parse("[1,39,68]"),
         tooltip: {
             valueSuffix: ' 篇'
         }
@@ -850,7 +850,7 @@ Highcharts.chart('section_year_chart_1', {
         name: '按年累计',
 		color:"#0047AB",
         type: 'spline',
-        data: JSON.parse("[1,40,107]"),
+        data: JSON.parse("[1,40,108]"),
         tooltip: {
             valueSuffix: ' 篇'
         }
@@ -907,7 +907,7 @@ Highcharts.chart('section_year_chart_2', {
     series:[{
 	    name: '百分比统计',
         colorByPoint: true,
-        data: JSON.parse("[{\"name\":\"0001\",\"y\":1},{\"name\":\"2022\",\"y\":39},{\"name\":\"2023\",\"y\":67}]")
+        data: JSON.parse("[{\"name\":\"0001\",\"y\":1},{\"name\":\"2022\",\"y\":39},{\"name\":\"2023\",\"y\":68}]")
 	}] 
 });
 Highcharts.chart('section_month_chart_1', {
@@ -973,7 +973,7 @@ Highcharts.chart('section_month_chart_1', {
         name: '按月新增',
 		color:"#16982b",
         type: 'column',
-        data: JSON.parse("[1,10,11,4,4,8,2,25,1,2,1,4,4,5,19,2,4]"),
+        data: JSON.parse("[1,10,11,4,4,8,2,25,1,2,1,4,4,5,19,2,5]"),
         tooltip: {
             valueSuffix: ' 篇'
         }
@@ -983,7 +983,7 @@ Highcharts.chart('section_month_chart_1', {
         type: 'spline',
 		color:"#0047AB",
         yAxis: 1,
-        data: JSON.parse("[1,11,22,26,30,38,40,65,66,68,69,73,77,82,101,103,107]"),
+        data: JSON.parse("[1,11,22,26,30,38,40,65,66,68,69,73,77,82,101,103,108]"),
         tooltip: {
             valueSuffix: ' 篇'
         }
@@ -1047,7 +1047,7 @@ Highcharts.chart('section_month_chart_2', {
             }
         }]
     },
-    series: JSON.parse("[{\"data\":[1,0,25],\"name\":1},{\"data\":[0,0,1],\"name\":2},{\"data\":[0,0,2],\"name\":3},{\"data\":[0,0,1],\"name\":4},{\"data\":[0,0,4],\"name\":5},{\"data\":[0,0,4],\"name\":6},{\"data\":[0,10,5],\"name\":7},{\"data\":[0,11,19],\"name\":8},{\"data\":[0,4,2],\"name\":9},{\"data\":[0,4,4],\"name\":10},{\"data\":[0,8,0],\"name\":11},{\"data\":[0,2,0],\"name\":12}]")
+    series: JSON.parse("[{\"data\":[1,0,25],\"name\":1},{\"data\":[0,0,1],\"name\":2},{\"data\":[0,0,2],\"name\":3},{\"data\":[0,0,1],\"name\":4},{\"data\":[0,0,4],\"name\":5},{\"data\":[0,0,4],\"name\":6},{\"data\":[0,10,5],\"name\":7},{\"data\":[0,11,19],\"name\":8},{\"data\":[0,4,2],\"name\":9},{\"data\":[0,4,5],\"name\":10},{\"data\":[0,8,0],\"name\":11},{\"data\":[0,2,0],\"name\":12}]")
 });
 </script>
 	</div>
