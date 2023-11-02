@@ -7,24 +7,21 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Tue, 10 Jan 2023 19:45:16 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/docker/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 10 Jan 2023 19:45:16 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/categories/docker/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Docker基础</title>
       <link>https://cold-bin.github.io/post/docker%E5%9F%BA%E7%A1%80/</link>
       <pubDate>Tue, 10 Jan 2023 19:45:16 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/docker%E5%9F%BA%E7%A1%80/</guid>
       <description>Docker基础篇之快速上手 第一章 Docker简介 是什么？ 问题：为什么会有 docker 的出现 一款产 品从开发到上线，从操作系统，到运行环境，再到应用配置</description>
     </item>
-    
     <item>
       <title>如何构建Go应用的Docker镜像</title>
       <link>https://cold-bin.github.io/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAgo%E5%BA%94%E7%94%A8%E7%9A%84docker%E9%95%9C%E5%83%8F/</link>
       <pubDate>Mon, 09 Jan 2023 10:31:00 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAgo%E5%BA%94%E7%94%A8%E7%9A%84docker%E9%95%9C%E5%83%8F/</guid>
       <description>如何构建 Go 应用的 Docker 镜像 简介： 在部署 Go 应用时，我们通常会使用 Docker 镜像来部署，那么如何构建一个 Go 应用的 Docker 镜像呢？镜像构建过程中有没有什么最佳实践呢</description>
     </item>
-    
   </channel>
 </rss>

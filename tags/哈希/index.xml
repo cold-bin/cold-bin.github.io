@@ -7,15 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Thu, 17 Nov 2022 12:42:15 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/%E5%93%88%E5%B8%8C/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 17 Nov 2022 12:42:15 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/tags/%E5%93%88%E5%B8%8C/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>常见摘要算法</title>
       <link>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/</link>
       <pubDate>Thu, 17 Nov 2022 12:42:15 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/</guid>
       <description>[toc] HASH算法 摘要算法又称哈希算法、散列算法，它的作用是：它通过一个函数，把任意长度的数据转换为一个长度固定的数据串（通常用16进制的字符串</description>
     </item>
-    
   </channel>
 </rss>

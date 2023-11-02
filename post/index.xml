@@ -7,978 +7,763 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Mon, 30 Oct 2023 15:10:39 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 30 Oct 2023 15:10:39 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Go语言设计与实现之栈内存管理</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E6%A0%88%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</link>
       <pubDate>Mon, 30 Oct 2023 15:10:39 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E6%A0%88%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>Go语言设计与实现之垃圾回收</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/</link>
       <pubDate>Sun, 29 Oct 2023 15:09:52 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>Go语言设计与实现之内存分配器</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/</link>
       <pubDate>Sun, 29 Oct 2023 15:09:36 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>Go语言设计与实现之调度器</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E8%B0%83%E5%BA%A6%E5%99%A8/</link>
       <pubDate>Sun, 29 Oct 2023 15:09:26 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E8%B0%83%E5%BA%A6%E5%99%A8/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>Go语言设计与实现之基础数据结构</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E5%9F%BA%E7%A1%80%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link>
       <pubDate>Fri, 27 Oct 2023 22:55:23 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E5%9F%BA%E7%A1%80%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>Go设计模式之桥接模式</title>
       <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Sat, 02 Sep 2023 11:27:02 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/</guid>
       <description>桥接模式 一个类存在多个独立变化维度，我们通过组合的方式让多个维度可以独立进行扩展。桥接模式的目的是将抽象部分与实现部分解耦，使它们可以独立地</description>
     </item>
-    
     <item>
       <title>Go设计模式之代理模式</title>
       <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Fri, 01 Sep 2023 11:51:13 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</guid>
       <description>代理模式 单例模式、工厂模式、建造者模式、原型模式、函数选项模式都是属于创建型模式，指导如何创建对象。 而结构型模式主要指导如何将对象或类组合在</description>
     </item>
-    
     <item>
       <title>Go设计模式之原型模式</title>
       <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Thu, 31 Aug 2023 16:40:50 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/</guid>
       <description>原型模式 如果对象创建成本比较大（有些字段赋值可能需要rpc、网络、磁盘读取等），而且同一个类的对象差异不大（大部分字段都相同）。在这种情况下</description>
     </item>
-    
     <item>
       <title>Go设计模式之函数选项模式</title>
       <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%87%BD%E6%95%B0%E9%80%89%E9%A1%B9%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Wed, 30 Aug 2023 15:28:21 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%87%BD%E6%95%B0%E9%80%89%E9%A1%B9%E6%A8%A1%E5%BC%8F/</guid>
       <description>来源于topgoer 函数选项模式 默认值 有时候一个函数会有很多参数，为了方便函数的使用，我们会给希望给一些参数设定默认值，调用时只需要传与默认</description>
     </item>
-    
     <item>
       <title>Go设计模式之建造者模式</title>
       <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Wed, 30 Aug 2023 14:24:59 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/</guid>
       <description>建造者模式 与工厂模式不同，建造者模式只创建一种类型的复杂对象，可以通过设置可选参数，定制化地创建不同对象。 简而言之，创建参数复杂的对象 应用场</description>
     </item>
-    
     <item>
       <title>Go语言设计模式之工厂模式</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Mon, 28 Aug 2023 17:01:59 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</guid>
       <description>工厂模式 与单例模式不同，工厂模式根据传入参数不同，会创建出不同的但是相关联的对象，由给定参数来决定是哪一种对象。像一个工厂一样，传入什么，生</description>
     </item>
-    
     <item>
       <title>Go语言设计模式之单例模式</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Mon, 28 Aug 2023 15:45:16 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/</guid>
       <description>单例模式 简而言之：一个类只允许创建一个对象或示例。 饿汉式 项目初始化的时候加载并初始化对象。创建过程线程安全，而且使得问题尽早暴露。 1 2 3 4 5</description>
     </item>
-    
     <item>
       <title>Go设计模式之设计原则</title>
       <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/</link>
       <pubDate>Mon, 28 Aug 2023 08:35:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99/</guid>
       <description>设计原则 SOLID原则 SRP、OCP、LSP、ISP、DIP KISS原则 YAGNI原则 DRY原则 LOD原则 SRP 单一职责原则（Single Responsibility Pr</description>
     </item>
-    
     <item>
       <title>Go设计模式之OOP</title>
       <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8Boop/</link>
       <pubDate>Sun, 27 Aug 2023 15:48:31 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8Boop/</guid>
       <description>OOP OOP指的就是面向对象编程。有三大特性：封装、继承和多态 封装：通过对象访问控制权限实现，只对外暴露必要的方法修改对象，不能直接将对象全部暴</description>
     </item>
-    
     <item>
       <title>常见算法之滑动窗口</title>
       <link>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E4%B9%8B%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</link>
       <pubDate>Thu, 24 Aug 2023 09:53:19 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E4%B9%8B%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</guid>
       <description>滑动窗口算法 1. 简介 滑动窗口算法（Sliding Window）是一种常用的双指针算法，被广泛应用于字符串和数组等数据结构中的子串或子数组问题，</description>
     </item>
-    
     <item>
       <title>八股系列|操作系统|文件系统</title>
       <link>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</link>
       <pubDate>Wed, 23 Aug 2023 21:35:11 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</guid>
       <description>以下文章摘自小林coding 文件系统 不多 BB，直接上「硬菜」。 #文件系统的基本组成 文件系统是操作系统中负责管理持久数据的子系统，说简单点，就</description>
     </item>
-    
     <item>
       <title>八股系列|操作系统|调度算法</title>
       <link>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/</link>
       <pubDate>Wed, 23 Aug 2023 21:35:02 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/</guid>
       <description>调度算法 进程调度 FIFO 先来先服务。每次从就绪队列里调度最先进入就绪队列的进程执行，执行完毕再调度下一个次先进入就绪队列的进程执行。 **缺点：**</description>
     </item>
-    
     <item>
       <title>八股系列|操作系统|进程管理其一</title>
       <link>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/</link>
       <pubDate>Wed, 23 Aug 2023 21:34:53 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/</guid>
       <description>进程管理 并行和并发的区别？ 并行：多个进程或线程同一时刻运行在多个CPU上 并发：多个进程或线程同一时间段交替运行在单个CPU上 什么是进程？ 运行</description>
     </item>
-    
     <item>
       <title>八股系列|操作系统|内存管理其二</title>
       <link>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%85%B6%E4%BA%8C/</link>
       <pubDate>Wed, 23 Aug 2023 21:34:46 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%85%B6%E4%BA%8C/</guid>
       <description>来源于小林coding linux虚拟内存管理 4.6 深入理解 Linux 虚拟内存管理 这一篇会比较硬核，是比较全面的一篇 Linux 虚拟内存管理的文章，文章多达 3.5 万字 +</description>
     </item>
-    
     <item>
       <title>八股系列|操作系统|内存管理篇一</title>
       <link>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%85%B6%E4%B8%80/</link>
       <pubDate>Wed, 23 Aug 2023 21:34:43 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%85%B6%E4%B8%80/</guid>
       <description>内存管理 为什么要有虚拟内存？ 设想以下：如果我们在指定物理地址的内存上装载两个及以上的应用程序。这两个程序事先并没有协商，那么很容易出现一个程</description>
     </item>
-    
     <item>
       <title>八股系列|操作系统|结构</title>
       <link>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84/</link>
       <pubDate>Wed, 23 Aug 2023 21:34:29 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84/</guid>
       <description>系统结构 什么是内核与操作系统？ 内核属于操作系统，是操作系统最核心的部分，是用户和系统硬件的桥梁 操作系统是管理计算机系统资源的软件 内核具备什么</description>
     </item>
-    
     <item>
       <title>记一次github图床上传异常的bug</title>
       <link>https://cold-bin.github.io/post/%E8%AE%B0%E4%B8%80%E6%AC%A1github%E5%9B%BE%E5%BA%8A%E4%B8%8A%E4%BC%A0%E5%BC%82%E5%B8%B8%E7%9A%84bug/</link>
       <pubDate>Tue, 22 Aug 2023 15:35:04 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E8%AE%B0%E4%B8%80%E6%AC%A1github%E5%9B%BE%E5%BA%8A%E4%B8%8A%E4%BC%A0%E5%BC%82%E5%B8%B8%E7%9A%84bug/</guid>
       <description>记一次picgo+github图床上传失败的过程 问题 这次遇到一个非常非常奇怪的问题。我和往常一样使用picgo在github上上传图片。但是</description>
     </item>
-    
     <item>
       <title>常见算法之并查集</title>
       <link>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B9%B6%E6%9F%A5%E9%9B%86/</link>
       <pubDate>Sun, 20 Aug 2023 18:02:42 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E4%B9%8B%E5%B9%B6%E6%9F%A5%E9%9B%86/</guid>
       <description>以下文章摘自labuladong的算法小抄 并查集（Union-Find）算法 读完本文，你不仅学会了算法套路，还可以顺便解决如下题目： LeetCode 力扣 难</description>
     </item>
-    
     <item>
       <title>八股系列|操作系统|硬件结构</title>
       <link>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6%E7%BB%93%E6%9E%84/</link>
       <pubDate>Mon, 14 Aug 2023 12:03:21 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%85%AB%E8%82%A1%E7%B3%BB%E5%88%97%E4%B9%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6%E7%BB%93%E6%9E%84/</guid>
       <description>这里记录一些不是很体系化，但是偶尔乍现的问题与其解 操作系统之硬件结构 CPU是如何执行程序的？ CPU是计算机的核心部件，包含控制器、运算器和寄</description>
     </item>
-    
     <item>
       <title>Mit6.824之lab1</title>
       <link>https://cold-bin.github.io/post/mit6.824%E4%B9%8Blab1/</link>
       <pubDate>Thu, 10 Aug 2023 16:32:37 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/mit6.824%E4%B9%8Blab1/</guid>
       <description>lab1——实现简易版的mapreduce框架 论文回顾 mapreduce架构 严格来讲，MapReduce是一种分布式计算模型，用于解决大于1</description>
     </item>
-    
     <item>
       <title>Go插件</title>
       <link>https://cold-bin.github.io/post/go%E6%8F%92%E4%BB%B6/</link>
       <pubDate>Sat, 05 Aug 2023 16:02:12 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E6%8F%92%E4%BB%B6/</guid>
       <description>插件 以下文章摘自go语言设计与实践里的插件系统 熟悉 Go 语言的开发者一般都非常了解 Goroutine 和 Channel 的原理，包括如何设计基于 CSP 模型的应用程序，但是 Go 语言的插</description>
     </item>
-    
     <item>
       <title>Cs144 Lab</title>
       <link>https://cold-bin.github.io/post/cs144-lab/</link>
       <pubDate>Mon, 31 Jul 2023 19:13:59 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/cs144-lab/</guid>
       <description>lab0 reference link lab0实验手册 implementation Set up GNU/Linux on your computer 简单地安装CS144 VirtualBox和c++环境，以方便后续地测试。 Networking by hand 接下来就是使用简单地tel</description>
     </item>
-    
     <item>
       <title>计算机网络之网络安全</title>
       <link>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/</link>
       <pubDate>Thu, 13 Jul 2023 21:15:36 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/</guid>
       <description>[toc] 一、网络攻击的类型 网络攻击分为两大类：被动攻击和主动攻击。 截获：从网络上窃听他人的通信内容，但不干扰原报文在源端和目的端的传送。 篡改：捕获</description>
     </item>
-    
     <item>
       <title>计算机网络之应用层</title>
       <link>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E5%BA%94%E7%94%A8%E5%B1%82/</link>
       <pubDate>Thu, 13 Jul 2023 13:52:13 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E5%BA%94%E7%94%A8%E5%B1%82/</guid>
       <description>[toc] 应用层 应用层协议原理 应用程序架构 应用层程序的体系结构一般包括：P2P、CS这两种架构。 P2P：P2P（Peer-to-Peer）是一种分布</description>
     </item>
-    
     <item>
       <title>C&#43;&#43;之指针与引用</title>
       <link>https://cold-bin.github.io/post/c&#43;&#43;%E4%B9%8B%E6%8C%87%E9%92%88%E4%B8%8E%E5%BC%95%E7%94%A8/</link>
       <pubDate>Wed, 12 Jul 2023 16:59:18 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/c&#43;&#43;%E4%B9%8B%E6%8C%87%E9%92%88%E4%B8%8E%E5%BC%95%E7%94%A8/</guid>
       <description>本文主要说明C++的指针和引用在函数调用中的异同点 指针 向函数传递参数的指针调用方法，把参数的地址复制给形式参数。在函数内，该地址用于访问调用</description>
     </item>
-    
     <item>
       <title>计算机网络之运输层</title>
       <link>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E8%BF%90%E8%BE%93%E5%B1%82/</link>
       <pubDate>Tue, 11 Jul 2023 17:36:16 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E8%BF%90%E8%BE%93%E5%B1%82/</guid>
       <description>[toc] 运输层概述 运输层的基本功能 运输层协议为运行在不同主机上的应用进程之间提供了逻辑通信功能，使得运行在不同主机上的进程像直连一样。 复用和分用 差</description>
     </item>
-    
     <item>
       <title>计算机网络之网络层</title>
       <link>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82/</link>
       <pubDate>Fri, 23 Jun 2023 22:05:45 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E7%BD%91%E7%BB%9C%E5%B1%82/</guid>
       <description>[toc] 4.1、网络层概述 简介 网络层的主要任务是实现网络互连，进而实现数据包在各网络之间的传输 这些异构型网络N1~N7如果只是需要各自内部通信，他</description>
     </item>
-    
     <item>
       <title>计算机网络之数据链路层</title>
       <link>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/</link>
       <pubDate>Thu, 08 Jun 2023 15:17:49 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/</guid>
       <description>[toc] 3.1、数据链路层概述 概述 链路与数据链路 链路是从一个结点到相邻结点的一段物理线路，数据链路则是在链路的基础上增加了一些必要的硬件（如网络适</description>
     </item>
-    
     <item>
       <title>计算机网络之物理层</title>
       <link>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E7%89%A9%E7%90%86%E5%B1%82/</link>
       <pubDate>Thu, 08 Jun 2023 15:16:08 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E7%89%A9%E7%90%86%E5%B1%82/</guid>
       <description>[toc] 2.1、物理层的基本概念 2.2、物理层下面的传输媒体 传输媒体也称为传输介质或传输媒介，他就是数据传输系统中在发送器和接收器之间的物理通路。</description>
     </item>
-    
     <item>
       <title>计算机网络之概述</title>
       <link>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E6%A6%82%E8%BF%B0/</link>
       <pubDate>Sat, 03 Jun 2023 22:42:06 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E4%B9%8B%E6%A6%82%E8%BF%B0/</guid>
       <description>[toc] 图示说明 代表着主机 代表服务器 代表着路由器 代表着网络 1.1、计算机网络在信息时代的作用 计算机网络已由一种通信基础设施发展成为一种重要的信息服</description>
     </item>
-    
     <item>
       <title>缓存淘汰策略</title>
       <link>https://cold-bin.github.io/post/%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5/</link>
       <pubDate>Wed, 31 May 2023 22:53:14 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AD%96%E7%95%A5/</guid>
       <description>[toc] 缓存淘汰 背景 不论是进程内缓存，还是分布式缓存，都无法避免这样一个问题：当我们需要缓存的数据大于物理内存时，那么就需要通过操作系统虚拟内存管</description>
     </item>
-    
     <item>
       <title>操作系统之输入输出管理</title>
       <link>https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E7%AE%A1%E7%90%86/</link>
       <pubDate>Tue, 30 May 2023 12:10:06 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E7%AE%A1%E7%90%86/</guid>
       <description>[toc] IO管理概述 IO设备基本概念 IO设备管理是操作系统设计中最凌乱也最具挑战性的部分。由于它包含了很多领域的不同设备以及与设备相关的应用程序，</description>
     </item>
-    
     <item>
       <title>操作系统之文件管理</title>
       <link>https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/</link>
       <pubDate>Sun, 21 May 2023 15:19:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/</guid>
       <description>[toc] 文件系统基础 文件的概念 由于系统的内存有限并且不能长期保存，故平时总是把它们以文件的形式存放在外存中，需要时再将它们调入内存。如何高效的对文</description>
     </item>
-    
     <item>
       <title>操作系统之内存管理</title>
       <link>https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</link>
       <pubDate>Thu, 11 May 2023 19:53:00 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</guid>
       <description>[toc] 内存管理概念 内存管理的基本原理和要求 存储器结构 上图展示了一个典型的存储器层次结构。一般而言，从高层往底层走，存储设备变得更慢、更便宜和更大</description>
     </item>
-    
     <item>
       <title>拷贝</title>
       <link>https://cold-bin.github.io/post/%E6%8B%B7%E8%B4%9D/</link>
       <pubDate>Wed, 05 Apr 2023 17:26:42 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%8B%B7%E8%B4%9D/</guid>
       <description>[toc] 拷贝 说起拷贝，语文上的联想词大概就是“复制”。那么在计算机范围内，二者定义是否一样呢？答案是不一样的。 拷贝：是指在计算机程序中，将一个对象</description>
     </item>
-    
     <item>
       <title>操作系统之进程管理</title>
       <link>https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/</link>
       <pubDate>Fri, 17 Mar 2023 14:55:42 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/</guid>
       <description>[TOC] 什么是进程？ 概念 进程（process）：是一个具有一定独立功能的程序，关于某个数据集合的一次运行活动，是操作系统资源分配的基本单位 要点 进程</description>
     </item>
-    
     <item>
       <title>操作系统之概述</title>
       <link>https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A6%82%E8%BF%B0/</link>
       <pubDate>Wed, 15 Mar 2023 18:32:26 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%B9%8B%E6%A6%82%E8%BF%B0/</guid>
       <description>[toc] 操作系统概念 操作系统（operation system，简称OS），是管理计算机硬件与软件资源的计算机程序。 例如，在windows上win+</description>
     </item>
-    
     <item>
       <title>汇编之总结</title>
       <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%80%BB%E7%BB%93/</link>
       <pubDate>Wed, 01 Feb 2023 20:43:35 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%80%BB%E7%BB%93/</guid>
       <description>指令系统总结 我们对8086CPU的指令系统进行一下总结。读者若要详细了解8086指令系统中的各个指令的用，可以查看有关的指令手册。 8086C</description>
     </item>
-    
     <item>
       <title>汇编之外中断</title>
       <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%A4%96%E4%B8%AD%E6%96%AD/</link>
       <pubDate>Sun, 29 Jan 2023 20:59:35 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%A4%96%E4%B8%AD%E6%96%AD/</guid>
       <description>外中断 1、外中断 CPU在计算机系统中，除了能够执行指令，进行运算以外，还应该能够对外部设备进行控制，接收它们的输入，向它们进行输出（I/O能</description>
     </item>
-    
     <item>
       <title>汇编之端口</title>
       <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AB%AF%E5%8F%A3/</link>
       <pubDate>Sat, 28 Jan 2023 20:59:37 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AB%AF%E5%8F%A3/</guid>
       <description>[toc] 端口 在PC机系统中，和CPU通过总线相连的芯片除各种存储器外，还有以下3种芯片。 各种接口卡（比如，网卡、显卡）上的接口芯片，它们控制接口卡</description>
     </item>
-    
     <item>
       <title>Redis高级篇之最佳实践</title>
       <link>https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/</link>
       <pubDate>Thu, 26 Jan 2023 16:39:51 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/</guid>
       <description>[toc] Redis高级篇之最佳实践 今日内容 Redis键值设计 批处理优化 服务端优化 集群最佳实践 1、Redis键值设计 1.1、优雅的key结构 Redi</description>
     </item>
-    
     <item>
       <title>汇编之内中断</title>
       <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%86%85%E4%B8%AD%E6%96%AD/</link>
       <pubDate>Tue, 24 Jan 2023 21:58:30 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%86%85%E4%B8%AD%E6%96%AD/</guid>
       <description>内中断 1、内中断的产生 任何一个通用的CPU，都具备一种能力，可以在执行完当前正在执行的指令之后，检测到从CPU外部发送过来的或内部产生的一种</description>
     </item>
-    
     <item>
       <title>Redis高级篇之多级缓存</title>
       <link>https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/</link>
       <pubDate>Tue, 24 Jan 2023 16:08:44 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/</guid>
       <description>[toc] 多级缓存 1.什么是多级缓存 传统的缓存策略一般是请求到达Tomcat后，先查询Redis，如果未命中则查询数据库，如图： 存在下面的问题： 请求</description>
     </item>
-    
     <item>
       <title>汇编之标志寄存器</title>
       <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A0%87%E5%BF%97%E5%AF%84%E5%AD%98%E5%99%A8/</link>
       <pubDate>Tue, 17 Jan 2023 21:08:13 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A0%87%E5%BF%97%E5%AF%84%E5%AD%98%E5%99%A8/</guid>
       <description>标志寄存器 1、标志寄存器 CPU内部的寄存器中，有一种特殊的寄存器（对于不同的处理机，个数和结构都可能不同）具有以下3种作用。 （1）用来存储相</description>
     </item>
-    
     <item>
       <title>Redis高级篇之分布式缓存</title>
       <link>https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/</link>
       <pubDate>Sun, 15 Jan 2023 17:26:41 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/</guid>
       <description>[toc] 基于Redis集群解决单机Redis存在的问题 单机的Redis存在四大问题： 分布式缓存 1.Redis持久化 Redis有两种持久化方案： RD</description>
     </item>
-    
     <item>
       <title>汇编之call和ret指令</title>
       <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8Bcall%E5%92%8Cret%E6%8C%87%E4%BB%A4/</link>
       <pubDate>Sat, 14 Jan 2023 22:59:42 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8Bcall%E5%92%8Cret%E6%8C%87%E4%BB%A4/</guid>
       <description>call和ret指令 call和ret指令都是转移指令，它们都修改IP，或同时修改CS和IP。 1、ret 和 retf ret指令用栈中的数据，修改IP的</description>
     </item>
-    
     <item>
       <title>汇编之转移指令原理</title>
       <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E8%BD%AC%E7%A7%BB%E6%8C%87%E4%BB%A4%E5%8E%9F%E7%90%86/</link>
       <pubDate>Fri, 13 Jan 2023 21:29:13 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E8%BD%AC%E7%A7%BB%E6%8C%87%E4%BB%A4%E5%8E%9F%E7%90%86/</guid>
       <description>转移指令的原理 可以修改IP，或同时修改CS和IP的指令统称为转移指令。概括地讲，转移指令就是可以控制CPU执行内存中某处代码的指令。 8086</description>
     </item>
-    
     <item>
       <title>分布式锁</title>
       <link>https://cold-bin.github.io/post/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/</link>
       <pubDate>Thu, 12 Jan 2023 11:54:12 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/</guid>
       <description>分布式锁 以下文章来自转载，并做了一些必要的补充和改进 什么是锁？ 在单进程的系统中，当存在多个线程可以同时改变某个变量（可变共享变量）时，就需要</description>
     </item>
-    
     <item>
       <title>汇编之数据处理问题</title>
       <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E9%97%AE%E9%A2%98/</link>
       <pubDate>Tue, 10 Jan 2023 20:04:55 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E9%97%AE%E9%A2%98/</guid>
       <description>div指令、dd、dup、mul指令 div是除法指令 除数：有8位和16位两种，在一个寄存器或内存单元中。 被除数：默认放在AX或DX和AX中，</description>
     </item>
-    
     <item>
       <title>Shell编程初识和Linux及其常用命令</title>
       <link>https://cold-bin.github.io/post/shell%E7%BC%96%E7%A8%8B%E5%88%9D%E8%AF%86%E5%92%8Clinux%E5%8F%8A%E5%85%B6%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</link>
       <pubDate>Tue, 10 Jan 2023 19:47:57 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/shell%E7%BC%96%E7%A8%8B%E5%88%9D%E8%AF%86%E5%92%8Clinux%E5%8F%8A%E5%85%B6%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</guid>
       <description>Linux 概述 什么是Linux？ Linux 是一套免费使用和自由传播的类 Unix 操作系统，是一个基于 POSIX 和 Unix 的多用户、多任务、支持多线程和多CPU的操作系统。 它能运行</description>
     </item>
-    
     <item>
       <title>Linux常用命令</title>
       <link>https://cold-bin.github.io/post/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</link>
       <pubDate>Tue, 10 Jan 2023 19:46:21 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</guid>
       <description>linux常用命令 零、linux初窥 一、命令行操作体验 在 linux 中，最最重要的就是命令，这就包含了 2 个过程，输入和输出 输入：输入当然就是打开终端，</description>
     </item>
-    
     <item>
       <title>Docker基础</title>
       <link>https://cold-bin.github.io/post/docker%E5%9F%BA%E7%A1%80/</link>
       <pubDate>Tue, 10 Jan 2023 19:45:16 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/docker%E5%9F%BA%E7%A1%80/</guid>
       <description>Docker基础篇之快速上手 第一章 Docker简介 是什么？ 问题：为什么会有 docker 的出现 一款产 品从开发到上线，从操作系统，到运行环境，再到应用配置</description>
     </item>
-    
     <item>
       <title>汇编之其他定位地址方法</title>
       <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%85%B6%E4%BB%96%E5%AE%9A%E4%BD%8D%E5%9C%B0%E5%9D%80%E6%96%B9%E6%B3%95/</link>
       <pubDate>Mon, 09 Jan 2023 21:39:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%85%B6%E4%BB%96%E5%AE%9A%E4%BD%8D%E5%9C%B0%E5%9D%80%E6%96%B9%E6%B3%95/</guid>
       <description>[toc] 更灵活的定位内存地址的方法 1、and 和 or and指令：逻辑与指令，按位进行与运算。 1 2 mov al, 01100011B and al, 00111011B 执行后：al=00100011B即都为1才</description>
     </item>
-    
     <item>
       <title>Redis应用</title>
       <link>https://cold-bin.github.io/post/redis%E5%BA%94%E7%94%A8/</link>
       <pubDate>Mon, 09 Jan 2023 10:48:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/redis%E5%BA%94%E7%94%A8/</guid>
       <description>[toc] Redis应用 开篇导读 短信登录 这一块我们会使用redis共享session来实现 商户查询缓存 通过本章节，我们会理解缓存击穿，缓存穿透，缓存</description>
     </item>
-    
     <item>
       <title>Mod和gopath依赖管理</title>
       <link>https://cold-bin.github.io/post/mod%E5%92%8Cgopath%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</link>
       <pubDate>Mon, 09 Jan 2023 10:33:48 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/mod%E5%92%8Cgopath%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</guid>
       <description>彻底搞懂GOROOT、GOPATH、PATH、mod管理和gopath管理项目的区别 1、GOPATH 和 GOROOT 不同于其他语言，go中没有项目的说法</description>
     </item>
-    
     <item>
       <title>如何构建Go应用的Docker镜像</title>
       <link>https://cold-bin.github.io/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAgo%E5%BA%94%E7%94%A8%E7%9A%84docker%E9%95%9C%E5%83%8F/</link>
       <pubDate>Mon, 09 Jan 2023 10:31:00 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAgo%E5%BA%94%E7%94%A8%E7%9A%84docker%E9%95%9C%E5%83%8F/</guid>
       <description>如何构建 Go 应用的 Docker 镜像 简介： 在部署 Go 应用时，我们通常会使用 Docker 镜像来部署，那么如何构建一个 Go 应用的 Docker 镜像呢？镜像构建过程中有没有什么最佳实践呢</description>
     </item>
-    
     <item>
       <title>基于go的selenium使用详解</title>
       <link>https://cold-bin.github.io/post/%E5%9F%BA%E4%BA%8Ego%E7%9A%84selenium%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/</link>
       <pubDate>Mon, 09 Jan 2023 10:30:18 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%9F%BA%E4%BA%8Ego%E7%9A%84selenium%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/</guid>
       <description>基于golang的selenium使用详解 什么是selenium？我理解成：selenium是一种程序员使用地、自动化地、可以通过代码来操控</description>
     </item>
-    
     <item>
       <title>常见算法总结</title>
       <link>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/</link>
       <pubDate>Mon, 09 Jan 2023 10:29:45 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/</guid>
       <description>[toc] 常见算法总结 Floyd 判圈算法 Floyd判圈算法(Floyd Cycle Detection Algorithm)，又称龟兔赛跑算法(Tortoise and Hare Algorithm)，</description>
     </item>
-    
     <item>
       <title>自动化接口文档swag使用指南</title>
       <link>https://cold-bin.github.io/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</link>
       <pubDate>Mon, 09 Jan 2023 10:29:26 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</guid>
       <description>swag 目录 快速开始 支持的Web框架 如何与Gin集成 格式化说明 开发现状 声明式注释格式 通用API信息 API操作 安全性 样例 多行的描述 用户自定义的具有数</description>
     </item>
-    
     <item>
       <title>Go爬虫</title>
       <link>https://cold-bin.github.io/post/go%E7%88%AC%E8%99%AB/</link>
       <pubDate>Mon, 09 Jan 2023 10:28:50 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E7%88%AC%E8%99%AB/</guid>
       <description>Go爬虫 爬虫就是模拟客户端程序访问服务端某个url下的资源，再将资源进行部分提取（使用正则筛选html等），然后在存储至某端，或者放在某网页</description>
     </item>
-    
     <item>
       <title>Leetcode每日一题</title>
       <link>https://cold-bin.github.io/post/leecode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</link>
       <pubDate>Sun, 08 Jan 2023 17:34:02 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/leecode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</guid>
       <description>Leetcode刷题笔记 [toc] day01 移除元素 题目 给你一个数组 nums 和一个值val，你需要 原地 移除所有数值等于val的元素，并返回移除后数组的新长度。 不要</description>
     </item>
-    
     <item>
       <title>Redis基础</title>
       <link>https://cold-bin.github.io/post/redis%E5%9F%BA%E7%A1%80/</link>
       <pubDate>Sun, 08 Jan 2023 10:27:07 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/redis%E5%9F%BA%E7%A1%80/</guid>
       <description>1.初识Redis Redis是一种键值型的NoSql数据库，这里有两个关键字： 键值型 NoSql 其中键值型，是指Redis中存储的数据都是以key、v</description>
     </item>
-    
     <item>
       <title>包含多个段的程序</title>
       <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/</link>
       <pubDate>Sat, 07 Jan 2023 20:37:19 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%8C%85%E5%90%AB%E5%A4%9A%E4%B8%AA%E6%AE%B5%E7%9A%84%E7%A8%8B%E5%BA%8F/</guid>
       <description>[toc] 多个段程序 程序中对段名的引用，将被编译器处理为一个表示段地址的数值。 1 2 3 mov ax, data mov ds, ax mov bx, ds:[6] 在代码段中使用数据 1 2 3 4 5 6 7 8 9 10 11 12 13 14</description>
     </item>
-    
     <item>
       <title>汇编之BX和loop指令</title>
       <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8Bbx%E5%92%8Cloop%E6%8C%87%E4%BB%A4/</link>
       <pubDate>Fri, 09 Dec 2022 21:58:07 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8Bbx%E5%92%8Cloop%E6%8C%87%E4%BB%A4/</guid>
       <description>[bx] 1、[bx]是什么呢？ 和[0]类似，[0]表示内存单元，它的偏移地址是0； 2、内存单元的描述 我们要完整地描述一个内存单元，需要两种信息： （</description>
     </item>
-    
     <item>
       <title>汇编之第一个程序</title>
       <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/</link>
       <pubDate>Tue, 06 Dec 2022 17:43:13 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E7%AC%AC%E4%B8%80%E4%B8%AA%E7%A8%8B%E5%BA%8F/</guid>
       <description>汇编之第一个程序 一个源程序从写出到执行的过程 一个汇编语言程序从写出到最终执行的简要过程： 编写 -&amp;gt; 编译连接 -&amp;gt; 执行 对源程序进行编译连接： 使用汇编语</description>
     </item>
-    
     <item>
       <title>汇编之寄存器</title>
       <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/</link>
       <pubDate>Wed, 30 Nov 2022 11:01:12 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E5%AF%84%E5%AD%98%E5%99%A8/</guid>
       <description>寄存器 概述 一个典型的CPU主要由运算器，控制器，寄存器等器件构成，它们靠内部总线相连（内部总线实现CPU内部各机器件间的联系，外部总线实现C</description>
     </item>
-    
     <item>
       <title>汇编之概述</title>
       <link>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/</link>
       <pubDate>Tue, 29 Nov 2022 15:43:09 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%B1%87%E7%BC%96%E4%B9%8B%E6%A6%82%E8%BF%B0/</guid>
       <description>汇编基础术语 什么是汇编语言？汇编语言就是直接工作硬件之上的编程语言。 机器语言 机器语言就是机器指令的集合。电子计算机的机器指令是一串二进制数字</description>
     </item>
-    
     <item>
       <title>MongoDB基础篇</title>
       <link>https://cold-bin.github.io/post/mongodb%E5%9F%BA%E7%A1%80%E7%AF%87/</link>
       <pubDate>Fri, 25 Nov 2022 20:20:04 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/mongodb%E5%9F%BA%E7%A1%80%E7%AF%87/</guid>
       <description>MongoDB背景 1、MongoDB是什么？ MongoDB是一款为web应用程序和互联网基础设施设计的数据库管理系统。没错MongoDB就是</description>
     </item>
-    
     <item>
       <title>存储之行列存储</title>
       <link>https://cold-bin.github.io/post/%E5%AD%98%E5%82%A8%E4%B9%8B%E8%A1%8C%E5%88%97%E5%AD%98%E5%82%A8/</link>
       <pubDate>Fri, 25 Nov 2022 15:47:28 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%AD%98%E5%82%A8%E4%B9%8B%E8%A1%8C%E5%88%97%E5%AD%98%E5%82%A8/</guid>
       <description>一.数据处理类型 联机事务处理 OLTP(on-line transaction processing) 联机分析处理 OLAP(On-Line Analytical Processing) 区别： OLTP 是传统关系型数据库的主要应用，用来执行一些基本的、日常的事务处理，比如数据库记录</description>
     </item>
-    
     <item>
       <title>常见摘要算法</title>
       <link>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/</link>
       <pubDate>Thu, 17 Nov 2022 12:42:15 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95/</guid>
       <description>[toc] HASH算法 摘要算法又称哈希算法、散列算法，它的作用是：它通过一个函数，把任意长度的数据转换为一个长度固定的数据串（通常用16进制的字符串</description>
     </item>
-    
     <item>
       <title>常见加密算法原理及概念</title>
       <link>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%A6%82%E5%BF%B5/</link>
       <pubDate>Tue, 15 Nov 2022 18:01:50 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86%E5%8F%8A%E6%A6%82%E5%BF%B5/</guid>
       <description>[toc] 一、概述 在安全领域，利用密钥加密算法来对通信的过程进行加密是一种常见的安全手段。利用该手段能够保障数据安全通信的三个目标： 1、数据的保密性</description>
     </item>
-    
     <item>
       <title>锁</title>
       <link>https://cold-bin.github.io/post/%E9%94%81/</link>
       <pubDate>Wed, 09 Nov 2022 16:46:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E9%94%81/</guid>
       <description>[toc] 定义 顾名思义，锁就是可以锁住某些东西的东西。在计算机科学中，锁(lock)是一种同步机制，用于在有许多执行线程的环境中强制对资源的访问限制</description>
     </item>
-    
     <item>
       <title>并发安全之原子操作</title>
       <link>https://cold-bin.github.io/post/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E4%B9%8B%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/</link>
       <pubDate>Wed, 09 Nov 2022 16:24:28 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E4%B9%8B%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/</guid>
       <description>[toc] 原子操作 并发是业务开发中经常要面对的问题，很多时候我们会直接用一把 sync.Mutex 互斥锁来线性化处理，保证每一时刻进入临界区的 goroutine 只有一个。这样避免了并发</description>
     </item>
-    
     <item>
       <title>HTTP协议知识点</title>
       <link>https://cold-bin.github.io/post/http%E5%8D%8F%E8%AE%AE%E7%9F%A5%E8%AF%86%E7%82%B9/</link>
       <pubDate>Sun, 23 Oct 2022 21:23:13 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/http%E5%8D%8F%E8%AE%AE%E7%9F%A5%E8%AF%86%E7%82%B9/</guid>
       <description>简介 超文本传输协议（英文：HyperText Transfer Protocol，缩写：HTTP）是一种用于分布式、协作式和超媒体信息系统的应用层协议。HTT</description>
     </item>
-    
     <item>
       <title>MySQL日志与备份篇</title>
       <link>https://cold-bin.github.io/post/mysql%E6%97%A5%E5%BF%97%E4%B8%8E%E5%A4%87%E4%BB%BD%E7%AF%87/</link>
       <pubDate>Sat, 22 Oct 2022 10:39:18 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/mysql%E6%97%A5%E5%BF%97%E4%B8%8E%E5%A4%87%E4%BB%BD%E7%AF%87/</guid>
       <description>[toc] 第17章_其他数据库日志 千万不要小看日志。很多看似奇怪的问题，答案往往就藏在日志里。很多情况下，只有通过查看日志才能发现问题的原因，真正解</description>
     </item>
-    
     <item>
       <title>MySQL事务篇</title>
       <link>https://cold-bin.github.io/post/mysql%E4%BA%8B%E5%8A%A1%E7%AF%87/</link>
       <pubDate>Thu, 20 Oct 2022 22:17:42 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/mysql%E4%BA%8B%E5%8A%A1%E7%AF%87/</guid>
       <description>[toc] 第13章_事务基础知识 1. 数据库事务概述 1.1 存储引擎支持情况 SHOW ENGINES 命令来查看当前 MySQL 支持的存储引擎都有哪些，以及这些存储引擎是否支持事务。 能看出在</description>
     </item>
-    
     <item>
       <title>BurpsuitePro抓包之旅</title>
       <link>https://cold-bin.github.io/post/burpsuitepro%E6%8A%93%E5%8C%85%E4%B9%8B%E6%97%85/</link>
       <pubDate>Wed, 05 Oct 2022 17:34:18 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/burpsuitepro%E6%8A%93%E5%8C%85%E4%B9%8B%E6%97%85/</guid>
       <description>burpsuitepro的模块 Proxy 提供一个直观、友好的用户界面，它的代理服务器包含非常详细的拦截规则，并能准确分析 HTTP 消息的结构与内容。 Spide 爬行蜘</description>
     </item>
-    
     <item>
       <title>Sync.Pool的使用及源码分析</title>
       <link>https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8F%8A%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
       <pubDate>Sat, 24 Sep 2022 15:09:27 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8F%8A%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
       <description>sync.Pool使用及源码浅析 sync.Pool使用 背景 “频繁创建对象，频繁销毁对象”是在项目开发里算比较常见。sync.Pool的出现就</description>
     </item>
-    
     <item>
       <title>MySQL索引及调优篇</title>
       <link>https://cold-bin.github.io/post/mysql%E7%B4%A2%E5%BC%95%E5%8F%8A%E8%B0%83%E4%BC%98%E7%AF%87/</link>
       <pubDate>Sat, 24 Sep 2022 15:03:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/mysql%E7%B4%A2%E5%BC%95%E5%8F%8A%E8%B0%83%E4%BC%98%E7%AF%87/</guid>
       <description>[toc] 第06章_索引的数据结构 1. 为什么使用索引 索引是存储引擎用于快速找到数据记录的一种数据结构，就好比一本教科书的目录部分，通过目录中找到对应文</description>
     </item>
-    
     <item>
       <title>MySQL架构篇</title>
       <link>https://cold-bin.github.io/post/mysql%E6%9E%B6%E6%9E%84%E7%AF%87/</link>
       <pubDate>Mon, 05 Sep 2022 15:10:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/mysql%E6%9E%B6%E6%9E%84%E7%AF%87/</guid>
       <description>[toc] 第04章_逻辑架构 1. 逻辑架构剖析 1.1 服务器处理客户端请求 首先MySQL是典型的C/S架构，即Client/Server 架构，服务端程序使用的</description>
     </item>
-    
     <item>
       <title>Go语言reflect包的使用</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80reflect%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/</link>
       <pubDate>Fri, 02 Sep 2022 19:26:22 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80reflect%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/</guid>
       <description>Go语言reflect包的使用 反射包使用 map and slice 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 func MapAndSlice() { stringSlice := make([]string,0) stringMap := make(map[string]string) sliceType := reflect.TypeOf(stringSlice) mapType := reflect.TypeOf(stringMap) rMap := reflect.MakeMap(mapType) rSlice := reflect.MakeSlice(sliceType,0,0) k := &amp;#34;first&amp;#34; rMap.SetMapIndex(reflect.ValueOf(k),reflect.ValueOf(&amp;#34;test&amp;#34;)) i :=</description>
     </item>
-    
     <item>
       <title>sync.pool的使用场景</title>
       <link>https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/</link>
       <pubDate>Mon, 29 Aug 2022 10:40:55 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/</guid>
       <description>sync.Pool 的使用场景 一句话总结：保存和复用临时对象，减少内存分配，降低GC压力。 举个简单的例子： 1 2 3 4 5 6 7 8 9 10 11 12 type Student struct { Name string Age int32 Remark [1024]byte } var buf, _</description>
     </item>
-    
     <item>
       <title>Go语言unsafe包的使用</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/</link>
       <pubDate>Sun, 28 Aug 2022 14:18:10 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/</guid>
       <description>unsafe使用及底层 unsafe实现原理 在使用之前我们先来看一下unsafe包的源码部分，标准库unsafe包中只提供了3种方法，分别是:</description>
     </item>
-    
     <item>
       <title>Gorm使用补充点</title>
       <link>https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/</link>
       <pubDate>Sun, 28 Aug 2022 12:01:57 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/</guid>
       <description>本文主要补充一些gorm的使用技巧，完整的gorm使用移步官方文档gorm官方文档 总结 配置单数表名, 再也不用写TableName 1 2 3 db, err :=</description>
     </item>
-    
     <item>
       <title>微服务架构项目开发要点</title>
       <link>https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E8%A6%81%E7%82%B9/</link>
       <pubDate>Sat, 27 Aug 2022 15:15:46 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E8%A6%81%E7%82%B9/</guid>
       <description>微服务架构项目开发要点 随着系统用户逐日增长，原来的单机架构集群部署的方式，虽然能够顶得住流量顶峰地倾泄，但是，系统越来越复杂。集群方式部署的</description>
     </item>
-    
     <item>
       <title>Git之commit规范指南</title>
       <link>https://cold-bin.github.io/post/git%E4%B9%8Bcommit%E8%A7%84%E8%8C%83%E6%8C%87%E5%8D%97/</link>
       <pubDate>Thu, 25 Aug 2022 11:53:50 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/git%E4%B9%8Bcommit%E8%A7%84%E8%8C%83%E6%8C%87%E5%8D%97/</guid>
       <description>Git 每次提交代码，都要写 Commit message（提交说明），否则就不允许提交。 1 $ git commit -m &amp;#34;hello world&amp;#34; 上面代码的-m参数，就是用来指定 commit mesage 的。 如果一行不够，可</description>
     </item>
-    
     <item>
       <title>Git工作流</title>
       <link>https://cold-bin.github.io/post/git%E5%B7%A5%E4%BD%9C%E6%B5%81/</link>
       <pubDate>Thu, 25 Aug 2022 11:52:44 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/git%E5%B7%A5%E4%BD%9C%E6%B5%81/</guid>
       <description>关于版本控制 什么是版本控制？我为什么要关心它呢？ 版本控制是一种记录一个或若干文件内容变化，以便将来查阅特定版本修订情况的系统。 在本书所展示的</description>
     </item>
-    
     <item>
       <title>MySQL基础篇</title>
       <link>https://cold-bin.github.io/post/mysql%E5%9F%BA%E7%A1%80%E7%AF%87/</link>
       <pubDate>Wed, 24 Aug 2022 15:37:22 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/mysql%E5%9F%BA%E7%A1%80%E7%AF%87/</guid>
       <description>[toc] 导入表的问题 导入数据时外键约束问题 数据导入指令： 1 source d:\xxx.sql 通过FOREIGN_KEY_CHECKS解决，用法如下： 1 2 set FOREIGN_KEY_CHECKS=0; #在导入前设置为不检</description>
     </item>
-    
     <item>
       <title>RPC与微服务</title>
       <link>https://cold-bin.github.io/post/rpc%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/</link>
       <pubDate>Sun, 21 Aug 2022 13:52:34 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/rpc%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/</guid>
       <description>RPC与微服务 一、RPC 1. 什么是RPC RPC(即：Remote Procedure Call) 远程过程调用，简单地理解是一个节点请求另一个节点提供的服务。当然这两个节点</description>
     </item>
-    
     <item>
       <title>微服务一些概念</title>
       <link>https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/</link>
       <pubDate>Fri, 19 Aug 2022 10:13:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/</guid>
       <description>微服务概念 微服务的粒度小，服务之间耦合度低，由于每个微服务都由独立的小团队负责，因此它敏捷性更高，分布式服务最后都会向微服务架构演化，这是一</description>
     </item>
-    
     <item>
       <title>Golang编程思想集锦</title>
       <link>https://cold-bin.github.io/post/golang%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E9%9B%86%E9%94%A6/</link>
       <pubDate>Wed, 10 Aug 2022 17:13:38 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/golang%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E9%9B%86%E9%94%A6/</guid>
       <description>一、go面向对象 封装 结构体与方法 多态 接口来实现多态，不同结构体可以实现相同的接口。这样就能拥有同种行为的不同具体状态 &amp;ndash;&amp;gt; 多态 继承、覆盖 1 2 3 4</description>
     </item>
-    
     <item>
       <title>详解Go中的rune类型</title>
       <link>https://cold-bin.github.io/post/%E8%AF%A6%E8%A7%A3go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/</link>
       <pubDate>Wed, 10 Aug 2022 14:23:15 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E8%AF%A6%E8%A7%A3go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/</guid>
       <description>Unicode编码和utf-8编码的关系 需要注意的是，Unicode 只是一个符号集，它只规定了符号的二进制代码，却没有规定这个二进制代码应该</description>
     </item>
-    
     <item>
       <title>Go的结构体内存对齐</title>
       <link>https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/</link>
       <pubDate>Sun, 17 Jul 2022 15:26:09 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/</guid>
       <description>一. 什么是内存对齐, 为啥要内存对齐？ 在解释什么是内存对齐之前，我们需要先了解一下CPU和内存数据交互的过程。CPU和内存是通过总线进行数据交</description>
     </item>
-    
     <item>
       <title>Flag包的在go项目的实践</title>
       <link>https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/</link>
       <pubDate>Sun, 17 Jul 2022 10:16:08 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/</guid>
       <description>阅读本文前，需具备flag基础 通常我们有种需求：可以在不修改程序源码的情况下，控制一些程序内部的变化。比如配置文件，我们可以手动更改配置文件</description>
     </item>
-    
     <item>
       <title>Makefile在go项目的实践</title>
       <link>https://cold-bin.github.io/post/makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/</link>
       <pubDate>Sat, 16 Jul 2022 22:13:26 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/</guid>
       <description>Make介绍 make命令是GNU的工程化编译工具，用以实现工程化的管理，提高开发效率。 Make解释Makefile 中的指令（应该说是规则）。</description>
     </item>
-    
     <item>
       <title>Go语言标准库flag基本使用</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%BA%93flag%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</link>
       <pubDate>Sat, 16 Jul 2022 14:03:46 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%BA%93flag%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</guid>
       <description>Go语言内置的flag包实现了命令行参数的解析，flag包使得开发命令行工具更为简单。 os.Args 如果你只是简单的想要获取命令行参数，可以像下面的代码</description>
     </item>
-    
     <item>
       <title>Https在golang的实践</title>
       <link>https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/</link>
       <pubDate>Sat, 16 Jul 2022 11:03:31 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/</guid>
       <description>Golang创建最简单的HTTP和HTTPS服务 HTTP服务 HTTP是基于传输层TCP协议的。 1 2 3 4 5 6 7 8 9 10 11 12 13 14 package main import ( &amp;#34;net/http&amp;#34; &amp;#34;fmt&amp;#34; &amp;#34;log&amp;#34; ) func</description>
     </item>
-    
     <item>
       <title>Go杂烩</title>
       <link>https://cold-bin.github.io/post/go%E6%9D%82%E7%83%A9/</link>
       <pubDate>Fri, 15 Jul 2022 14:19:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E6%9D%82%E7%83%A9/</guid>
       <description>Golang杂烩 一、结构体 和 C/C++ 的结构体类似，Go 语言的结构体 struct 是一种聚合的数据类型，可以包含任意类型的值。 方法 值接收者（go语言特有） 所谓值</description>
     </item>
-    
     <item>
       <title>集中式与分布式</title>
       <link>https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/</link>
       <pubDate>Thu, 07 Jul 2022 17:55:34 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/</guid>
       <description>[toc] 集中式与分布式 集中式系统架构 集中式是指由一台或多台主计算机组成的中心节点，数据集中存储于这个中心节点中，并且整个系统的所有业务单元都集中部</description>
     </item>
-    
     <item>
       <title>API向前兼容性的解决方案</title>
       <link>https://cold-bin.github.io/post/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9%E6%80%A7%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</link>
       <pubDate>Thu, 07 Jul 2022 17:51:45 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9%E6%80%A7%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/</guid>
       <description>API向前兼容性的解决方案 应该有不少程序员受过这样的困扰，特别是做后端的。项目一直在持续不断的迭代，但是呢老版本的代码还不能直接删掉，因为不</description>
     </item>
-    
     <item>
       <title>Go测试与性能优化</title>
       <link>https://cold-bin.github.io/post/go%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</link>
       <pubDate>Thu, 07 Jul 2022 17:46:37 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</guid>
       <description>go测试与性能优化 一、单元测试 不写测试的开发不是好程序员。我个人非常崇尚TDD（Test Driven Development）的，然而可惜的是国内的程序</description>
     </item>
-    
     <item>
       <title>数据结构与算法（java版）</title>
       <link>https://cold-bin.github.io/post/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95java%E7%89%88/</link>
       <pubDate>Thu, 07 Jul 2022 12:36:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95java%E7%89%88/</guid>
       <description>[TOC] 引子 数据结构包括：线性结构和非线性结构 线性结构 特点：数据元素一对一的线性关系 线性结构有两种不同的存储结构：一种是顺序存储结构，元素处于相邻</description>
     </item>
-    
     <item>
       <title></title>
       <link>https://cold-bin.github.io/post/readme/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://cold-bin.github.io/post/readme/</guid>
       <description>notes 学习笔记托管</description>
     </item>
-    
   </channel>
 </rss>

@@ -7,15 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Fri, 25 Nov 2022 20:20:04 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/mongodb/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 25 Nov 2022 20:20:04 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/categories/mongodb/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>MongoDB基础篇</title>
       <link>https://cold-bin.github.io/post/mongodb%E5%9F%BA%E7%A1%80%E7%AF%87/</link>
       <pubDate>Fri, 25 Nov 2022 20:20:04 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/mongodb%E5%9F%BA%E7%A1%80%E7%AF%87/</guid>
       <description>MongoDB背景 1、MongoDB是什么？ MongoDB是一款为web应用程序和互联网基础设施设计的数据库管理系统。没错MongoDB就是</description>
     </item>
-    
   </channel>
 </rss>

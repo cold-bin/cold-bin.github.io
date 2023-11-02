@@ -7,15 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Sun, 08 Jan 2023 17:34:02 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 08 Jan 2023 17:34:02 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Leetcode每日一题</title>
       <link>https://cold-bin.github.io/post/leecode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</link>
       <pubDate>Sun, 08 Jan 2023 17:34:02 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/leecode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98/</guid>
       <description>Leetcode刷题笔记 [toc] day01 移除元素 题目 给你一个数组 nums 和一个值val，你需要 原地 移除所有数值等于val的元素，并返回移除后数组的新长度。 不要</description>
     </item>
-    
   </channel>
 </rss>

@@ -7,15 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Sun, 21 Aug 2022 13:52:34 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 21 Aug 2022 13:52:34 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>RPC与微服务</title>
       <link>https://cold-bin.github.io/post/rpc%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/</link>
       <pubDate>Sun, 21 Aug 2022 13:52:34 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/rpc%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/</guid>
       <description>RPC与微服务 一、RPC 1. 什么是RPC RPC(即：Remote Procedure Call) 远程过程调用，简单地理解是一个节点请求另一个节点提供的服务。当然这两个节点</description>
     </item>
-    
   </channel>
 </rss>

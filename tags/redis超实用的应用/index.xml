@@ -7,15 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Mon, 09 Jan 2023 10:48:47 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/redis%E8%B6%85%E5%AE%9E%E7%94%A8%E7%9A%84%E5%BA%94%E7%94%A8/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 09 Jan 2023 10:48:47 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/tags/redis%E8%B6%85%E5%AE%9E%E7%94%A8%E7%9A%84%E5%BA%94%E7%94%A8/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Redis应用</title>
       <link>https://cold-bin.github.io/post/redis%E5%BA%94%E7%94%A8/</link>
       <pubDate>Mon, 09 Jan 2023 10:48:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/redis%E5%BA%94%E7%94%A8/</guid>
       <description>[toc] Redis应用 开篇导读 短信登录 这一块我们会使用redis共享session来实现 商户查询缓存 通过本章节，我们会理解缓存击穿，缓存穿透，缓存</description>
     </item>
-    
   </channel>
 </rss>

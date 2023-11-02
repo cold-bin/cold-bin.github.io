@@ -7,15 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Wed, 09 Nov 2022 16:46:32 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 09 Nov 2022 16:46:32 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/tags/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>锁</title>
       <link>https://cold-bin.github.io/post/%E9%94%81/</link>
       <pubDate>Wed, 09 Nov 2022 16:46:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E9%94%81/</guid>
       <description>[toc] 定义 顾名思义，锁就是可以锁住某些东西的东西。在计算机科学中，锁(lock)是一种同步机制，用于在有许多执行线程的环境中强制对资源的访问限制</description>
     </item>
-    
   </channel>
 </rss>

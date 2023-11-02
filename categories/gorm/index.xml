@@ -7,15 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Sun, 28 Aug 2022 12:01:57 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/gorm/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 28 Aug 2022 12:01:57 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/categories/gorm/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Gorm使用补充点</title>
       <link>https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/</link>
       <pubDate>Sun, 28 Aug 2022 12:01:57 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/gorm%E4%BD%BF%E7%94%A8%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/</guid>
       <description>本文主要补充一些gorm的使用技巧，完整的gorm使用移步官方文档gorm官方文档 总结 配置单数表名, 再也不用写TableName 1 2 3 db, err :=</description>
     </item>
-    
   </channel>
 </rss>

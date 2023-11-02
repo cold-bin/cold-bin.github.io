@@ -7,15 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Wed, 24 Aug 2022 15:37:22 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/ddl/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 24 Aug 2022 15:37:22 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/tags/ddl/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>MySQL基础篇</title>
       <link>https://cold-bin.github.io/post/mysql%E5%9F%BA%E7%A1%80%E7%AF%87/</link>
       <pubDate>Wed, 24 Aug 2022 15:37:22 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/mysql%E5%9F%BA%E7%A1%80%E7%AF%87/</guid>
       <description>[toc] 导入表的问题 导入数据时外键约束问题 数据导入指令： 1 source d:\xxx.sql 通过FOREIGN_KEY_CHECKS解决，用法如下： 1 2 set FOREIGN_KEY_CHECKS=0; #在导入前设置为不检</description>
     </item>
-    
   </channel>
 </rss>

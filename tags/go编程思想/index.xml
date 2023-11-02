@@ -7,15 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Wed, 10 Aug 2022 17:13:38 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/go%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 10 Aug 2022 17:13:38 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/tags/go%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Golang编程思想集锦</title>
       <link>https://cold-bin.github.io/post/golang%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E9%9B%86%E9%94%A6/</link>
       <pubDate>Wed, 10 Aug 2022 17:13:38 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/golang%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E9%9B%86%E9%94%A6/</guid>
       <description>一、go面向对象 封装 结构体与方法 多态 接口来实现多态，不同结构体可以实现相同的接口。这样就能拥有同种行为的不同具体状态 &amp;ndash;&amp;gt; 多态 继承、覆盖 1 2 3 4</description>
     </item>
-    
   </channel>
 </rss>

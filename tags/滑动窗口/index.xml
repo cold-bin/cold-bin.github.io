@@ -7,15 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Thu, 24 Aug 2023 09:53:19 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 24 Aug 2023 09:53:19 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>常见算法之滑动窗口</title>
       <link>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E4%B9%8B%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</link>
       <pubDate>Thu, 24 Aug 2023 09:53:19 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E4%B9%8B%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</guid>
       <description>滑动窗口算法 1. 简介 滑动窗口算法（Sliding Window）是一种常用的双指针算法，被广泛应用于字符串和数组等数据结构中的子串或子数组问题，</description>
     </item>
-    
   </channel>
 </rss>

@@ -7,15 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Sat, 24 Sep 2022 15:03:32 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%87%A0%E5%A4%A7%E8%8C%83%E5%BC%8F/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 24 Sep 2022 15:03:32 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%87%A0%E5%A4%A7%E8%8C%83%E5%BC%8F/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>MySQL索引及调优篇</title>
       <link>https://cold-bin.github.io/post/mysql%E7%B4%A2%E5%BC%95%E5%8F%8A%E8%B0%83%E4%BC%98%E7%AF%87/</link>
       <pubDate>Sat, 24 Sep 2022 15:03:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/mysql%E7%B4%A2%E5%BC%95%E5%8F%8A%E8%B0%83%E4%BC%98%E7%AF%87/</guid>
       <description>[toc] 第06章_索引的数据结构 1. 为什么使用索引 索引是存储引擎用于快速找到数据记录的一种数据结构，就好比一本教科书的目录部分，通过目录中找到对应文</description>
     </item>
-    
   </channel>
 </rss>

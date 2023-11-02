@@ -23,7 +23,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.119.0 with theme even" />
+<meta name="generator" content="Hugo 0.120.3 with theme even" />
 
 
 <link rel="canonical" href="https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/" />
@@ -45,6 +45,7 @@
 <meta property="og:url" content="https://cold-bin.github.io/post/redis%E9%AB%98%E7%BA%A7%E7%AF%87%E4%B9%8B%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2023-01-15T17:26:41+08:00" />
 <meta property="article:modified_time" content="2023-01-15T17:26:41+08:00" />
+
 <meta itemprop="name" content="Redis高级篇之分布式缓存">
 <meta itemprop="description" content="[toc] 基于Redis集群解决单机Redis存在的问题 单机的Redis存在四大问题： 分布式缓存 1.Redis持久化 Redis有两种持久化方案： RD"><meta itemprop="datePublished" content="2023-01-15T17:26:41+08:00" />
 <meta itemprop="dateModified" content="2023-01-15T17:26:41+08:00" />
@@ -591,15 +592,15 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">spring:</span>
-</span></span><span class="line"><span class="cl">  <span class="n">redis</span><span class="o">:</span>
-</span></span><span class="line"><span class="cl">    <span class="n">sentinel</span><span class="o">:</span>
-</span></span><span class="line"><span class="cl">      <span class="n">master</span><span class="o">:</span> <span class="n">mymaster</span>
-</span></span><span class="line"><span class="cl">      <span class="n">nodes</span><span class="o">:</span>
-</span></span><span class="line"><span class="cl">        <span class="o">-</span> <span class="mi">192</span><span class="o">.</span><span class="na">168</span><span class="o">.</span><span class="na">150</span><span class="o">.</span><span class="na">101</span><span class="o">:</span><span class="mi">27001</span>
-</span></span><span class="line"><span class="cl">        <span class="o">-</span> <span class="mi">192</span><span class="o">.</span><span class="na">168</span><span class="o">.</span><span class="na">150</span><span class="o">.</span><span class="na">101</span><span class="o">:</span><span class="mi">27002</span>
-</span></span><span class="line"><span class="cl">        <span class="o">-</span> <span class="mi">192</span><span class="o">.</span><span class="na">168</span><span class="o">.</span><span class="na">150</span><span class="o">.</span><span class="na">101</span><span class="o">:</span><span class="mi">27003</span>
-</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nl">spring</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">redis</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="n">sentinel</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">master</span><span class="p">:</span><span class="w"> </span><span class="n">mymaster</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="n">nodes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">-</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">150</span><span class="p">.</span><span class="na">101</span><span class="p">:</span><span class="n">27001</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">-</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">150</span><span class="p">.</span><span class="na">101</span><span class="p">:</span><span class="n">27002</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="o">-</span><span class="w"> </span><span class="n">192</span><span class="p">.</span><span class="na">168</span><span class="p">.</span><span class="na">150</span><span class="p">.</span><span class="na">101</span><span class="p">:</span><span class="n">27003</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="334配置读写分离">3.3.4.配置读写分离</h3>
 <p>在项目的启动类中，添加一个新的bean：</p>
@@ -611,11 +612,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Bean</span>
-</span></span><span class="line"><span class="cl"><span class="kd">public</span> <span class="n">LettuceClientConfigurationBuilderCustomizer</span> <span class="nf">clientConfigurationBuilderCustomizer</span><span class="o">(){</span>
-</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">clientConfigurationBuilder</span> <span class="o">-&gt;</span> <span class="n">clientConfigurationBuilder</span><span class="o">.</span><span class="na">readFrom</span><span class="o">(</span><span class="n">ReadFrom</span><span class="o">.</span><span class="na">REPLICA_PREFERRED</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl"><span class="o">}</span>
-</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="nd">@Bean</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="kd">public</span><span class="w"> </span><span class="n">LettuceClientConfigurationBuilderCustomizer</span><span class="w"> </span><span class="nf">clientConfigurationBuilderCustomizer</span><span class="p">(){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">clientConfigurationBuilder</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">clientConfigurationBuilder</span><span class="p">.</span><span class="na">readFrom</span><span class="p">(</span><span class="n">ReadFrom</span><span class="p">.</span><span class="na">REPLICA_PREFERRED</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p>这个bean中配置的就是读写策略，包括四种：</p>
 <ul>

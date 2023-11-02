@@ -7,15 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Tue, 10 Jan 2023 19:45:16 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 10 Jan 2023 19:45:16 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/tags/docker/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Docker基础</title>
       <link>https://cold-bin.github.io/post/docker%E5%9F%BA%E7%A1%80/</link>
       <pubDate>Tue, 10 Jan 2023 19:45:16 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/docker%E5%9F%BA%E7%A1%80/</guid>
       <description>Docker基础篇之快速上手 第一章 Docker简介 是什么？ 问题：为什么会有 docker 的出现 一款产 品从开发到上线，从操作系统，到运行环境，再到应用配置</description>
     </item>
-    
   </channel>
 </rss>

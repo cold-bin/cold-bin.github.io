@@ -23,7 +23,7 @@
 
 
 
-<meta name="generator" content="Hugo 0.119.0 with theme even" />
+<meta name="generator" content="Hugo 0.120.3 with theme even" />
 
 
 <link rel="canonical" href="https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/" />
@@ -45,6 +45,7 @@
 <meta property="og:url" content="https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2022-08-29T10:40:55+08:00" />
 <meta property="article:modified_time" content="2022-08-29T10:40:55+08:00" />
+
 <meta itemprop="name" content="sync.pool的使用场景">
 <meta itemprop="description" content="sync.Pool 的使用场景 一句话总结：保存和复用临时对象，减少内存分配，降低GC压力。 举个简单的例子： 1 2 3 4 5 6 7 8 9 10 11 12 type Student struct { Name string Age int32 Remark [1024]byte } var buf, _"><meta itemprop="datePublished" content="2022-08-29T10:40:55+08:00" />
 <meta itemprop="dateModified" content="2022-08-29T10:40:55+08:00" />
@@ -242,11 +243,11 @@
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">var studentPool = sync.Pool{
-</span></span><span class="line"><span class="cl">    New: func() interface{} { 
-</span></span><span class="line"><span class="cl">        return new(Student) 
-</span></span><span class="line"><span class="cl">    },
-</span></span><span class="line"><span class="cl">}
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">var</span> <span class="n">studentPool</span> <span class="o">=</span> <span class="n">sync</span><span class="o">.</span><span class="n">Pool</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">New</span><span class="p">:</span> <span class="k">func</span><span class="p">()</span> <span class="n">interface</span><span class="p">{}</span> <span class="p">{</span> 
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">new</span><span class="p">(</span><span class="n">Student</span><span class="p">)</span> 
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="getput"><code>Get</code>&amp;<code>Put</code></h3>

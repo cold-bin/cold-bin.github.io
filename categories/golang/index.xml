@@ -7,330 +7,259 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Mon, 30 Oct 2023 15:10:39 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/golang/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 30 Oct 2023 15:10:39 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/categories/golang/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Go语言设计与实现之栈内存管理</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E6%A0%88%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</link>
       <pubDate>Mon, 30 Oct 2023 15:10:39 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E6%A0%88%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>Go语言设计与实现之垃圾回收</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/</link>
       <pubDate>Sun, 29 Oct 2023 15:09:52 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>Go语言设计与实现之内存分配器</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/</link>
       <pubDate>Sun, 29 Oct 2023 15:09:36 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>Go语言设计与实现之调度器</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E8%B0%83%E5%BA%A6%E5%99%A8/</link>
       <pubDate>Sun, 29 Oct 2023 15:09:26 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E8%B0%83%E5%BA%A6%E5%99%A8/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>Go语言设计与实现之基础数据结构</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E5%9F%BA%E7%A1%80%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</link>
       <pubDate>Fri, 27 Oct 2023 22:55:23 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0%E4%B9%8B%E5%9F%BA%E7%A1%80%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>Go设计模式之桥接模式</title>
       <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Sat, 02 Sep 2023 11:27:02 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E6%A1%A5%E6%8E%A5%E6%A8%A1%E5%BC%8F/</guid>
       <description>桥接模式 一个类存在多个独立变化维度，我们通过组合的方式让多个维度可以独立进行扩展。桥接模式的目的是将抽象部分与实现部分解耦，使它们可以独立地</description>
     </item>
-    
     <item>
       <title>Go设计模式之代理模式</title>
       <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Fri, 01 Sep 2023 11:51:13 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</guid>
       <description>代理模式 单例模式、工厂模式、建造者模式、原型模式、函数选项模式都是属于创建型模式，指导如何创建对象。 而结构型模式主要指导如何将对象或类组合在</description>
     </item>
-    
     <item>
       <title>Go设计模式之原型模式</title>
       <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Thu, 31 Aug 2023 16:40:50 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/</guid>
       <description>原型模式 如果对象创建成本比较大（有些字段赋值可能需要rpc、网络、磁盘读取等），而且同一个类的对象差异不大（大部分字段都相同）。在这种情况下</description>
     </item>
-    
     <item>
       <title>Go设计模式之函数选项模式</title>
       <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%87%BD%E6%95%B0%E9%80%89%E9%A1%B9%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Wed, 30 Aug 2023 15:28:21 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%87%BD%E6%95%B0%E9%80%89%E9%A1%B9%E6%A8%A1%E5%BC%8F/</guid>
       <description>来源于topgoer 函数选项模式 默认值 有时候一个函数会有很多参数，为了方便函数的使用，我们会给希望给一些参数设定默认值，调用时只需要传与默认</description>
     </item>
-    
     <item>
       <title>Go设计模式之建造者模式</title>
       <link>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Wed, 30 Aug 2023 14:24:59 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/</guid>
       <description>建造者模式 与工厂模式不同，建造者模式只创建一种类型的复杂对象，可以通过设置可选参数，定制化地创建不同对象。 简而言之，创建参数复杂的对象 应用场</description>
     </item>
-    
     <item>
       <title>Go语言设计模式之工厂模式</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Mon, 28 Aug 2023 17:01:59 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/</guid>
       <description>工厂模式 与单例模式不同，工厂模式根据传入参数不同，会创建出不同的但是相关联的对象，由给定参数来决定是哪一种对象。像一个工厂一样，传入什么，生</description>
     </item>
-    
     <item>
       <title>Go语言设计模式之单例模式</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Mon, 28 Aug 2023 15:45:16 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/</guid>
       <description>单例模式 简而言之：一个类只允许创建一个对象或示例。 饿汉式 项目初始化的时候加载并初始化对象。创建过程线程安全，而且使得问题尽早暴露。 1 2 3 4 5</description>
     </item>
-    
     <item>
       <title>Go插件</title>
       <link>https://cold-bin.github.io/post/go%E6%8F%92%E4%BB%B6/</link>
       <pubDate>Sat, 05 Aug 2023 16:02:12 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E6%8F%92%E4%BB%B6/</guid>
       <description>插件 以下文章摘自go语言设计与实践里的插件系统 熟悉 Go 语言的开发者一般都非常了解 Goroutine 和 Channel 的原理，包括如何设计基于 CSP 模型的应用程序，但是 Go 语言的插</description>
     </item>
-    
     <item>
       <title>Mod和gopath依赖管理</title>
       <link>https://cold-bin.github.io/post/mod%E5%92%8Cgopath%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</link>
       <pubDate>Mon, 09 Jan 2023 10:33:48 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/mod%E5%92%8Cgopath%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</guid>
       <description>彻底搞懂GOROOT、GOPATH、PATH、mod管理和gopath管理项目的区别 1、GOPATH 和 GOROOT 不同于其他语言，go中没有项目的说法</description>
     </item>
-    
     <item>
       <title>如何构建Go应用的Docker镜像</title>
       <link>https://cold-bin.github.io/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAgo%E5%BA%94%E7%94%A8%E7%9A%84docker%E9%95%9C%E5%83%8F/</link>
       <pubDate>Mon, 09 Jan 2023 10:31:00 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BAgo%E5%BA%94%E7%94%A8%E7%9A%84docker%E9%95%9C%E5%83%8F/</guid>
       <description>如何构建 Go 应用的 Docker 镜像 简介： 在部署 Go 应用时，我们通常会使用 Docker 镜像来部署，那么如何构建一个 Go 应用的 Docker 镜像呢？镜像构建过程中有没有什么最佳实践呢</description>
     </item>
-    
     <item>
       <title>基于go的selenium使用详解</title>
       <link>https://cold-bin.github.io/post/%E5%9F%BA%E4%BA%8Ego%E7%9A%84selenium%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/</link>
       <pubDate>Mon, 09 Jan 2023 10:30:18 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%9F%BA%E4%BA%8Ego%E7%9A%84selenium%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/</guid>
       <description>基于golang的selenium使用详解 什么是selenium？我理解成：selenium是一种程序员使用地、自动化地、可以通过代码来操控</description>
     </item>
-    
     <item>
       <title>自动化接口文档swag使用指南</title>
       <link>https://cold-bin.github.io/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</link>
       <pubDate>Mon, 09 Jan 2023 10:29:26 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</guid>
       <description>swag 目录 快速开始 支持的Web框架 如何与Gin集成 格式化说明 开发现状 声明式注释格式 通用API信息 API操作 安全性 样例 多行的描述 用户自定义的具有数</description>
     </item>
-    
     <item>
       <title>Go爬虫</title>
       <link>https://cold-bin.github.io/post/go%E7%88%AC%E8%99%AB/</link>
       <pubDate>Mon, 09 Jan 2023 10:28:50 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E7%88%AC%E8%99%AB/</guid>
       <description>Go爬虫 爬虫就是模拟客户端程序访问服务端某个url下的资源，再将资源进行部分提取（使用正则筛选html等），然后在存储至某端，或者放在某网页</description>
     </item>
-    
     <item>
       <title>锁</title>
       <link>https://cold-bin.github.io/post/%E9%94%81/</link>
       <pubDate>Wed, 09 Nov 2022 16:46:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E9%94%81/</guid>
       <description>[toc] 定义 顾名思义，锁就是可以锁住某些东西的东西。在计算机科学中，锁(lock)是一种同步机制，用于在有许多执行线程的环境中强制对资源的访问限制</description>
     </item>
-    
     <item>
       <title>并发安全之原子操作</title>
       <link>https://cold-bin.github.io/post/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E4%B9%8B%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/</link>
       <pubDate>Wed, 09 Nov 2022 16:24:28 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E4%B9%8B%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/</guid>
       <description>[toc] 原子操作 并发是业务开发中经常要面对的问题，很多时候我们会直接用一把 sync.Mutex 互斥锁来线性化处理，保证每一时刻进入临界区的 goroutine 只有一个。这样避免了并发</description>
     </item>
-    
     <item>
       <title>Sync.Pool的使用及源码分析</title>
       <link>https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8F%8A%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
       <pubDate>Sat, 24 Sep 2022 15:09:27 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%8F%8A%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
       <description>sync.Pool使用及源码浅析 sync.Pool使用 背景 “频繁创建对象，频繁销毁对象”是在项目开发里算比较常见。sync.Pool的出现就</description>
     </item>
-    
     <item>
       <title>Go语言reflect包的使用</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80reflect%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/</link>
       <pubDate>Fri, 02 Sep 2022 19:26:22 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80reflect%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/</guid>
       <description>Go语言reflect包的使用 反射包使用 map and slice 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 func MapAndSlice() { stringSlice := make([]string,0) stringMap := make(map[string]string) sliceType := reflect.TypeOf(stringSlice) mapType := reflect.TypeOf(stringMap) rMap := reflect.MakeMap(mapType) rSlice := reflect.MakeSlice(sliceType,0,0) k := &amp;#34;first&amp;#34; rMap.SetMapIndex(reflect.ValueOf(k),reflect.ValueOf(&amp;#34;test&amp;#34;)) i :=</description>
     </item>
-    
     <item>
       <title>sync.pool的使用场景</title>
       <link>https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/</link>
       <pubDate>Mon, 29 Aug 2022 10:40:55 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/sync.pool%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF/</guid>
       <description>sync.Pool 的使用场景 一句话总结：保存和复用临时对象，减少内存分配，降低GC压力。 举个简单的例子： 1 2 3 4 5 6 7 8 9 10 11 12 type Student struct { Name string Age int32 Remark [1024]byte } var buf, _</description>
     </item>
-    
     <item>
       <title>Go语言unsafe包的使用</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/</link>
       <pubDate>Sun, 28 Aug 2022 14:18:10 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80unsafe%E5%8C%85%E7%9A%84%E4%BD%BF%E7%94%A8/</guid>
       <description>unsafe使用及底层 unsafe实现原理 在使用之前我们先来看一下unsafe包的源码部分，标准库unsafe包中只提供了3种方法，分别是:</description>
     </item>
-    
     <item>
       <title>RPC与微服务</title>
       <link>https://cold-bin.github.io/post/rpc%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/</link>
       <pubDate>Sun, 21 Aug 2022 13:52:34 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/rpc%E4%B8%8E%E5%BE%AE%E6%9C%8D%E5%8A%A1/</guid>
       <description>RPC与微服务 一、RPC 1. 什么是RPC RPC(即：Remote Procedure Call) 远程过程调用，简单地理解是一个节点请求另一个节点提供的服务。当然这两个节点</description>
     </item>
-    
     <item>
       <title>微服务一些概念</title>
       <link>https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/</link>
       <pubDate>Fri, 19 Aug 2022 10:13:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5/</guid>
       <description>微服务概念 微服务的粒度小，服务之间耦合度低，由于每个微服务都由独立的小团队负责，因此它敏捷性更高，分布式服务最后都会向微服务架构演化，这是一</description>
     </item>
-    
     <item>
       <title>Golang编程思想集锦</title>
       <link>https://cold-bin.github.io/post/golang%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E9%9B%86%E9%94%A6/</link>
       <pubDate>Wed, 10 Aug 2022 17:13:38 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/golang%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3%E9%9B%86%E9%94%A6/</guid>
       <description>一、go面向对象 封装 结构体与方法 多态 接口来实现多态，不同结构体可以实现相同的接口。这样就能拥有同种行为的不同具体状态 &amp;ndash;&amp;gt; 多态 继承、覆盖 1 2 3 4</description>
     </item>
-    
     <item>
       <title>详解Go中的rune类型</title>
       <link>https://cold-bin.github.io/post/%E8%AF%A6%E8%A7%A3go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/</link>
       <pubDate>Wed, 10 Aug 2022 14:23:15 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E8%AF%A6%E8%A7%A3go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/</guid>
       <description>Unicode编码和utf-8编码的关系 需要注意的是，Unicode 只是一个符号集，它只规定了符号的二进制代码，却没有规定这个二进制代码应该</description>
     </item>
-    
     <item>
       <title>Go的结构体内存对齐</title>
       <link>https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/</link>
       <pubDate>Sun, 17 Jul 2022 15:26:09 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E7%9A%84%E7%BB%93%E6%9E%84%E4%BD%93%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/</guid>
       <description>一. 什么是内存对齐, 为啥要内存对齐？ 在解释什么是内存对齐之前，我们需要先了解一下CPU和内存数据交互的过程。CPU和内存是通过总线进行数据交</description>
     </item>
-    
     <item>
       <title>Flag包的在go项目的实践</title>
       <link>https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/</link>
       <pubDate>Sun, 17 Jul 2022 10:16:08 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/flag%E5%8C%85%E7%9A%84%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/</guid>
       <description>阅读本文前，需具备flag基础 通常我们有种需求：可以在不修改程序源码的情况下，控制一些程序内部的变化。比如配置文件，我们可以手动更改配置文件</description>
     </item>
-    
     <item>
       <title>Makefile在go项目的实践</title>
       <link>https://cold-bin.github.io/post/makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/</link>
       <pubDate>Sat, 16 Jul 2022 22:13:26 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/</guid>
       <description>Make介绍 make命令是GNU的工程化编译工具，用以实现工程化的管理，提高开发效率。 Make解释Makefile 中的指令（应该说是规则）。</description>
     </item>
-    
     <item>
       <title>Go语言标准库flag基本使用</title>
       <link>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%BA%93flag%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</link>
       <pubDate>Sat, 16 Jul 2022 14:03:46 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E8%AF%AD%E8%A8%80%E6%A0%87%E5%87%86%E5%BA%93flag%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</guid>
       <description>Go语言内置的flag包实现了命令行参数的解析，flag包使得开发命令行工具更为简单。 os.Args 如果你只是简单的想要获取命令行参数，可以像下面的代码</description>
     </item>
-    
     <item>
       <title>Https在golang的实践</title>
       <link>https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/</link>
       <pubDate>Sat, 16 Jul 2022 11:03:31 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/https%E5%9C%A8golang%E7%9A%84%E5%AE%9E%E8%B7%B5/</guid>
       <description>Golang创建最简单的HTTP和HTTPS服务 HTTP服务 HTTP是基于传输层TCP协议的。 1 2 3 4 5 6 7 8 9 10 11 12 13 14 package main import ( &amp;#34;net/http&amp;#34; &amp;#34;fmt&amp;#34; &amp;#34;log&amp;#34; ) func</description>
     </item>
-    
     <item>
       <title>Go杂烩</title>
       <link>https://cold-bin.github.io/post/go%E6%9D%82%E7%83%A9/</link>
       <pubDate>Fri, 15 Jul 2022 14:19:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E6%9D%82%E7%83%A9/</guid>
       <description>Golang杂烩 一、结构体 和 C/C++ 的结构体类似，Go 语言的结构体 struct 是一种聚合的数据类型，可以包含任意类型的值。 方法 值接收者（go语言特有） 所谓值</description>
     </item>
-    
     <item>
       <title>集中式与分布式</title>
       <link>https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/</link>
       <pubDate>Thu, 07 Jul 2022 17:55:34 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E9%9B%86%E4%B8%AD%E5%BC%8F%E4%B8%8E%E5%88%86%E5%B8%83%E5%BC%8F/</guid>
       <description>[toc] 集中式与分布式 集中式系统架构 集中式是指由一台或多台主计算机组成的中心节点，数据集中存储于这个中心节点中，并且整个系统的所有业务单元都集中部</description>
     </item>
-    
     <item>
       <title>Go测试与性能优化</title>
       <link>https://cold-bin.github.io/post/go%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</link>
       <pubDate>Thu, 07 Jul 2022 17:46:37 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E6%B5%8B%E8%AF%95%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</guid>
       <description>go测试与性能优化 一、单元测试 不写测试的开发不是好程序员。我个人非常崇尚TDD（Test Driven Development）的，然而可惜的是国内的程序</description>
     </item>
-    
   </channel>
 </rss>

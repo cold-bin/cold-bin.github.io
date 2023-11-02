@@ -7,15 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Mon, 09 Jan 2023 10:29:26 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/swagger/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 09 Jan 2023 10:29:26 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/tags/swagger/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>自动化接口文档swag使用指南</title>
       <link>https://cold-bin.github.io/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</link>
       <pubDate>Mon, 09 Jan 2023 10:29:26 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3swag%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</guid>
       <description>swag 目录 快速开始 支持的Web框架 如何与Gin集成 格式化说明 开发现状 声明式注释格式 通用API信息 API操作 安全性 样例 多行的描述 用户自定义的具有数</description>
     </item>
-    
   </channel>
 </rss>

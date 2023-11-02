@@ -7,15 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Sat, 16 Jul 2022 22:13:26 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/makefile/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 16 Jul 2022 22:13:26 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/tags/makefile/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Makefile在go项目的实践</title>
       <link>https://cold-bin.github.io/post/makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/</link>
       <pubDate>Sat, 16 Jul 2022 22:13:26 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/makefile%E5%9C%A8go%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%AE%9E%E8%B7%B5/</guid>
       <description>Make介绍 make命令是GNU的工程化编译工具，用以实现工程化的管理，提高开发效率。 Make解释Makefile 中的指令（应该说是规则）。</description>
     </item>
-    
   </channel>
 </rss>

@@ -7,15 +7,14 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Mon, 09 Jan 2023 10:29:45 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/floyd/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 09 Jan 2023 10:29:45 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/tags/floyd/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>常见算法总结</title>
       <link>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/</link>
       <pubDate>Mon, 09 Jan 2023 10:29:45 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%B8%B8%E8%A7%81%E7%AE%97%E6%B3%95%E6%80%BB%E7%BB%93/</guid>
       <description>[toc] 常见算法总结 Floyd 判圈算法 Floyd判圈算法(Floyd Cycle Detection Algorithm)，又称龟兔赛跑算法(Tortoise and Hare Algorithm)，</description>
     </item>
-    
   </channel>
 </rss>

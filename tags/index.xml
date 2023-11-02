@@ -7,1293 +7,1008 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Sun, 29 Oct 2023 15:09:26 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 29 Oct 2023 15:09:26 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>gmp</title>
       <link>https://cold-bin.github.io/tags/gmp/</link>
       <pubDate>Sun, 29 Oct 2023 15:09:26 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/gmp/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>滑动窗口</title>
       <link>https://cold-bin.github.io/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</link>
       <pubDate>Thu, 24 Aug 2023 09:53:19 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>算法</title>
       <link>https://cold-bin.github.io/tags/%E7%AE%97%E6%B3%95/</link>
       <pubDate>Thu, 24 Aug 2023 09:53:19 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E7%AE%97%E6%B3%95/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>操作系统文件系统</title>
       <link>https://cold-bin.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</link>
       <pubDate>Wed, 23 Aug 2023 21:35:11 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>操作系统调度算法</title>
       <link>https://cold-bin.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/</link>
       <pubDate>Wed, 23 Aug 2023 21:35:02 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>操作系统进程管理</title>
       <link>https://cold-bin.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/</link>
       <pubDate>Wed, 23 Aug 2023 21:34:53 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>linux虚拟内存管理</title>
       <link>https://cold-bin.github.io/tags/linux%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</link>
       <pubDate>Wed, 23 Aug 2023 21:34:46 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/linux%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>操作系统内存管理</title>
       <link>https://cold-bin.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</link>
       <pubDate>Wed, 23 Aug 2023 21:34:46 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>操作系统结构</title>
       <link>https://cold-bin.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84/</link>
       <pubDate>Wed, 23 Aug 2023 21:34:29 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>并查集</title>
       <link>https://cold-bin.github.io/tags/%E5%B9%B6%E6%9F%A5%E9%9B%86/</link>
       <pubDate>Sun, 20 Aug 2023 18:02:42 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E5%B9%B6%E6%9F%A5%E9%9B%86/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>操作系统硬件结构</title>
       <link>https://cold-bin.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6%E7%BB%93%E6%9E%84/</link>
       <pubDate>Mon, 14 Aug 2023 12:03:21 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%A1%AC%E4%BB%B6%E7%BB%93%E6%9E%84/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>mit6.824 labs</title>
       <link>https://cold-bin.github.io/tags/mit6.824-labs/</link>
       <pubDate>Thu, 10 Aug 2023 16:32:37 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/mit6.824-labs/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>go插件开发</title>
       <link>https://cold-bin.github.io/tags/go%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</link>
       <pubDate>Sat, 05 Aug 2023 16:02:12 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/go%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>cs144-labs</title>
       <link>https://cold-bin.github.io/tags/cs144-labs/</link>
       <pubDate>Mon, 31 Jul 2023 19:13:59 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/cs144-labs/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>https</title>
       <link>https://cold-bin.github.io/tags/https/</link>
       <pubDate>Thu, 13 Jul 2023 21:15:36 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/https/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>tls</title>
       <link>https://cold-bin.github.io/tags/tls/</link>
       <pubDate>Thu, 13 Jul 2023 21:15:36 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/tls/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>证书</title>
       <link>https://cold-bin.github.io/tags/%E8%AF%81%E4%B9%A6/</link>
       <pubDate>Thu, 13 Jul 2023 21:15:36 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E8%AF%81%E4%B9%A6/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>dhcp协议</title>
       <link>https://cold-bin.github.io/tags/dhcp%E5%8D%8F%E8%AE%AE/</link>
       <pubDate>Thu, 13 Jul 2023 13:52:13 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/dhcp%E5%8D%8F%E8%AE%AE/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>dns协议</title>
       <link>https://cold-bin.github.io/tags/dns%E5%8D%8F%E8%AE%AE/</link>
       <pubDate>Thu, 13 Jul 2023 13:52:13 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/dns%E5%8D%8F%E8%AE%AE/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>ftp协议</title>
       <link>https://cold-bin.github.io/tags/ftp%E5%8D%8F%E8%AE%AE/</link>
       <pubDate>Thu, 13 Jul 2023 13:52:13 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/ftp%E5%8D%8F%E8%AE%AE/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>http协议</title>
       <link>https://cold-bin.github.io/tags/http%E5%8D%8F%E8%AE%AE/</link>
       <pubDate>Thu, 13 Jul 2023 13:52:13 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/http%E5%8D%8F%E8%AE%AE/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>smtp协议</title>
       <link>https://cold-bin.github.io/tags/smtp%E5%8D%8F%E8%AE%AE/</link>
       <pubDate>Thu, 13 Jul 2023 13:52:13 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/smtp%E5%8D%8F%E8%AE%AE/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>c&#43;&#43;引用</title>
       <link>https://cold-bin.github.io/tags/c&#43;&#43;%E5%BC%95%E7%94%A8/</link>
       <pubDate>Wed, 12 Jul 2023 16:59:18 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/c&#43;&#43;%E5%BC%95%E7%94%A8/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>c&#43;&#43;指针</title>
       <link>https://cold-bin.github.io/tags/c&#43;&#43;%E6%8C%87%E9%92%88/</link>
       <pubDate>Wed, 12 Jul 2023 16:59:18 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/c&#43;&#43;%E6%8C%87%E9%92%88/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>tcp协议</title>
       <link>https://cold-bin.github.io/tags/tcp%E5%8D%8F%E8%AE%AE/</link>
       <pubDate>Tue, 11 Jul 2023 17:36:16 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/tcp%E5%8D%8F%E8%AE%AE/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>udp协议</title>
       <link>https://cold-bin.github.io/tags/udp%E5%8D%8F%E8%AE%AE/</link>
       <pubDate>Tue, 11 Jul 2023 17:36:16 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/udp%E5%8D%8F%E8%AE%AE/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>icmp协议</title>
       <link>https://cold-bin.github.io/tags/icmp%E5%8D%8F%E8%AE%AE/</link>
       <pubDate>Fri, 23 Jun 2023 22:05:45 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/icmp%E5%8D%8F%E8%AE%AE/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>ipv4</title>
       <link>https://cold-bin.github.io/tags/ipv4/</link>
       <pubDate>Fri, 23 Jun 2023 22:05:45 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/ipv4/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>nat</title>
       <link>https://cold-bin.github.io/tags/nat/</link>
       <pubDate>Fri, 23 Jun 2023 22:05:45 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/nat/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>vpn</title>
       <link>https://cold-bin.github.io/tags/vpn/</link>
       <pubDate>Fri, 23 Jun 2023 22:05:45 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/vpn/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>路由选择协议</title>
       <link>https://cold-bin.github.io/tags/%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E5%8D%8F%E8%AE%AE/</link>
       <pubDate>Fri, 23 Jun 2023 22:05:45 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E8%B7%AF%E7%94%B1%E9%80%89%E6%8B%A9%E5%8D%8F%E8%AE%AE/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>arp协议</title>
       <link>https://cold-bin.github.io/tags/arp%E5%8D%8F%E8%AE%AE/</link>
       <pubDate>Thu, 08 Jun 2023 15:17:49 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/arp%E5%8D%8F%E8%AE%AE/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>ppp协议</title>
       <link>https://cold-bin.github.io/tags/ppp%E5%8D%8F%E8%AE%AE/</link>
       <pubDate>Thu, 08 Jun 2023 15:17:49 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/ppp%E5%8D%8F%E8%AE%AE/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>可靠传输协议</title>
       <link>https://cold-bin.github.io/tags/%E5%8F%AF%E9%9D%A0%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE/</link>
       <pubDate>Thu, 08 Jun 2023 15:17:49 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E5%8F%AF%E9%9D%A0%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>虚拟局域网vlan</title>
       <link>https://cold-bin.github.io/tags/%E8%99%9A%E6%8B%9F%E5%B1%80%E5%9F%9F%E7%BD%91vlan/</link>
       <pubDate>Thu, 08 Jun 2023 15:17:49 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E8%99%9A%E6%8B%9F%E5%B1%80%E5%9F%9F%E7%BD%91vlan/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>以太网协议</title>
       <link>https://cold-bin.github.io/tags/%E4%BB%A5%E5%A4%AA%E7%BD%91%E5%8D%8F%E8%AE%AE/</link>
       <pubDate>Thu, 08 Jun 2023 15:17:49 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E4%BB%A5%E5%A4%AA%E7%BD%91%E5%8D%8F%E8%AE%AE/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>osi七层模型</title>
       <link>https://cold-bin.github.io/tags/osi%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/</link>
       <pubDate>Sat, 03 Jun 2023 22:42:06 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/osi%E4%B8%83%E5%B1%82%E6%A8%A1%E5%9E%8B/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>2q</title>
       <link>https://cold-bin.github.io/tags/2q/</link>
       <pubDate>Wed, 31 May 2023 22:53:14 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/2q/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>fifo</title>
       <link>https://cold-bin.github.io/tags/fifo/</link>
       <pubDate>Wed, 31 May 2023 22:53:14 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/fifo/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>lfu</title>
       <link>https://cold-bin.github.io/tags/lfu/</link>
       <pubDate>Wed, 31 May 2023 22:53:14 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/lfu/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>lru</title>
       <link>https://cold-bin.github.io/tags/lru/</link>
       <pubDate>Wed, 31 May 2023 22:53:14 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/lru/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>lru-k</title>
       <link>https://cold-bin.github.io/tags/lru-k/</link>
       <pubDate>Wed, 31 May 2023 22:53:14 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/lru-k/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>dma</title>
       <link>https://cold-bin.github.io/tags/dma/</link>
       <pubDate>Tue, 30 May 2023 12:10:06 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/dma/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>io控制方式</title>
       <link>https://cold-bin.github.io/tags/io%E6%8E%A7%E5%88%B6%E6%96%B9%E5%BC%8F/</link>
       <pubDate>Tue, 30 May 2023 12:10:06 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/io%E6%8E%A7%E5%88%B6%E6%96%B9%E5%BC%8F/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>spooling技术</title>
       <link>https://cold-bin.github.io/tags/spooling%E6%8A%80%E6%9C%AF/</link>
       <pubDate>Tue, 30 May 2023 12:10:06 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/spooling%E6%8A%80%E6%9C%AF/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>链接</title>
       <link>https://cold-bin.github.io/tags/%E9%93%BE%E6%8E%A5/</link>
       <pubDate>Sun, 21 May 2023 15:19:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E9%93%BE%E6%8E%A5/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>内存分配与回收</title>
       <link>https://cold-bin.github.io/tags/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E4%B8%8E%E5%9B%9E%E6%94%B6/</link>
       <pubDate>Thu, 11 May 2023 19:53:00 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E4%B8%8E%E5%9B%9E%E6%94%B6/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>虚拟内存</title>
       <link>https://cold-bin.github.io/tags/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</link>
       <pubDate>Thu, 11 May 2023 19:53:00 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>mmap</title>
       <link>https://cold-bin.github.io/tags/mmap/</link>
       <pubDate>Wed, 05 Apr 2023 17:26:42 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/mmap/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>sendfile</title>
       <link>https://cold-bin.github.io/tags/sendfile/</link>
       <pubDate>Wed, 05 Apr 2023 17:26:42 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/sendfile/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>零拷贝</title>
       <link>https://cold-bin.github.io/tags/%E9%9B%B6%E6%8B%B7%E8%B4%9D/</link>
       <pubDate>Wed, 05 Apr 2023 17:26:42 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E9%9B%B6%E6%8B%B7%E8%B4%9D/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>进程同步与调度</title>
       <link>https://cold-bin.github.io/tags/%E8%BF%9B%E7%A8%8B%E5%90%8C%E6%AD%A5%E4%B8%8E%E8%B0%83%E5%BA%A6/</link>
       <pubDate>Fri, 17 Mar 2023 14:55:42 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E8%BF%9B%E7%A8%8B%E5%90%8C%E6%AD%A5%E4%B8%8E%E8%B0%83%E5%BA%A6/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>死锁</title>
       <link>https://cold-bin.github.io/tags/%E6%AD%BB%E9%94%81/</link>
       <pubDate>Fri, 17 Mar 2023 14:55:42 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%AD%BB%E9%94%81/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>中断</title>
       <link>https://cold-bin.github.io/tags/%E4%B8%AD%E6%96%AD/</link>
       <pubDate>Wed, 15 Mar 2023 18:32:26 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E4%B8%AD%E6%96%AD/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>汇编里的端口</title>
       <link>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E9%87%8C%E7%9A%84%E7%AB%AF%E5%8F%A3/</link>
       <pubDate>Sat, 28 Jan 2023 20:59:37 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E9%87%8C%E7%9A%84%E7%AB%AF%E5%8F%A3/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>redis最佳实践及优化指南</title>
       <link>https://cold-bin.github.io/tags/redis%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E5%8F%8A%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97/</link>
       <pubDate>Thu, 26 Jan 2023 16:39:51 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/redis%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E5%8F%8A%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>汇编里的中断</title>
       <link>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E9%87%8C%E7%9A%84%E4%B8%AD%E6%96%AD/</link>
       <pubDate>Tue, 24 Jan 2023 21:58:30 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E9%87%8C%E7%9A%84%E4%B8%AD%E6%96%AD/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>lua脚本</title>
       <link>https://cold-bin.github.io/tags/lua%E8%84%9A%E6%9C%AC/</link>
       <pubDate>Tue, 24 Jan 2023 16:08:44 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/lua%E8%84%9A%E6%9C%AC/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>多级缓存</title>
       <link>https://cold-bin.github.io/tags/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/</link>
       <pubDate>Tue, 24 Jan 2023 16:08:44 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>rdb与aof持久化</title>
       <link>https://cold-bin.github.io/tags/rdb%E4%B8%8Eaof%E6%8C%81%E4%B9%85%E5%8C%96/</link>
       <pubDate>Sun, 15 Jan 2023 17:26:41 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/rdb%E4%B8%8Eaof%E6%8C%81%E4%B9%85%E5%8C%96/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>redis分片集群</title>
       <link>https://cold-bin.github.io/tags/redis%E5%88%86%E7%89%87%E9%9B%86%E7%BE%A4/</link>
       <pubDate>Sun, 15 Jan 2023 17:26:41 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/redis%E5%88%86%E7%89%87%E9%9B%86%E7%BE%A4/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>redis哨兵模式</title>
       <link>https://cold-bin.github.io/tags/redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F/</link>
       <pubDate>Sun, 15 Jan 2023 17:26:41 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/redis%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>redis主从架构</title>
       <link>https://cold-bin.github.io/tags/redis%E4%B8%BB%E4%BB%8E%E6%9E%B6%E6%9E%84/</link>
       <pubDate>Sun, 15 Jan 2023 17:26:41 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/redis%E4%B8%BB%E4%BB%8E%E6%9E%B6%E6%9E%84/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>汇编函数结构</title>
       <link>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%87%BD%E6%95%B0%E7%BB%93%E6%9E%84/</link>
       <pubDate>Sat, 14 Jan 2023 22:59:42 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%87%BD%E6%95%B0%E7%BB%93%E6%9E%84/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>汇编的转移指令</title>
       <link>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E7%9A%84%E8%BD%AC%E7%A7%BB%E6%8C%87%E4%BB%A4/</link>
       <pubDate>Fri, 13 Jan 2023 21:29:13 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E7%9A%84%E8%BD%AC%E7%A7%BB%E6%8C%87%E4%BB%A4/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>实现redlock</title>
       <link>https://cold-bin.github.io/tags/%E5%AE%9E%E7%8E%B0redlock/</link>
       <pubDate>Thu, 12 Jan 2023 11:54:12 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E5%AE%9E%E7%8E%B0redlock/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>汇编运算指令</title>
       <link>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E8%BF%90%E7%AE%97%E6%8C%87%E4%BB%A4/</link>
       <pubDate>Tue, 10 Jan 2023 20:04:55 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E8%BF%90%E7%AE%97%E6%8C%87%E4%BB%A4/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>linux常用命令</title>
       <link>https://cold-bin.github.io/tags/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</link>
       <pubDate>Tue, 10 Jan 2023 19:47:57 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>docker</title>
       <link>https://cold-bin.github.io/tags/docker/</link>
       <pubDate>Tue, 10 Jan 2023 19:45:16 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/docker/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>dockerfile</title>
       <link>https://cold-bin.github.io/tags/dockerfile/</link>
       <pubDate>Tue, 10 Jan 2023 19:45:16 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/dockerfile/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>redis超实用的应用</title>
       <link>https://cold-bin.github.io/tags/redis%E8%B6%85%E5%AE%9E%E7%94%A8%E7%9A%84%E5%BA%94%E7%94%A8/</link>
       <pubDate>Mon, 09 Jan 2023 10:48:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/redis%E8%B6%85%E5%AE%9E%E7%94%A8%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>go依赖管理</title>
       <link>https://cold-bin.github.io/tags/go%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</link>
       <pubDate>Mon, 09 Jan 2023 10:33:48 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/go%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>colly</title>
       <link>https://cold-bin.github.io/tags/colly/</link>
       <pubDate>Mon, 09 Jan 2023 10:30:18 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/colly/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>selenium</title>
       <link>https://cold-bin.github.io/tags/selenium/</link>
       <pubDate>Mon, 09 Jan 2023 10:30:18 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/selenium/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>floyd</title>
       <link>https://cold-bin.github.io/tags/floyd/</link>
       <pubDate>Mon, 09 Jan 2023 10:29:45 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/floyd/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>kmp</title>
       <link>https://cold-bin.github.io/tags/kmp/</link>
       <pubDate>Mon, 09 Jan 2023 10:29:45 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/kmp/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>背包问题</title>
       <link>https://cold-bin.github.io/tags/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/</link>
       <pubDate>Mon, 09 Jan 2023 10:29:45 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>快速幂</title>
       <link>https://cold-bin.github.io/tags/%E5%BF%AB%E9%80%9F%E5%B9%82/</link>
       <pubDate>Mon, 09 Jan 2023 10:29:45 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E5%BF%AB%E9%80%9F%E5%B9%82/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>swagger</title>
       <link>https://cold-bin.github.io/tags/swagger/</link>
       <pubDate>Mon, 09 Jan 2023 10:29:26 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/swagger/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>接口文档自动化</title>
       <link>https://cold-bin.github.io/tags/%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3%E8%87%AA%E5%8A%A8%E5%8C%96/</link>
       <pubDate>Mon, 09 Jan 2023 10:29:26 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3%E8%87%AA%E5%8A%A8%E5%8C%96/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>colly框架</title>
       <link>https://cold-bin.github.io/tags/colly%E6%A1%86%E6%9E%B6/</link>
       <pubDate>Mon, 09 Jan 2023 10:28:50 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/colly%E6%A1%86%E6%9E%B6/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>goquery框架</title>
       <link>https://cold-bin.github.io/tags/goquery%E6%A1%86%E6%9E%B6/</link>
       <pubDate>Mon, 09 Jan 2023 10:28:50 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/goquery%E6%A1%86%E6%9E%B6/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>算法题</title>
       <link>https://cold-bin.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/</link>
       <pubDate>Sun, 08 Jan 2023 17:34:02 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E7%AE%97%E6%B3%95%E9%A2%98/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>bitmap</title>
       <link>https://cold-bin.github.io/tags/bitmap/</link>
       <pubDate>Sun, 08 Jan 2023 10:27:07 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/bitmap/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>jedis客户端</title>
       <link>https://cold-bin.github.io/tags/jedis%E5%AE%A2%E6%88%B7%E7%AB%AF/</link>
       <pubDate>Sun, 08 Jan 2023 10:27:07 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/jedis%E5%AE%A2%E6%88%B7%E7%AB%AF/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>redis各大数据类型</title>
       <link>https://cold-bin.github.io/tags/redis%E5%90%84%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</link>
       <pubDate>Sun, 08 Jan 2023 10:27:07 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/redis%E5%90%84%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>汇编里的栈</title>
       <link>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E9%87%8C%E7%9A%84%E6%A0%88/</link>
       <pubDate>Sat, 07 Jan 2023 20:37:19 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E9%87%8C%E7%9A%84%E6%A0%88/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>汇编循环结构</title>
       <link>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%BE%AA%E7%8E%AF%E7%BB%93%E6%9E%84/</link>
       <pubDate>Fri, 09 Dec 2022 21:58:07 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%B1%87%E7%BC%96%E5%BE%AA%E7%8E%AF%E7%BB%93%E6%9E%84/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>mongodb</title>
       <link>https://cold-bin.github.io/tags/mongodb/</link>
       <pubDate>Fri, 25 Nov 2022 20:20:04 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/mongodb/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>列存储</title>
       <link>https://cold-bin.github.io/tags/%E5%88%97%E5%AD%98%E5%82%A8/</link>
       <pubDate>Fri, 25 Nov 2022 15:47:28 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E5%88%97%E5%AD%98%E5%82%A8/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>行存储</title>
       <link>https://cold-bin.github.io/tags/%E8%A1%8C%E5%AD%98%E5%82%A8/</link>
       <pubDate>Fri, 25 Nov 2022 15:47:28 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E8%A1%8C%E5%AD%98%E5%82%A8/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>哈希</title>
       <link>https://cold-bin.github.io/tags/%E5%93%88%E5%B8%8C/</link>
       <pubDate>Thu, 17 Nov 2022 12:42:15 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E5%93%88%E5%B8%8C/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>aes</title>
       <link>https://cold-bin.github.io/tags/aes/</link>
       <pubDate>Tue, 15 Nov 2022 18:01:50 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/aes/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>rsa</title>
       <link>https://cold-bin.github.io/tags/rsa/</link>
       <pubDate>Tue, 15 Nov 2022 18:01:50 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/rsa/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>mysql隔离级别</title>
       <link>https://cold-bin.github.io/tags/mysql%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</link>
       <pubDate>Wed, 09 Nov 2022 16:46:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/mysql%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>并发安全</title>
       <link>https://cold-bin.github.io/tags/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8/</link>
       <pubDate>Wed, 09 Nov 2022 16:46:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>协程池</title>
       <link>https://cold-bin.github.io/tags/%E5%8D%8F%E7%A8%8B%E6%B1%A0/</link>
       <pubDate>Wed, 09 Nov 2022 16:24:28 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E5%8D%8F%E7%A8%8B%E6%B1%A0/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>原子操作</title>
       <link>https://cold-bin.github.io/tags/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/</link>
       <pubDate>Wed, 09 Nov 2022 16:24:28 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>mysql备份与恢复</title>
       <link>https://cold-bin.github.io/tags/mysql%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D/</link>
       <pubDate>Sat, 22 Oct 2022 10:39:18 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/mysql%E5%A4%87%E4%BB%BD%E4%B8%8E%E6%81%A2%E5%A4%8D/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>mysql性能优化</title>
       <link>https://cold-bin.github.io/tags/mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</link>
       <pubDate>Sat, 22 Oct 2022 10:39:18 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>mysql主从架构</title>
       <link>https://cold-bin.github.io/tags/mysql%E4%B8%BB%E4%BB%8E%E6%9E%B6%E6%9E%84/</link>
       <pubDate>Sat, 22 Oct 2022 10:39:18 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/mysql%E4%B8%BB%E4%BB%8E%E6%9E%B6%E6%9E%84/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>mvcc多版本并发控制</title>
       <link>https://cold-bin.github.io/tags/mvcc%E5%A4%9A%E7%89%88%E6%9C%AC%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6/</link>
       <pubDate>Thu, 20 Oct 2022 22:17:42 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/mvcc%E5%A4%9A%E7%89%88%E6%9C%AC%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>mysql事务</title>
       <link>https://cold-bin.github.io/tags/mysql%E4%BA%8B%E5%8A%A1/</link>
       <pubDate>Thu, 20 Oct 2022 22:17:42 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/mysql%E4%BA%8B%E5%8A%A1/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>redo与undo</title>
       <link>https://cold-bin.github.io/tags/redo%E4%B8%8Eundo/</link>
       <pubDate>Thu, 20 Oct 2022 22:17:42 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/redo%E4%B8%8Eundo/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>抓包</title>
       <link>https://cold-bin.github.io/tags/%E6%8A%93%E5%8C%85/</link>
       <pubDate>Wed, 05 Oct 2022 17:34:18 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%8A%93%E5%8C%85/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>sync.pool</title>
       <link>https://cold-bin.github.io/tags/sync.pool/</link>
       <pubDate>Sat, 24 Sep 2022 15:09:27 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/sync.pool/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>mysql索引及调优</title>
       <link>https://cold-bin.github.io/tags/mysql%E7%B4%A2%E5%BC%95%E5%8F%8A%E8%B0%83%E4%BC%98/</link>
       <pubDate>Sat, 24 Sep 2022 15:03:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/mysql%E7%B4%A2%E5%BC%95%E5%8F%8A%E8%B0%83%E4%BC%98/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>数据库几大范式</title>
       <link>https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%87%A0%E5%A4%A7%E8%8C%83%E5%BC%8F/</link>
       <pubDate>Sat, 24 Sep 2022 15:03:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%87%A0%E5%A4%A7%E8%8C%83%E5%BC%8F/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>innodb引擎</title>
       <link>https://cold-bin.github.io/tags/innodb%E5%BC%95%E6%93%8E/</link>
       <pubDate>Mon, 05 Sep 2022 15:10:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/innodb%E5%BC%95%E6%93%8E/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>mysql存储引擎</title>
       <link>https://cold-bin.github.io/tags/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/</link>
       <pubDate>Mon, 05 Sep 2022 15:10:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>sql执行过程</title>
       <link>https://cold-bin.github.io/tags/sql%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B/</link>
       <pubDate>Mon, 05 Sep 2022 15:10:32 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/sql%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>go反射</title>
       <link>https://cold-bin.github.io/tags/go%E5%8F%8D%E5%B0%84/</link>
       <pubDate>Fri, 02 Sep 2022 19:26:22 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/go%E5%8F%8D%E5%B0%84/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>unsafe</title>
       <link>https://cold-bin.github.io/tags/unsafe/</link>
       <pubDate>Sun, 28 Aug 2022 14:18:10 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/unsafe/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>微服务</title>
       <link>https://cold-bin.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/</link>
       <pubDate>Sat, 27 Aug 2022 15:15:46 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>gitのcommit规范</title>
       <link>https://cold-bin.github.io/tags/git%E3%81%AEcommit%E8%A7%84%E8%8C%83/</link>
       <pubDate>Thu, 25 Aug 2022 11:53:50 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/git%E3%81%AEcommit%E8%A7%84%E8%8C%83/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>git</title>
       <link>https://cold-bin.github.io/tags/git/</link>
       <pubDate>Thu, 25 Aug 2022 11:52:44 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/git/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>ddl</title>
       <link>https://cold-bin.github.io/tags/ddl/</link>
       <pubDate>Wed, 24 Aug 2022 15:37:22 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/ddl/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>dml</title>
       <link>https://cold-bin.github.io/tags/dml/</link>
       <pubDate>Wed, 24 Aug 2022 15:37:22 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/dml/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>dql</title>
       <link>https://cold-bin.github.io/tags/dql/</link>
       <pubDate>Wed, 24 Aug 2022 15:37:22 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/dql/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>连接查询</title>
       <link>https://cold-bin.github.io/tags/%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2/</link>
       <pubDate>Wed, 24 Aug 2022 15:37:22 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>子查询</title>
       <link>https://cold-bin.github.io/tags/%E5%AD%90%E6%9F%A5%E8%AF%A2/</link>
       <pubDate>Wed, 24 Aug 2022 15:37:22 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E5%AD%90%E6%9F%A5%E8%AF%A2/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>grpc</title>
       <link>https://cold-bin.github.io/tags/grpc/</link>
       <pubDate>Sun, 21 Aug 2022 13:52:34 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/grpc/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>go编程思想</title>
       <link>https://cold-bin.github.io/tags/go%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/</link>
       <pubDate>Wed, 10 Aug 2022 17:13:38 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/go%E7%BC%96%E7%A8%8B%E6%80%9D%E6%83%B3/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>go中的rune类型</title>
       <link>https://cold-bin.github.io/tags/go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/</link>
       <pubDate>Wed, 10 Aug 2022 14:23:15 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/go%E4%B8%AD%E7%9A%84rune%E7%B1%BB%E5%9E%8B/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>unicode与utf8</title>
       <link>https://cold-bin.github.io/tags/unicode%E4%B8%8Eutf8/</link>
       <pubDate>Wed, 10 Aug 2022 14:23:15 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/unicode%E4%B8%8Eutf8/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>go内存对齐</title>
       <link>https://cold-bin.github.io/tags/go%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/</link>
       <pubDate>Sun, 17 Jul 2022 15:26:09 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/go%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>go语言flag包实现命令行功能</title>
       <link>https://cold-bin.github.io/tags/go%E8%AF%AD%E8%A8%80flag%E5%8C%85%E5%AE%9E%E7%8E%B0%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8A%9F%E8%83%BD/</link>
       <pubDate>Sun, 17 Jul 2022 10:16:08 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/go%E8%AF%AD%E8%A8%80flag%E5%8C%85%E5%AE%9E%E7%8E%B0%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8A%9F%E8%83%BD/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>makefile</title>
       <link>https://cold-bin.github.io/tags/makefile/</link>
       <pubDate>Sat, 16 Jul 2022 22:13:26 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/makefile/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>api向前兼容</title>
       <link>https://cold-bin.github.io/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/</link>
       <pubDate>Thu, 07 Jul 2022 17:51:45 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/api%E5%90%91%E5%89%8D%E5%85%BC%E5%AE%B9/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>单元测试</title>
       <link>https://cold-bin.github.io/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</link>
       <pubDate>Thu, 07 Jul 2022 17:46:37 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>网络测试</title>
       <link>https://cold-bin.github.io/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/</link>
       <pubDate>Thu, 07 Jul 2022 17:46:37 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E7%BD%91%E7%BB%9C%E6%B5%8B%E8%AF%95/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>性能优化</title>
       <link>https://cold-bin.github.io/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</link>
       <pubDate>Thu, 07 Jul 2022 17:46:37 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>bfs</title>
       <link>https://cold-bin.github.io/tags/bfs/</link>
       <pubDate>Thu, 07 Jul 2022 12:36:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/bfs/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>dfs</title>
       <link>https://cold-bin.github.io/tags/dfs/</link>
       <pubDate>Thu, 07 Jul 2022 12:36:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/dfs/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>查找算法</title>
       <link>https://cold-bin.github.io/tags/%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95/</link>
       <pubDate>Thu, 07 Jul 2022 12:36:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>动态规划</title>
       <link>https://cold-bin.github.io/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/</link>
       <pubDate>Thu, 07 Jul 2022 12:36:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>队列</title>
       <link>https://cold-bin.github.io/tags/%E9%98%9F%E5%88%97/</link>
       <pubDate>Thu, 07 Jul 2022 12:36:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E9%98%9F%E5%88%97/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>链表</title>
       <link>https://cold-bin.github.io/tags/%E9%93%BE%E8%A1%A8/</link>
       <pubDate>Thu, 07 Jul 2022 12:36:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E9%93%BE%E8%A1%A8/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>排序算法</title>
       <link>https://cold-bin.github.io/tags/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</link>
       <pubDate>Thu, 07 Jul 2022 12:36:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>树</title>
       <link>https://cold-bin.github.io/tags/%E6%A0%91/</link>
       <pubDate>Thu, 07 Jul 2022 12:36:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%A0%91/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>图</title>
       <link>https://cold-bin.github.io/tags/%E5%9B%BE/</link>
       <pubDate>Thu, 07 Jul 2022 12:36:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E5%9B%BE/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>稀疏数组</title>
       <link>https://cold-bin.github.io/tags/%E7%A8%80%E7%96%8F%E6%95%B0%E7%BB%84/</link>
       <pubDate>Thu, 07 Jul 2022 12:36:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E7%A8%80%E7%96%8F%E6%95%B0%E7%BB%84/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>栈</title>
       <link>https://cold-bin.github.io/tags/%E6%A0%88/</link>
       <pubDate>Thu, 07 Jul 2022 12:36:47 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/tags/%E6%A0%88/</guid>
       <description></description>
     </item>
-    
   </channel>
 </rss>

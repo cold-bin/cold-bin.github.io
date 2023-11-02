@@ -7,24 +7,21 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Mon, 09 Jan 2023 10:30:18 +0800</lastBuildDate><atom:link href="https://cold-bin.github.io/categories/%E7%88%AC%E8%99%AB/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 09 Jan 2023 10:30:18 +0800</lastBuildDate>
+    <atom:link href="https://cold-bin.github.io/categories/%E7%88%AC%E8%99%AB/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>基于go的selenium使用详解</title>
       <link>https://cold-bin.github.io/post/%E5%9F%BA%E4%BA%8Ego%E7%9A%84selenium%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/</link>
       <pubDate>Mon, 09 Jan 2023 10:30:18 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/%E5%9F%BA%E4%BA%8Ego%E7%9A%84selenium%E4%BD%BF%E7%94%A8%E8%AF%A6%E8%A7%A3/</guid>
       <description>基于golang的selenium使用详解 什么是selenium？我理解成：selenium是一种程序员使用地、自动化地、可以通过代码来操控</description>
     </item>
-    
     <item>
       <title>Go爬虫</title>
       <link>https://cold-bin.github.io/post/go%E7%88%AC%E8%99%AB/</link>
       <pubDate>Mon, 09 Jan 2023 10:28:50 +0800</pubDate>
-      
       <guid>https://cold-bin.github.io/post/go%E7%88%AC%E8%99%AB/</guid>
       <description>Go爬虫 爬虫就是模拟客户端程序访问服务端某个url下的资源，再将资源进行部分提取（使用正则筛选html等），然后在存储至某端，或者放在某网页</description>
     </item>
-    
   </channel>
 </rss>
