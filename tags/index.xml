@@ -7,8 +7,15 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>cold-bin</copyright>
-    <lastBuildDate>Sun, 29 Oct 2023 15:09:26 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 06 Nov 2023 13:59:29 +0800</lastBuildDate>
     <atom:link href="https://cold-bin.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>gin</title>
+      <link>https://cold-bin.github.io/tags/gin/</link>
+      <pubDate>Mon, 06 Nov 2023 13:59:29 +0800</pubDate>
+      <guid>https://cold-bin.github.io/tags/gin/</guid>
+      <description></description>
+    </item>
     <item>
       <title>gmp</title>
       <link>https://cold-bin.github.io/tags/gmp/</link>
